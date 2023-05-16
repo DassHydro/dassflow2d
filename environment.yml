@@ -1,0 +1,21 @@
+name: df2d
+channels:
+    - conda-forge
+dependencies:
+    - python=3.8
+    - pip
+    
+    # compile
+    - make
+    - gcc
+    - gfortran
+    
+    # required dependencies
+    - pybtex
+    - pillow
+    - f90wrap==0.2.7
+    - numpy
+    - pandas
+    - matplotlib
+    - h5py
+    - scipy
