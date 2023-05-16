@@ -2,10 +2,16 @@
 ! File Defining Points and/or Lines to output result in files at a prescribed temporal frequency
 !=================================================================================================!
 
-stations	2
+stations	9
 
+100.	50.		60.		1.
 200.	50.		60.		1.
+300.	50.		60.		1.
+400.	50.		60.		1.
+500.	50.		60.		1.
+600.	50.		60.		1.
+700.	50.		60.		1.
 800.	50.		60.		1.
-
+900.	50.		60.		1.
 
 sections		0

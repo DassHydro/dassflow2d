@@ -1,0 +1,125 @@
+=======================
+BALISES #ifdef
+=======================
+src_analysis.sh:5:grep -rin "\#*ifdef"
+adjoint/adStack.c:28:#ifdef STACK_SIZE_TRACING
+adjoint/adStack.c:38:#ifdef STACK_SIZE_TRACING
+adjoint/adStack.c:99:#ifdef STACK_SIZE_TRACING
+adjoint/m_mpi_diff.f90:66:   #ifdef USE_SW_MONO
+adjoint/m_mpi_diff.f90:96:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:126:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:152:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:169:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:199:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:235:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:280:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:316:      #ifdef USE_MPI
+adjoint/m_mpi_diff.f90:367:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:74:#ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:78:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:116:#ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:122:#ifdef USE_LBFGSB3
+adjoint/m_adjoint.f90:188:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:230:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:280:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:329:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:689:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:698:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:875:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:884:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1022:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:1033:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1079:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1212:#ifdef USE_LBFGSB3
+adjoint/m_adjoint.f90:1370:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:1394:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1551:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:1566:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1592:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1716:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:1735:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:1863:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:1865:#ifdef USE_HYDRO
+adjoint/m_adjoint.f90:2082:      #ifdef USE_SW_MONO
+adjoint/m_adjoint.f90:2084:#ifdef USE_HYDRO
+adjoint/m_mpi_back.f90:67:   #ifdef USE_SW_MONO
+adjoint/m_mpi_back.f90:103:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:202:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:297:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:321:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:354:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:396:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:447:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:489:      #ifdef USE_MPI
+adjoint/m_mpi_back.f90:542:      #ifdef USE_SW_MONO
+adjoint/m_minimization.f90:66:#ifdef USE_SW_MONO
+adjoint/m_minimization.f90:70:#ifdef USE_HYDRO
+adjoint/m_minimization.f90:166:#ifdef USE_M1QN3
+adjoint/m_minimization.f90:503:#ifdef USE_LBFGSB3
+adjoint/m_tap_vars.f90:58:#ifdef USE_SW_MONO
+adjoint/m_tap_vars.f90:62:#ifdef USE_HYDRO
+adjoint/m_tap_vars.f90:83:#ifdef USE_HYDRO
+adjoint/m_tap_vars.f90:87:#ifdef USE_SW_MONO
+adjoint/m_tap_vars.f90:120:#ifdef USE_HYDRO
+adjoint/m_tap_vars.f90:190:      #ifdef USE_SW_MONO
+adjoint/m_tap_vars.f90:232:#ifdef USE_HYDRO
+adjoint/m_tap_vars.f90:342:      #ifdef USE_SW_MONO
+adjoint/m_tap_vars.f90:369:      #ifdef USE_HYDRO
+adjoint/m_tap_vars.f90:381:      #ifdef USE_SW_MONO
+common/m_mpi.f90:305:         #ifdef USE_INTEL
+common/m_linear_solver.f90:77:   #ifdef USE_MUMPS
+common/m_linear_solver.f90:208:         #ifdef USE_MUMPS
+common/m_linear_solver.f90:243:   #ifdef USE_MUMPS
+common/m_time_screen.f90:104:      #ifdef USE_MPI
+common/m_time_screen.f90:131:      #ifdef USE_MPI
+common/m_time_screen.f90:161:      #ifdef USE_MPI
+common/m_time_screen.f90:189:      #ifdef USE_MPI
+common/m_time_screen.f90:224:      #ifdef USE_MPI
+common/m_obs.f90:139:      #ifdef USE_SW_MONO
+common/m_obs.f90:305:      #ifdef USE_SW_MONO
+sw_mono/output_sw.f90:110:   #ifdef USE_VALID
+sw_mono/output_sw.f90:810:#ifdef USE_VALID
+sw_mono/unused_scheme/ck_time_step.f90:89:   #ifdef USE_MPI
+sw_mono/unused_scheme/jin_time_step.f90:85:   #ifdef USE_MPI
+sw_mono/unused_scheme/rk_time_step.f90:84:   #ifdef USE_MPI
+sw_mono/unused_scheme/euler_imp_muscl.f90:124:#ifdef USE_MUMPS
+sw_mono/unused_scheme/imex2_time_step.f90:97:   #ifdef USE_MPI
+sw_mono/unused_scheme/euler_imp_first.f90:120:#ifdef USE_MUMPS
+sw_mono/boundary.f90:83:#ifdef USE_HYDRO
+sw_mono/boundary.f90:369:#ifdef USE_HYDRO
+sw_mono/boundary.f90:789:#ifdef USE_HYDRO
+sw_mono/read_write_obs.f90:168:#ifdef USE_HYDRO
+sw_mono/read_write_obs.f90:838:#ifdef USE_SW_MONO
+sw_mono/read_write_obs.f90:873:#ifdef USE_HYDRO
+sw_mono/call_run_model.f90:75:   #ifdef USE_ADJ
+sw_mono/call_run_model.f90:268:#ifdef USE_ADJ
+sw_mono/call_run_model.f90:341:		#ifdef USE_ADJ
+sw_mono/run_model_sw_mono.f90:73:#ifdef USE_HYDRO
+sw_mono/run_model_sw_mono.f90:98:#ifdef USE_HYDRO
+sw_mono/run_model_sw_mono.f90:265:#ifdef USE_HYDRO
+sw_mono/sw_post.f90:307:#ifdef USE_VALID
+sw_mono/initialization.f90:76:#ifdef USE_HYDRO
+sw_mono/initialization.f90:117:#ifdef USE_MPI
+sw_mono/initialization.f90:189:#ifdef USE_HYDRO
+sw_mono/initialization.f90:903:!#ifdef USE_HYDRO !NOT CLEAN, ADD CORRECT FLAGS
+sw_mono/initialization.f90:1370:!#ifdef USE_MPI
+sw_mono/imex_time_step.f90:95:   #ifdef USE_MPI
+base/m_numeric.f90:368:      #ifdef USE_NS_MULTIFLUID
+base/output.f90:838:!             #ifdef USE_MPI
+base/output.f90:1010:            #ifdef USE_MPI
+
+=======================
+BALISES #ifndef
+=======================
+grep -rin "\#*ifndef"
+adjoint/adStack.c:8:#ifndef STACK_SIZE_TRACING
+adjoint/m_minimization.f90:159:#ifndef USE_M1QN3
+adjoint/m_minimization.f90:160:#ifndef USE_LBFGSB3
+adjoint/adStack.h:2:#ifndef ADSTACK_LOADED
+common/m_linear_algebra.f90:159:#ifndef CPP_PASS
+common/m_linear_algebra.f90:194:#ifndef CPP_PASS
+base/m_numeric.f90:1176:#ifndef CPP_PASS
+
+
+
+

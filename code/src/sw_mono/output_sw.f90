@@ -888,7 +888,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
    !  Interface Variables
    !===================================================================================================================!
 
-   TYPE(unk), intent(in)  ::  dof
+   TYPE(unk), intent(inout)  ::  dof
    TYPE(msh), intent(in)  ::  mesh
 
    character(len=*), intent(in)  ::  filename
@@ -899,7 +899,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
    integer(ip)  ::  rec_index, mesh_total_size
 
-   real(rp)  ::  h , u , v , c , hx , hy , dtx , dty , dmin
+   real(rp)  ::  h , u_temp , v_temp , c , hx , hy , dtx , dty , dmin
 
    !===================================================================================================================!
    !  Begin Subroutine
@@ -940,6 +940,24 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
          open(10,file=filename,status='old',position='append',form='formatted')
 
          do i=1,mesh%nc
+
+if ( abs( dof%u( i ) ) < 1E-16 ) then
+
+         u_temp = 0._rp ! dirty force to zero values below 10**-99
+         write(*,*) "u_temp= dof%u( i )-modif", u_temp
+
+else
+
+         u_temp = dof%u(i)
+end if
+
+if (abs(dof%v(i)) < 1E-16 ) then
+         v_temp =0._rp ! dirty force to zero values below 10**-100
+         write(*,*) "v= dof%v( i )", v_temp
+else
+        v_temp = dof%v(i)
+end if
+
             write(10,'(I5,8(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
@@ -947,8 +965,8 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  dof%h(i)               , &
                                  bathy_cell(i)+dof%h(i) , &
                                  manning( land(i) )     , &
-                                 dof%u(i)               , &
-                                 dof%v(i)
+                                 u_temp             , &
+                                 v_temp
 
          end do
 

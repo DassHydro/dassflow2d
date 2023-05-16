@@ -129,56 +129,22 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
      inquire( file = 'restart.bin' , exist = file_exist(2) )
      inquire( file = 'dof_init.txt' , exist = file_exist(3) )
      if      ( file_exist(1) ) then
-
         open(10,file='ic.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
-
         read(10,rec=1) tc0
-
         tc0 = 0._rp
-
      else if ( file_exist(2) ) then
-
        open(10,file='restart.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
-
         read(10,rec=1) tc0
-
         if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
-
      end if
-
      if ( file_exist(1) .or. file_exist(2)) then
-
         do i = 1,mesh%nc
-
   		!read(10,rec=1) dof0%h(i) , dof0%u(i) , dof0%v(i)
           read(10,rec=1+swap_index(i)) dof0%h(i) , dof0%u(i) , dof0%v(i)
-
         end do
-
         close(10)
 
      endif
-
-
-! COMMENTED, need to replace zs0_user, u0_user and v0_user
-!      else
-!
-!         do i = 1,mesh%nc
-!
-!            dof0%h(i)  = max( 0._rp , zs0_user( mesh%cell(i)%grav%x , mesh%cell(i)%grav%y ) - bathy_cell(i) ) ! h_ex(mesh%cell(i)%grav%x , mesh%cell(i)%grav%y)!
-!
-!            if ( dof0%h(i) > heps ) then
-!
-!               dof0%u(i)  =  u0_user( mesh%cell(i)%grav%x , mesh%cell(i)%grav%y )
-!               dof0%v(i)  =  v0_user( mesh%cell(i)%grav%x , mesh%cell(i)%grav%y )
-!            else
-!               dof0%u(i)  =  0._rp
-!               dof0%v(i)  =  0._rp
-!
-!            end if
-!
-!         end do
-!      end if
 
 
        if(file_exist(3)) then

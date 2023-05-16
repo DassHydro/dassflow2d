@@ -496,21 +496,30 @@
 
 
 
-<div class="viewcode-block" id="Config.set"><a class="viewcode-back" href="../../../reference/dassflow2d.core.config/dassflow2d.core.config.Config.set.html#dassflow2d.core.config.Config.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Config.set"><a class="viewcode-back" href="../../../reference/dassflow2d.core.config/dassflow2d.core.config.Config.set.html#dassflow2d.core.config.Config.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dictionary_to_force</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         
             <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            update values in fortran kernel based on provided input</span>
-<span class="sd">        </span>
-<span class="sd">            **param**: self : dictionary of class Config</span>
-<span class="sd">            return**: set the values in fortran kernel</span>
-<span class="sd">        </span>
-<span class="sd">            requirement**</span>
-<span class="sd">        </span>
-<span class="sd">            fortran kernel values must be initialised</span>
+<span class="sd">	    ---------------</span>
+<span class="sd">            param: </span>
+<span class="sd">            ---------------</span>
+<span class="sd">            self : dictionary of class Config</span>
+<span class="sd">            </span>
+<span class="sd">	    ---------------</span>
+<span class="sd">            return: </span>
+<span class="sd">	    ---------------</span>
+<span class="sd">            set the values in fortran kernel</span>
+<span class="sd">            </span>
+<span class="sd">            fortran kernel values must be initialise </span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">input_param</span> <span class="o">=</span> <span class="bp">self</span>
+            
+            <span class="k">if</span>  <span class="n">config_dictionary_to_force</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+	            <span class="n">input_param</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">else</span> <span class="p">:</span>
+            	    <span class="n">input_param</span> <span class="o">=</span> <span class="n">config_dictionary_to_force</span>
+	     		
         <span class="c1">#    all_keys = input_param.keys()</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">input_param</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">input_param</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="c1"># in module m_common</span>
                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;mesh_name&#39;</span><span class="p">:</span>
                     <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_common</span><span class="o">.</span><span class="n">set_mesh_name</span><span class="p">(</span><span class="n">input_param</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
@@ -574,6 +583,8 @@
                <span class="c1">#elif k == &#39;c_ic&#39;:</span>
                    <span class="c1">#df2d.wrapping.m_model.set_c_ic()</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;values </span><span class="si">{</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">input_param</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span><span class="si">}</span><span class="s2"> set&quot;</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
             <span class="k">return</span><span class="p">()</span></div>
             
 <div class="viewcode-block" id="Config.save"><a class="viewcode-back" href="../../../reference/dassflow2d.core.config/dassflow2d.core.config.Config.save.html#dassflow2d.core.config.Config.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">,</span> <span class="n">source_kernel</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>

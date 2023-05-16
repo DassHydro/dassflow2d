@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -79,7 +79,7 @@ SUBROUTINE calc_innovation( dof,mesh )
    !  Local Variables
    !===================================================================================================================!
 
-   integer(ip)  ::  cell , searched_time , pt,N_average
+   integer(ip)  ::  cell , searched_time , pt, N_average
 
    real(rp)  ::  h_mean,s_total
 
@@ -88,7 +88,7 @@ SUBROUTINE calc_innovation( dof,mesh )
    !===================================================================================================================!
     !write(*,*) "size( station )",size( station )
    do iobs = 1,size( station )
-   
+
       searched_time  =  innovation( iobs )%ind_t
 
       if ( searched_time > innovation( iobs )%nb_dt ) cycle
@@ -108,7 +108,7 @@ SUBROUTINE calc_innovation( dof,mesh )
             !*****************************
             ! H = 1/swet \int_swet Hdx
             !*****************************
-            if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average 
+            if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average
                h_mean = h_mean + (dof%h( cell )+bathy_cell( cell ) )*mesh%cell(cell)%surf
                s_total= s_total + mesh%cell(cell)%surf
             end if
@@ -140,14 +140,14 @@ SUBROUTINE calc_innovation( dof,mesh )
          !s_total=100._rp
 
 
-         if (s_total>0) then 
+         if (s_total>0) then
             h_mean=h_mean/ s_total
-            
-            !write(*,*) "s_total>0"
+!write(*,*) "s_total>0"
          end if
-            !write(*,*) "s_total=", s_total
 
-         innovation ( iobs )%diff( searched_time )    = (h_mean - station( iobs )%h( searched_time )) 
+!write(*,*) "s_total=", s_total
+
+         innovation ( iobs )%diff( searched_time )    = (h_mean - station( iobs )%h( searched_time ))
          innovation ( iobs )%ind_t  =  innovation ( iobs )%ind_t + 1
 
       end if
@@ -204,7 +204,7 @@ SUBROUTINE calc_innovQ_gr4( dof,mesh )
 
         !!!!!!!!!!!!!!!!!!!
         !Classical RMSE
-        !!!!!!!!!!!!!!!!!!!        
+        !!!!!!!!!!!!!!!!!!!
 ! write(*,*) iobs, (bc%gr4( iobs )%Q( searched_time ) / bc%gr4(iobs)%surf * 3.6_rp) , stationQ( iobs )%Q( searched_time )
          innovQ ( iobs )%diff( searched_time )    = (bc%gr4( iobs )%Q( searched_time ) / bc%gr4(iobs)%surf * 3.6_rp) &
          - stationQ( iobs )%Q( searched_time ) !! mm/h, not m3/s !
@@ -216,16 +216,16 @@ SUBROUTINE calc_innovQ_gr4( dof,mesh )
 
 !         innovQ ( iobs )%diff( searched_time )    =  (bc%gr4( iobs )%Q( searched_time ) * 3.6_rp / bc%gr4( iobs )%surf &
 !          - stationQ( iobs )%Q( searched_time )) !! mm/h, not m3/s !
-!          
+!
 !         innovQ ( iobs + size(stationQ) )%diff( searched_time ) = stationQ( iobs )%Q( searched_time ) &
 !         - sum(stationQ( iobs )%Q( : )) / size(stationQ( iobs )%Q( : ))
-! ! 
+! !
 !         innovQ ( iobs )%ind_t  =  innovQ ( iobs )%ind_t + 1
 
       end if
 
    end do
-   
+
 END SUBROUTINE calc_innovQ_gr4
 #endif
 
@@ -271,7 +271,7 @@ SUBROUTINE calc_innovQ( dof,mesh )
       end if
 
    end do
-   
+
 END SUBROUTINE calc_innovQ
 
 
@@ -320,11 +320,11 @@ SUBROUTINE calc_innovW( dof,mesh )
 
             if ( cell < 0 ) cycle
 
-            !if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average 
-            !   w_total = w_total + mesh%cell(cell)%surf
-            !end if
+            !   if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average
+            !     w_total = w_total + mesh%cell(cell)%surf
+            !   end if
             w_total= w_total+ mesh%cell(cell)%surf*(max(dof%h(cell),0.0_rp)/max(dof%h(cell),0.0000000001_rp))
-            
+
          end do
 
          call mpi_sum_r( w_total )
@@ -333,7 +333,7 @@ SUBROUTINE calc_innovW( dof,mesh )
 
          if ( station( iobs )%length > 0) then
             w_total = w_total / station( iobs )%length
-         else 
+         else
             w_total= 0.0_rp
          endif
 
@@ -380,7 +380,7 @@ SUBROUTINE write_stations( dof ,mesh )
 
 !    write(*,*) "INTO  write station"
    if ( .not. allocated( station ) .or. w_obs /= 1 ) then
-!    write(*,*) ".not. allocated( station ) .or. w_obs /= 1 --> RETURN" 
+!    write(*,*) ".not. allocated( station ) .or. w_obs /= 1 --> RETURN"
     return
    end if
    if ( w_tecplot == 1 ) then
@@ -430,27 +430,27 @@ SUBROUTINE write_stations( dof ,mesh )
          !=============================================================================================================!
          !  Begin Subroutine
          !=============================================================================================================!
-        
-!write(*,*) "end_time_loop 3.3.1 -- before entering write_stations",end_time_loop
+
+!write(*,*) "size( station )=", size( station )
          do iobs = 1,size( station )
-         
-        if (iobs .EQ. 1 ) then
-!            write(*,*) "iobs =", iobs
-!            write(*,*)"tc =",tc
-        end if
+
             !==========================================================================================================!
             !  Testing if Simulation Time match with Observation Time Step
             !==========================================================================================================!
-            
+
             !if ( .not. test_dt_just_after( station( iobs )%dt ) ) cycle
-      
+
             searched_time  =  station( iobs )%ind_t
+
+!write(*,*) "station( iobs )%ind_t=", station( iobs )%ind_t
+!write(*,*) "tc=", tc
+!write(*,*) station( iobs )%dt_obs(:)
 
             if ( searched_time > station( iobs )%nb_dt ) cycle
 !write(*,*) "end_time_loop 3.3.2 -- into write_stations",end_time_loop
 
-            if ( tc >= station( iobs )%dt_obs( searched_time ) ) then           
-               
+            if ( tc >= station( iobs )%dt_obs( searched_time ) ) then
+
                !==========================================================================================================!
                !  Creating File Name
                !==========================================================================================================!
@@ -525,7 +525,7 @@ SUBROUTINE write_stations( dof ,mesh )
 !write(*,*) "end_time_loop 3.3.3.10",end_time_loop
 
                   is_file_open( file_open_counter ) = file_name
-                  
+
 !write(*,*) "file_open_counter", file_open_counter
 !write(*,*) "file_name=", file_name
 !write(*,*) "is_file_open(:)=", is_file_open(:)
@@ -547,7 +547,7 @@ SUBROUTINE write_stations( dof ,mesh )
 
 
                do pt = 1,size( station( iobs )%pt )
-					 
+
                   cell = station( iobs )%pt( pt )%cell
 
                   if ( cell < 0 ) cycle
@@ -556,7 +556,7 @@ SUBROUTINE write_stations( dof ,mesh )
                   !*****************************
                   ! H = 1/swet \int_swet Hdx
                   !*****************************
-                  if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average 
+                  if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average
 
                      u_mean = u_mean + dof%u( cell )
                      v_mean = v_mean + dof%v( cell )
@@ -592,7 +592,7 @@ SUBROUTINE write_stations( dof ,mesh )
                call mpi_sum_r( s_total )
                call mpi_sum_i( N_average )
 
-           
+
                !*****************************
                ! H = 1/sriver \int_sobs Hdx
                !*****************************
@@ -600,14 +600,14 @@ SUBROUTINE write_stations( dof ,mesh )
 
 !write(*,*) "done loop on station( iobs )%pt( pt )"
 		if (N_average>0) then ! not divide by 0
-		
+
                  h_mean = h_mean / s_total
 ! 		         u_mean = u_mean / real( N_average , 8) !real( size( station( iobs )%pt ) , 8 )
 ! 		         v_mean = v_mean / real( N_average , 8) !real( size( station( iobs )%pt ) , 8 )
 		end if
 
-! write(*,*) "3e test: u_mean, v_mean, h_mean", u_mean, v_mean, h_mean                      
-               
+! write(*,*) "3e test: u_mean, v_mean, h_mean", u_mean, v_mean, h_mean
+
                if (station(iobs)%length>0) then
                   w_meanb=w_meanb/(station(iobs)%length)
                else
@@ -625,7 +625,7 @@ SUBROUTINE write_stations( dof ,mesh )
                      write(10) tc , h_mean , u_mean , v_mean ,w_meanb
 
                   else
-          
+
                      open(10,file=file_name,status='old',position='append',form='formatted')
 
                      write(10,'(5ES23.15)') tc , h_mean , u_mean , v_mean ,w_meanb
@@ -644,7 +644,7 @@ SUBROUTINE write_stations( dof ,mesh )
                   !open(10,file=file_name,status='replace',position='append',form='formatted')
 
                   !write(10,*) 'indexes'
-                  
+
                   !do pt = 1,size( station( iobs )%pt )
                   !   cell = station( iobs )%pt( pt )%cell
                   !   if (dof%h(cell)>0) then
@@ -662,10 +662,10 @@ SUBROUTINE write_stations( dof ,mesh )
                 station( iobs )%ind_t= station( iobs )%ind_t+1
 
 !write(*,*) "end_time_loop 3.3.6 ",end_time_loop
-            end if          
+            end if
 
 !write(*,*) "end_time_loop 3.3.7 ",end_time_loop
-      
+
 
        end do
 
@@ -673,7 +673,7 @@ SUBROUTINE write_stations( dof ,mesh )
        close(20)
 !write(*,*) "end_time_loop 3.3.8 ",end_time_loop
 !write(*,*) "out sub_write"
-         
+
 
       END SUBROUTINE sub_write
 
@@ -763,12 +763,12 @@ SUBROUTINE read_stations
 
             if ( .not. file_exist(1) ) then
 
-                if (iobs <= size( station ) ) call Stopping_Program_Sub('Not enough number of observation files or not provided, check obs directory') 
-                
+                if (iobs <= size( station ) ) call Stopping_Program_Sub('Not enough number of observation files or not provided, check obs directory')
+
                exit
 
             else if ( iobs > size( station ) ) then
-                
+
                call Stopping_Program_Sub( 'Mismatch between the number of files in obs directory and obs.txt file' )
 
             end if
@@ -786,7 +786,7 @@ SUBROUTINE read_stations
                allocate( station( iobs )%u( nbdt_obs ) )
                allocate( station( iobs )%v( nbdt_obs ) )
                allocate( station( iobs )%w( nbdt_obs ) )
-               
+
                !=======================================================================================================!
                !
                !=======================================================================================================!
@@ -823,65 +823,65 @@ SUBROUTINE read_stationsQ
    USE m_model
 
    implicit none
-   
-   
+
+
       !=============================================================================================================!
       !  Local Variables
       !=============================================================================================================!
 
          integer(ip)  ::  l
          character(len=lchar)  ::  filename
-         
+
       !================================================================================================================!
       !  Opening Data File concerning Q Stations
       !================================================================================================================!
 #ifdef USE_SW_MONO
-!       if ( use_Qobs == 1) then 
-!       
+!       if ( use_Qobs == 1) then
+!
 !             inquire( file = 'obs/flow_obs.txt'      , exist = file_exist(1) )
-!             
+!
 !             if      ( file_exist(1) ) then
 !                 open(10,file='obs/flow_obs.txt',status='old')
-!             
+!
 !                 read(10,*)
 !                 read(10,*) i
-!             
+!
 !                 allocate( stationQ( i ))
-!             
+!
 !                 do i=1,SIZE(stationQ)
-!             
+!
 !                 read(10,*)
 !                 read(10,*) l, stationQ( i )%weight
-! 
+!
 !                 allocate( stationQ( i )%t( l ))
 !                 allocate( stationQ( i )%Q( l ))
-!                 
+!
 !                 do j=1,l
 !                     read(10,*) stationQ( i )%t( j ), stationQ( i )%q( j )
 !                 enddo
-! 
+!
 !             enddo
 !                 close(10)
 !             else
-!             
+!
 !                 allocate( stationQ( 1 ))
 !                 allocate( stationQ( 1 )%t( 1 ))
 !                 allocate( stationQ( 1 )%Q( 1 ))
-!             
+!
 !             endif
 #endif
 #ifdef USE_HYDRO
       if (use_Qobs_gr4 == 1) then
-      
+
         do i=1,size(stationQ)
       write(*,*) i, size(stationQ)
        write(filename,'("obs/GR4obs_",1I1.1,".txt")') i
        inquire( file = filename     , exist = file_exist(1) )
 ! write(*,*) 'filename'
             if ( file_exist(1) ) then
-            
+
                 open(10,file=filename,status='old')
-            
+
                 read(10,*)
                 read(10,*)
                 read(10,*)
@@ -889,18 +889,18 @@ SUBROUTINE read_stationsQ
 
                 allocate( stationQ( i )%t( l ))
                 allocate( stationQ( i )%Q( l ))
-            
+
                 do j=1,l
                     read(10,*) stationQ( i )%t( j ), stationQ( i )%q( j )
 !                     write(*,*) stationQ( i )%t( j ), stationQ( i )%q( j )
                 enddo
-                
+
                 close(10)
-                
+
             endif
 
         enddo
-        
+
     endif
 
 #endif
@@ -984,7 +984,7 @@ SUBROUTINE write_sections( dof,mesh )
 		!write(*,*) "in sub_write_file"
 
             do iobs = 1,size( section )
-            
+
             if ( .not. test_dt_just_after( section( iobs )%dt ) ) cycle
 
             write(file_name(1),'(A,"_",I4.4)') 'res/obs/obs_section' , iobs
@@ -1073,7 +1073,7 @@ SUBROUTINE write_sections( dof,mesh )
                select case( file_type )
 
                   case( 'tecplot' )
-			
+
                      write(10,'(A,ES15.8,A,I6,A)') 'ZONE T = "' , tc , '" , I =' , &
                                                    size( section( iobs )%pt ) , ' , DATAPACKING=POINT'
 

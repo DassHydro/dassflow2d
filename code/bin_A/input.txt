@@ -1,80 +1,63 @@
 !======================================================================================================================!
-!	Input File for Shallow-Water Model
-!	(configure your text editor with a 4 tabs space for better reading)
+!Input File for Shallow-Water Model
 !======================================================================================================================!
 
-&list_input
+    &list_input
 
 !======================================================================================================================!
-!  Mesh Type
+!Mesh Type
 !======================================================================================================================!
 
-	mesh_type		=	'dassflow',				! 'basic' , 'dassflow'
-
-	mesh_name		=	'mesh.geo',			! mesh name
-
-
+	mesh_type	=	'dassflow',
+    mesh_name    =   'channel.geo', 
 
 !======================================================================================================================!
-!  Simulation parameters
+!Simulation parameters
 !======================================================================================================================!
 
-	ts				=	1000.,					! Simulation Time
-
-	dtw				=	100.,					! Time Step to Output Result Files
-
-	dtp				=	100.,					! Time Step to Output Post Variables
-
-	dta				=	100.,					! Time Step to Generate BC (for Data Assimilation)
-
-!======================================================================================================================!
-!  Numerical parameters
-!======================================================================================================================!
-
-	temp_scheme		=	'euler',		   		! Choice of Temporal Scheme ( euler , rk2 )
-
-	spatial_scheme	        =	'first_b1',				! Choice of Spatial Scheme ( first , muscl )
-
-	adapt_dt		=	1,						! Choice of an Adaptative Time Step (1) or not (0)
-
-	cfl				=	0.8,					! CFL number in case of Adaptative Time Step
-
-	heps			=	0.,						! Cut-off height to stabilize SW Numerical Schemes
-
-	friction		=	1,						! Manning Source Term
+  ts                 =   1000,      ! Simulation Time 
+    dtw                =   100,       ! data assimilation
+    dtp                =   10, 
+    dta                =   1000, 
+    temp_scheme        =   'euler', 
+    spatial_scheme     =   'first_b1', 
+    friction           =   1, 
+    adapt_dt           =   1, 
+    dt                 =   1, 
+    cfl                =   0.8, 
+    feedback_inflow    =   1, 
+    coef_feedback      =   0.8, 
 
 !======================================================================================================================!
-!  Physical parameters
+!PHYSICAL PARAMETERS
 !======================================================================================================================!
 
-	g				=	9.81,					! Gravity constant
+    g                  =   10, 
 
 !======================================================================================================================!
-!  Output Results Files Switches
+!OUTPUT RESULTS
 !======================================================================================================================!
 
-	w_gnuplot		=	1,						! in Tecplot ASCII format
-	w_vtk			=	0,						
-        w_obs			=	1,						! Writing obs data relating to obs.txt file
-	use_obs			=	1,
+    w_tecplot          =   0, 
+      w_gnuplot          =   1, 
+      w_vtk              =   0, 
 
 !======================================================================================================================!
-!  Variational Data Assimilation Parameters
+!ASSIMILATION PARAMETER
 !======================================================================================================================!
 
-	eps_min				=	1.d-3,
+    w_obs                 =   0, 
+    use_obs               =   0, 
+    max_nt_for_adjoint    =   2500, 
 
-	c_manning			=	0,
-	eps_manning			=	0.2,
-	regul_manning		=	0.,
+    c_hydrograph          =   0, 
+    c_ratcurve            =   0, 
+    c_manning             =   0, 
+    c_manning_beta        =   0, 
+    c_bathy               =   0, 
+    c_rain                =   0, 
+    c_ic                  =   0, 
 
-	c_bathy				=	0,
-	eps_bathy			=	0.01,
-	regul_bathy			=	0.,
-
-	c_hydrograph		=   1,
-	eps_hydrograph		=   0.2,
-	regul_hydrograph	=	0.000,
-
-
-//
+  restart_min         =   0, 
+    eps_min               =   0.0001
+ //  

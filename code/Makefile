@@ -97,7 +97,6 @@ ifeq ($(COMPILO),1)
   endif
 
   ifeq ($(OPTIM),0)
-
     export CFLAGS = fpp -module ./obj -g -traceback -check all -check noarg_temp_created -fpe0 -nofor_main -diag-disable 8291 -fPIC
     export FFLAGS = -nofor_main -fPIC
 
@@ -160,16 +159,15 @@ MUMPS = $(PWD)/libs/MUMPS_4.10.0
 ifeq ($(SOLVER),1)
 
   export CLIBS  +=  -I$(SCOTCH)/include
-
   export FLIBS  +=    $(SCOTCH)/lib/libscotch.a
   export FLIBS  +=    $(SCOTCH)/lib/libscotcherr.a
 
   export CLIBS  +=  -I$(MUMPS)/include
-
   export FLIBS  +=    $(MUMPS)/lib/libdmumps.a
   export FLIBS  +=    $(MUMPS)/lib/libmumps_common.a
   export FLIBS  +=  -L$(MUMPS)/PORD/lib
   export FLIBS  +=  -L$(MUMPS)/libseq
+	
   export FLIBS  +=  -lpord -lmpiseq -lblas -lpthread -L$(PWD)/libs/scotch_5.1.12_esmumps/lib -lesmumps -lscotch -lscotcherr
 
 endif
@@ -943,7 +941,7 @@ package:
 
 			#then copy wished file
 		cp $(lilian_dir)/init_files/wrapping/__init__.py $(true_wrapper_dir)/$(module_name)/$(wrapping_name)  # copy   init file of "wrapped" from sources (AND NOT FROM AUTOMATIC GENERATION)
-		cp $(lilian_dir)/init_files/main/__init__.py $(true_wrapper_dir)/$(module_name)															# copy, init file of main module fril sources
+		cp $(lilian_dir)/init_files/main/__init__.py $(true_wrapper_dir)/$(module_name)												# copy, init file of main module fril sources
 		cp -r $(lilian_dir)/core/*  $(true_wrapper_dir)/$(module_name)/core																		# copy main module
 		cp -r $(lilian_dir)/assim/*  $(true_wrapper_dir)/$(module_name)/assim																	# copy assim module
 

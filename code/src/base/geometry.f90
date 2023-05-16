@@ -118,7 +118,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 !   - Connected Cells
 !
 !======================================================================================================================!
-! WRITE(*,*) "INTO Mesh_Geometric_Properties"
+WRITE(*,*) "INTO Mesh_Geometric_Properties"
    if ( maxed > 4 ) call Stopping_Program_Sub( 'Fix Mesh_Geometric_Properties for maxed > 4' )
 
    mesh%surf  =  0._rp
@@ -160,14 +160,14 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
       connected_to_node( mesh%cell(i)%node(1:nbed) ) = &
       connected_to_node( mesh%cell(i)%node(1:nbed) ) + 1
 
-! write(*,*) "     mesh%cell(i)%surf  =",      mesh%cell(i)%surf
-! write(*,*) "     connected_to_node( mesh%cell(i)%node(1:nbed) )  =",    connected_to_node( : )
+!write(*,*) "     mesh%cell(i)%surf  =",      mesh%cell(i)%surf
+!write(*,*) "     connected_to_node( mesh%cell(i)%node(1:nbed) )  =",    connected_to_node( : )
 
 
    end do
 
-! WRITE(*,*) "INTO step2"
-! WRITE(*,*) "mesh%neb=",mesh%neb
+!WRITE(*,*) "INTO step2"
+!WRITE(*,*) "mesh%neb=",mesh%neb
 
    do ie = 1,mesh%neb
       connected_to_node( mesh%edge( mesh%edgeb(ie)%ind )%node(:) ) = &
@@ -175,7 +175,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
    end do
 
 
-!  WRITE(*,*) "Def nodes"
+!WRITE(*,*) "Def nodes"
 
    do i = 1,size(mesh%node)
 
@@ -185,7 +185,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
    connected_to_node(:)  =  0
 
-! WRITE(*,*) "Def ++++"
+!   WRITE(*,*) "Def ++++"
    do i = 1,size(mesh%cell)
 
       nbed  =  mesh%cell(i)%nbed
@@ -201,16 +201,16 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
   enddo
 
- do i = 1, mesh%ne
+do i = 1, mesh%ne
 
-!  WRITE(*,*) "check mesh%edge(i)%boundary"
+!WRITE(*,*) "check mesh%edge(i)%boundary"
 
       if ( mesh%edge(i)%boundary ) then
 
-! WRITE(*,*) "i=", i
-! WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
-! WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
-! WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
+!WRITE(*,*) "i=", i
+!WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
+!WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
+!WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
 
         if ( mesh%edgeb(mesh%edge(i)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
                 read(bc%typ (mesh%edgeb(mesh%edge(i)%lim)%group, 3 ),'(i3)') connected_num_bc !Get connectivity to 1D-like cell from bc.txt
@@ -226,17 +226,17 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
         endif
 
-!   WRITE(*,*) "-----------------------------"
-!   WRITE(*,*) "i=", i
-!   WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
-!   WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
-!   WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
-!   WRITE(*,*) "-----------------------------"
+!  WRITE(*,*) "-----------------------------"
+!  WRITE(*,*) "i=", i
+!  WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
+!  WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
+!  WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
+!  WRITE(*,*) "-----------------------------"
       endif
 
    end do
 
-! WRITE(*,*) " ==> TREAT NODES"
+!WRITE(*,*) " ==> TREAT NODES"
    do ie = 1,mesh%neb
 
       connected_to_node( mesh%edge( mesh%edgeb(ie)%ind )%node(:) ) = &
@@ -259,7 +259,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
 
 
-!  WRITE(*,*) "NODES OK"
+!WRITE(*,*) "NODES OK"
 !======================================================================================================================!
 !
 !  Edges geometrical properties :
@@ -285,17 +285,17 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
    connected_to_node(:)  =  0
 
-! WRITE(*,*) "edge1-----"
+!WRITE(*,*) "edge1-----"
    do ie = 1,size(mesh%edge)
 
       node_coord(1:2)  =  mesh%node( mesh%edge(ie)%node(1:2) )%coord
-! WRITE(*,*) "  node_coord(1:2)  ",   node_coord(1:2)
+!WRITE(*,*) "  node_coord(1:2)  ",   node_coord(1:2)
       mesh%edge(ie)%center%x  =  demi * sum( node_coord(1:2)%x )
       mesh%edge(ie)%center%y  =  demi * sum( node_coord(1:2)%y )
 
       mesh%edge(ie)%length  =  sqrt( ( node_coord(2)%x - node_coord(1)%x )**2 + &
                                      ( node_coord(2)%y - node_coord(1)%y )**2 )
-! WRITE(*,*) "    mesh%edge(ie)%length   ",     mesh%edge(ie)%length
+!WRITE(*,*) "    mesh%edge(ie)%length   ",     mesh%edge(ie)%length
 
       mesh%edge(ie)%normal%x   =  ( node_coord(1)%y - node_coord(2)%y ) / mesh%edge(ie)%length
       mesh%edge(ie)%normal%y   =  ( node_coord(2)%x - node_coord(1)%x ) / mesh%edge(ie)%length
@@ -304,17 +304,17 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
       mesh%edge(ie)%tangent%y  =  ( node_coord(2)%y - node_coord(1)%y ) / mesh%edge(ie)%length
 
       if ( .not. mesh%edge(ie)%boundary ) then
-! WRITE(*,*) "   not boundary   "
+!WRITE(*,*) "   not boundary   "
          mesh%cell( mesh%edge(ie)%cell(1:2) )%peri  =  &
          mesh%cell( mesh%edge(ie)%cell(1:2) )%peri  +  mesh%edge(ie)%length
-! WRITE(*,*) "    mesh%cell( mesh%edge(ie)%cell(1:2) )%peri   ",  mesh%cell( mesh%edge(ie)%cell(1:2) )%peri
+!WRITE(*,*) "    mesh%cell( mesh%edge(ie)%cell(1:2) )%peri   ",  mesh%cell( mesh%edge(ie)%cell(1:2) )%peri
 
          mesh%edge(ie)%vcell%x = mesh%cell( mesh%edge(ie)%cell(2) )%grav%x - &
                                  mesh%cell( mesh%edge(ie)%cell(1) )%grav%x
 
          mesh%edge(ie)%vcell%y = mesh%cell( mesh%edge(ie)%cell(2) )%grav%y - &
                                  mesh%cell( mesh%edge(ie)%cell(1) )%grav%y
-! WRITE(*,*) "  mesh%edge(ie)%vcell%y   ",  mesh%edge(ie)%vcell%y
+!WRITE(*,*) "  mesh%edge(ie)%vcell%y   ",  mesh%edge(ie)%vcell%y
 
          if ( ( mesh%edge(ie)%vcell .dotprod. mesh%edge(ie)%normal ) < 0._rp ) then
 
@@ -325,7 +325,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
          mesh%edge(ie)%v_edge_cell(1)%x = mesh%edge(ie)%center%x - &
                                           mesh%cell( mesh%edge(ie)%cell(1) )%grav%x
-! WRITE(*,*) "  mesh%edge(ie)%v_edge_cell(1)%x  ",mesh%edge(ie)%v_edge_cell(1)%x
+!WRITE(*,*) "  mesh%edge(ie)%v_edge_cell(1)%x  ",mesh%edge(ie)%v_edge_cell(1)%x
          mesh%edge(ie)%v_edge_cell(1)%y = mesh%edge(ie)%center%y - &
                                           mesh%cell( mesh%edge(ie)%cell(1) )%grav%y
 
@@ -334,10 +334,10 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
          mesh%edge(ie)%v_edge_cell(2)%y = mesh%edge(ie)%center%y - &
                                           mesh%cell( mesh%edge(ie)%cell(2) )%grav%y
-! WRITE(*,*) "   end not boundary   "
+!WRITE(*,*) "   end not boundary   "
       else
 
-! WRITE(*,*) "  In boundary edge  "
+!WRITE(*,*) "  In boundary edge  "
          mesh%cell( mesh%edge(ie)%cell(1) )%boundary = .true.
 
          mesh%cell( mesh%edge(ie)%cell(1) )%peri  =  &
@@ -364,19 +364,19 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
          mesh%cellb( ib )%grav%x  =  mesh%cell( mesh%edge(ie)%cell(1) )%grav%x + mesh%edge(ie)%vcell%x
          mesh%cellb( ib )%grav%y  =  mesh%cell( mesh%edge(ie)%cell(1) )%grav%y + mesh%edge(ie)%vcell%y
 
-! WRITE(*,*) "  Out boundary edge  "
+!WRITE(*,*) "  Out boundary edge  "
       end if
 
-! WRITE(*,*) "  tmp ",  connected_to_node( :)
+!WRITE(*,*) "  tmp ",  connected_to_node( :)
       connected_to_node( mesh%edge(ie)%node(1:2) ) = &
       connected_to_node( mesh%edge(ie)%node(1:2) ) + 1
 
-! WRITE(*,*) "   connected_to_node( :)  ",  connected_to_node( :)
+!WRITE(*,*) "   connected_to_node( :)  ",  connected_to_node( :)
    end do
 
-! WRITE(*,*) "edge2-----"
+!WRITE(*,*) "edge2-----"
    do ib = 1,size(mesh%edgeb)
-! WRITE(*,*) "mesh%edgeb(ib)%typlim "
+!WRITE(*,*) "mesh%edgeb(ib)%typlim "
 
       if ( mesh%edgeb(ib)%typlim == 'periodic' ) then
 
@@ -391,7 +391,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
    end do
 
 
-! WRITE(*,*) "edge3-----"
+!WRITE(*,*) "edge3-----"
 
    do i = 1,size(mesh%node)
 !~ 		if (proc == 2) print *, proc, i, connected_to_node(i)
@@ -418,7 +418,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
 !~    print *, proc, "finishing edges info"
 
-!  WRITE(*,*) "OUT Mesh_Geometric_Properties"
+WRITE(*,*) "OUT Mesh_Geometric_Properties"
 END SUBROUTINE Mesh_Geometric_Properties
 
 

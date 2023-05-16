@@ -37,7 +37,7 @@ demo_dir = "/home/livillenave/Documents/distant/Demo"
 # default bin dir, containing necessary file for dassflow to compile
 default_bin_dir  = f"{demo_dir}/default_bin" 
 # were to invoke dassflow2d    
-bin_dir = f"{demo_dir}/bin6"
+bin_dir = f"{demo_dir}/bin7"
 # source file location
 source_dir =  f"{demo_dir}/source_file/"
 # were most of intermediate files (mostly GIS are written)
@@ -62,7 +62,7 @@ mesh_name = "aude"
 
 # mesh size in meters
 mesh_size_major = 100 # major bed
-mesh_size_minor = 50  # minor bed
+mesh_size_minor = 10  # minor bed
 
 # set False  to disable minor bed
 include_minor_bed =  True
@@ -453,7 +453,7 @@ plt.show()
 
 
 fig,ax = plt.subplots(1,2, figsize=(15,8))
-ax[0].imshow(new_mesh["drained_area"], extent = [min(points[:,0]), max(points[:,0]), min(points[:,1]), max(points[:,1])])
+ax[0].imshow(new_mesh["flwacc"], extent = [min(points[:,0]), max(points[:,0]), min(points[:,1]), max(points[:,1])])
 ax[1].imshow(new_mesh["categorical"], extent = [min(points[:,0]), max(points[:,0]), min(points[:,1]), max(points[:,1])])
 plt.show()
 plt.close()
@@ -607,12 +607,12 @@ code_gauge = "Y1422030"
 
 calib_options={
     'structure':'gr-a',
-    'dt':900,
+    'dt':3600,
 		'start_time':        '2018-10-14 12:00',
-		'end_time':        '2018-10-15 20:00',
+		'end_time':        '2018-10-20 20:00',
     
     'read_qobs':True,
-    'qobs_directory':'/home/livillenave/Documents/data/FORCING/DEBIT/15',
+    'qobs_directory':'/home/livillenave/Documents/data/FORCING/DEBIT/60',
     
     'read_prcp':True,
     'prcp_directory':'/home/livillenave/Documents/data/FORCING/PLUIE/J+1/1H',

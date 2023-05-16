@@ -98,12 +98,13 @@ MODULE call_model
    	real(rp)   ::  cost            !> cost value
 
 
- 	type(Input_Param) :: param     !> not used yet
-	type(friction_data) :: my_friction !> friction parameterisation
-	type(infiltration_data) :: my_infiltration !> infiltration parameterisation
-	type(input_data)  :: my_phys_desc !> Physical descriptors
+ 	type(Input_Param) :: param                   !> not used yet
+	type(friction_data) :: my_friction           !> friction parameterisation
+	type(infiltration_data) :: my_infiltration   !> infiltration parameterisation
+	type(input_data)  :: my_phys_desc            !> Physical descriptors
 	type(param_model) ::  my_param_model         !> Bathymetry at mesh cells gravity center
-    !type(bcs) :: my_bc
+
+  !type(bcs) :: my_bc
 
    END TYPE
 
@@ -150,7 +151,7 @@ CONTAINS
    !>++++++++++++++++++++++++++++++++++++++++++++++++
    !>FORTRAN DOCUMENTATION
    !>++++++++++++++++++++++++++++++++++++++++++++++++
-   	   !>init_solver
+   	 !> init_solver
 	   !>
 	   !> initialize solver
 	   !>
@@ -203,7 +204,7 @@ write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
 ! 		call friction_initialise(mdl%my_friction, mdl%mesh) ! can be called in the python
 ! 		call infiltration_initialise(mdl%my_infiltration, mdl%mesh) ! can be called in the python
 ! 		call my_param_model_initialise(mdl%my_param_model, mdl%mesh) ! can be called in the python
-		!call my_bc_initialise(mdl%my_bc, bc, mdl%mesh,mdl%dof0)
+! call my_bc_initialise(mdl%my_bc, bc, mdl%mesh,mdl%dof0)
 
 
    end subroutine init_friction
@@ -219,7 +220,7 @@ write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
 	   !>- bc
 	   !>- land use
 	   !>- eventual bc value (bc%hyd, bc%rat, bc%zpresc, bc%hpresc, etc...)
-	   !>(manning, manning_beta, bathy_cell are ALREADY defined with mesh)
+	   !> (manning, manning_beta, bathy_cell are ALREADY defined with mesh)
 	   !>
 	   !>-------------------
 	   !>details

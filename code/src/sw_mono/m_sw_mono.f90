@@ -334,7 +334,6 @@ MODULE m_model
     real(rp)  ::  clay !>  Soil percentage of clay at each cell
     real(rp)  ::  silt !>  Soil percentage of silt at each cell
     real(rp)  ::  sand !>  Soil percentage of sand at each cell
-
     integer(ip) :: soil_group !>  Group of clay/silt/sand repartition derived from topographic maps pre-processed in Python
 
    END TYPE soil_data
@@ -342,10 +341,10 @@ MODULE m_model
 
    TYPE surface_data
 
-    real(rp)  ::  imperm  !>  Surface impermeabilisation percentage at each cell
-    integer(ip) :: imperm_group !>  Group of impermeabilization percentage derived from topographic maps pre-processed in Python
+    real(rp)  ::  imperm         !>  Surface impermeabilisation percentage at each cell
+    integer(ip) :: imperm_group  !>  Group of impermeabilization percentage derived from topographic maps pre-processed in Python
 
-    real(rp)  ::  Dmax !>  Support rugosity at each cell
+    real(rp)  ::  Dmax          !>  Support rugosity at each cell
     integer(ip) :: Dmax_group !>  Group of support rugosity
 
     integer(ip)  ::  soil_occ_type  !>  Index of the occupation type
@@ -1068,6 +1067,6 @@ CONTAINS
 
 
 																													!>NOADJ
-                                                                                                                    
+
 
 END MODULE m_model

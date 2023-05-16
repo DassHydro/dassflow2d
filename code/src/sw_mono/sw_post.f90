@@ -202,20 +202,21 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 !write(*,*) " Test qin/qout"
 !write(*,*) "=============="
    do num_bc = 1,bc%nb
-
+!write(*,*) "num_bc=", num_bc
       discharg  = zero
 
       do ib = 1,mesh%neb
+!write(*,*) "esh%edgeb(ib)%group = ",mesh%edgeb(ib)%group
+!write(*,*) "mesh%edgeb(ib)%typlim(1:8) ", mesh%edgeb(ib)%typlim(1:8)
 
          if ( mesh%edgeb(ib)%group  == num_bc ) then
 
             ie  =  mesh%edgeb(ib)%ind
-
             i  =  mesh%edge(ie)%cell(1)
-
             if ( mesh%edgeb(ib)%typlim(1:8) == 'discharg' &
                  .or. bc%typ(num_bc,1)(1:4) == 'gr4') then
 
+! write(*,*) "esh%edgeb(ib)%group = ",mesh%edgeb(ib)%group
                discharg  =  discharg  -  dof%h(i) * ( dof%u(i) * mesh%edge(ie)%normal%x + &
                                                       dof%v(i) * mesh%edge(ie)%normal%y ) * mesh%edge(ie)%length
 
@@ -231,6 +232,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
          end if
 
+!write(*,*) "discharg",discharg
       end do
 
       call mpi_sum_r( discharg )
@@ -269,7 +271,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
       if ( buffer /= '' ) call write_scalar_in_time( discharg , buffer )
 
-   end do
+   end do !  end loop on bc%nb
 
    !===================================================================================================================!
    !  Rain write
@@ -323,12 +325,14 @@ SUBROUTINE sw_post_treatment( dof , mesh )
             norm_L2_s (:)  =  norm_L2 (:)
 
          end if
+
         ! ALWAYS initialise for this timestep
          norm_inf(:)  =  0._rp ; norm_inf_e(:)  =  0._rp
          norm_L1 (:)  =  0._rp ; norm_L1_e (:)  =  0._rp
          norm_L2 (:)  =  0._rp ; norm_L2_e (:)  =  0._rp
 
          surf_total  =  0._rp
+         
         !NORM ON EACH CELL
          do i = 1,mesh%nc
 

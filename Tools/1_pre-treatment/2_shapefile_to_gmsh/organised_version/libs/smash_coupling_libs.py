@@ -40,7 +40,7 @@ def get_hydrological_coupling(mesh,
                 return
             return(res)
             
-    drained_area =  mesh["drained_area"]
+    drained_area =  mesh["flwacc"]
     flow_dir = mesh["flwdir"]
     
     # >>> define treshold 
@@ -61,7 +61,7 @@ def get_hydrological_coupling(mesh,
     id_hydraulic = new
     
     # -------------------- PLOT
-    tmp = mesh["drained_area"].copy()
+    tmp = mesh["flwacc"].copy()
     tmp[:,:] = 0
     for my_id in id_hydraulic:
         tmp[my_id[0],my_id[1]] = 1

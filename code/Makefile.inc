@@ -89,7 +89,6 @@ ADJOINT	= 1
 MINMETHOD	= 1
 #Solver: 		'1' for MUMPS (recommended), '2' for AGMG, '0' for no recompilation of external libraries
 SOLVER		= 0
-
 #Parallel computing: 	'1' to use
 MPI		=0
 #If MPI=1, number of processors to use

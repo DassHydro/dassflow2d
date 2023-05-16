@@ -162,7 +162,7 @@ SUBROUTINE Mesh_Input(mesh)
             call Read_Dass_Mesh( mesh )
 
          case( 'gmsh' )
-            call Read_Gmsh_Mesh( mesh )            
+            call Read_Gmsh_Mesh( mesh )
       #endif
 
    end select
@@ -181,6 +181,12 @@ write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
    call Mesh_Geometric_Properties( mesh )
 write(*,*)  " done mesh input "
 !read(*,*)
+
+
+do i=1,mesh%neb
+  write(*,*) mesh%edgeb(i)%typlim
+end do
+
 END SUBROUTINE Mesh_Input
 
 
@@ -800,12 +806,11 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    read(10,*) buffer
    read(10,*)  bc_type , nc_bc , nb_grp_in
-write(*,*)  bc_type , nc_bc , nb_grp_in
+!write(*,*)  bc_type , nc_bc , nb_grp_in
    if ( nb_grp_in == 0 ) then
       do i = 1,nc_bc
          read(10,*)  k , j , bc_number , ghost_cell_bathy
-!         ie = mesh%cell(k)%edge(j)
-write(*,*) k , j , bc_number , ghost_cell_bathy
+!write(*,*) k , j , bc_number , ghost_cell_bathy
 !write(*,*) "mesh%edge(:)%typlim  ", mesh%edge(ie)%lim
 !write(*,*) ie
          mesh%edgeb( mesh%edge(ie)%lim )%typlim  =  bc%typ( 1 , 1 )
@@ -841,7 +846,7 @@ write(*,*) k , j , bc_number , ghost_cell_bathy
    !===================================================================================================================!
 
    read(10,*)  bc_type , nc_bc , nb_grp_out
-write(*,*)  bc_type , nc_bc , nb_grp_out
+!write(*,*)  bc_type , nc_bc , nb_grp_out
 
    if ( nb_grp_out == 0 ) then
 
@@ -850,11 +855,8 @@ write(*,*)  bc_type , nc_bc , nb_grp_out
          read(10,*)  k , j , bc_number , ghost_cell_bathy
 
          ie = mesh%cell(k)%edge(j)
-
          mesh%edgeb( mesh%edge(ie)%lim )%typlim  =  bc%typ( 2 , 1 )
-
          mesh%edgeb( mesh%edge(ie)%lim )%group  =  2
-
          bathy_cell( mesh%nc + mesh%edge(ie)%lim )  =  ghost_cell_bathy
 
       end do
@@ -887,7 +889,7 @@ write(*,*)  bc_type , nc_bc , nb_grp_out
 
    call Print_Screen( 'end_mesh' )
 
-   write(*,*) 'Read_Dass_Mesh OK --> go out'
+!   write(*,*) 'Read_Dass_Mesh OK --> go out'
 END SUBROUTINE Read_Dass_Mesh
 
 
@@ -1237,11 +1239,6 @@ SUBROUTINE read_bc_file
 
       read(buffer,*) k , temp
 
-      if ( temp(1:6)  ==  'hpresc' ) then
-		 n_hpresc = n_hpresc +1
-         bc%grpf(k) = n_hpresc
-      end if
-
       if ( temp(1:8) == 'internal' ) then
 
         read(buffer,*) k , bc%typ(k,1:3) !item 3 of the line is read here only, it contains the index of the corresponding internal 1D2D interface
@@ -1277,6 +1274,11 @@ SUBROUTINE read_bc_file
          bc%grpf(k) = n_zspresc
 
       end if
+      if ( temp(1:6)  ==  'hpresc' ) then
+		    n_hpresc = n_hpresc +1
+         bc%grpf(k) = n_hpresc
+      end if
+
 
 
    end do

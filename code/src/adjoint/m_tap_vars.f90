@@ -365,9 +365,11 @@ SUBROUTINE dealloc_back_vars()
       if(allocated(bc_back%outflow )) deallocate(bc_back%outflow )
       if(allocated(bc_back%rat )) deallocate(bc_back%rat )
       if(allocated(bc_back%hyd )) deallocate(bc_back%hyd )
+
       #ifdef USE_HYDRO
       if(allocated(bc_back%gr4 )) deallocate(bc_back%gr4 )
       #endif USE_HYDRO
+      
       if(allocated( bc_back%rain)) deallocate( bc_back%rain)
       if(allocated(infil_back%GA )) deallocate(infil_back%GA )
       if(allocated(infil_back%SCS  )) deallocate(infil_back%SCS)

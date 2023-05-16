@@ -133,14 +133,14 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !  Writing Initial Condition Output File
    !===================================================================================================================!
 !write(*,*) "+ do  call write_results( dof0 , mesh )      "
-   call write_results( dof0 , mesh )                                                                              !NOADJ
+   call write_results( dof0 , mesh )                                              !NOADJ
 !write(*,*) "+ done  call write_results( dof0 , mesh )      "
    !===================================================================================================================!
    !  Initializing post treatment variables
    !===================================================================================================================!
-!write(*,*) "+ do  call sw_pre_treatment( dof0 , mesh      "
-   call sw_pre_treatment( dof0 , mesh )                                                                           !NOADJ
-!write(*,*) "+ done call sw_pre_treatment( dof0 , mesh       "
+!write(*,*) "+ do  call sw_pre_treatment( dof0 , mesh  )      "
+   call sw_pre_treatment( dof0 , mesh )                                           !NOADJ
+!write(*,*) "+ done call sw_pre_treatment( dof0 , mesh )      "
 
    !===================================================================================================================!
    !  SW Model Loop Time
@@ -150,6 +150,8 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
    do while( .not. end_time_loop)
 !write(*,*) "+ do call sub_run_model"
+!write(*,*) 'w_obs=', w_obs
+
       call sub_run_model
 !write(*,*) "+ done call sub_run_model"
 
@@ -170,7 +172,7 @@ CONTAINS
 
       sub_nt = 0
 
-!write(*,*) "++ ENTER WHILE LOOP: while ( .not. end_time_loop .and. sub_nt < max_nt_for_adjoint )"
+! write(*,*) "++ ENTER WHILE LOOP: while ( .not. end_time_loop .and. sub_nt < max_nt_for_adjoint )"
       do while ( .not. end_time_loop .and. sub_nt < max_nt_for_adjoint )
 
          !=============================================================================================================!
@@ -199,7 +201,7 @@ CONTAINS
          !  Time Stepping Performing ( Euler + first_b1, IMEX +  )
          !=============================================================================================================!
 
-!write(*,*) "--- do  call appropriate scheme"
+! write(*,*) "--- do  call appropriate scheme"
 	select case( temp_scheme )
 
 				case( 'euler' )

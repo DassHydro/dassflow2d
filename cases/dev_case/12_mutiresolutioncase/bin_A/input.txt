@@ -30,14 +30,13 @@
 !  Simulation parameters
 !======================================================================================================================!
 
-	ts				=	14400.,					! Simulation Time
+	ts				=1000,	!14400.,					! Simulation Time
 
-	dtw				=	3600.,					! Time Step to Output Result Files
+	dtw				=	100.,					! Time Step to Output Result Files
 
-	dtp				=	60.,					! Time Step to Output Post Variables
+	dtp				=	100.,					! Time Step to Output Post Variables
 
-	dta				=	60.,					! Time Step to Generate BC (for Data Assimilation)
-
+	dta				=	100.,					! Time Step to Generate BC (for Data Assimilation)
 !======================================================================================================================!
 !  Numerical parameters
 !======================================================================================================================!
@@ -67,7 +66,7 @@
 	w_tecplot		=	0,						! in Tecplot ASCII format
     	w_gnuplot		=	1,						! 
     	w_obs			=	1,						! Writing obs data relating to obs.txt file
-    	w_vtk =1
+    	w_vtk =0,
 	use_obs			=	0,
 
 !======================================================================================================================!

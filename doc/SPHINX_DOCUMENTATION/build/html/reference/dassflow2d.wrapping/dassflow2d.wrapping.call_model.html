@@ -354,11 +354,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../dassflow2d.core.param/dassflow2d.core.param.Friction.save_manning.html">dassflow2d.core.param.Friction.save_manning</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../Output.html">Output</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html">dassflow2d.core.output.Output.get_res</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html">dassflow2d.core.output.Output.save_res</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../Output.html">Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wrapping.html">Fortran wrapped modules</a></li>
 
 </ul>
@@ -392,7 +388,7 @@
   <div class="section" id="module-dassflow2d.wrapping.call_model">
 <span id="dassflow2d-wrapping-call-model"></span><h1>dassflow2d.wrapping.call_model<a class="headerlink" href="#module-dassflow2d.wrapping.call_model" title="Permalink to this heading">#</a></h1>
 <p>Module call_model</p>
-<p>Defined at call_run_model.f90 lines 1-771</p>
+<p>Defined at call_run_model.f90 lines 1-797</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -401,52 +397,58 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">boundaries_copy</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 753-757</p></td>
+<td><p>Defined at call_run_model.f90 lines 757-761</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_model</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 194-208</p></td>
+<td><p>Defined at call_run_model.f90 lines 198-212</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code>(self, ctrl_in, grad_func)</p></td>
-<td><p>Defined at call_run_model.f90 lines 436-464</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dof_copy</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 766-770</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_all</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 117-124</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code>(self, ctrl_in, grad_func)</p></td>
+<td><p>Defined at call_run_model.f90 lines 440-468</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_back</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 130-134</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_all</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 121-128</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_fortran</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 88-115</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_back</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 134-138</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_friction</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 74-86</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_fortran</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 92-119</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_solver</span></code>(self)</p></td>
-<td><p>Defined at call_run_model.f90 lines 48-72</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_friction</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 78-90</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_solver</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 48-76</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mesh_copy</span></code>(self)</p></td>
+<td><p>Defined at call_run_model.f90 lines 775-779</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_gnu</span></code>(self, dof, filename)</p></td>
-<td><p>Defined at call_run_model.f90 lines 214-219</p></td>
+<td><p>Defined at call_run_model.f90 lines 218-223</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_tec</span></code>(self, dof, filename)</p></td>
-<td><p>Defined at call_run_model.f90 lines 230-235</p></td>
+<td><p>Defined at call_run_model.f90 lines 234-239</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_vtk</span></code>(self, dof, filename)</p></td>
-<td><p>Defined at call_run_model.f90 lines 222-227</p></td>
+<td><p>Defined at call_run_model.f90 lines 226-231</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reallocate_manning</span></code>(new_size)</p></td>
-<td><p>Defined at call_run_model.f90 lines 759-771</p></td>
+<td><p>Defined at call_run_model.f90 lines 785-797</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code>(self[, arg])</p></td>
-<td><p>Defined at call_run_model.f90 lines 139-191</p></td>
+<td><p>Defined at call_run_model.f90 lines 143-195</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_bc</span></code>()</p></td>
-<td><p>Defined at call_run_model.f90 lines 631-706</p></td>
+<td><p>Defined at call_run_model.f90 lines 635-710</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_hydrograph</span></code>()</p></td>
-<td><p>Defined at call_run_model.f90 lines 708-751</p></td>
+<td><p>Defined at call_run_model.f90 lines 712-755</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_land_uses</span></code>()</p></td>
-<td><p>Defined at call_run_model.f90 lines 608-624</p></td>
+<td><p>Defined at call_run_model.f90 lines 612-628</p></td>
 </tr>
 </tbody>
 </table>

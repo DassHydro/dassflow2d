@@ -1,0 +1,17 @@
+!===============================================!
+!  Number of boundary conditions
+!===============================================!
+10
+!===============================================!
+!  List of boundary conditions
+!===============================================!
+1	discharg1	file
+2	discharg1	file
+3	discharg1	file
+4	discharg1	file
+5	discharg1	file
+6	discharg1	file
+7	discharg1	file
+8	discharg1	file
+9	discharg1	file
+10	transm	        transm

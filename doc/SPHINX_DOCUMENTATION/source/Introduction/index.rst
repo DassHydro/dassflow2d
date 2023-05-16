@@ -8,8 +8,8 @@ Presentation
 
 DassFlow (Data Assimilation for Free Surface Flows) is an open computational software designed to model shallow free surface flows and perform Variational Data Assimilation. The hydrodynamic flow model can be coupled with a hydrological model, therefore providing a complete hydraulic-hydrological chain applicable at basin scale.
 
-The computational kernel is coded in Fortran 2003 and uses MPI for parallel computing, it is wrapped in Python using the f90wrap library :cite:p:`Kermode_2020`. The following physical models are available: the 2D Shallow Water (SW) equations in variables :math:`(h,q_{x},q_{y})`.
-where :math:`x, y`  denotes x and y direction in global coordinate system on mesh :math:`\forall(x,y)\in\mathcal{D}_{\Omega}`,  and :math:`t` the physical time.
+The computational kernel is coded in Fortran 2003, with MPI, and wrapped in Python. The following physical models are available: the 2D Shallow Water (SW) equations in variables :math:`(h,q_{x},q_{y})`.
+**where** :math:`x, y  \text{ denotes x and y direction in global coordinate system on mesh} \forall(x,y)\in\mathcal{D}_{\Omega}`,  **at time** :math:`t`, physical time.
 
 Note that a 1D version of SW system in variables :math:`(S,Q)` (Saint-Venant's equations) is available but in another DassFlow version (please consult DassFlow webpage for details: https://www.math.univ-toulouse.fr/DassFlow/index.html).
 

@@ -333,144 +333,457 @@
 <span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">version</span>  <span class="c1"># get package version</span>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../reference/Output.html#dassflow2d.core.output.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    define output from fortran kernel simulation results</span>
-<span class="sd">    </span>
-<span class="sd">    </span>
-<span class="sd">    inherit **self.bin_dir**, **self.res_dir**</span>
+
+
+<span class="sd">    ===============</span>
+<span class="sd">    CONTAINS</span>
+<span class="sd">    ===============</span>
+<span class="sd">    self.results: df2d.core.output.Result object: Result from simulation at each writting timestep</span>
+<span class="sd">    self.post:    df2d.core.output.Post   object: Post result (flux at boundary edges) at each post writting timestep (to check dassflow_model.config[&quot;dtp&quot;] influence)</span>
+
+<span class="sd">    ==============</span>
+<span class="sd">    methods</span>
+<span class="sd">    ==============</span>
+
+<span class="sd">    __init__ : fills values from text files, path are automaticaly generated from bin_dir root and boundary_metadata objects</span>
+<span class="sd">    save :    save in hdf5 file the data stored in Output class</span>
+<span class="sd">    source: source textfiles from bin_dir and fills values of self.result and self.post</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bin_dir</span><span class="p">,</span><span class="n">ts</span><span class="p">,</span> <span class="n">boundary_metadata</span><span class="p">,</span>  <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize Output class:</span>
+<span class="sd">            - initialize Result class</span>
+<span class="sd">            - initialize Post class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="n">bin_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span> <span class="o">+</span> <span class="s2">&quot;/res/&quot;</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">all_res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_res</span><span class="p">()</span>
-        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">,</span> <span class="n">ts</span> <span class="o">=</span>  <span class="n">ts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">,</span> <span class="n">boundary_metadata</span> <span class="o">=</span>  <span class="n">boundary_metadata</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
         	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt; Outputs initialized &quot;</span><span class="p">)</span>
         	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - Simulation Result files were loaded from : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
 
-<span class="c1">#########</span>
-<span class="c1"># source output files</span>
 
 
-               
-        
-    <span class="c1"># get output dat file</span>
-    
-<div class="viewcode-block" id="Output.get_res"><a class="viewcode-back" href="../../../reference/dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html#dassflow2d.core.output.Output.get_res">[docs]</a>    <span class="k">def</span> <span class="nf">get_res</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        load out from result_xxx.file</span>
-<span class="sd">        </span>
-<span class="sd">        defines dictionary with callable items (x, y, bahty, h, zs, manningALPHA, u, v)</span>
-<span class="sd">        	dict[&quot;x&quot;].shape == (number of cell, number of writing time step)</span>
+<span class="sd">        Save in hdf5 format in hdf5_file[&quot;output&quot;] group, both result and post create_dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">_my_grep</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span>
-            
-        
 
-        <span class="k">def</span> <span class="nf">_source_w_gnuplot</span><span class="p">(</span><span class="n">pathfile</span><span class="p">):</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">pathfile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span><span class="s1">&#39;\s+&#39;</span><span class="p">)</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;id_pixel&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;bathy&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s1">&#39;zs&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span> <span class="s1">&#39;manningALPHA&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;v&#39;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;id_pixel&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">res</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span> <span class="o">=</span>   <span class="n">res</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="c1">#print(&quot;error&quot;,e,&quot;on variable&quot;,colname)</span>
-                    <span class="c1">#print(&quot;real value is&quot;,res[colname])</span>
-                    <span class="c1">#print( &quot;result is set to zero&quot;)</span>
-                    <span class="n">res</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-            
-        <span class="c1"># list all files in res_dir</span>
+        <span class="k">if</span> <span class="n">hdf5_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hdf5_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boundary_metadata</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Source from text file both Result and Post objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">boundary_metadata</span> <span class="o">=</span> <span class="n">boundary_metadata</span><span class="p">)</span></div>
+
+
+
+
+<span class="k">class</span> <span class="nc">Result</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Result class</span>
+
+<span class="sd">    contains result data produced as result_xxx.dat files in &quot;bin_dir/res/&quot; directory</span>
+
+<span class="sd">    ===============</span>
+<span class="sd">    CONTAINS</span>
+<span class="sd">    ===============</span>
+<span class="sd">    self.bin_dir: str : path to bin directory</span>
+<span class="sd">    self.res_dir: str : path to bin directory</span>
+
+<span class="sd">    self.all_time:  list of num : time values</span>
+<span class="sd">    self.all_files: list of str : absolute path to each result file sourced (ordered)</span>
+
+<span class="sd">    self.h: np.ndarray(nb_cell, nb_writting_timestep): h value on each cell at each timestep [m]</span>
+<span class="sd">    self.u: np.ndarray(nb_cell, nb_writting_timestep): u-velocity value on each cell at each timestep [m/s]</span>
+<span class="sd">    self.v: np.ndarray(nb_cell, nb_writting_timestep): v-velocity value on each cell at each timestep [m/s]</span>
+
+<span class="sd">    self.id_cell_fortran: np.array(nb_cell): FORTRAN index of correponding cell (same ordering for all objects)</span>
+<span class="sd">    self.x: np.array(nb_cell): x coordinate of cell</span>
+<span class="sd">    self.y: np.array(nb_cell): y coordinate of cell</span>
+
+<span class="sd">    self.bathy: np.array(nb_cell): bathymemtry value</span>
+<span class="sd">    self.zs: np.array(nb_cell): water surface height</span>
+<span class="sd">    self.manning_alpha: np.array(nb_cell): manning coefficient parameter</span>
+
+
+
+<span class="sd">    ===============</span>
+<span class="sd">    Methods</span>
+<span class="sd">    ===============</span>
+<span class="sd">    __init__ : initialize object and</span>
+<span class="sd">    list_dat_files(): that list .dat result files in result directory (bin_a/res)</span>
+<span class="sd">    source() :  that source the necessary files (listed by list dat file)</span>
+<span class="sd">    save():     that save to hdf5 file the data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__list_dat_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List files availaible in self.res_dir,</span>
+
+<span class="sd">        res_dir: dir where to scrap from</span>
+
+<span class="sd">        RETURN: list of files (absolute path) of result to source (that are the files that respect the &quot;.dat&quot; result file format).</span>
+<span class="sd">        Files are ordered in ascending time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">_my_grep</span><span class="p">(</span><span class="n">test_list</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            classicall grep function</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">test_list</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span>
+
         <span class="n">onlyfiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span><span class="p">,</span> <span class="n">f</span><span class="p">))]</span>
-
-
-        <span class="c1"># get .dat files</span>
-        
-        <span class="c1"># source all files and sort them by ascending time</span>
-        <span class="n">all_files</span> <span class="o">=</span> <span class="n">_my_grep</span><span class="p">(</span><span class="n">onlyfiles</span><span class="p">,</span> <span class="s2">&quot;.dat&quot;</span><span class="p">)</span>
+        <span class="n">all_files</span> <span class="o">=</span> <span class="n">_my_grep</span><span class="p">(</span><span class="n">test_list</span><span class="o">=</span> <span class="n">onlyfiles</span><span class="p">,</span> <span class="n">pattern</span> <span class="o">=</span> <span class="s2">&quot;.dat&quot;</span><span class="p">)</span>
         <span class="n">all_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_files</span><span class="p">))</span>
 
+        <span class="c1"># replace initial and final times by appropriate numeric values</span>
         <span class="k">for</span> <span class="n">id_file</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_files</span><span class="p">)):</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">all_files</span><span class="p">[</span><span class="n">id_file</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;.dat&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">tmp</span> <span class="o">==</span> <span class="s2">&quot;initial&quot;</span><span class="p">:</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="n">tmp</span> <span class="o">==</span> <span class="s2">&quot;final&quot;</span><span class="p">:</span>
-                <span class="n">tmp</span> <span class="o">=</span> <span class="mi">9999999999999999</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts</span>
             <span class="n">all_times</span><span class="p">[</span><span class="n">id_file</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
 
+        <span class="c1"># reorder in increasing time</span>
         <span class="n">id_reorder</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">all_times</span><span class="p">)</span>
         <span class="n">all_times</span> <span class="o">=</span> <span class="n">all_times</span><span class="p">[</span><span class="n">id_reorder</span><span class="p">]</span>
-        <span class="n">all_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">id_reorder</span><span class="p">]</span>
-        
-        
-        <span class="n">all_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">all_files</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">all_files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">id_reorder</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_files</span><span class="p">)):</span>
-            <span class="n">all_res</span><span class="p">[</span><span class="n">all_times</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_source_w_gnuplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span> <span class="o">+</span> <span class="n">all_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            
-            
-        <span class="k">return</span><span class="p">(</span><span class="n">all_res</span><span class="p">,</span> <span class="n">all_times</span><span class="p">)</span></div>
+        <span class="k">return</span><span class="p">(</span><span class="n">all_times</span><span class="p">,</span> <span class="n">all_files</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Output.save_res"><a class="viewcode-back" href="../../../reference/dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html#dassflow2d.core.output.Output.save_res">[docs]</a>    <span class="k">def</span> <span class="nf">save_res</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__source_for_initialisation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_files</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        save output from result_xxx.file t ohdf5 file</span>
-<span class="sd">        </span>
-<span class="sd">        **parameters**</span>
-<span class="sd">        </span>
-<span class="sd">        hdf5_path : path to hdf5 file to save</span>
+<span class="sd">        source all result file, and return np.ndarray(nb_cell, nb_writted_variables)</span>
+<span class="sd">        variable are ordered like: id_cell_fortran x y bathy h zs Manning u v</span>
+
+<span class="sd">        self: Result object</span>
+<span class="sd">        all_files: list produced by list_result_files methods</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">id_timestep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_files</span><span class="p">)):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">((</span><span class="n">all_files</span><span class="p">[</span><span class="n">id_timestep</span><span class="p">]</span> <span class="p">))</span>
+            <span class="c1"># order of columns in textfile:</span>
+            <span class="c1"># 0:i 1:x 2:y 3:bathy 4:h 5:zs 6:Manning 7:u 8:v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">[:,</span><span class="n">id_timestep</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zs</span><span class="p">[:,</span><span class="n">id_timestep</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">5</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[:,</span><span class="n">id_timestep</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">7</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">[:,</span><span class="n">id_timestep</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">8</span><span class="p">]</span>
+        <span class="c1"># use last file to fill variables that do not vary in time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_cell_fortran</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bathy</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manning_alpha</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span><span class="mi">6</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># list result files (.dat) and corresponding times</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_files</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__list_dat_files</span><span class="p">()</span>
+        <span class="c1"># fill them</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__source_for_initialisation</span><span class="p">(</span><span class="n">all_files</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">all_files</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">ts</span> <span class="o">=</span>  <span class="mi">9999999999999999</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize Result structure, fills all arrays self.(h,u,v, id_cell,x,y,bathy,zs,manning_alpha),</span>
+<span class="sd">        call source() method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="n">bin_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_dir</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span> <span class="o">+</span> <span class="s2">&quot;/res/&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ts</span> <span class="o">=</span> <span class="n">ts</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts</span> <span class="o">==</span> <span class="mi">9999999999999999</span><span class="p">:</span> <span class="c1"># some check</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning, default ts is set for output results, this means ts = 9999999999999999&quot;</span><span class="p">)</span>
+
+
+        <span class="c1"># list result files (.dat) and corresponding times</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_files</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__list_dat_files</span><span class="p">()</span>
+        <span class="c1"># temporary variables to determine shapes</span>
+        <span class="n">nb_cell</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">nb_writting_timestep</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_time</span><span class="p">)</span>
+
+        <span class="c1"># Generate empty variables</span>
+        <span class="c1"># dof</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_writting_timestep</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_writting_timestep</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_writting_timestep</span><span class="p">))</span>
+        <span class="c1"># geometry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_cell_fortran</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">))</span>
+        <span class="c1"># parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bathy</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_cell</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manning_alpha</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_cell</span><span class="p">)</span>
+        <span class="c1"># by-products:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_writting_timestep</span><span class="p">))</span>
+
+        <span class="c1"># fill them</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__source_for_initialisation</span><span class="p">(</span><span class="n">all_files</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">all_files</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf5_path</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save  Result class to pre-existing hdf5 file.</span>
+
+
+<span class="sd">        -----------</span>
+<span class="sd">        parameter</span>
+<span class="sd">        -----------</span>
+
+<span class="sd">        self:    Result class</span>
+<span class="sd">        hdf5_path : path to hdf5 file to save</span>
+
+<span class="sd">        -----------</span>
+<span class="sd">        return</span>
+<span class="sd">        -----------</span>
+<span class="sd">        hdf5 file filled with data stored in Result class, this account for: my_hdf5[&quot;output&quot;][&quot;result&quot;][&quot;i&quot;]</span>
+<span class="sd">        with i =h,u,v,zs,x,y, id_cell_fortran,manning_aplha, bathy, all_times</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Open hdf5 file to append</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
-        
-        
-        <span class="n">nb_timestep</span> <span class="o">=</span>  <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_res</span><span class="p">)</span>
-        <span class="n">nb_cell</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_timestep</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_timestep</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_timestep</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">bathy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_timestep</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">manning</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span> <span class="n">nb_timestep</span><span class="p">)</span> <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">id_time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_res</span><span class="p">)):</span>
-            <span class="n">my_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_res</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_times</span><span class="p">[</span><span class="n">id_time</span><span class="p">]</span> <span class="p">]</span>
-            <span class="n">h</span><span class="p">[</span> <span class="p">:,</span> <span class="n">id_time</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_res</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-            <span class="n">u</span><span class="p">[</span> <span class="p">:,</span> <span class="n">id_time</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_res</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-            <span class="n">v</span><span class="p">[</span> <span class="p">:,</span> <span class="n">id_time</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_res</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-            <span class="n">bathy</span><span class="p">[</span> <span class="p">:,</span> <span class="n">id_time</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_res</span><span class="p">[</span><span class="s2">&quot;bathy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-            <span class="n">manning</span><span class="p">[</span> <span class="p">:,</span> <span class="n">id_time</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_res</span><span class="p">[</span><span class="s2">&quot;manningALPHA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="c1"># Identify dimentions</span>
+        <span class="n">nb_cell</span>     <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">nb_timestep</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 
+        <span class="c1"># create groups to be filled</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
-        <span class="n">spatial_var</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;spatial_var&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)</span>
 
-        <span class="n">h_new</span> <span class="o">=</span> <span class="n">spatial_var</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
-        <span class="n">spatial_var</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="n">h</span>
+        <span class="c1"># Fill HDF5 file with self.xxxx values</span>
 
-        <span class="n">u_new</span> <span class="o">=</span> <span class="n">spatial_var</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
-        <span class="n">spatial_var</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="n">u</span>
+        <span class="c1"># dof</span>
+        <span class="n">h_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+        <span class="n">u_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span>
+        <span class="n">v_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">][:,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span>
 
-        <span class="n">v_new</span> <span class="o">=</span> <span class="n">spatial_var</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
-        <span class="n">spatial_var</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">][:,:]</span> <span class="o">=</span> <span class="n">v</span>
-
-        <span class="n">bathy_new</span> <span class="o">=</span> <span class="n">spatial_var</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;bathy&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
-        <span class="n">spatial_var</span><span class="p">[</span><span class="s2">&quot;bathy&quot;</span><span class="p">][:,:]</span> <span class="o">=</span> <span class="n">bathy</span>
-
-        <span class="n">manning_alpha_new</span> <span class="o">=</span> <span class="n">spatial_var</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;manning_alpha&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">,</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
-        <span class="n">spatial_var</span><span class="p">[</span><span class="s2">&quot;manning_alpha&quot;</span><span class="p">][:,:]</span> <span class="o">=</span> <span class="n">manning</span>
-
-
-        <span class="n">time_new</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>  <span class="p">(</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_times</span>
+        <span class="c1"># geometry</span>
+        <span class="n">id_cell_fortran_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;id_cell_fortran&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id_cell_fortran&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_cell_fortran</span>
+        <span class="n">x_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
 
 
-        <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;package version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">version</span><span class="p">(</span><span class="s1">&#39;dassflow2d&#39;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+        <span class="c1"># parameters</span>
+        <span class="n">bathy_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;bathy&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;bathy&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bathy</span>
+        <span class="n">manning_alpha_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;manning_alpha&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_cell</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;manning_alpha&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manning_alpha</span>
 
+        <span class="c1">#by-products --&gt; ignored (surface height = bathy + h)</span>
+
+        <span class="c1"># time/file values</span>
+        <span class="n">time_new</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;all_time&quot;</span><span class="p">,</span>  <span class="p">(</span><span class="n">nb_timestep</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;all_time&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_time</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results.save(): File </span><span class="si">{</span><span class="n">hdf5_path</span><span class="si">}</span><span class="s2"> updated with Result class data&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post Class:</span>
+
+<span class="sd">        contains result data produced  in &quot;bin_dir/res/post&quot; directory</span>
+<span class="sd">        they mainly contains  data about flows at the edges of interest</span>
+
+
+<span class="sd">        inflow.metadata      : tofiil</span>
+<span class="sd">        inflow.sum_mass_flux :</span>
+<span class="sd">        inflow.sum_q         :</span>
+
+<span class="sd">        outflow.metadata      :</span>
+<span class="sd">        outflow.sum_mass_flux :</span>
+<span class="sd">        outflow.sum_q         :</span>
+
+<span class="sd">        TODO: internals</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">__count_nb_bc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boundary_metadata</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Use boundary_metadata dictionary to identify the number of inflow, the number of outflow and the number total of boundaries</span>
+
+
+<span class="sd">            return: tuple (nb_q_inflow, nb_q_outflow, nb_total_bc)</span>
+<span class="sd">            nb_q_inflow: number of inflow</span>
+<span class="sd">            nb_q_inflow: number of outlfow</span>
+<span class="sd">            nb_total_bc: total number of bc, accounting for internals also (not walls)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">nb_q_inflow</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">nb_q_outflow</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">nb_internal_2d</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># count nb_inflow</span>
+            <span class="k">if</span> <span class="s2">&quot;discharg1&quot;</span> <span class="ow">in</span> <span class="n">boundary_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nb_q_inflow</span> <span class="o">=</span> <span class="n">nb_q_inflow</span> <span class="o">+</span> <span class="n">boundary_metadata</span><span class="p">[</span><span class="s2">&quot;discharg1&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;discharg2&quot;</span> <span class="ow">in</span> <span class="n">boundary_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nb_q_inflow</span> <span class="o">=</span> <span class="n">nb_q_inflow</span> <span class="o">+</span> <span class="n">boundary_metadata</span><span class="p">[</span><span class="s2">&quot;discharg2&quot;</span><span class="p">]</span>
+
+            <span class="c1"># count nb_outflow</span>
+            <span class="k">if</span> <span class="s2">&quot;transm&quot;</span> <span class="ow">in</span> <span class="n">boundary_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nb_q_outflow</span> <span class="o">=</span> <span class="n">boundary_metadata</span><span class="p">[</span><span class="s2">&quot;transm&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="s2">&quot;ratcurve&quot;</span> <span class="ow">in</span> <span class="n">boundary_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nb_q_outflow</span> <span class="o">=</span> <span class="n">boundary_metadata</span><span class="p">[</span><span class="s2">&quot;ratcurve&quot;</span><span class="p">]</span>
+
+           <span class="c1"># counter total number of bc (consider internals), this is used to access the correct outflow id file for the file sum_mass_flux_outflow_ID_MAX_BC</span>
+            <span class="n">nb_total_bc</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">my_key</span> <span class="ow">in</span> <span class="n">boundary_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">my_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;transm&quot;</span><span class="p">,</span> <span class="s2">&quot;ratcurve&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span> <span class="p">]:</span>
+                    <span class="n">nb_total_bc</span> <span class="o">=</span> <span class="n">nb_total_bc</span> <span class="o">+</span><span class="n">boundary_metadata</span><span class="p">[</span><span class="n">my_key</span><span class="p">]</span>
+
+            <span class="k">return</span><span class="p">(</span><span class="n">nb_q_inflow</span><span class="p">,</span> <span class="n">nb_q_outflow</span><span class="p">,</span> <span class="n">nb_total_bc</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">__source_inflow_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">template_file</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_inflow&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+            <span class="c1"># inflow</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_inflow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">template_file</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_q_inflow</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_q_inflow</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">template_file</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_q_inflow</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">my_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_q_inflow</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_inflow</span><span class="p">[:,</span> <span class="n">my_id</span><span class="p">]</span> 	<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_inflow&quot;</span><span class="p">][</span><span class="n">my_id</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sum_q_inflow</span><span class="p">[:,</span> <span class="n">my_id</span><span class="p">]</span>		    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_q_inflow&quot;</span><span class="p">][</span><span class="n">my_id</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="k">def</span> <span class="nf">__source_outflow_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">template_file</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_outflow&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+            <span class="c1"># outflow</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_outflow</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">template_file</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_q_outflow</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_q_outflow</span>  <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">template_file</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_q_outflow</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">my_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_q_outflow</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_outflow</span><span class="p">[:,</span> <span class="n">my_id</span><span class="p">]</span> 	<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_outflow&quot;</span><span class="p">][</span><span class="n">my_id</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sum_q_outflow</span><span class="p">[:,</span> <span class="n">my_id</span><span class="p">]</span>   		<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_q_outflow&quot;</span><span class="p">][</span><span class="n">my_id</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boundary_metadata</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">nb_q_inflow</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_q_outflow</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_total_bc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__count_nb_bc</span><span class="p">(</span><span class="n">boundary_metadata</span> <span class="o">=</span> <span class="n">boundary_metadata</span><span class="p">)</span>
+
+            <span class="c1"># list all file path</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span> <span class="o">=</span>  <span class="nb">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_inflow&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/sum_mass_flux_inflow_</span><span class="si">{</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_q_inflow</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_q_inflow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/sum_q_inflow_</span><span class="si">{</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_q_inflow</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_outflow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/sum_mass_flux_outflow_</span><span class="si">{</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_total_bc</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_q_outflow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/sum_q_outflow_</span><span class="si">{</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_q_outflow</span><span class="p">)</span> <span class="p">]</span> <span class="c1"># WARNING : TO DEBUG</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;time_step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/time_step.dat&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;water_vol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/water_vol.dat&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;water_vol_num_add&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/water_vol_num_add.dat&quot;</span>
+            
+            
+            
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">x</span><span class="o">==</span><span class="s2">&quot;transm&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boundary_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()]):</span>
+            	<span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_q_outflow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/sum_q_outflow_</span><span class="si">{</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_q_outflow</span><span class="p">)</span> <span class="p">]</span>
+            	<span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_outflow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span><span class="si">}</span><span class="s2">/sum_mass_flux_outflow_</span><span class="si">{</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_total_bc</span><span class="p">)</span><span class="si">}</span><span class="s2">.dat&quot;</span><span class="p">]</span>
+            
+
+            <span class="c1"># source values from files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__source_inflow_values</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__source_outflow_values</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> 					<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;time_step&quot;</span><span class="p">]</span> <span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_time</span> 					<span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;time_step&quot;</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">water_vol</span> 					<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>    <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;water_vol&quot;</span><span class="p">]</span> <span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">water_vol_num_add</span> 				<span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="s2">&quot;water_vol_num_add&quot;</span><span class="p">],</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">boundary_metadata</span>  <span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/res/post/&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">boundary_metadata</span> <span class="o">=</span> <span class="n">boundary_metadata</span><span class="p">)</span>
+            
+
+        <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Save  Result class to pre-existing hdf5 file.</span>
+
+
+<span class="sd">            -----------</span>
+<span class="sd">            parameter</span>
+<span class="sd">            -----------</span>
+
+<span class="sd">            self:    Result class</span>
+<span class="sd">            hdf5_path : path to hdf5 file to save</span>
+
+<span class="sd">            -----------</span>
+<span class="sd">            return</span>
+<span class="sd">            -----------</span>
+<span class="sd">            hdf5 file filled with data stored in Posr class, this account for: my_hdf5[&quot;output&quot;][&quot;post&quot;][&quot;i&quot;]</span>
+<span class="sd">            with i = sum_q_inflow, sum_mass_flux_inflow, ..._outflow, time_step, water_vol, water_vol_num_add</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Open hdf5 file to append</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+
+            <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
+            <span class="c1"># create groups to be filled</span>
+            <span class="n">post</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;post&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Fill HDF5 file with self.xxxx values</span>
+
+            <span class="c1"># inflow</span>
+            <span class="n">sum_mass_flux_inflow</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;sum_mass_flux_inflow&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_inflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_inflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_inflow&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_inflow</span>
+            <span class="n">sum_q_inflow</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;sum_q_inflow&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_q_inflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_q_inflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;sum_q_inflow&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_inflow</span>
+
+            <span class="c1"># inflow</span>
+            <span class="n">sum_mass_flux_outflow</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;sum_mass_flux_outflow&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_outflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_outflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;sum_mass_flux_outflow&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_outflow</span>
+            <span class="n">sum_q_outflow</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;sum_q_outflow&quot;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_q_outflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_q_outflow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;sum_q_outflow&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_mass_flux_outflow</span>
+
+            <span class="c1"># time</span>
+            <span class="n">time_step</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;time_step&quot;</span><span class="p">,</span>  <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">)),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;time_step&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span>
+            <span class="n">all_time</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;all_time&quot;</span><span class="p">,</span>  <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_time</span><span class="p">)),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;all_time&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_time</span>
+
+            <span class="c1"># water volumes</span>
+            <span class="n">water_vol</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;water_vol&quot;</span><span class="p">,</span>  <span class="p">(</span><span class="nb">len</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">water_vol</span><span class="p">)),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;water_vol&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">water_vol</span>
+            <span class="n">water_vol_num_add</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;water_vol_num_add&quot;</span><span class="p">,</span>  <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">water_vol_num_add</span><span class="p">)),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+            <span class="n">post</span><span class="p">[</span><span class="s2">&quot;water_vol_num_add&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">water_vol_num_add</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Post.save(): File </span><span class="si">{</span><span class="n">hdf5_path</span><span class="si">}</span><span class="s2"> updated with Result class data&quot;</span><span class="p">)</span>
 </pre></div>
 
             </article>

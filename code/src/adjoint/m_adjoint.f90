@@ -317,7 +317,7 @@ CONTAINS
       !================================================================================================================!
 
       call read_control( dof0 , mesh )
-
+write(*,*) "control read in ajoint model", control
       !================================================================================================================!
       !  Calling adjoint model
       !================================================================================================================!
@@ -346,7 +346,11 @@ CONTAINS
          manning_beta_back(:) = 0._rp
 
         !write(*,*) "call run_model_back"
+write(*,*) "control before run_model_back", control
+write(*,*) "manning", manning(:)
          call run_model_back( mesh , dof0 , dof0_back , dof , dof_back , cost , cost_back )
+write(*,*) "control after run_model_back", control
+write(*,*) "manning", manning(:)
 
         !write(*,*) "DONE call run_model_back"
       #endif
@@ -1457,6 +1461,8 @@ x4_ubound = 1_rp
                call control_2_var( bc%rain( k )%q(:) , size( bc%rain( k )%q(:) ) , 1 )
             end do
          end if
+
+write(*,*) "manning value after  read control", manning
 
       #endif
 

@@ -117,7 +117,7 @@ CONTAINS
       integer(ip)  ::  omode        ! Output mode
       integer(ip)  ::  niter        ! Maximum number of minimization iterations
       integer(ip)  ::  nsim         ! Maximum number of simulator calls
-!       integer(ip)  ::  iz(5)        ! Adress of working array for m1qn3
+!     integer(ip)  ::  iz(5)        ! Adress of working array for m1qn3
       integer(ip)  ::  ndz          ! Dimension of dz
       integer(ip)  ::  reverse      ! Specifies direct or reverse mode
       integer(ip)  ::  indic        ! m1qn3 indicates it needs cost/gradient
@@ -155,7 +155,7 @@ CONTAINS
       call alloc_back_vars(dof0_back, dof_back, mesh ) ! allocate _back variables (both dof0_back and other control vector components, to be call only on time
 
       call write_control( dof0 , mesh )
-
+write(*,*) "control in", control
 #ifndef USE_M1QN3
 #ifndef USE_LBFGSB3
       write (*,'(A)') 'Wrong MINMETHOD in Makefile (must be 1 or 2)'
@@ -181,7 +181,7 @@ CONTAINS
       ndz        =   4 * n + 100 * ( 2 * n + 1 )
       reverse    =   1
       indic      =   4
-      max_ite_line_search = 5
+      max_ite_line_search = 50
 
       allocate( dz( ndz ) ) ; dz(:) = 0._rp
       allocate( iz(  5  ) )
@@ -240,6 +240,9 @@ CONTAINS
             write(*,*) "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
             write(*,*) "New loop", "indic=",indic, "reverse=", reverse, "ite_min", ite_min, "ite_line_search", ite_line_search
             write(*,*) "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+!write(*,*) "control l245 =", control
          !=============================================================================================================!
          !  Case indic = 4 -> M1QN3 needs new values of the cost and its gradient to compute
          !  either the step descent (line-search) or the new iterate
@@ -250,9 +253,11 @@ CONTAINS
             cost_back = one
 
             verbose = -1
+!Write(*,*) "control  before adjoint_model =", control
             call adjoint_model( mesh , dof0 , dof )
             ite_line_search = ite_line_search + 1
 
+!Write(*,*) "control  after adjoint_model =", control
          end if
 
 !~          !=============================================================================================================!
@@ -276,13 +281,17 @@ CONTAINS
 
                   norm_grad_cost_ini(k) = sqrt( sum( control_back( i : i - 1 + dim_vars_in_control(k) ) * &
                                                      control_back( i : i - 1 + dim_vars_in_control(k) ) ) )
-
                   i = i + dim_vars_in_control(k)
-
                end do
-
             end if
 
+
+!  Write(*,*) "control l291", control
+!  Write(*,*) "cost ini l293", cost_ini
+!  Write(*,*) "control_back", control_back
+!  Write(*,*) "norm_grad_cost", norm_grad_cost_ini(:)
+!  Write(*,*) "nb_vars_in_control", nb_vars_in_control
+!  write(*,*) "dim_vars_in_control", dim_vars_in_control(:)
             !==========================================================================================================!
             !  Normalization of the control vector
             !==========================================================================================================!
@@ -298,6 +307,7 @@ CONTAINS
 
             end do
 
+!Write(*,*) "control l308", control
             !==========================================================================================================!
             !  Normalization of the cost, its gradient and the control vector
             !==========================================================================================================!
@@ -328,6 +338,8 @@ CONTAINS
 
             end if
 
+!Write(*,*) "control l308", control_back
+
             !==========================================================================================================!
             !  dJ_expect is df1 in the M1QN3 documentation
             !==========================================================================================================!
@@ -337,39 +349,42 @@ CONTAINS
             !==========================================================================================================!
             !  Call of M1QN3
 !           !==========================================================================================================!
-!~             write(*,*) "-----------------------------------------------------------------------------"
-!~             write(*,*) "control vector size:            "
-!~             write(*,*) n
-!~             write(*,*) "   control         "
-!~             write(*,*) control(:)
-!~             write(*,*) "control back"
-!~             write(*,*) control_back(:)
-!~             write(*,*) " input mode            "
-!~             write(*,*) imode
-!~             write(*,*) " output mode            "
-!~             write(*,*) omode
-!~             write(*,*) " cost            "
-!~             write(*,*) cost
-!~             write(*,*) "indic"
-!~             write(*,*) indic
-!~             write(*,*) "reverse"
-!~             write(*,*) reverse
-!~             write(*,*) "ndz"
-!~             write(*,*) ndz
-!~             write(*,*) "iz(:)"
-!~             write(*,*) iz(:)
-!~             write(*,*) "nsim(:)"
-!~             write(*,*) nsim
-!~             write(*,*) "io(:)"
-!~             write(*,*) io
-!~             write(*,*) "normtype(:)"
-!~             write(*,*) normtype
-!~             write(*,*) "epsg(:)"
-!~             write(*,*) epsg
-!~             write(*,*) "dJ_expect(:)"
-!~             write(*,*) dJ_expect
-!~             write(*,*) "-----------------------------------------------------------------------------"
+!            write(*,*) "-----------------------------------------------------------------------------"
+!             write(*,*) "control vector size:            "
+!             write(*,*) n
+!             write(*,*) "   control         "
+!             write(*,*) control(:)
+!             write(*,*) "control back"
+!             write(*,*) control_back(:)
+!             write(*,*) imode
+!             write(*,*) " input mode            "
+!             write(*,*) " output mode            "
+!             write(*,*) omode
+!             write(*,*) " cost            "
+!             write(*,*) cost
+!             write(*,*) "indic"
+!             write(*,*) indic
+!             write(*,*) "reverse"
+!             write(*,*) reverse
+!             write(*,*) "ndz"
+!             write(*,*) ndz
+!             write(*,*) "iz(:)"
+!             write(*,*) iz(:)
+!             write(*,*) "nsim(:)"
+!             write(*,*) nsim
+!             write(*,*) "io(:)"
+!             write(*,*) io
+!             write(*,*) "normtype(:)"
+!             write(*,*) normtype
+!             write(*,*) "epsg(:)"
+!             write(*,*) epsg
+!             write(*,*) "dJ_expect(:)"
+!             write(*,*) dJ_expect
+!             write(*,*) "-----------------------------------------------------------------------------"
 !~             control_temp(:) = control(:)
+
+
+Write(*,*) "control before   call m1qn3 =", control
             call m1qn3( simul_rc     , &
                         euclid       , &
                         ctonbe       , &
@@ -428,6 +443,10 @@ CONTAINS
 !~             write(*,*) "dJ_expect(:)"
 !~             write(*,*) dJ_expect
 !~             if (all(control(:) == control_temp(:) )) print *, "control is not changed here l344"
+
+
+Write(*,*) "control  after lbfgsb =", control
+
             !==========================================================================================================!
             !  Back normalization of the control vector in order to output it
             !==========================================================================================================!

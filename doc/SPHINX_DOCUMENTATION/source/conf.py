@@ -19,38 +19,20 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'DassFlow-2D'
 copyright = 'Under Cecil licence'
-author = 'INSA Toulouse, INRAE-Aix-en-Provence'
+author = 'INSA Toulouse, INRAE-aix'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0'
 version = release
+
 
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.todo',
-              'sphinx.ext.autosectionlabel', 
-              'sphinx.ext.viewcode', 
-              'sphinx.ext.autodoc', 
-              'sphinx.ext.duration', 
-              'sphinx.ext.autosummary', 
-              'numpydoc', 
-              'sphinx_panels', 
-              'IPython.sphinxext.ipython_directive', 
-              'IPython.sphinxext.ipython_console_highlighting', 
-              'sphinx_autosummary_accessors', 
-              'sphinxcontrib.bibtex', 
-              'sphinx.ext.intersphinx',
-              "sphinx.ext.napoleon",
-              "pyvista.ext.plot_directive",
-              'jupyter_sphinx'
-              ]
-
-
+extensions = [ 'sphinx.ext.todo', 'sphinx.ext.autosectionlabel', 'sphinx.ext.viewcode', 'sphinx.ext.autodoc', 'sphinx.ext.duration', 'sphinx.ext.autosummary', 'numpydoc', 'sphinx_panels', "IPython.sphinxext.ipython_directive", "IPython.sphinxext.ipython_console_highlighting", 'sphinx_autosummary_accessors', 'sphinxcontrib.bibtex', 'sphinx.ext.intersphinx']
 bibtex_bibfiles = ['references.bib']
-
 
 pygments_style = 'sphinx'
 
