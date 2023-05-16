@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coding Philosophy &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/CodingPhilosophy/index';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Forward/Direct run" href="../Tutorials/1_make_your_first_run.html" />
+    <link rel="prev" title="compilation" href="../Compilation/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Coding Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/1_make_your_first_run.html">Forward/Direct run</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/2_make_your_first_4Dvar.html">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/3_inference-python.html">Inference run using scipy.minimize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/5_gen-user-data.html">Generate  Basic channel</a></li>
+</ul>
+
+  </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <p id="coding-philosophy">This short section introduces notions of code requirements pertaining to the Fortran core code and its interfacing with Python.</p>
+<div class="section" id="id1">
+<h1>Coding Philosophy<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h1>
+<div class="section" id="variational-assimilation-through-adjoint-based-method-and-automatic-differentiation">
+<h2>Variational assimilation through adjoint-based method and automatic differentiation<a class="headerlink" href="#variational-assimilation-through-adjoint-based-method-and-automatic-differentiation" title="Permalink to this heading">#</a></h2>
+<p>In this code, Variational Data Assimilation is used as an adapted approach to deal with non-linear dynamic models and with heterogeneous observations in space and time, but also to deal with multivariate data assimilation problems and large control vectors.</p>
+<p>It relies on the gradient of a cost function (e.g. misfit to observations). This gradient is obtained by applying the automatic differentiation tool Tapenade to Fortran source codes found in code/src. The resulting files are called the adjoint code and appear in code/tap. The file names correspond to several routines found in code/src files. In the source code, the <strong>NOADJ</strong> tag indicates that the line or lines are intended to be skipped during this process.</p>
+<p>For the total code to be differentiable, the mathematical formula, or combination thereof, linking the TAP_INVARS and TAP_OUTVARS structures list in the Makefile (not .inc), needs to be differentiable.</p>
+<p>As a rule of thumb, any part of the code that does not affect this link between variables and parameters may be flagged as <strong>NOADJ</strong>. For example, many computational checks or result writing routines are currently flagged as <strong>NOADJ</strong>.</p>
+<p>Errors in the differentiation process may or may not cause it to abort. Instead, errors from within /tap files may be raised during a run (direct or inverse). In this case, it is preferable to address the issue from the corresponding /src file or routine than to modify the /tap files.</p>
+<p>Any parameter that is not linked to the <strong>cost</strong> variable and written/read in the <strong>control</strong> will not be inferable, although it may not forbid differentiation and inverse modeling.</p>
+</div>
+<div class="section" id="passing-structures-from-the-computational-core-to-the-corresponding-python-classes">
+<h2>Passing structures from the computational core to the corresponding Python classes<a class="headerlink" href="#passing-structures-from-the-computational-core-to-the-corresponding-python-classes" title="Permalink to this heading">#</a></h2>
+<p>Python can be used to pre-process and post-process data for DassFlow. The Fortran core will, at the minimum, handle the gradient computation, which benefits from the compiled code’s efficiency, and may also handle gradient minimization (see <em class="xref py py-obj">2_make_your_first_4Dvar</em>) as well as data handling. Python scripts can replace th Fortran code in the latter two of these tasks (see <em class="xref py py-obj">3_inference python</em>).</p>
+<p>Currently, the Fortran code handles most of the reading of input data. If Python is used to read data and passes it to Fortran, it will overwrite potentially existing data read by Fortran earlier in the process. Thus, additional input data may be read using Python without modifying the Fortran code.</p>
+<p>You may need to pass the following (non-exhaustive) list of structures:</p>
+<ul class="simple">
+<li><p>Initial hydraulic states</p></li>
+</ul>
+<p>dof0%h ,
+dof0%u ,
+dof0%v</p>
+<ul class="simple">
+<li><p>Current hydraulic states</p></li>
+</ul>
+<p>dof%h ,
+dof%u ,
+dof%v</p>
+<ul class="simple">
+<li><p>Model parameters</p></li>
+</ul>
+<p>manning ,
+manning_beta ,
+bathy_cell ,
+infil%GA%Ks ,
+infil%GA%PsiF ,
+infil%GA%DeltaTheta ,
+infil%SCS%lambda ,
+infil%SCS%CN</p>
+<ul class="simple">
+<li><p>Boundary condition definition data</p></li>
+</ul>
+<p>bc%hyd%t ,
+bc%hyd%q ,
+bc%rat%h ,
+bc%rat%q ,
+bc%rain%t ,
+bc%rain%q</p>
+<ul class="simple">
+<li><p>Inverse modeling structures</p></li>
+</ul>
+<p>control,
+control_back,
+cost</p>
+<ul class="simple">
+<li><p>MPI parameters</p></li>
+</ul>
+<p>np (number of CPU cores)</p>
+<p>Note that the order in which you pass data through the interface is important.</p>
+</div>
+</div>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="../Compilation/index.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">compilation</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="../Tutorials/1_make_your_first_run.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Forward/Direct run</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#variational-assimilation-through-adjoint-based-method-and-automatic-differentiation">
+   Variational assimilation through adjoint-based method and automatic differentiation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#passing-structures-from-the-computational-core-to-the-corresponding-python-classes">
+   Passing structures from the computational core to the corresponding Python classes
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://gitlab.irstea.fr//lilian.villenave/dassflow2d-wrap/-/edit/documentation//doc/SPHINX_DOCUMENTATION/source/getting_started/CodingPhilosophy/index.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
+    </a>
+</div>
+
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../../_sources/getting_started/CodingPhilosophy/index.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

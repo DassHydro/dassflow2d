@@ -1,0 +1,6562 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass scrbook
+\begin_preamble
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{color}
+
+\usepackage[affil-it]{authblk}
+
+%\usepackage{indentfirst}
+
+\author[1]{Pierre-André Garambois}
+\author[2]{Ngo Nghi Truyen Huynh}
+\author[3]{Kévin Larnier}
+\author[2]{Shenyuan Ma}
+\author[4]{Léo Pujol}
+
+\affil[1]{INRAE (Irstea), Aix Marseille University, RECOVER, Aix-en-Provence.}
+\affil[2]{INSA, the Toulouse Mathematics Institute, Toulouse University.}
+\affil[3]{CS GROUP - FRANCE, SPACE Business unit.}
+\affil[4]{CNRS, The Engineering science, computer science and imaging laboratory (ICUBE), Fluid Mechanics Team, Strasbourg University.}
+\renewcommand\Authands{ and }
+
+\newcommand{\version}{v3.0}
+\newcommand{\DassFlow}{\textsc{DassFlow}}
+
+\newcommand{\bin}{\texttt{\textbf{/bin}}}
+\newcommand{\case}{\texttt{\textbf{/user\_cases}}}
+\newcommand{\cpp}{\texttt{\textbf{/cpp}}}
+\newcommand{\doc}{\texttt{\textbf{/doc}}}
+\newcommand{\libs}{\texttt{\textbf{/libs}}}
+\newcommand{\obj}{\texttt{\textbf{/obj}}}
+\newcommand{\scripts}{\texttt{\textbf{/scripts}}}
+\newcommand{\simu}{\texttt{\textbf{/simu}}}
+\newcommand{\souk}{\texttt{\textbf{/souk}}}
+\newcommand{\src}{\texttt{\textbf{/src}}}
+\newcommand{\tap}{\texttt{\textbf{/tap}}}
+\newcommand{\test}{\texttt{\textbf{/test}}}
+\newcommand{\wrappers}{\texttt{\textbf{/wrappers}}}
+
+\newcommand{\binres}{\texttt{\textbf{/bin/res}}}
+\newcommand{\binmsh}{\texttt{\textbf{/bin/msh}}}
+\newcommand{\binobs}{\texttt{\textbf{/bin/obs}}}
+\newcommand{\bingrad}{\texttt{\textbf{/bin/grad}}}
+\newcommand{\binmin}{\texttt{\textbf{/bin/min}}}
+
+\newcommand{\make}{\texttt{\textbf{Makefile}}}
+\newcommand{\exe}{\texttt{\textbf{exe}}}
+
+\newcommand{\inp}{\texttt{\textbf{input.txt}}}
+\newcommand{\usr}{\texttt{\textbf{m\_user\_data.f90}}}
+\newcommand{\tst}{\texttt{\textbf{m\_user\_test.f90}}}
+\newcommand{\bc}{\texttt{\textbf{bc.txt}}}
+\newcommand{\obs}{\texttt{\textbf{obs.txt}}}
+\newcommand{\paramObs}{\texttt{\textbf{param\_obs.txt}}}
+\newcommand{\hydro}{\texttt{\textbf{hydrograph.txt}}}
+\newcommand{\rat}{\texttt{\textbf{ratcurve.txt}}}
+\newcommand{\landuse}{\texttt{\textbf{land\_use.txt}}}
+
+\newcommand{\warm}{\includegraphics[scale=0.25]{figs/Symbols-Critical-icon}}
+
+\lhead{\DassFlow{} \version{} - User Guide}
+\rhead{}
+\cfoot{\thepage/\pageref{LastPage}}
+\pagestyle{fancy}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mylightgray}{rgb}{0.95,0.95,0.95}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mypink}{rgb}{0.858, 0.188, 0.478}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 2
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\begin_inset Graphics
+	filename figs/logo/is_logo_2017_logo_triangulaire_bleu.png
+	height 2cm
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 0.5cm
+\end_inset
+
+
+\begin_inset Graphics
+	filename figs/logo/logo-cnrs.pdf
+	lyxscale 15
+	height 2cm
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 0.5cm
+\end_inset
+
+
+\begin_inset Graphics
+	filename figs/logo/logo-cs-grp.png
+	height 2cm
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 0.5cm
+\end_inset
+
+
+\begin_inset Graphics
+	filename figs/logo/logo-IMT.png
+	lyxscale 20
+	height 2cm
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 0.5cm
+\end_inset
+
+
+\begin_inset Graphics
+	filename figs/logo/logo-insa.pdf
+	height 2cm
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 0.5cm
+\end_inset
+
+
+\begin_inset Graphics
+	filename figs/logo/logo-univ-toulouse.pdf
+	lyxscale 40
+	height 2cm
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 0.5cm
+\end_inset
+
+
+\begin_inset Graphics
+	filename figs/logo/logo-Unistra.jpg
+	height 2cm
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset VSpace 1.2cm
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{} 
+\backslash
+version{}
+\end_layout
+
+\end_inset
+
+ : Developer Guide
+\end_layout
+
+\begin_layout Subtitle
+in alphabetical order :
+\end_layout
+
+\begin_layout Paragraph*
+Former coauthors (alphabetical order) :
+\end_layout
+
+\begin_layout Paragraph*
+Frédéric Couderc
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+CNRS, the Toulouse Mathematics Institute, Toulouse University, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+frederic.couderc@math.univ-toulouse.fr
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Ronan Madec
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+INSA, the Toulouse Mathematics Institute, Toulouse University.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Jérôme Monnier
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+INSA, the Toulouse Mathematics Institute, Toulouse University, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+jerome.monnier@insa-toulouse.fr
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Jean-Paul Vila
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+INSA, the Toulouse Mathematics Institute, Toulouse University.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Developer guide
+\end_layout
+
+\begin_layout Chapter
+Preamble
+\end_layout
+
+\begin_layout Section
+License
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ software is distributed under the CeCILL 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Ce(A)C(nrs)I(NRIA)L(ogiciel)L(ibre), 
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.cecill.info/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ license in version 2 compatible with the GNU GPL license.
+\end_layout
+
+\begin_layout Standard
+List of the external librairies that are eventually used by the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ software:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Scotch 
+\series default
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "https://gforge.inria.fr/projects/scotch/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\series bold
+ :
+\series default
+ a software package for graph and mesh/hypergraph partitioning, graph clustering
+, and sparse matrix ordering available as free software under the CeCILL-C
+ license.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Mpich 
+\series default
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.mpich.org/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\series bold
+ :
+\series default
+ a high performance and widely portable implementation of the Message Passing
+ Interface (MPI) standard available as free software.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Tapenade
+\series default
+ 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www-sop.inria.fr/tropics/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ : External executable Java program that is called to generate the discrete
+ model adjoint.
+ Free of use in an academic usage.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+m1qn3 
+\series default
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "https://who.rocq.inria.fr/Jean-Charles.Gilbert/modulopt/optimization-routines/m1qn3/m1qn3.html"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\series bold
+ :
+\series default
+ a solver of large-scale unconstrained minimization problems dittributed
+ under the GNU General Public License and listed in the Free Software Directory.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Mumps 
+\series default
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://graal.ens-lyon.fr/MUMPS/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\series bold
+ :
+\series default
+ a parallel sparse direct solver available in public domain, based on public
+ domain software developed during the Esprit IV European project PARASOL
+ (1996-1999).
+\end_layout
+
+\begin_layout Section
+System requirements
+\end_layout
+
+\begin_layout Standard
+One particularity of the original 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ software is that you need to compile if you want to use it.
+ The main reason is that some inputs are defined by some 
+\shape italic
+"user-functions"
+\shape default
+ which are part of the FORTRAN code, so we need to recompile the code every
+ time we change one of them.
+\end_layout
+
+\begin_layout Standard
+This is still the case in the current wrapped version of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+.
+ In the future wrapping of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+, we will try to eliminate the dependency of some 
+\begin_inset Quotes eld
+\end_inset
+
+
+\emph on
+user-functions
+\emph default
+
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Instead of giving those functions in a FORTRAN file that will be compiled,
+ the user should compute the values of those functions in python and pass
+ those values to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ as argument.
+ The user will only need to compile one time the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ on his/her system in order to import it into Python just like any other
+ Python package.
+\end_layout
+
+\begin_layout Standard
+In this document, we will assume that you have a Linux or Unix operating
+ system even if compilation remains possible on Windows (using Cygwin 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+name "http://www.cygwin.com/"
+target "http://www.cygwin.com/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ for example) and MacOS (native Linux) operating systems.
+ One of these two compilers must be installed,
+\end_layout
+
+\begin_layout Itemize
+the GNU FORTRAN compiler 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://gcc.gnu.org/fortran/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ (free software under the GPL free license).
+\end_layout
+
+\begin_layout Itemize
+the INTEL FORTRAN compiler 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://software.intel.com/en-us/intel-compilers"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ (commercial software under a proprietary license).
+\end_layout
+
+\begin_layout Standard
+Result output files are written in the following formats,
+\end_layout
+
+\begin_layout Itemize
+text format (
+\family typewriter
+.txt
+\family default
+ extension) : a basic format file that can generally be plotted with your
+ favorite graphical XY-plot software 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://en.wikipedia.org/wiki/List_of_graphing_software"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, like the Gnuplot 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.gnuplot.info/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ free software.
+\end_layout
+
+\begin_layout Itemize
+VTK format (
+\family typewriter
+.vtk
+\family default
+ extension) : the Kitware free format file 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.vtk.org/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ that can be read by visualization free softwares like Paraview 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.paraview.org/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, Visit 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "https://wci.llnl.gov/codes/visit/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ or Mayavi 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://code.enthought.com/projects/mayavi/#Mayavi"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Tecplot format (
+\family typewriter
+.plt
+\family default
+ extension) : a proprietary format file used by the visualization commercial
+ software Tecplot 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.tecplot.com/"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+and gives the choice of the visulization software(s) to be used.
+\end_layout
+
+\begin_layout Standard
+Finally, in order to use the adjoint model, we need the automatic differentiatio
+n tool 
+\emph on
+Tapenade
+\emph default
+.
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "For more information"
+target "https://team.inria.fr/ecuador/fr/tapenade/"
+literal "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset href
+LatexCommand href
+name "for installing this tool"
+target "http://www-sop.inria.fr/ecuador/tapenade/distrib/README.html"
+literal "false"
+
+\end_inset
+
+, please refer to these links.
+\end_layout
+
+\begin_layout Subsection*
+New to the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+version{}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In addition to the Fortran compilers, Python interpreter, numpy (a scientific
+ computation packge of Python) and in particular 
+\emph on
+f2py 
+\emph default
+(included in numpy), and 
+\emph on
+f90wrap
+\emph default
+ are required.
+ To install 
+\emph on
+f90wrap
+\emph default
+, one can use the Python package manager 
+\begin_inset Quotes eld
+\end_inset
+
+
+\emph on
+pip
+\emph default
+
+\begin_inset Quotes erd
+\end_inset
+
+ via the following command:
+\end_layout
+
+\begin_layout Verbatim
+
+	$ pip install git+https://github.com/jameskermode/f90wrap
+\end_layout
+
+\begin_layout Standard
+To test and verify the installation, we can use 
+\emph on
+git 
+\emph default
+to download the 
+\emph on
+f90wrap 
+\emph default
+test cases by following command in a working directory:
+\end_layout
+
+\begin_layout Verbatim
+
+	$ git clone https://github.com/jameskermodee/f90wrap.git
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+f90wrap 
+\emph default
+is sensible to the version, the current wrapping has been tested on the
+ version 0.2.3.
+ A 
+\emph on
+conda 
+\emph default
+environment file is provided in order to created a virtual environment in
+ which the current development was made.
+\end_layout
+
+\begin_layout Section
+Directories organization
+\end_layout
+
+\begin_layout Standard
+At the root of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ distribution or archive, one can find the directories Fig.(
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Directories-at-root"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figs/Directories_at_root.png
+	lyxscale 50
+	scale 25
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Directories at root
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Directories-at-root"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+case{}
+\end_layout
+
+\end_inset
+
+ : the main directory to use the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ software.
+ This directory contains all the user cases.
+ The name of the directory can be specified using an option in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+.
+ For more information about the available makefile option : 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Makefile-options"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ We assume in this user guide that the user case is to be found in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+case{}
+\backslash
+bin{}
+\end_layout
+
+\end_inset
+
+.
+ In the user guide, we use 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+bin{}
+\end_layout
+
+\end_inset
+
+ for easy writing, but it means, in reality, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+case{}
+\backslash
+bin{}
+\end_layout
+
+\end_inset
+
+.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+First, the simulation control files have to be put in,
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+inp{}
+\end_layout
+
+\end_inset
+
+ file (must be provided) which allows the user to define all variables concernin
+g the mesh, numerical and physical parameters and input/output options.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+usr{}
+\end_layout
+
+\end_inset
+
+ file (must be provided) which contains user-subroutines which can be used
+ to define initial conditions, boundary conditions, etc ...
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+bc{}
+\end_layout
+
+\end_inset
+
+ file which allows the user to assign boundary conditions lo labelled boundaries
+ of the mesh.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+obs{}
+\end_layout
+
+\end_inset
+
+ file which allows the user to define some observations to output.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hydro{}
+\end_layout
+
+\end_inset
+
+ file which contains all tabullated hydrographs to imposed at specified
+ boundaries.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+rat{}
+\end_layout
+
+\end_inset
+
+ file which contains all tabullated rat curves to imposed at specified boundarie
+s.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Secondly, the output files will be written into those sub directories:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+textbf{res}}
+\end_layout
+
+\end_inset
+
+ directory that contains the results of direct simulation.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+textbf{res/obs}}
+\end_layout
+
+\end_inset
+
+ directory that contains the observations generated according to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+obs{}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+textbf{res/post}}
+\end_layout
+
+\end_inset
+
+ directory that contains some post processed variables.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+textbf{graph}}
+\end_layout
+
+\end_inset
+
+ directory that contains some visulisations.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+textbf{grad}}
+\end_layout
+
+\end_inset
+
+ directory that contains the results of sensitivity analysis.
+\end_layout
+
+\begin_layout Itemize
+the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+textbf{min}}
+\end_layout
+
+\end_inset
+
+ directory that contains the results of minimization.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cpp{}
+\end_layout
+
+\end_inset
+
+ : a working directory where are putted the preprocessed Fortran files using
+ the 'cpp' command (with same original 
+\family typewriter
+\series bold
+.f90
+\family default
+\series default
+ extension).
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+doc{}
+\end_layout
+
+\end_inset
+
+ : documention of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ software
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+libs{}
+\end_layout
+
+\end_inset
+
+ : external libraries eventually compiled (normally automated with the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+) and used by the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ software.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+obj{}
+\end_layout
+
+\end_inset
+
+ : a working directory where are putted the compiled Fortran files (with
+ 
+\family typewriter
+\series bold
+.o
+\family default
+\series default
+ extension).
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+scripts{}
+\end_layout
+
+\end_inset
+
+ : a directory containing a bash script that export to the environment 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{PYTHONPATH}
+\end_layout
+
+\end_inset
+
+ the path to find the automatically generated Python module and the 
+\emph on
+conda 
+\emph default
+environment file.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+simu{}
+\end_layout
+
+\end_inset
+
+ : a directory containing all preconfigured simulations.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+souk{}
+\end_layout
+
+\end_inset
+
+ : a directory containing some usefull programs to user and developer.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+src{}
+\end_layout
+
+\end_inset
+
+ : a directory containing all Fortran source files and Python scripts.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+tap{}
+\end_layout
+
+\end_inset
+
+ : a directory containing all Tapenade automatically generated Fortran source
+ files related to the generation of the adjoint solver.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+test{}
+\end_layout
+
+\end_inset
+
+ : a directory containing testing cases with a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+tst{}
+\end_layout
+
+\end_inset
+
+ file.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+wrappers{}
+\end_layout
+
+\end_inset
+
+ : a directory containing the Python module of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ that will be generated automatically by 
+\emph on
+f90wrap.
+\end_layout
+
+\begin_layout Standard
+A show case using 
+\emph on
+jupyter notebook 
+\emph default
+is still in construction.
+\end_layout
+
+\begin_layout Section
+Organization chart of modules
+\end_layout
+
+\begin_layout Standard
+For more organization charts, please open the page 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{/doc/doxygen/html/index.html}
+\end_layout
+
+\end_inset
+
+.
+ Here is the detailed call chart of the main sub routine 
+\emph on
+run :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figs/call_model_run.png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Call graph of main sub-routine
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Call-graph-of"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ is wrapped into Python, thus it's possible now to launch direct simulation
+ using Python.
+ Here is the structure of the main Python script :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figs/main_py.svg
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The main Python script
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Code structure
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+expliquer la structure et les choix/contraintes num et techno qui ont mené
+ à ces choix...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+schema doxygen (au moins du fortran) / expliciter liens python à la main..
+\end_layout
+
+\begin_layout Standard
+***************************************************************
+\end_layout
+
+\begin_layout Standard
+/home/pierre-andre.garambois/Documents/Distant/truyenstage/branches/shenyuan/Dass
+Flow2D-wrapping/src/sw_mono/call_run_model
+\end_layout
+
+\begin_layout Standard
+EXPLIQUER pourquoi call_run_model et ce qu'il contient (preciser ce que
+ toi tu as modifié (ex.
+ les struct de mesh, connectivite bc ds mdl) et pour quelle raison)
+\end_layout
+
+\begin_layout Standard
+pal objet (model) appelé en python.
+ contient 4 structures : dof, dof0, mesh, param (non codé)
+\end_layout
+
+\begin_layout Standard
+***
+\end_layout
+
+\begin_layout Standard
+expliquer le lien entre la routine fortran subroutine init_solver(mdl) qui
+ se trouve dans call_run_model.f90 ;
+\end_layout
+
+\begin_layout Standard
+l'appel python
+\end_layout
+
+\begin_layout Standard
+*
+\end_layout
+
+\begin_layout Standard
+*****************************
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+après les modif de codes nécesstées par f90wrap ; expliquer makefile ajouts,
+ ordre des choses :
+\end_layout
+
+\begin_layout Plain Layout
+ex :
+\end_layout
+
+\begin_layout Plain Layout
+***************************
+\end_layout
+
+\begin_layout Plain Layout
+ifeq ($(ADJOINT),1) WRAPPERS_CPP += wrappers/m_adjoint.f90 
+\backslash
+ wrappers/m_tap_vars.f90 OBJ_TMP += $(OBJS_TAP) endif
+\end_layout
+
+\begin_layout Plain Layout
+WRAPPERS_CPP += wrappers/call_run_model.f90 OBJ_TMP += ./obj/call_run_model.o
+ POST_PY = ./wrappers/${module_name}/post/__init__.py 
+\backslash
+ ./wrappers/${module_name}/post/metrics.py 
+\backslash
+ ./wrappers/${module_name}/post/results.py 
+\backslash
+ ./wrappers/${module_name}/post/minimization.py 
+\backslash
+ ./wrappers/${module_name}/post/read_results.py
+\end_layout
+
+\begin_layout Plain Layout
+UTILS_PY = ./wrappers/${module_name}/utils/__init__.py 
+\backslash
+ ./wrappers/${module_name}/utils/SwotObs.py 
+\backslash
+ ./wrappers/${module_name}/utils/PepsiNetCDF.py 
+\backslash
+ ./wrappers/${module_name}/utils/mesh_from_swot_observations.py 
+\backslash
+ ./wrappers/${module_name}/utils/pepsi_nodes_observations.py 
+\backslash
+ ASSIM_PY = ./wrappers/${module_name}/assim/__init__.py 
+\backslash
+ ./wrappers/$(module_name)/assim/lbfgs.py
+\end_layout
+
+\begin_layout Plain Layout
+WRAPPER_LIST = $(patsubst wrappers/%.f90, %.f90, ${WRAPPERS_CPP}) WRAPPED_OBJ
+ = $(patsubst ./obj/%.o, ../obj/%.o, $(OBJ_TMP))
+\end_layout
+
+\begin_layout Plain Layout
+***************************
+\end_layout
+
+\begin_layout Plain Layout
+=> ex.
+ pkoi (vs dependance nbreuses) run_model placé à la fin de la partie adjoint
+ du makefile 
+\end_layout
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\begin_layout Plain Layout
+expliquer : OBJ_TMP += $(OBJS_TAP)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Question :pkoi WRAPPERS_CPP reçoit certains progs et pas d'autres...
+ // OBJ_TMP
+\end_layout
+
+\begin_layout Plain Layout
+expliquer routines principales + sous routines ~ 
+\series bold
+ex.
+ si un developper voulait ajouter un module ou une fonctionalité sous routine
+ ou autres, comment modifier les sources et le makefile
+\end_layout
+
+\begin_layout Plain Layout
+**
+\end_layout
+
+\begin_layout Plain Layout
+expliquer pkoi par ex.
+ lbfgs.py ds makefile ...
+ (en pensant à un dev qui voudrait creer autres structures)
+\end_layout
+
+\begin_layout Plain Layout
+****
+\end_layout
+
+\begin_layout Plain Layout
+
+\series bold
+Expliquer :
+\end_layout
+
+\begin_layout Plain Layout
+ifeq ($(MPI),1) cd wrappers ; f2py-f90wrap --f90exec=mpif90 ${debug_wrapping}
+ --opt="-O3" --build-dir .
+ -c -m _${module_name} -I../obj -L.
+ f90wrap*.f90 ../obj/*.o ${FLIBS} else cd wrappers ; f2py-f90wrap --f90exec=gfortran
+ ${debug_wrapping} --opt="-O3" --build-dir .
+ -c -m _${module_name} -I../obj -L.
+ f90wrap*.f90 ../obj/*.o ${FLIBS} endif
+\end_layout
+
+\begin_layout Plain Layout
+
+\series bold
+Ne pas oublier aussi expliquer -fpiC sur lib exterieures ;
+\end_layout
+
+\begin_layout Plain Layout
+comment ferait un dev pour brancher une autre lib exterieure (export CLIBS
+ = export FLIBS =
+\end_layout
+
+\begin_layout Plain Layout
+) ${FLIBS}
+\end_layout
+
+\begin_layout Plain Layout
+****
+\end_layout
+
+\begin_layout Plain Layout
+expliquer brievement ce que contient la secion Run du makefile...
+\end_layout
+
+\begin_layout Plain Layout
+ce qu'un dev peut modif et comment
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Nouveautés Shenyuan
+\end_layout
+
+\begin_layout Plain Layout
+***** point de départ, citer doc + version code Truyen ******
+\end_layout
+
+\begin_layout Plain Layout
+- formats mesh
+\end_layout
+
+\begin_layout Plain Layout
+- BCs
+\end_layout
+
+\begin_layout Plain Layout
+- mpi
+\end_layout
+
+\begin_layout Plain Layout
+- adjoint
+\end_layout
+
+\begin_layout Plain Layout
+- ongoing : 
+\begin_inset Quotes eld
+\end_inset
+
+external
+\begin_inset Quotes erd
+\end_inset
+
+ optim (~lbfgs)
+\end_layout
+
+\begin_layout Plain Layout
+- test cases (which ones - 
+\series bold
+present them clean
+\series default
+ + laisser les bouts de code python pour Garonne) and doc
+\end_layout
+
+\begin_layout Plain Layout
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Structure of the wrapped DassFlow 2D
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ Python package contains the following files and directories :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figs/Python_package_structure.png
+	width 50page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Structure of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ Python packge
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Structure-of-python"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+.py
+\emph default
+ files in the root of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ are generated by the tool 
+\emph on
+f90wrap, 
+\emph default
+while the sub-modules 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{assim, post, utils}
+\end_layout
+
+\end_inset
+
+ are copied and added from the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+src{}
+\backslash
+wrappers{}
+\end_layout
+
+\end_inset
+
+.
+ The process of adding sub-modules are automated by using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Some modifications of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d/
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ are required so that Python interpreter can take in account the sub-modules.
+ As this script is generated automatically by 
+\emph on
+f90wrap, 
+\emph default
+we should write the modifications in another script (
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+src{}
+\backslash
+wrappers{}
+\backslash
+texttt{
+\backslash
+textbf{include.py}}
+\end_layout
+
+\end_inset
+
+) and should get this script included into init script using the option
+ 
+\begin_inset Quotes eld
+\end_inset
+
+-I
+\begin_inset Quotes erd
+\end_inset
+
+ of 
+\emph on
+f90wrap.
+\end_layout
+
+\begin_layout Standard
+The init script of sub-modules are also written according to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Recall-of-Python"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Structure of the computation kernel
+\end_layout
+
+\begin_layout Standard
+The computation kernel of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ respect the following architecture :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figs/daorganisation.pdf
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+computation architecture
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The simulator contains :
+\end_layout
+
+\begin_layout Enumerate
+The direct simulator, that is forward in the time, is able to compute the
+ final states and produce the value of a cost function based on observations.
+\end_layout
+
+\begin_layout Enumerate
+The adjoint simulator, that is backward in the time, produce the gradient
+ of the cost function with respect to the components of the control vector.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The optimization routine take advantage of the previous two simulators to
+ find the control vector that minimze cost function (if it's possible).
+\end_layout
+
+\begin_layout Chapter
+Makefile
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+In a logical order.
+ how to organize the sections ?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Macros of files
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+WRAPPERS_CPP 
+\series default
+: includes the FORTRAN module / programs that will be visible in the wrapped.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+OBJ_TEMP
+\series default
+ : contains the object files that will be compiled.
+ It's important to put file names in the order that satisfied the dependencies
+ (this is required by FORTRAN compilation and not by wrapper) : if A.f90
+ depends on B.f90, then B.o should be placed before A.o.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+OBJS_TAP
+\series default
+ : contains the object files that will be compiled from the adjoint files
+ generated by Tapenade.
+ In the case where we choose to use adjoint model, we need to add this part
+ into OBJ_TEMP.
+ This macro exists since the version V2.0.0 .
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+module_name 
+\series default
+: the name that will be given the wrapping, currently is set to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+It's also required to add the FORTRAN files of adjoint model into WRAPPERS_CPP
+ if the option of adjoint is activated.
+\end_layout
+
+\begin_layout Standard
+The main file call_run_model.f90 as soon as the object file of the same name,
+ should be added in the end because of the dependancies.
+\end_layout
+
+\begin_layout Section
+Compilation flags
+\end_layout
+
+\begin_layout Standard
+CFLAGS and FFLAGS are used to define the compilation options for both C
+ and FORTRAN compilation.
+ 
+\series bold
+The option -fPIC is mandatory.
+
+\series default
+ When f2py links the object files to the low level module file, (a low level
+ module file with extension .so), it requires that the FORTRAN files are
+ compiled into dynamic module.
+ It is important to remember that this option should also be added to the
+ external libraries (such as SCOTCH) if they need to be compiled.
+\end_layout
+
+\begin_layout Standard
+CLIBS and FLIBS contain header files of external librairies used in the
+ FORTRAN codes.
+\end_layout
+
+\begin_layout Section
+f90wrap / f2py options and commands
+\end_layout
+
+\begin_layout Standard
+The target : 
+\series bold
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{wrappers/
+\backslash
+_
+\backslash
+$
+\backslash
+{module
+\backslash
+_name
+\backslash
+}.so}
+\end_layout
+
+\end_inset
+
+ 
+\series default
+calls the recipes to generate the wrapping.
+ For more information about these two tools : 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:What-is-f90wrap"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+f90wrap 
+\series default
+and the 
+\series bold
+f2py 
+\series default
+commands are :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=make,basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cd wrappers ; f90wrap -m ${module_name} ${WRAPPER_LIST} -k kind_map ${string}
+ ${pkg} ${move} -I include.py 
+\end_layout
+
+\begin_layout Plain Layout
+
+ifeq ($(MPI),1) 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	cd wrappers ; f2py-f90wrap --f90exec=mpif90 ${debug_wrapping} --opt="-O3"
+ --build-dir .
+ -c -m _${module_name} -I../obj -L.
+ f90wrap*.f90 ../obj/*.o ${FLIBS} 
+\end_layout
+
+\begin_layout Plain Layout
+
+else 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	cd wrappers ; f2py-f90wrap --f90exec=gfortran ${debug_wrapping} --opt="-O3"
+ --build-dir .
+ -c -m _${module_name} -I../obj -L.
+ f90wrap*.f90 ../obj/*.o ${FLIBS}  
+\end_layout
+
+\begin_layout Plain Layout
+
+endif
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At first, the Python package and the 
+\series bold
+f90wrap 
+\series default
+interface files are generated.
+ The options :
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{module
+\backslash
+_name}
+\end_layout
+
+\end_inset
+
+: contains the name of the package that will be generated.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{string}
+\end_layout
+
+\end_inset
+
+: contains the default length of charater strings (set to 128)
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{pkg}
+\end_layout
+
+\end_inset
+
+: generate the wrapping as a package or as modules (set to be package).
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{move}
+\end_layout
+
+\end_inset
+
+: transform the subroutine/function whose first argument is a derived type
+ to a class method in the wrapping.
+ (set to be true)
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{-I include.py}
+\end_layout
+
+\end_inset
+
+: include the content of 
+\emph on
+include.py 
+\emph default
+into the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ in the root of the directory that represents generated the Python package.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+f2py 
+\series default
+is called afterwise, which will generate the low level shared object file.
+ The options:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{--f90exec}
+\end_layout
+
+\end_inset
+
+ : indicates the compil
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{debug
+\backslash
+_wrapping}
+\end_layout
+
+\end_inset
+
+: enables more debug messages (while the execution of program), set to be
+ false by default.
+ (control by the variable 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{DEBUG
+\backslash
+_WRAPPING}
+\end_layout
+
+\end_inset
+
+ in the top of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{FLIBS}
+\end_layout
+
+\end_inset
+
+ : contains the list of external libraries.
+\end_layout
+
+\begin_layout Section
+Run commands
+\end_layout
+
+\begin_layout Standard
+There are three run commands 
+\series bold
+rundirect, runmin 
+\series default
+and 
+\series bold
+rungrad 
+\series default
+and some test commands : 
+\series bold
+runtestadj 
+\series default
+and other in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The 
+\series bold
+run
+\series default
+ commands copy the main Python script into the user cases directory and
+ launch the Python script there and delete the script from the directory.
+ 
+\emph on
+mpirun 
+\emph default
+is required in order to use mpi in the execution of Python script.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+runtestadj 
+\series default
+uses the main Python script, it's useful to test if the adjoint files are
+ generated and linked into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ correctly
+\end_layout
+
+\begin_layout Itemize
+Other 
+\series bold
+test
+\series default
+ commands copy the test Python scripts in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+test{}
+\end_layout
+
+\end_inset
+
+ into the user cases directory to perform some tests.
+\end_layout
+
+\begin_layout Chapter
+f90wrap and f2py
+\end_layout
+
+\begin_layout Section
+What is f90wrap and f2py and basic examples
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:What-is-f90wrap"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+f2py
+\series default
+ is the basic tool to create interface of Fortran/Python and is part of
+ the Python packge 
+\series bold
+numpy
+\series default
+.
+ In fact, some functionalities of 
+\series bold
+numpy 
+\series default
+is implemented by wrapping libraries written in C or in Fortran.
+ 
+\series bold
+f2py 
+\series default
+is able to handle simple task of wrapping, while it has limitations.
+ For example, it can't handle derived types (which are largely used in the
+ current projet).
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+f90wrap 
+\series default
+is an advanced Fortran/Python wrapping tool developped based on 
+\series bold
+f2py
+\series default
+ by 
+\emph on
+J.
+ Kermode
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kermode_2020"
+literal "false"
+
+\end_inset
+
+
+\emph on
+ 
+\emph default
+which has the ability to handle complexe data structures such as derived
+ types or array with variable dimension of derived types (attribute 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dimension(:), allocatable}
+\end_layout
+
+\end_inset
+
+ ).
+ 
+\series bold
+f90wrap 
+\series default
+is also able to wrapper a Fortran routine when it depends on other routines
+ or variables that are declared outside the file where the routine is defined.
+ It doesnot compile Fortran files into a shared object file with extension
+ 
+\begin_inset Quotes eld
+\end_inset
+
+.so
+\begin_inset Quotes erd
+\end_inset
+
+ ( this is done by 
+\series bold
+f2py
+\series default
+), instead, it generates Fortran/Python interface codes written in Fortran
+ by parsing the provided Fortran codes.
+ Those interface codes should be given to 
+\series bold
+f2py
+\series default
+ to generate the shared object file.
+\end_layout
+
+\begin_layout Standard
+When using 
+\series bold
+f90wrap 
+\series default
+to wrap Fortran program, instead of using 
+\series bold
+f2py
+\series default
+ at final step to generate the shared object file, we should use the modified
+ version of 
+\series bold
+f2py 
+\series default
+(by the command 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py-f90wrap}
+\end_layout
+
+\end_inset
+
+) that is provided by 
+\series bold
+f90wrap
+\series default
+.
+ This is indeed optional (one can always use only 
+\series bold
+f2py
+\series default
+), but 
+\series bold
+f2py-f90wrap
+\series default
+ provides some additional functionalities such as handling the exception
+ via Python (Fortran codes can raise a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{RunTimeError}
+\end_layout
+
+\end_inset
+
+ so that Python will be able ot handle it.
+ Without the modified version of 
+\series bold
+f2py
+\series default
+, when Fortran codes raise an exception, the program will be stopped.
+\end_layout
+
+\begin_layout Standard
+The following figure shows the mecanism to wrapper a Fortran program into
+ a Python package using the tools that we introduced previously :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figs/f90wrap.svg
+	width 60page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Wrapping procedure using f90wrap/f2py
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to wrap a Fortran program into Python, we should follow these steps
+ :
+\end_layout
+
+\begin_layout Enumerate
+We shall use 
+\series bold
+f90wrap 
+\series default
+to generate the Python package (which will be results of wrapping that we
+ will import in the user defined Python script) and the interface Fortran/Python
+ files (the files whose name starts with f90wrap).
+ The Python package is not usable yet, it requires the corresponding low
+ level shared object file that needs to be generated in a second time.
+ The interface files respect the following rules :
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{module.f90}
+\end_layout
+
+\end_inset
+
+ contains a Fortran module, the file interface file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap
+\backslash
+_module.f90}
+\end_layout
+
+\end_inset
+
+ will be generated.
+\end_layout
+
+\begin_layout Enumerate
+All the routines, that donot belong to any module, will be gathered into
+ a single interface file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap
+\backslash
+_top
+\backslash
+_level.f90}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+We compile the Fortran files, not only the files that will be included in
+ the wrapping, but also the files that the wrapped files depend on.
+ It's mandatory to compile the files with option 
+\begin_inset Quotes eld
+\end_inset
+
+-fPIC
+\begin_inset Quotes erd
+\end_inset
+
+, as finally a shared object with extension 
+\begin_inset Quotes eld
+\end_inset
+
+.so
+\begin_inset Quotes erd
+\end_inset
+
+ will be generated.
+ There are mainly two reasons why we need to compile the Fortran ourself
+ even though the command 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py-f90wrap}
+\end_layout
+
+\end_inset
+
+ also compiles the files:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+The generated interface files 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap
+\backslash
+_*.f90}
+\end_layout
+
+\end_inset
+
+ have the statements 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{use ...}
+\end_layout
+
+\end_inset
+
+ inside, so the .mod files are required first before compiling them.
+ They require equally the object files .o to establish the link in the final
+ stage of compilation.
+\end_layout
+
+\begin_layout Enumerate
+The Fortran files that will be visible in the wrapping may depends on some
+ subroutines/functions that are not defined in the same file, it requires
+ to link the subroutines/functions though .o files.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+We use the command 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py-f90wrap}
+\end_layout
+
+\end_inset
+
+ to call the modified version fo 
+\series bold
+f2py
+\series default
+ to generate the shared object file.
+\end_layout
+
+\begin_layout Standard
+Now the Python package is up to use.
+ The commands will be shown in the examples' section.
+\end_layout
+
+\begin_layout Section
+Examples of f90wrap
+\end_layout
+
+\begin_layout Standard
+In this section, we show at first 3 examples of wrapping using 
+\series bold
+f90wrap
+\series default
+ with ascending level of complexity :
+\end_layout
+
+\begin_layout Enumerate
+without derived type, module, subroutine/function defined outside the file
+\end_layout
+
+\begin_layout Enumerate
+with derived type, module, without subroutine/function defined outside the
+ file
+\end_layout
+
+\begin_layout Enumerate
+with derived type, module, subroutine/function defined outside the file
+\end_layout
+
+\begin_layout Standard
+Notice that for each example, a file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{kind
+\backslash
+_map}
+\end_layout
+
+\end_inset
+
+ is provided.
+ It's useful to impose the explicit mapping of basic types of Fortran and
+ of Python.
+ The examples 2,3 are given by 
+\emph on
+J.
+ Kermode.
+ 
+\emph default
+More examples can be downloaded using git in your own working directory:
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+git clone https://github.com/jameskermodee/f90wrap.git
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The example 4 and 5 show the usage of mpi and the usage of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap
+\backslash
+_abort}
+\end_layout
+
+\end_inset
+
+ (enabled by modified 
+\series bold
+f2py
+\series default
+).
+\end_layout
+
+\begin_layout Standard
+The example cases are available in the directory 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap-test}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Example 1 : basic case
+\end_layout
+
+\begin_layout Standard
+We take a basic example that we would like to wrap :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language={[90]Fortran},basicstyle={\ttfamily},tabsize=4,keywordstyle={\color{blue}},commentstyle={\color{mypink}},backgroundcolor={\color{mylightgray}},frame=tb"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+! test.f90
+\end_layout
+
+\begin_layout Plain Layout
+
+subroutine foo(a,b)
+\end_layout
+
+\begin_layout Plain Layout
+
+	implicit none
+\end_layout
+
+\begin_layout Plain Layout
+
+	real(kind=8), intent(in) :: a
+\end_layout
+
+\begin_layout Plain Layout
+
+	integer :: b
+\end_layout
+
+\begin_layout Plain Layout
+
+	print *, a,b,a*b
+\end_layout
+
+\begin_layout Plain Layout
+
+end subroutine
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As there is no derived type nor module, nor subroutine/function outside
+ the file, it's not necessary to generate the .o and .mod files.
+ We can omit the step using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{gfortran}
+\end_layout
+
+\end_inset
+
+ and let 
+\series bold
+f2py-f90wrap 
+\series default
+manage the compilation.
+ We can proceed as followed :
+\end_layout
+
+\begin_layout Enumerate
+Generate the interface file and the Python package while providing 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{kind
+\backslash
+_map}
+\end_layout
+
+\end_inset
+
+ :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f90wrap -k kind_map -m module test.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Combine the interface file and the original file to generate the low level
+ shared object file .so :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f2py-f90wrap -c -m _module test.f90 f90wrap_toplevel.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now it's possible to call the subroutine 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{foo}
+\end_layout
+
+\end_inset
+
+ in Python just by adding :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=Python,basicstyle={\ttfamily},tabsize=4,keywordstyle={\color{blue}},commentstyle={\color{mypink}},backgroundcolor={\color{mylightgray}},frame=tb"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+import module as m
+\end_layout
+
+\begin_layout Plain Layout
+
+m.foo(3,4)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We should observe the following outputs in the screen :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figs/wrap_ex1.png
+	width 60page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+example 1 of Wrapping
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Example 2 : With derived type and module
+\end_layout
+
+\begin_layout Standard
+Let's consider the Fortran file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{example.f90}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We follow these steps to produce the wrapping :
+\end_layout
+
+\begin_layout Enumerate
+Compile the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{example.f90}
+\end_layout
+
+\end_inset
+
+ with option 
+\begin_inset Quotes eld
+\end_inset
+
+-fPIC
+\begin_inset Quotes erd
+\end_inset
+
+ (this option is mandatory) :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+gfortran -x f95-cpp-input -c -fPIC example.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Generate the interface file and the Python module :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f90wrap -m example example.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Combine the interface file and the original file to generate the low level
+ shared object file .so :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f2py-f90wrap -c -m _example f90wrap_example.f90 example.o
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We notice that only the subroutines and the types that are marked with 
+\begin_inset Quotes eld
+\end_inset
+
+public
+\begin_inset Quotes erd
+\end_inset
+
+ are visible in the wrapping.
+ One instance of type(example) is defined in the Fortran, in order to make
+ it visible, one needs to :
+\end_layout
+
+\begin_layout Enumerate
+add it in the 
+\begin_inset Quotes eld
+\end_inset
+
+public
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+add attribute 
+\begin_inset Quotes eld
+\end_inset
+
+target
+\begin_inset Quotes erd
+\end_inset
+
+ in the definition so that it will be :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+type(Example), target :: this
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The attribute 
+\begin_inset Quotes eld
+\end_inset
+
+target
+\begin_inset Quotes erd
+\end_inset
+
+ is needed because the 
+\series bold
+f90wrap
+\series default
+ use pointer to realize the wrapping of derived types (see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kermode_2020"
+literal "false"
+
+\end_inset
+
+), by adding 
+\begin_inset Quotes eld
+\end_inset
+
+target
+\begin_inset Quotes erd
+\end_inset
+
+, an instance of a derived type can be referenced by pointer.
+\end_layout
+
+\begin_layout Standard
+Moreover, in this example, we can see that 
+\series bold
+f90wrap 
+\series default
+support 
+\emph on
+interface 
+\emph default
+implementation.
+ While the operator implementation of Fortran isnot availble yet.
+\end_layout
+
+\begin_layout Subsection
+Example 3 : With derived type, module and subroutine/function defined outside
+ the Fortran files
+\end_layout
+
+\begin_layout Standard
+Let's consider the files in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{/ex
+\backslash
+_3}
+\end_layout
+
+\end_inset
+
+.
+ In this example, we would like to compute the partial derivatives of the
+ volume of a cylinder with respect to the radius and to the high using dual
+ number automatic differentiation (DNAD) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "YU20131446"
+literal "false"
+
+\end_inset
+
+.
+ The dual number type is defined in the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{DNAD.f90}
+\end_layout
+
+\end_inset
+
+ while the computation of the volumn and of the derivatives are made in
+ called in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{cyldnad.f90}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To construct the wrapping, we should follow these steps :
+\end_layout
+
+\begin_layout Enumerate
+Compile the Fortran files, notice that the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{DNAD.f90}
+\end_layout
+
+\end_inset
+
+ and the order is not arbitrary, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{DNAD.mod}
+\end_layout
+
+\end_inset
+
+ is required so that 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{cyldnad.f90}
+\end_layout
+
+\end_inset
+
+ can be compiled:
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+gfortran -x f95-cpp-input -c -fPIC DNAD.f90
+\end_layout
+
+\begin_layout Plain Layout
+
+gfortran -x f95-cpp-input -c -fPIC cyldnad.g90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Generate the interface files :
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f90wrap -m module DNAD.f90 cyldnad.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Combine the interface files to generate the low level shared object file:
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f2py-f90wrap -c -m _module DNAD.o cyldnad.o f90wrap_*.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now the wrapping is available.
+\end_layout
+
+\begin_layout Standard
+A page notebook is avaible in the same directory to illustrate the wrapping.
+\end_layout
+
+\begin_layout Subsection
+Example 4 : wrapping of mpif90
+\end_layout
+
+\begin_layout Standard
+When wrapping Fortran codes using mpi, it's possible that the mpi is managed
+ in Fortran level, then there is no need to invoke mpi in the Python and
+ we can let the Fortran codes manage the communication task.
+ However, it's necessary to compile the Fortran codes using the mpi wrapper
+ and launch the Python script importing the wrapping by 
+\emph on
+mpirun.
+\end_layout
+
+\begin_layout Standard
+If ones want to produce pre or post treatment in Python, it's indeed required
+ to invoke mpi explicitly in Python ( by importing 
+\series bold
+mpi4py
+\series default
+)
+\end_layout
+
+\begin_layout Standard
+Let's consider the files in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{/ex
+\backslash
+_4}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We follow these steps to produce the wrapping :
+\end_layout
+
+\begin_layout Enumerate
+Compile the Fortran codes with 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{mpif90}
+\end_layout
+
+\end_inset
+
+:
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+mpif90 -x f95-cpp-input -c -fPIC hello_mpi.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Generate the interface file:
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f90wrap -m hello_mpi hello_mpi.f90
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Combine the interface file and the object file to produce .so file (the specialit
+y here is that we need to specify the compiler using option 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{--f90exec=mpif90}
+\end_layout
+
+\end_inset
+
+):
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+f2py-f90wrap --f90exec=mpif90 -c -m _hello_mpi f90wrap_*.f90 *.o
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An example Python script is available, using mpirun to launch it:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+mpirun -np 4 python test.py
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Example 5 : test case of FORTRAN routine f90wrap_abort
+\end_layout
+
+\begin_layout Standard
+It's possible to call the subroutine 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap
+\backslash
+_abort}
+\end_layout
+
+\end_inset
+
+ inside the Fortran codes to manage exceptions.
+ The link is made via the command 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py-f90wrap}
+\end_layout
+
+\end_inset
+
+.
+ The Fortran codes will raise and the Python script can receive a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{RuntimeError}
+\end_layout
+
+\end_inset
+
+ when this subroutine is called.
+ So that it's possible to manage the exception in the Python level when
+ this is not done inside the Fortran codes.
+\end_layout
+
+\begin_layout Standard
+The procedure to generate the wrapping remain the same, launch the test
+ case in the directory 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{/ex
+\backslash
+_5}
+\end_layout
+
+\end_inset
+
+ to illustrate the result.
+ The Fortran file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{test
+\backslash
+_abort.f90}
+\end_layout
+
+\end_inset
+
+ is available in that directory.
+\end_layout
+
+\begin_layout Section
+Wrapping of DassFlow 2D
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{main.f90}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The program 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{main}
+\end_layout
+
+\end_inset
+
+ has been wrapped and this file has been renamed to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{call
+\backslash
+_run
+\backslash
+_model.f90}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The program 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{main}
+\end_layout
+
+\end_inset
+
+ has been divided into :
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine run (type(model) intent(inout) :: mdl, character(len=*) intent(in)
+ optional :: arg)  
+\end_layout
+
+\end_inset
+
+: perform simulations indicated by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{arg}
+\end_layout
+
+\end_inset
+
+.
+ If no 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{arg}
+\end_layout
+
+\end_inset
+
+ is given, direct simulation will be called.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine init_solver(type(model) intent(inout) :: mdl)
+\end_layout
+
+\end_inset
+
+: fill the model with initial conditions and allocate the solver.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine init_back(type(model) intent(inout) :: mdl)
+\end_layout
+
+\end_inset
+
+: initialize the adjoint variables.
+\end_layout
+
+\begin_layout Standard
+The subroutines above are callable in Python as a class method of class
+ 
+\emph on
+model
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+It contains a type(Model) that saved the mesh, and the unknown vectors.
+ The initialization process is now seperated from the main subroutine that
+ calls the time loop.
+ This modification is designed to enable re-initialization of the solver
+ in the future development (in order to run different simulations in one
+ task).
+\end_layout
+
+\begin_layout Standard
+Some useful routines are also added into this Fortran file to make the manipulat
+ion of type(Model) more convenient :
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine table_connec(type(model) intent(inout) mdl, integer(ip) dimension(:,:
+) intent(out) table)
+\end_layout
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{input.f90}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Wrapping-of-the input"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The sub-routine 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{read
+\backslash
+_input}
+\end_layout
+
+\end_inset
+
+ has been wrapped and is callable in Python.
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_common.f90}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Those sub-routines have been wrapped and are callable in Python :
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+function count_lines( charater(len=*), intent(in) :: file_name ) RESULT(
+ integer(ip) :: nb_lines )
+\end_layout
+
+\end_inset
+
+ : count the number of lines in the file 
+\emph on
+file_name
+\emph default
+.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+real(rp) FUNCTION div_by_except_0( real(rp), intent(in) :: a , b )
+\end_layout
+
+\end_inset
+
+ : compute a/b, return 0 if b is close to 0.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+FUNCTION file_name_ext( character(len=*), intent(in) ::  file_name, typ
+ ) RESULT(character(len=lchar) :: file_name_res )
+\end_layout
+
+\end_inset
+
+ : add extension 
+\emph on
+.dat
+\emph default
+, 
+\emph on
+.plt
+\emph default
+, 
+\emph on
+.bin
+\emph default
+ or 
+\emph on
+.txt
+\emph default
+(given by typ) to file_name.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine swap_* (a,b)
+\end_layout
+
+\end_inset
+
+ : swap 
+\emph on
+a 
+\emph default
+and 
+\emph on
+b.
+ 
+\emph default
+Replace * by i or r to swap two integers or floats respectively.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine swap_vec_* (vec,integer(ip), dimension(:), intent(in) :: swap)
+\end_layout
+
+\end_inset
+
+ : swap the vector 
+\emph on
+vec
+\emph default
+ using the permutation given by 
+\emph on
+swap, 
+\emph default
+if the k-th value of 
+\emph on
+swap
+\emph default
+ equals to 0, then the k-th value of 
+\emph on
+vec 
+\emph default
+will stay unchanged
+\emph on
+.
+ 
+\emph default
+The two parameters 
+\emph on
+vec 
+\emph default
+and
+\emph on
+ swap 
+\emph default
+should have the same size.
+ Replace * by i or r for vector of integers or floats respectively.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine i4col_sort_a (integer(ip), intent(in) :: m,n , integer(ip), intent(in
+out) :: a(m,n))
+\end_layout
+
+\end_inset
+
+ : Perform heap sort over 
+\emph on
+n 
+\emph default
+columns of 
+\emph on
+a 
+\emph default
+in ascending lexicographic order.
+\end_layout
+
+\begin_layout Standard
+Working variables contained in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_common.f90}
+\end_layout
+
+\end_inset
+
+ are visible in the wrapping, use get_* and set_* (functions generated by
+ 
+\emph on
+f90wrap 
+\emph default
+) ,replace * by the name of the variable, to access and modify their values.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+utilise get et set pour lire les valeurs et mettre à jour les valeurs
+\end_layout
+
+\begin_layout Plain Layout
+indiquer les fonctions fortran qui sont appelable en python
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_sw
+\backslash
+_mono.f90}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Those sub-routines have been wrapped and are callable in Python :
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine Default_values
+\end_layout
+
+\end_inset
+
+ : set Default values to input parameters, this subroutine is called inside
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{read
+\backslash
+_input}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Wrapping-of-the input"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ to complete the values that are omitted in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+inp{}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine unk_initialise(type(unk), intent(out) :: dof, type(msh), intent(in)
+ :: mesh)
+\end_layout
+
+\end_inset
+
+ : user-defined constructor of type(unk) (see the section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:What-is-f90wrap"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), this constructor is made in order to enable to create the unknown vector
+ with correct size according to the given mesh (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Wrapping-of-the m_mesh"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine unk_finalise(type(unk), intent(out) :: dof)
+\end_layout
+
+\end_inset
+
+ : the destructor of type(unk)
+\end_layout
+
+\begin_layout Standard
+The subroutines 2,3 are introduced to adapt the original Fortran codes in
+ the context of wrapping.
+\end_layout
+
+\begin_layout Standard
+This module contains input variables (for example, the choice of control
+ vector to be identified) that are specific to the shallow water model and
+ declares important structures that the all the computation depends on (such
+ as bathymetry, bcs (bounday conditions that contain moreover the hydrograph
+ and rating curve) etc.).
+ This module is wrapped so that it's possible to initialize the computation
+ in Python rather than calling the initializing sub routine using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{call
+\backslash
+_run
+\backslash
+_model.f90}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+By deallocating the structures in this module, it will be possible to re-initial
+ize the solver.
+\end_layout
+
+\begin_layout Standard
+It contains the type(unk) that is used to represent the unknown vectors.
+\end_layout
+
+\begin_layout Standard
+The attribute 
+\emph on
+target 
+\emph default
+is added to the variables of derived type declared in this module (for example
+ 
+\emph on
+bc
+\emph default
+), which allows the Python codes to manipulate those variables.
+ (
+\emph on
+f90wrap '
+\emph default
+s
+\emph on
+ 
+\emph default
+implementation is based on the usage of pointer, it's necessary to add the
+ attribute 
+\emph on
+target
+\emph default
+ so that a variable can be pointed.
+ This step is not mandatory for variables of basic types of Fortran while
+ it's mandatory for variable of derived types.
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_mesh.f90}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Wrapping-of-the m_mesh"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This module contains types to represent meshes, cells, edges and nodes.
+ The constructor of type(msh) is defined in the module :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+SUBROUTINE msh_initialise(type(msh), intent(inout) :: mesh)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The reading of the mesh is done by calling this subroutine.
+\end_layout
+
+\begin_layout Standard
+This module is wrapped so that a user can directly manipulate all the attribute
+ of a type(msh) inside of a Python scripte.
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_linear
+\backslash
+_algebra.f90}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This module doesn't contain subroutines.
+\end_layout
+
+\begin_layout Standard
+This module is included in the wrapping because the type(vec2d) (defined
+ in this module) is used in the module 
+\emph on
+m_mesh
+\emph default
+.
+
+\emph on
+ 
+\emph default
+Without this module, it will be impossible to (for example) access to the
+ gravity center coordinates of a particular cell in the mesh, as those coordinat
+es are represented by the type(vec2d).
+\end_layout
+
+\begin_layout Standard
+The pre-processing flag 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{CPP
+\backslash
+_PASS}
+\end_layout
+
+\end_inset
+
+ is used in order to remove the operators ( for example the summing two
+ instances of vec2d), as the behaviour of the wrapping of the Fortran's
+ interface implementation realized by 
+\emph on
+f90wrap 
+\emph default
+is not clear.
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_adjoint.f90}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The adjoint calculation uses variables that terminate with 
+\begin_inset Quotes eld
+\end_inset
+
+_back
+\begin_inset Quotes erd
+\end_inset
+
+ (used in the files generated by 
+\emph on
+Tapenade
+\emph default
+) to represent gradients of the cost function with respect to a particular
+ control variable.
+\end_layout
+
+\begin_layout Standard
+This module provide an array of real numbers 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{control}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Wrapping of the file 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_tap
+\backslash
+_vars.f90}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This subroutine have been wrapped and is callable in Python :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},breaklines=true,tabsize=4"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+subroutine alloc_back_vars(type(unk), intent(inout) :: dof0_back, dof_back,
+ type(msh), intent(in) :: msh)
+\end_layout
+
+\end_inset
+
+ : allocate the variables *_back (Declared in current module and the module
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_adjoint.f90}
+\end_layout
+
+\end_inset
+
+.
+ Depreciated, use the subroutine 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{init
+\backslash
+_back}
+\end_layout
+
+\end_inset
+
+ of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{call
+\backslash
+_run
+\backslash
+_model.f90}
+\end_layout
+
+\end_inset
+
+ instead.
+ ).
+\end_layout
+
+\begin_layout Chapter
+Adding new features into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Through FORTRAN codes
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+How to do it ?
+\end_layout
+
+\begin_layout Plain Layout
+If I want to include gr4 model for example ...
+\end_layout
+
+\begin_layout Plain Layout
+How to adapt makefile so that new files in the src can be included in the
+ wrapping ?
+\end_layout
+
+\begin_layout Plain Layout
+declare a type fortran, it will be visible in python through f9àwrap
+\end_layout
+
+\begin_layout Plain Layout
+if you want a variable to be visible in python, it's necessary to add 
+\begin_inset Quotes eld
+\end_inset
+
+target
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Through Python codes
+\end_layout
+
+\begin_layout Standard
+In this section, we explain how to add functionalies to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ through Python.
+\end_layout
+
+\begin_layout Subsection
+Recall of Python package structure
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Recall-of-Python"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let's recall first the files organization of a Python package.
+ Assume that we have those files and directories (marked by (d)):
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/dassflow2d (d)
+\end_layout
+
+\begin_layout Plain Layout
+
+	module1.py
+\end_layout
+
+\begin_layout Plain Layout
+
+	/assim (d)
+\end_layout
+
+\begin_layout Plain Layout
+
+		minimization.py
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We desire to call the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ packge in a Python script by adding this lines :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+import dassflow2d
+\end_layout
+
+\begin_layout Plain Layout
+
+from dassflow2d import assim
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Python interpreter can not recognize the previous two lines and an error
+ will occur if we launch a Python script that contains those two lines.
+ It's necessary to add the Python script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ in both of the directories 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d/assim}
+\end_layout
+
+\end_inset
+
+.
+ The script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ tells the Python interpreter to consider the directory containing it as
+ a Python module.
+ The script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d}
+\end_layout
+
+\end_inset
+
+ should contain at least :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from .
+ import module1
+\end_layout
+
+\begin_layout Plain Layout
+
+from .
+ import assim
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Similarly, the script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d/assim}
+\end_layout
+
+\end_inset
+
+ should contain at least:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from .
+ import minimization
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If the script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ contains a function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow
+\backslash
+_function()}
+\end_layout
+
+\end_inset
+
+, (assume that it's the init script of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d}
+\end_layout
+
+\end_inset
+
+ ), it can be called by using :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\ttfamily},tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+dassflow2d.dassflow_function()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Update the Python script include.py
+\end_layout
+
+\begin_layout Standard
+According to the previous paragraph, it's necessary to add in the init script
+ the list of sub modules.
+ The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ inside the root of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ is generated automatically by 
+\emph on
+f90wrap, 
+\emph default
+in order to write into this script, we should use the option 
+\begin_inset Quotes eld
+\end_inset
+
+
+\emph on
+-I
+\emph default
+
+\begin_inset Quotes erd
+\end_inset
+
+ of the command 
+\emph on
+f90wrap 
+\emph default
+and the content of the file after 
+\begin_inset Quotes eld
+\end_inset
+
+-I
+\begin_inset Quotes erd
+\end_inset
+
+ will be written into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{
+\backslash
+_
+\backslash
+_init
+\backslash
+_
+\backslash
+_.py}
+\end_layout
+
+\end_inset
+
+ once it is generated.
+\end_layout
+
+\begin_layout Standard
+The script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{include.py}
+\end_layout
+
+\end_inset
+
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+src{}
+\backslash
+wrappers{}
+\end_layout
+
+\end_inset
+
+ is included by the option 
+\begin_inset Quotes eld
+\end_inset
+
+-I
+\begin_inset Quotes erd
+\end_inset
+
+.
+ And it contains :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=Python,basicstyle={\ttfamily},tabsize=4,keywordstyle={\color{blue}},commentstyle={\color{mypink}},backgroundcolor={\color{mylightgray}},frame=tb"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from .
+ import utils 
+\end_layout
+
+\begin_layout Plain Layout
+
+from .
+ import post 
+\end_layout
+
+\begin_layout Plain Layout
+
+from .
+ import assim
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Update the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Copying the Python sub modules is automated by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+, it's needed to modifiy the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+ in order to take into account a new Python sub-module.
+\end_layout
+
+\begin_layout Standard
+The macros 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{POST
+\backslash
+_PY, UTILS
+\backslash
+_PY, ASSIM
+\backslash
+_PY}
+\end_layout
+
+\end_inset
+
+ are already available in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+ and they contain respectively the files of each sub-module.
+ Moreover, they are added into the dependancies of the 
+\series bold
+wrappers/_${module_name}.so
+\series default
+ (this shared object file is created by the tool 
+\emph on
+f90wrap
+\emph default
+).
+\end_layout
+
+\begin_layout Standard
+Please refer to corresponding part of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+make{}
+\end_layout
+
+\end_inset
+
+ to know about the syntax.
+\end_layout
+
+\begin_layout Section
+Applying the scipy optimizer
+\end_layout
+
+\begin_layout Standard
+In this section, we will show how we have added the scipy optimizer into
+ the wrapping of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+ to identify the control vector.
+ We would like to use the method : 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scipy.optimize.minimize}
+\end_layout
+
+\end_inset
+
+ to call minimzation methods.
+ The detailed documentation of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scipy.optimize.minimize}
+\end_layout
+
+\end_inset
+
+ is available online
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ We need to construct the inputs of the function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{minimize}
+\end_layout
+
+\end_inset
+
+ so that the minimization can be performed correctly.
+ In order to call the LBFGS method, The function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{minimize}
+\end_layout
+
+\end_inset
+
+ requires the following intputs:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{func}
+\end_layout
+
+\end_inset
+
+ : a function ( callable object) that takes the control vector and returns
+ the cost function.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{x0}
+\end_layout
+
+\end_inset
+
+ : the first guess, this is already managed in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+DassFlow{}
+\end_layout
+
+\end_inset
+
+.
+ It's sufficient to extract the initial control vector once it's allocated
+ and initialized.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{method}
+\end_layout
+
+\end_inset
+
+ : set to be 
+\begin_inset Quotes eld
+\end_inset
+
+L-BFGS-B
+\begin_inset Quotes erd
+\end_inset
+
+, this will solve indeed the contrained minimization problem.
+ We will not give any bound for the control vector so only the non-constrained
+ problem will be considered.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{jac}
+\end_layout
+
+\end_inset
+
+ : a function that returns the gradient of cost function.
+ Otherwise, if 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{jac=True}
+\end_layout
+
+\end_inset
+
+, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{func}
+\end_layout
+
+\end_inset
+
+ should also return the gradient.
+ Here, we choose the case where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{jac=True}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{bounds}
+\end_layout
+
+\end_inset
+
+ : the bounds for the contrained problem, not considered here.
+ So we set it to 
+\series bold
+None
+\series default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{options}
+\end_layout
+
+\end_inset
+
+ : the dictionary of options for LBFGS.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{callback}
+\end_layout
+
+\end_inset
+
+ : the callback function, this function is called after each successful
+ iteration.
+ We would like to use this function to write each iteration.
+\end_layout
+
+\begin_layout Standard
+We notice that the main difficulty is to constuct 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{func}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{callback}
+\end_layout
+
+\end_inset
+
+.
+ There are already two Fortran subroutines that can, respectively, compute
+ the cost function and the gradient and wirte the output.
+ They use the allocatable global variable 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{control}
+\end_layout
+
+\end_inset
+
+ of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{m
+\backslash
+_adjoint}
+\end_layout
+
+\end_inset
+
+ to perform computation or outputs.
+ Furthermore, they requires the initial unknown vector (
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dof0}
+\end_layout
+
+\end_inset
+
+), the unknown vector 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dof}
+\end_layout
+
+\end_inset
+
+ and the mesh.
+\end_layout
+
+\begin_layout Standard
+For constructing 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{func}
+\end_layout
+
+\end_inset
+
+, the strategy starts by defining, in the Fortran level inside the file
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{call
+\backslash
+_run
+\backslash
+_model.f90}
+\end_layout
+
+\end_inset
+
+, a subroutine that takes :
+\end_layout
+
+\begin_layout Itemize
+a type(Model) variable that contains the initial unknown vector, the unknown
+ vector and the mesh,
+\end_layout
+
+\begin_layout Itemize
+a intent(in) vector whose values will be written into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{control}
+\end_layout
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+a variable to save the cost function,
+\end_layout
+
+\begin_layout Itemize
+a variable to save the gradient.
+\end_layout
+
+\begin_layout Standard
+This subroutine will be wrapped and will be called later in a callable object
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dass
+\backslash
+_func}
+\end_layout
+
+\end_inset
+
+ (see the source code of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{assim/utils.py}
+\end_layout
+
+\end_inset
+
+) that will be instantiated using a type(Model) and that will be given to
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{minimize}
+\end_layout
+
+\end_inset
+
+.
+ The main reason is that 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+fwrap
+\end_layout
+
+\end_inset
+
+ doesn't allow to create a function that returns a tuple while the minimization
+ method requires it.
+ We construct the function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dass
+\backslash
+_func}
+\end_layout
+
+\end_inset
+
+ so that it returns cost and gradient in a tuple.
+\end_layout
+
+\begin_layout Standard
+The strategy for constructing callback is similar.
+ We will define a callable object in Python and instantiate it using an
+ instance of type(Model).
+ So that it can see the instance of type(Model) even though only the control
+ vector is inputed.
+ In order to satisfy some special request of LBFGS, the class the callable
+ object is inherited for LBFGS (see 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{assim/lbfgs.py}
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+LBFGS 
+\series default
+method is sequential.
+ While it's still possible to evaluate the cost function and its gradient
+ by using mpi, which has a clear effect to reduce the time of each iteration.
+ The implementation is made in the Python script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{assim/lbfgs
+\backslash
+_mpi.py}
+\end_layout
+
+\end_inset
+
+.
+ The idea is the same as 
+\series bold
+m1qn3 
+\series default
+in parallel (implemented by Fortran), it consists of calling the minimization
+ process by the main proc and other processors will participate in the evalution
+ of cost function/ gradient only when the evaluation is required by the
+ minimization process.
+ As the other processors can't know in advance when to stop the execution,
+ they will preform the adjoint model (to calculate cost funciton / gradient)
+ in a loop until a stopping signal is sent by the main processor.
+ Please find the details in the commented Python script 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{assim/lbfgs
+\backslash
+_mpi.py}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It's possible to add regularization term in the minimization process.
+ To do so, it requires to post-process the outputs of the callable object
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dass
+\backslash
+_func}
+\end_layout
+
+\end_inset
+
+ by adding manually the regularization term and its gradient to the cost
+ function and gradient.
+\end_layout
+
+\begin_layout Chapter
+FORTRAN module organization (not finished yet)
+\end_layout
+
+\begin_layout Section
+call_run_model.f90
+\end_layout
+
+\begin_layout Standard
+This module contains a type(Model) that will be directly manipulated by
+ Python script.
+\end_layout
+
+\begin_layout Section
+m_common.f90
+\end_layout
+
+\begin_layout Standard
+This module contains the parameters of the computation kernel.
+\end_layout
+
+\begin_layout Section
+m_linear_algebra.f90
+\end_layout
+
+\begin_layout Standard
+This module contains basic types for computation and defines their operators.
+\end_layout
+
+\begin_layout Chapter
+Warning for the current version / suggestion for the future versions
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+LBFGS 
+\series default
+minimization in sequential and in parallel mode are not implemented in the
+ same Python script, they should be merged in a single Python script for
+ more convenient uses.
+\end_layout
+
+\begin_layout Enumerate
+A problem is detected when performing in the parallel mode the minimization
+ (both 
+\series bold
+m1qn3 and LBFGS
+\series default
+) with respect to 
+\series bold
+bathymetry
+\series default
+ using the test case channel adj.
+ The gradient of cost function seems not to be performed correctly.
+ This problem may be caused by an error in the partitionning of the mesh
+ or an error in mpi/adjoint (?).
+ 
+\series bold
+Make the gradient test (!)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "references"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

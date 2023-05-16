@@ -1,0 +1,800 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dassflow2d.core.model &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dassflow2d/core/model';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <h1>Source code for dassflow2d.core.model</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">dassflow2d</span>         <span class="c1"># package</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>         <span class="c1"># numpy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">os</span>                <span class="c1"># for system discussion (get path, etc...)</span>
+<span class="kn">import</span> <span class="nn">re</span>                 <span class="c1"># for grep</span>
+<span class="kn">import</span> <span class="nn">h5py</span>                <span class="c1"># for save file</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>        <span class="c1"># for read tables</span>
+<span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">version</span>  <span class="c1"># get package version</span>
+<span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>    <span class="c1"># plot grids</span>
+
+
+
+<span class="kn">from</span> <span class="nn">dassflow2d.core.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">dassflow2d.core.meshing</span> <span class="kn">import</span> <span class="n">Meshing</span>
+<span class="kn">from</span> <span class="nn">dassflow2d.core.boundary</span> <span class="kn">import</span> <span class="n">Boundary</span>
+<span class="kn">from</span> <span class="nn">dassflow2d.core.output</span> <span class="kn">import</span> <span class="n">Output</span>
+<span class="kn">from</span> <span class="nn">dassflow2d.core.param</span> <span class="kn">import</span> <span class="n">Param</span>
+<span class="kn">from</span> <span class="nn">dassflow2d.core.min</span> <span class="kn">import</span> <span class="n">Min</span>
+<span class="kn">from</span> <span class="nn">dassflow2d.core.obs</span> <span class="kn">import</span> <span class="n">Obs</span>
+
+
+
+
+<span class="c1">#####################</span>
+<span class="c1"># Main class</span>
+<span class="c1">#######################</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dassflowmodel&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="dassflowmodel"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.html#dassflow2d.dassflowmodel">[docs]</a><span class="k">class</span> <span class="nc">dassflowmodel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main object of ``DassFlow-2d``.</span>
+
+<span class="sd">    &quot;subclasses&quot;</span>
+<span class="sd">    -------------</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dassflow_dir: str,   default None</span>
+<span class="sd">                    Path to the root of your dassflow2d-wrap directory </span>
+<span class="sd">                    </span>
+<span class="sd">    bin_dir: str, default None</span>
+<span class="sd">            Path to your bin_directory, the configuration file input.txt must be at the root of bin_dir.</span>
+
+<span class="sd">    run_type: str, default &quot;direct&quot;</span>
+<span class="sd">             The type of simulation you want to run, can be either</span>
+<span class="sd">            - &#39;direct&#39; : if you want to run the forward code</span>
+<span class="sd">            - &#39;min&#39;    : if you want to perform an inference</span>
+<span class="sd">            (Variational Data Assimilation using the adjoint code)</span>
+<span class="sd">            - &#39;grad&#39;   : if you want to perform a gradient based optimization</span>
+<span class="sd">    clean: if True,  keeps only input files in bin directoy (apply all command &quot;make cleanxxx&quot;  existing)</span>
+
+<span class="sd">    **kwarg: not used, bonus argument : pass any arguments to a unique function of your choice within this function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="c1">#=================================================================#</span>
+<span class="c1"># INITIALISATION                                                  #</span>
+<span class="c1">#=================================================================#</span>
+<span class="c1">#dassflow_dir</span>
+<span class="c1">#       dassflow_dir: str, </span>
+<span class="c1">#             absolute path to the root of your dassflow2d-wrap directory   </span>
+<div class="viewcode-block" id="dassflowmodel.__init__"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.__init__.html#dassflow2d.dassflowmodel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bin_dir</span><span class="p">,</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="n">run_type</span><span class="o">=</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span><span class="n">clean</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This initialize **fortran** instance and some **python** objects</span>
+
+
+<span class="sd">       **Parameters**</span>
+<span class="sd">                  </span>
+<span class="sd">       bin_dir: str, default None</span>
+<span class="sd">             absolute path to your bin_directory, the configuration file input.txt must be at the root of bin_dir             </span>
+<span class="sd">       hdf5_path: str, default None</span>
+<span class="sd">             absolute path to your hdf5 file (where you will save results)       </span>
+<span class="sd">       run_type: str, default &quot;direct&quot;</span>
+<span class="sd">             The type of simulation you want to run, can be either</span>
+<span class="sd">             - &#39;direct&#39; : if you want to run the forward code</span>
+<span class="sd">             - &#39;min&#39;    : if you want to perform an inference</span>
+<span class="sd">             (Variational Data Assimilation using the adjoint code)</span>
+<span class="sd">             - &#39;grad&#39;   : if you want to perform a gradient based optimization</span>
+<span class="sd">             </span>
+<span class="sd">             </span>
+<span class="sd">       clean: boolean,</span>
+<span class="sd">             if True,  keeps only input files in bin directoy (apply all command &quot;make cleanxxx&quot;  existing)</span>
+<span class="sd">             </span>
+<span class="sd">             </span>
+<span class="sd">       **Return**</span>
+<span class="sd">       </span>
+<span class="sd">       </span>
+<span class="sd">       python variable:</span>
+<span class="sd">          </span>
+<span class="sd">             - self.bin_dir</span>
+<span class="sd">             - self.dassflow_dir</span>
+<span class="sd">             - self.run_type</span>
+<span class="sd">             - self.config: dict configuration data stored in a dictionary</span>
+<span class="sd">             </span>
+<span class="sd">       fortran:</span>
+<span class="sd">                </span>
+<span class="sd">             - &quot;self.kernel.mpi&quot;: mpi setup information</span>
+<span class="sd">             - &quot;config&quot;: global variables in m_common and m_model</span>
+<span class="sd">             - &quot;kernel&quot;: &quot;model&quot; in smash --&gt; this correspond to the elements that are directly and continuously interfaced to fortran kernel</span>
+
+<span class="sd">       </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># ------------ FIRST mpi treatment------------------</span>
+        <span class="c1"># this is necessary for both mpi and non mpi cases in order to initialise some variables</span>
+        <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_mpi</span><span class="o">.</span><span class="n">init_mpi</span><span class="p">()</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_mpi</span><span class="o">.</span><span class="n">get_proc</span><span class="p">()</span> <span class="c1"># get the rank and number of processors</span>
+        <span class="n">nproc</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_mpi</span><span class="o">.</span><span class="n">get_np</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mpi</span> <span class="o">=</span> <span class="p">[</span><span class="n">rank</span><span class="p">,</span> <span class="n">nproc</span><span class="p">]</span>
+        
+        
+        
+        
+        <span class="k">if</span> <span class="n">run_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;grad&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;argument run_type incorect, must be either &#39;min&#39;, &#39;direct&#39; or &#39;grad&#39; &quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------ store inputs as data within DassFlowModel------------------</span>
+        <span class="c1"># store main path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span>        <span class="o">=</span> <span class="n">bin_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span>      <span class="o">=</span> <span class="n">hdf5_path</span>
+        <span class="c1"># run type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_type</span>     <span class="o">=</span> <span class="n">run_type</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean</span> <span class="o">=</span> <span class="n">clean</span>
+        <span class="c1"># kwar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span>        <span class="o">=</span> <span class="n">kwargs</span>
+
+        <span class="c1"># ------------ Define Default values------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+        <span class="c1"># ------------ Clean files ------------------</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;clean=&quot;</span><span class="p">,</span> <span class="n">clean</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clean</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/res/&quot;</span><span class="p">):</span>
+                	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/res/*&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/res directory</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/min/&quot;</span><span class="p">):</span>
+                	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/min/*&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/res directory</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/msh/&quot;</span><span class="p">):</span>
+                	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/msh/&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/msh directory</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/restart.bin&quot;</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/restart.bin&quot;</span><span class="p">)</span>   <span class="c1"># removes all in bin_dir/msh directory</span>
+
+
+        <span class="c1"># ------------ input file treatment------------------</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">)</span>                     <span class="c1"># open bin directory</span>
+        <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">read_input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/input.txt&quot;</span><span class="p">)</span> <span class="c1"># read input    and update in fortrnan kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>                     <span class="c1"># update configuration in python from fortran kerne value</span>
+
+
+        <span class="c1"># ------------ Model = mdl in fortran, kernel in python ------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">Model</span><span class="p">()</span></div>
+        
+
+<div class="viewcode-block" id="dassflowmodel.init_mesh"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.init_mesh.html#dassflow2d.dassflowmodel.init_mesh">[docs]</a>    <span class="k">def</span> <span class="nf">init_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize mesh instance, coth in fortran kernel and python.</span>
+<span class="sd">        Also initialise fortran kernel solver</span>
+<span class="sd">        </span>
+<span class="sd">        parameters:</span>
+<span class="sd">            self: dassflow2d object (with initialised self.bin_dir, dans self.config.mesh_name)</span>
+<span class="sd">            </span>
+<span class="sd">        return:</span>
+<span class="sd">            self.meshing: dassflow2d.core.Meshing object initialised with fortran kernel values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">mesh</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_mesh</span><span class="o">.</span><span class="n">msh</span><span class="p">()</span>
+        <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">init_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshing</span> <span class="o">=</span> <span class="n">Meshing</span><span class="p">(</span><span class="n">mesh_fortran</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">mesh</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="dassflowmodel.init_dof"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.init_dof.html#dassflow2d.dassflowmodel.init_dof">[docs]</a>    <span class="k">def</span> <span class="nf">init_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize dof (h,u,v) fortran kernel instance.</span>
+<span class="sd">        </span>
+<span class="sd">        parameters:</span>
+<span class="sd">            self: dassflow2d object (with initialised self.bin_dir, dans self.config.mesh_name)</span>
+<span class="sd">            require **self.bin_dir**</span>
+<span class="sd">            </span>
+<span class="sd">        return:</span>
+<span class="sd">            self.meshing: dassflow2d.core.Meshing object initialised with fortran kernel values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">unk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">dof0</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">unk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="p">)</span>        </div>
+        
+<div class="viewcode-block" id="dassflowmodel.init_fortran"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.init_fortran.html#dassflow2d.dassflowmodel.init_fortran">[docs]</a>    <span class="k">def</span> <span class="nf">init_fortran</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>       
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform all last fortran kernel initialisatins</span>
+<span class="sd">        </span>
+<span class="sd">        it accounts for:</span>
+<span class="sd">            - initial conditions (from ic.bin file / restart.bin / dof.init)</span>
+<span class="sd">            - Boundary condition table of values</span>
+<span class="sd">            - some rain treatment</span>
+<span class="sd">            - observation station treatment if self.config.use_obs = 1</span>
+<span class="sd">        </span>
+<span class="sd">        parameters:</span>
+<span class="sd">            self: dassflow2d object (with initialised self.bin_dir, dans self.config.mesh_name)</span>
+<span class="sd">            requires dassflowmodel.__init__() dassflowmodel.init_mesh(), dassflowmodel.init_dof() already performed</span>
+<span class="sd">            </span>
+<span class="sd">        return:</span>
+<span class="sd">            self.boundary: dassflow2d.core.Boundary object initialised with fortran kernel values</span>
+<span class="sd">            and initialiased fortran kernel   valeus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">init_fortran</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span>  <span class="o">=</span>  <span class="n">Boundary</span><span class="p">(</span><span class="n">mesh_pyvista</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span> <span class="n">mesh_fortran</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">get_mesh_corresp</span><span class="p">()</span></div>
+        
+    <span class="k">def</span> <span class="nf">init_fortran_mpi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        light init fortran so that mpi is ok</span>
+<span class="sd">        (no python interaction)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">init_fortran</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
+    
+
+    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>       
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get parameters values from fortran kernel and put them in dassflowmodel class</span>
+<span class="sd">        </span>
+<span class="sd">        it accounts for:</span>
+<span class="sd">            - friction.manning</span>
+<span class="sd">          </span>
+<span class="sd">        return:</span>
+<span class="sd">            self.param: dassflow2d.core.param object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    	
+<div class="viewcode-block" id="dassflowmodel.init_all"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.init_all.html#dassflow2d.dassflowmodel.init_all">[docs]</a>    <span class="k">def</span> <span class="nf">init_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform in correct order all fortran initialisation</span>
+<span class="sd">        build ready to run model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_mesh</span><span class="p">()</span>
+        <span class="c1"># initialise dof structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_dof</span><span class="p">()</span> 
+        <span class="c1"># initialise remaining structures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_fortran</span><span class="p">()</span>
+        <span class="c1"># source param kernel data to python</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">()</span></div>
+<span class="c1">#=================================================================#</span>
+<span class="c1"># RUN                                                              #</span>
+<span class="c1">#=================================================================#</span>
+<div class="viewcode-block" id="dassflowmodel.run"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.run.html#dassflow2d.dassflowmodel.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run Dassflow model</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+
+<span class="sd">        when all values are correctly set up perform wished simumation</span>
+<span class="sd">        </span>
+
+<span class="sd">        **Parameters**</span>
+<span class="sd">             </span>
+<span class="sd">        self: dassflowmodel</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+
+<span class="sd">        **Requirement**</span>
+<span class="sd">        </span>
+<span class="sd">        kernel: dassflow.kernel initialised object</span>
+<span class="sd">        </span>
+<span class="sd">        run_type: str, default &quot;direct&quot;</span>
+<span class="sd">             - &#39;direct&#39; : if you want to run the forward code</span>
+<span class="sd">             - &#39;min&#39;    : if you want to perform an inference</span>
+<span class="sd">             (Variational Data Assimilation using the adjoint code)</span>
+<span class="sd">             - &#39;grad&#39;   : if you want to perform a gradient based optimization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="n">arg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">Output</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_type</span> <span class="o">==</span><span class="s2">&quot;min&quot;</span><span class="p">:</span>
+        	<span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">Min</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span></div>
+
+
+<span class="c1">#=================================================================#</span>
+<span class="c1"># Save result                                                     #</span>
+<span class="c1">#=================================================================#</span>
+<div class="viewcode-block" id="dassflowmodel.save_all"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.save_all.html#dassflow2d.dassflowmodel.save_all">[docs]</a>    <span class="k">def</span> <span class="nf">save_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save all elements</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">save_res</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span> </div>
+
+
+
+
+<span class="c1">#================================================================================================================================#</span>
+<span class="c1">#  PLOT result, using hdf5 file and grid object</span>
+<span class="c1">#================================================================================================================================#</span>
+
+
+
+
+    <span class="c1"># self : class model</span>
+    <span class="c1"># my_hdf5_file :  &lt;HDF5 file &quot;simu.hdf5&quot; (mode r)&gt; built by build_hdf5</span>
+    <span class="c1"># what : one of the spatial variables : &quot;h&quot;, &quot;u&quot;, &quot;v&quot;, &quot;bathy&quot;, etc..</span>
+    <span class="c1"># what can be &quot;zs&quot;</span>
+    <span class="c1"># when : id (integer) of timestep, can be also &quot;initial&quot;, or &quot;final&quot;</span>
+    <span class="c1"># title plot : the title of the plot</span>
+
+<div class="viewcode-block" id="dassflowmodel.plot_var"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.plot_var.html#dassflow2d.dassflowmodel.plot_var">[docs]</a>    <span class="k">def</span> <span class="nf">plot_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_hdf5_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;bathy&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot; title &quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;tmp&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot wished variable at wished time, sourcing hdf5 file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        path_hdf5_file: str, default self.bin_dir + &quot;/res/&quot; + &quot;simu.hdf5&quot;</span>
+<span class="sd">                  Path to the HDF5 file generated by DassFlowModel.save_res</span>
+<span class="sd">                  The variables to plot are sourced from this file</span>
+
+<span class="sd">        what: str, default=&quot;bathy&quot;</span>
+<span class="sd">                 which spatial variables to plot? must be one of the following :</span>
+<span class="sd">                - h</span>
+<span class="sd">                - u</span>
+<span class="sd">                - v</span>
+<span class="sd">                - bathy</span>
+<span class="sd">                - manning_alpha</span>
+<span class="sd">                - zs</span>
+<span class="sd">                - vel : for velocity (sqrt(u2+v2) )</span>
+<span class="sd">                **note that zs and vel are calculated within the function**</span>
+
+<span class="sd">        when: int, default=0</span>
+<span class="sd">                the number of the time step you want to plot</span>
+<span class="sd">                can also be a string: **&quot;initial&quot;** for the initial condition (the 0th timestep) and **&quot;final&quot;**  for the last timestep</span>
+
+<span class="sd">        title_plot: str, default = &quot;title&quot;,</span>
+<span class="sd">                    title of the plot</span>
+
+<span class="sd">        save_plot: logical, default = False</span>
+<span class="sd">                Do you wish to save the plot or not</span>
+<span class="sd">        filename: str, default = &quot;tmp&quot;</span>
+<span class="sd">                Path to fsave the graphic file to. (see Plotter.save_graphic)</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">         no example</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        plot_grid: similar method but where you can define your own variable to plot</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">my_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span>
+        <span class="k">if</span> <span class="n">path_hdf5_file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="p">:</span>
+            <span class="n">path_hdf5_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span> <span class="o">+</span> <span class="s2">&quot;/res/&quot;</span> <span class="o">+</span> <span class="s2">&quot;simu.hdf5&quot;</span>
+
+        <span class="n">my_hdf5_file</span> <span class="o">=</span>  <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path_hdf5_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">when</span> <span class="o">==</span> <span class="s2">&quot;initial&quot;</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">when</span> <span class="o">=</span>  <span class="mi">0</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">when</span> <span class="o">==</span> <span class="s2">&quot;final&quot;</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">when</span> <span class="o">=</span>  <span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;spatial_var/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+
+        <span class="n">time_corresp</span> <span class="o">=</span> <span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:]</span> <span class="c1"># not used yet but could be used for title</span>
+
+
+        <span class="k">if</span> <span class="n">what</span> <span class="o">==</span> <span class="s2">&quot;zs&quot;</span><span class="p">:</span>
+                <span class="n">my_scalar</span> <span class="o">=</span> <span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;spatial_var/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;bathy&quot;</span><span class="p">)][:,</span><span class="n">when</span><span class="p">]</span>  <span class="o">+</span> <span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;spatial_var/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">)][:,</span><span class="n">when</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">what</span> <span class="o">==</span> <span class="s2">&quot;vel&quot;</span><span class="p">:</span>
+            <span class="n">my_scalar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;spatial_var/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)][:,</span><span class="n">when</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>  <span class="o">+</span> <span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;spatial_var/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">)][:,</span><span class="n">when</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">my_scalar</span> <span class="o">=</span> <span class="n">my_hdf5_file</span><span class="p">[</span><span class="s2">&quot;spatial_var/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">what</span><span class="p">)][:,</span><span class="n">when</span><span class="p">]</span>
+
+
+        <span class="n">title_scale_bar</span> <span class="o">=</span> <span class="n">what</span> <span class="o">+</span> <span class="s2">&quot;  [USI]&quot;</span>
+
+        <span class="n">sargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">vertical</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="n">title_scale_bar</span><span class="p">,</span> <span class="n">position_y</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">position_x</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="p">)</span>
+        <span class="c1"># Plotter instance</span>
+        <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+        <span class="c1"># mesh plot</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">my_mesh</span><span class="p">,</span> <span class="n">scalars</span> <span class="o">=</span> <span class="n">my_scalar</span><span class="p">,</span> <span class="n">scalar_bar_args</span><span class="o">=</span><span class="n">sargs</span><span class="p">,</span>
+                 <span class="n">show_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">()</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">add_title</span><span class="p">(</span><span class="n">title_plot</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">save_graphic</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">.svg&quot;</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="n">title_plot</span><span class="p">)</span>
+
+        <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">plotter</span><span class="p">)</span></div></div>
+        
+        
+        
+        
+        
+        
+</pre></div>
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+</div>
+
+<div class="toc-item">
+  
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

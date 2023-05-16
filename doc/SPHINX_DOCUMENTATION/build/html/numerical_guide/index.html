@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Numerical Guide &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'numerical_guide/index';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="License" href="../license/index.html" />
+    <link rel="prev" title="dassflow2d.wrapping.m_model.unk.init_array_grad_z" href="../reference/dassflow2d/dassflow2d.wrapping.m_model.unk.init_array_grad_z.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="#">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="#">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <div class="section" id="numerical-guide">
+<span id="id1"></span><h1>Numerical Guide<a class="headerlink" href="#numerical-guide" title="Permalink to this heading">#</a></h1>
+<p><strong>Renommer en Numerical Guide, place l’onglet avant le dev guide dans le bandeau</strong></p>
+</div>
+<div class="section" id="dassflow-capabilities-at-a-glance">
+<h1>DassFLow capabilities at a glance<a class="headerlink" href="#dassflow-capabilities-at-a-glance" title="Permalink to this heading">#</a></h1>
+<details class="sphinx-bs dropdown card mb-3 shadow fade-in-slide-down">
+<summary class="summary-title card-header font-weight-bolder">
+DassFlow capabilities at a glance<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<p class="card-text"><strong>Direct/forward model</strong></p>
+<blockquote>
+<div><p class="card-text">The first forward model is based on the bidimensional Shallow Water equations written here with Manning-Strickler friction parameterization.</p>
+<p class="card-text">On a computational domain <span class="math notranslate nohighlight">\(\Omega\in\mathbb{\mathbb{\mathbb{R}}}^{2}\)</span> and for a time interval <span class="math notranslate nohighlight">\(\left[0,T\right]\)</span>, the equations numerically resolved are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\left\{ \begin{array}{lclcc}
+    \partial_{t}h+div(\mathbf{q}) &amp; = &amp; 0 &amp; \textrm{in} &amp; \text{Ω}\times]0,T]\\
+    \\
+    \partial_{t}\mathbf{q}+div\left(\dfrac{\mathbf{q}\otimes\mathbf{q}}{h}+g\dfrac{h^{2}}{2}\right) &amp; = &amp; -gh\mathbf{\nabla}z_{b}-g\dfrac{n^{2}\left\Vert \mathbf{q}\right\Vert }{h^{7/3}}\mathbf{q} &amp; \textrm{in} &amp; \text{Ω}\times]0,T]
+    \end{array}\right.
+:label: SWE\end{split}\]</div>
+<p class="card-text">with provided initial and boundary conditions.  Different types of boundary conditions can be prescribed at user-defined subsets of the computational domain to consider walls, inflows or outflows (see section <strong>todo reference</strong>).</p>
+<p class="card-text">The state variables are the water depth h and the local discharge <span class="math notranslate nohighlight">\(\mathbf{q}=h\mathbf{u}\)</span>, where <span class="math notranslate nohighlight">\(\mathbf{u}=(u,v)^{T}\)</span> is the depth-averaged velocity vector. <span class="math notranslate nohighlight">\(g\)</span> is the magnitude of the gravity, <span class="math notranslate nohighlight">\(z_{b}\)</span> the bed elevation and <span class="math notranslate nohighlight">\(n\)</span> the Manning-Strickler roughness coefficient.</p>
+<p class="card-text">The model is numerically resolved by a Finite Volume method considering either structured or unstructured grids of discretization of the computational domain. (see doc <strong>todo ref doc</strong>).</p>
+<p class="card-text">Several numerical schemes have been implemented and give the possibility to use a globally first or second order numerical solver with the well-balanced property.</p>
+<p class="card-text">The global stability and robustness of the schemes insure a good treatment of dynamic wet/dry fronts without a water depth cut-off.</p>
+</div></blockquote>
+<p class="card-text"><strong>Adjoint model</strong></p>
+<blockquote>
+<div><p class="card-text">The adjoint code can be used to perform a parametric sensitivity analysis or a parameter identification process (4D-Var data assimilation) by calculating the gradient with respect to parameters of a cost function <span class="math notranslate nohighlight">\(J\)</span> measuring the discrepency between simulated and observed flow quantities. Only the first order scheme is available for the adjoint model.</p>
+<p class="card-text">The adjoint code is automatically generated using the differentiation tool Tapenade [<a class="reference external" href="http://www-sop.inria.fr/tropics/">http://www-sop.inria.fr/tropics/</a>] and some final tricks.</p>
+<p class="card-text"><em>Gradient values : sensitivity analysis</em> - The computation of the cost gradient <span class="math notranslate nohighlight">\(\nabla J\)</span> enables to perform spatially-distributed sensitivity analysis of the flow model to its input parameters; this is the ‘local sensitivity mode’.</p>
+<p class="card-text"><em>Variational data assimilation (4D-Var)</em> - Complete Variational Data Assimilation algorithm is available. This enables solving high dimensional optimization problems such as the identification of some input parameters values (eg. the bathymetry, some inflows or physical parametrizations) of the shalow water model from flow observations. The VDA process is based on local minimization algorithms adapted to minimize functions depending on large numbers of variables, such as the quasi-Newton technique L-BFGS method (<strong>todo ref</strong>). The optimization routine M1QN3 (<strong>todo ref</strong>) is directly implemented in the fortran source code but DassFLow wrapping also enables to use python optimization package instead (e.g. scipy).</p>
+</div></blockquote>
+</div>
+</details></div>
+<div class="section" id="full-documentation">
+<h1>Full documentation<a class="headerlink" href="#full-documentation" title="Permalink to this heading">#</a></h1>
+<p>Here, you can find detailed documentation about the mathematical models and numerical solvers used for their resolution as well as about inverse algorithms. Furthermore, DassFlow website can be found here: &lt;<a class="reference external" href="https://www.math.univ-toulouse.fr/DassFlow/">https://www.math.univ-toulouse.fr/DassFlow/</a>&gt;</p>
+<div class="section" id="mathematical-and-numerical-documentation">
+<span id="math-num-doc"></span><h2>Mathematical and numerical documentation<a class="headerlink" href="#mathematical-and-numerical-documentation" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/db5ec4041ad87e44b1e7047f7ba2e5d6/doc-dassflow2d-num.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-dassflow2d-num.lyx</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="previous-documentation">
+<h2>Previous documentation<a class="headerlink" href="#previous-documentation" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/4ce6876da95d2d4f9214e4776746b4ee/doc-dassflow2d-current.pdf"><code class="xref download docutils literal notranslate"><span class="pre">doc_dassflow2d</span> <span class="pre">2013</span> <span class="pre">(&quot;current&quot;)</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/1948330fbd13b3eb28d67ca2fa059728/Tolosa-sw.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Tolosa-sw.pdf</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="shenyuan-documentation">
+<h2>shenyuan documentation<a class="headerlink" href="#shenyuan-documentation" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/601edae1949e85347b2b814bb7afac14/doc-shenyuan_DF2D-wrappe.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-shenyuan_DF2D-wrappe.lyx</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/e79f969360ffb8bbab22ba805345155c/doc-shenyuan_doc_developer.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-shenyuan_doc_developer.lyx</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/bf24626fca1bf6109217681ac39e0d54/doc-shenyuan_doc_user.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-shenyuan_doc_user.lyx</span></code></a></p></li>
+</ul>
+</div>
+</div>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="../reference/dassflow2d/dassflow2d.wrapping.m_model.unk.init_array_grad_z.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">dassflow2d.wrapping.m_model.unk.init_array_grad_z</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="../license/index.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">License</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Numerical Guide
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dassflow-capabilities-at-a-glance">
+   DassFLow capabilities at a glance
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#full-documentation">
+   Full documentation
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#mathematical-and-numerical-documentation">
+     Mathematical and numerical documentation
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#previous-documentation">
+     Previous documentation
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shenyuan-documentation">
+     shenyuan documentation
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://gitlab.irstea.fr//lilian.villenave/dassflow2d-wrap/-/edit/documentation//doc/SPHINX_DOCUMENTATION/source/numerical_guide/index.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
+    </a>
+</div>
+
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../_sources/numerical_guide/index.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1013 @@
+
+==========================================
+TEMPORARY SAVE
+==========================================
+
+Presentation 2D-Shallow Watter equations.
+
+
+Dassflow2d solves the 2D-Shallow Watter equations.
+It is based on the bidimensional Shallow Water (or Saint-Venant) equations of conservation considering both bed elevation and Manning-Strickler friction source terms.
+
+
+.. math::
+
+  \left\{ \begin{array}{lclcc}
+      \partial_{t}h+div(\mathbf{q}) & = & 0 & \textrm{in} & \text{Ω}\times]0,T]\\
+      \\
+      \partial_{t}\mathbf{q}+div\left(\dfrac{\mathbf{q}\otimes\mathbf{q}}{h}+g\dfrac{h^{2}}{2}\right) & = & -gh\mathbf{\nabla}z_{b}-g\dfrac{n^{2}\left\Vert \mathbf{q}\right\Vert }{h^{7/3}}\mathbf{q} & \textrm{in} & \text{Ω}\times]0,T]
+      \end{array}\right.
+
+Where:
+  - :math:`\mathbf{q}` denotes the lineic discharge :math:`\mathbf{q}=h\mathbf{u}`
+  - :math:`h` denotes the water height
+  - :math:`\mathbf{u}` denotes the flow speed. :math:`\mathbf{u}=(u,v)^{T}`
+  - :math:`g` is the magnitude of the gravity,
+  - :math:`z_{b}` the bed elevation
+  - :math:`n` the Manning-Strickler roughness coefficient.
+
+The domains are:
+  - :math:`\Omega\in\mathbb{\mathbb{\mathbb{R}}}^{2}`:  computational domain
+  - :math:`\left[0,T\right]` : time interval
+
+
+.. note::
+
+  The SW equations are written in their conservative form as follows:
+
+  .. math::
+
+
+      \partial_{t}\mathbf{U}+\partial_{x}\mathbf{F}(\mathbf{U})+\partial_{y}\mathbf{G}(\mathbf{U})\:=\:\mathbf{S}_{g}(\mathbf{U})+\mathbf{S}_{f}(\mathbf{U})\\\\\begin{array}{c}
+      \mathbf{U}=\begin{bmatrix}h\\
+      hu\\
+      hv
+      \end{bmatrix}\:,\:\mathbf{F}(\mathbf{U})=\begin{bmatrix}hu\\
+      hu^{2}+{\displaystyle g\frac{h^{2}}{2}}\\
+      huv
+      \end{bmatrix}\:,\:\mathbf{G}(\mathbf{U})=\begin{bmatrix}hv\\
+      huv\\
+      hv^{2}+{\displaystyle g\frac{h^{2}}{2}}
+      \end{bmatrix}\:,\\
+      \\
+      \mathbf{S}_{g}(z_{b};\mathbf{U})=-g\begin{bmatrix}0\\
+      h\mathbf{\nabla}z_{b}
+      \end{bmatrix}\:,\:\mathbf{S}_{f}(\mathbf{U})=-gn^{2}\begin{bmatrix}0\\
+      {\displaystyle \frac{\left\Vert \mathbf{u}\right\Vert }{h^{1/3}}}\mathbf{u}
+      \end{bmatrix}
+      \end{array}
+
+
+
+
+
+
+
+
++++++++++++++++++++++++++
+to delete below
++++++++++++++++++++++++++
+
+
+
+
+
+
+
+
+
+
+
+
+
+```````````````````````````````````````````````````````````````
+
+*TODO - Structure*
+
+- Cases
+    - Fichiers inout,
+    - BCs - Cas test de ref ; all bcs possibles (non fait)
+    - Source terms (rain, infil, ...)
+    - Mesh / Parametres
+    - land use -> Ks spatialisé, regarder lignes eau differentes
+    - Numerical schemes
+    -  Assim - obs.txt et autres fichiers obs, params input (explication twin exp)...
+    - ...
+    - Hydro-au coupling (section user guide à aussi répercuter ds smash ?)
+        - raster preproc hydro-hydrau
+        - coupling
+        - ...
+- Setup
+ -options, keywords ...
+
+``````````````````````````````````````````````````````````````````
+
+==========================
+Python manipulation
+==========================
+
+------------------------------
+Lowest level used:
+------------------------------
+
+
+Get appropriate input:
+
+.. code-block:: bash
+
+    # delete all files in your simulation directory before starting
+    rm -r ./bin_A/*
+    # Copy recursively the files provided in the specified DassFlow repository into your simulation directory **code/bin_A/**.
+    cp -r ../cases/indev_case/new/* ./bin_A/
+
+Replace the makefile:  :download:`Makefile.inc <../files/inference_Makefile.inc>`
+
+
+
+++++++++++++++++++++++++++++++++++
+direct run
+++++++++++++++++++++++++++++++++++
+.. code-block:: python
+
+  #===============================================================#
+  #  Set up python intefare
+  #===============================================================#
+
+  #--------------------#
+  #  Source librairies
+  #--------------------#
+  import dassflow2d                # dassflow2d : main package
+  import os                        # os, for shell command execution (mainly for file manipulation)
+  # for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below
+
+  #---------------------#
+  #  Define Parameters
+  #----------------------#
+  bin_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/"
+
+
+
+
+  #===============================================================#
+  #  Set up fortran interface
+  #===============================================================#
+
+  #--------------------------------------------#
+  # Calls fortran routines to initialise MPI
+  # needed even if USE_MPI = 0
+  #--------------------------------------------#
+  # this is necessary for both mpi amodel_directnd non mpi cases in order to initialise some variables
+  dassflow2d.wrapping.m_mpi.init_mpi()         # calls intilisation in fortran
+  rank = dassflow2d.wrapping.m_mpi.get_proc()  # rank
+  nproc = dassflow2d.wrapping.m_mpi.get_np()   # number of processor used
+  mpi = [rank, nproc]
+
+
+  #----------------------------------------------------------------#
+  # initialise wrapped variables and fortran allocate
+  #----------------------------------------------------------------#
+  os.chdir(bin_dir) # set working directory as your bin_directory specified above
+  dassflow2d.wrapping.read_input( bin_dir + "/input.txt") # read inputs and store them in fortran
+  model = dassflow2d.wrapping.call_model.Model()  # initialise Model class
+  model.mesh = dassflow2d.wrapping.m_mesh.msh() # create object (class) Model.mesh
+  model.dof = dassflow2d.wrapping.m_model.unk(model.mesh)  # create object ( of class) Model.unk --> dof
+  model.dof0 = dassflow2d.wrapping.m_model.unk(model.mesh) # create object ( of class) Model.unk --> dof INITIAL
+  dassflow2d.wrapping.call_model.init_solver(model)    # Initialise fortran solver knowing mesh, and solver choosen.
+  dassflow2d.wrapping.call_model.init_friction(model)  # Initialise friction reading input files if mesh type is dassflow, if mesh_type is basic, initialise values from m_user_data.f90
+  dassflow2d.wrapping.call_model.init_fortran(model)   # Pass initialised interfaced variable to fortran variables (+ complete initialisation)
+
+  #----------------------------------------------------------------#
+  # run
+  #----------------------------------------------------------------#
+  dassflow2d.wrapping.call_model.run(model, arg = "direct") # run model
+
+
+  #----------------------------------------------------------------#
+  # clean
+  #----------------------------------------------------------------#
+  dassflow2d.wrapping.call_model.clean_model(model)         # deallocate correctly (necessary action)
+  del model # delete object
+
+
+
+
+-----------------------------------------------
+Twin experiment
+-----------------------------------------------
+Make a direct simulation, and set up the observation station to generation observation FileExistsError
+
+.. note::
+
+  we set up w_obs=1 in python: ``dassflow2d.m_common.set_w_obs(1)``
+
+
+
+.. code-block:: python
+
+  #--------------------#
+  #  Source librairies
+  #--------------------#
+  import dassflow2d                # dassflow2d : main package
+  import os                        # os, for shell command execution (mainly for file manipulation)
+  # for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below
+
+  #---------------------#
+  #  Define Parameters
+  #----------------------#
+  bin_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/"
+
+
+
+
+  #===============================================================#
+  #  Set up fortran interface
+  #===============================================================#
+
+  #--------------------------------------------#
+  # Calls fortran routines to initialise MPI
+  # needed even if USE_MPI = 0
+  #--------------------------------------------#
+  # this is necessary for both mpi amodel_directnd non mpi cases in order to initialise some variables
+  dassflow2d.wrapping.m_mpi.init_mpi()         # calls intilisation in fortran
+  rank = dassflow2d.wrapping.m_mpi.get_proc()  # rank
+  nproc = dassflow2d.wrapping.m_mpi.get_np()   # number of processor used
+  mpi = [rank, nproc]
+
+
+  #----------------------------------------------------------------#
+  # initialise wrapped variables and fortran allocate
+  #----------------------------------------------------------------#
+  os.chdir(bin_dir) # set working directory as your bin_directory specified above
+  dassflow2d.wrapping.read_input( bin_dir + "/input.txt") # read inputs and store them in fortran
+
+            ################
+            #Update input information
+            ################
+  dassflow2d.m_common.set_w_obs(1)
+
+
+  model = dassflow2d.wrapping.call_model.Model()  # initialise Model class
+  model.mesh = dassflow2d.wrapping.m_mesh.msh() # create object (class) Model.mesh
+  model.dof = dassflow2d.wrapping.m_model.unk(model.mesh)  # create object ( of class) Model.unk --> dof
+  model.dof0 = dassflow2d.wrapping.m_model.unk(model.mesh) # create object ( of class) Model.unk --> dof INITIAL
+  dassflow2d.wrapping.call_model.init_solver(model)    # Initialise fortran solver knowing mesh, and solver choosen.
+  dassflow2d.wrapping.call_model.init_friction(model)  # Initialise friction reading input files if mesh type is dassflow, if mesh_type is basic, initialise values from m_user_data.f90
+  dassflow2d.wrapping.call_model.init_fortran(model)   # Pass initialised interfaced variable to fortran variables (+ complete initialisation)
+
+  #----------------------------------------------------------------#
+  # run
+  #----------------------------------------------------------------#
+  dassflow2d.wrapping.call_model.run(model, arg = "direct") # run model
+
+
+  #----------------------------------------------------------------#
+  # clean
+  #----------------------------------------------------------------#
+  dassflow2d.wrapping.call_model.clean_model(model)         # deallocate correctly (necessary action)
+  del model # delete object
+
+
+
+
+Still in your python interpreter you have to copy the generated obs files to observation directory
+
+.. code-block:: python
+
+  import os                        # os, for shell command execution (mainly for file manipulation)
+  from subprocess import call     # for cp_dir funciton (see below)
+
+  # cp_dir copy files from source directory to target directory.
+  # note that the directory is copied (not only the files within)
+  def cp_dir(source, target):
+    call(['cp', '-a', source, target]) # Linux
+
+  bin_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/"
+  os.chdir(bin_dir)
+  cp_dir('./res/obs', '.')
+
+
+
+Quit your python interpreter
+
+.. note::
+  needed because dealocation is incomplete
+  to debug
+
+Open again your python interpreter
+
+.. note::
+
+  This time, we will update the option ``use_obs=1``, change an input variable to infer (here the manning coefficient:
+  ``model2.my_friction.manning = model2.my_friction.manning`` ), we will have to update ``c_manning=1`` to specify that we want to infer on this varible.
+
+
+
+.. code-block:: python
+
+  #--------------------#
+  #  Source librairies
+  #--------------------#
+  import dassflow2d                # dassflow2d : main package
+  import os                        # os, for shell command execution (mainly for file manipulation)
+  # for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below
+
+  #---------------------#
+  #  Define Parameters
+  #----------------------#
+  bin_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/"
+
+
+
+
+  #===============================================================#
+  #  Set up fortran interface
+  #===============================================================#
+
+  #--------------------------------------------#
+  # Calls fortran routines to initialise MPI
+  # needed even if USE_MPI = 0
+  #--------------------------------------------#
+  # this is necessary for both mpi amodel_directnd non mpi cases in order to initialise some variables
+  dassflow2d.wrapping.m_mpi.init_mpi()         # calls intilisation in fortran
+  rank = dassflow2d.wrapping.m_mpi.get_proc()  # rank
+  nproc = dassflow2d.wrapping.m_mpi.get_np()   # number of processor used
+  mpi = [rank, nproc]
+
+  # this is necessary for both mpi and non mpi cases in order to initialise some variables
+  dassflow2d.wrapping.m_mpi.init_mpi()
+  # get the rank and number of processors
+  rank = dassflow2d.wrapping.m_mpi.get_proc()
+  nproc = dassflow2d.wrapping.m_mpi.get_np()
+  mpi = [rank, nproc]
+
+
+  os.chdir(bin_dir)
+  dassflow2d.wrapping.read_input( bin_dir + "/input.txt")
+
+        ################
+        #Update input information
+        ################
+  dassflow2d.m_common.set_w_obs(1)
+  dassflow2d.m_common.use_obs(1)
+  dassflow2d.m_model.set_c_manning(1)
+
+  model2 = dassflow2d.wrapping.call_model.Model()
+  model2.mesh = dassflow2d.wrapping.m_mesh.msh()
+
+  model2.dof = dassflow2d.wrapping.m_model.unk(model2.mesh)
+  model2.dof0 = dassflow2d.wrapping.m_model.unk(model2.mesh)
+  dassflow2d.wrapping.call_model.init_solver(model2)
+  dassflow2d.wrapping.call_model.init_friction(model2)
+
+  #model2.my_friction.manning = model2.my_friction.manning * 2 # change friction parameter to infer
+  dassflow2d.wrapping.call_model.init_fortran(model2)         # UPDATE IN FORTRAN
+
+  n = dassflow2d.m_model.get_array_manning()
+  dassflow2d.m_model.set_array_manning(n*2)
+
+  dassflow2d.wrapping.call_model.run(model2, arg = "min")
+
+
+
+
+
+================================================================================
+si ça marche, ce qu'on peut faire avec la meme methode
+===============================================================================
+
+z = dassflow2d.m_model.get_array_bathy_cell()
+z = z  +np.random.uniform(-0.4,0.4, len(z))
+dassflow2d.m_model.set_array_bathy_cell(z)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=================================
+Developer Guide
+=================================
+
+link to book
+
+.. toctree::
+   :maxdepth: 5
+   :titlesonly:
+
+   ../getting_started/Tutorials/1_make_your_first_run-terminal
+..........................................
+Compilation options
+..........................................
+
+.. _compil:
+
+In the Makefile.inc file, all the compilation commands are presented.  The main options are the following:
+
+
+  - **main user Options**
+          - **CASEDIR**: name of the case directory
+              - default is bin_A (the path is added to  *dassflow2/code/* path --> here bin localisation would be*dassflow2/code/bin_A* )
+          - **COMPILO**: Fortran compiler used:
+              - '0' for GNU
+              - '1' for Intel
+          - **MODEL**: SW model
+              - '0' to not compile,
+              - '1' to compile SW_MONO,
+              - more options are available for reasearch ( '2' to compile SW_HB, '3' to compile SW_MULTI)
+
+  - **main user Options - Minimization specific**
+          - **ADJOINT**: Adjoint model:
+              - '0' to not compile
+              - '1' to compile
+          - **OPTIM**: Debug mode:
+              - '0' not activate.
+              - '1' to activate.
+
+              .. warning::
+
+                  Not activating when computing adjoint model may cause errors.
+
+          - **MINMETHOD**: Minimization method:
+              - '1' to compile M1QN3
+              - '3' to compile LBFGSB3
+
+  - **main user Options - Parallel computing specific**
+          - **MPI**: Parallel computing:
+              - '0' no use
+              - '1' use
+          - **NB_PROC**: If MPI=1, number of processors to use
+
+  - **Validation to analytical results Options**
+          - **VALID**: Compute exact solution using user function (in m_user_data.f90):
+              - '0' no compile
+              - '1' to compile
+  - **Debug Options**
+          - **DEBUG_WRAPPING = 0**: dont know
+
+
+
+
+
+.....................
+Compilation commands
+.....................
+
+You can compile the code directly DassFlow2d in your terminal using make commands. Nonetheless, to proceed a correct compilation, you must already have your bin directory filled with the case you wish to run (each compilation is specific to the run you are making).
+In practice, the unical command you need to know is **make install** that realize a full install of dassflow-2d.
+
+
+all **make** commands
+
+The compilation commands defined in the makefile are the following:
+
+  - clean options
+          - clean               : removes the exe file in the bin directory
+          - cleantap            : deletes all in the /tap folder
+          - cleanlib            : deletes all in the /libs folder
+          - clean wrap          : removes files in /wrappers directory
+          - **TODO** clea_wraptrue : removes files in /wrappers_true folder
+          - **TODO** clean_doc : removes files in /doc/SPHINX_DOC/build/ folder
+          - cleanres, cleanplot : deletes all in the /res and /plot folder in the bin directory
+          - cleanmin            : deletes all in the /min folder in the bin directory + deletes restart.bin
+          - cleanwrap           : deletes all in the /wrappers folder
+
+  - compilation options
+          - make **deprecated**
+          - make libs : to compile parallel librairies.
+          - make tap_files to generate adjoint code
+          - make wrap : to compile fortran and wrapping librairies
+          - **make install : clean all, compile all and install dassflow package**
+          - make doc : compile sphinx documentation
+
+.. note::
+
+  ``make install`` and ``make doc`` 	are new options, as well as their antagonous ``make cleanall`` and ``make cleandoc`` . The first one is necessary to generate python
+    package, and the second one produce the documentation you are reading now.
+
+
+++++++++++++++++++++++++++++++++++++++++++
+**make install explanation**:
+++++++++++++++++++++++++++++++++++++++++++
+We show i
+
+.. dropdown:: DassFlow capabilities at a glance
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: font-weight-bolder
+
+
+
+    **Direct model**ts functionment in the makefile
+Note that the curent working directory is *DassFlow2d/code/bin_directory/*
+
+first, gather main make commands
+
+``````````
+make cleanlib : deletes all in the /libs folder
+
+make cleantap : deletes all in the /tap folder
+
+make cleanwrap : :removes files in /wrappers directory
+
+make clean : removes the exe file in the bin directory
+
+sleep 2
+
+make libs : to compile parallel librairies. --> regenerates files in /libs folder
+
+make tap_files : to generate adjoint code --> regenerates files in /tap folder
+
+make wrap : to compile fortran and wrapping librairies
+``````````
+
+.. hint::
+
+  +++++++++++++++++++++++++++++++++++++++++++++
+  more about make wrap
+  +++++++++++++++++++++++++++++++++++++++++++++
+
+  **wrapping action**
+
+   2 wrappings commands are specified, with the following options:
+
+  **f90wrap:**
+
+  - ``-m ${wrapping_name} ${WRAPPER_LIST}``: ``-m``  create module of name: ``${wrapping_name}``, with file given in : ``${WRAPPER_LIST}``
+  - ``-k kind_map`` : use this kind_map (needed for basic object correspondance (real, integer., character) with given precision between fortran and python.
+  - ``-documentation-plugin doc_plugin.py  --package``: documentation parsing from fortran file ( interpretate as comment when line of .f90 file start like this ``!>``.In addition, to be parsed the block comments must be written right after the left parenthesis of the declaration of subroutine ):
+
+  .. code-block:: fortran
+
+        subroutine init_fortran(mdl)
+        !> init_fortran
+        !> call f90 routine friction_initialise, infiltration_initialise,
+        !> -------------------
+        !> note
+        !> -------------------
+        !> to be updated
+        implicit none
+        ! input/ output variables
+        type(Model), intent(inout) :: mdl
+        call Initial(mdl%dof0, mdl%mesh, mdl%my_friction, mdl%my_infiltration)
+
+        !======================================================================================================================!
+        !  Fill arrays usefull to save time computation for some schemes (MUSCL, Diamond Scheme, etc ... )
+        !======================================================================================================================!
+        call Init_Schemes(mdl%mesh)
+        end subroutine init_fortran
+
+
+        	cd wrappers ; f2py-f90wrap --f90exec=gfortran --f77exec=gfortran ${debug_wrapping} --opt="-O3" --build-dir . -c -m _${wrapping_name} -I../obj -L. f90wrap*.f90 ../obj/*.o ${FLIBS}
+    -
+  -   f2py-f90wrap:
+    - ``--f90exec=gfortran``: fotran90 compiler is gfortran
+    - ``--f77exec=gfortran``: fotran77 compiler is gfortran
+    - ${debug_wrapping} : option to debug, refer to
+    - --build-dir .
+    - -c -m _${wrapping_name}
+    - -I../obj
+    - -L. f90wrap*.f90
+    - ./obj/*.o ${FLIBS}
+
+
+
+
+Then, create new directory and import source  and compilated files:
+
+    .. code-block:: bash
+
+      # create new directory, where we can write everything as necessary without modifying existing Compilation
+    	mkdir -p $(true_wrapper_dir)                               		# base working dir (necessary to story the setup.py)
+    	mkdir -p $(true_wrapper_dir)/$(module_name)								 		# within there is all python stuff
+    	mkdir -p $(true_wrapper_dir)/$(module_name)/$(wrapping_name)  # here we store generated files by f90wrap
+    	mkdir -p $(true_wrapper_dir)/$(module_name)/core  # here we store generated files by f90wrap
+    	# Copy wrapped  files
+    	cp  wrappers/_$(wrapping_name).cpython-38-x86_64-linux-gnu.so  $(true_wrapper_dir)/$(module_name)/$(wrapping_name)
+    	cp -r  wrappers/$(wrapping_name)/*  $(true_wrapper_dir)/$(module_name)/$(wrapping_name)
+
+    	# Replace f90wrap automatic generation
+    		#first remove -init files and replace them
+    	cp $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/__init__.py $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/save_init.py
+    	rm $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/__init__.py
+
+.. warning::
+
+  this means that if you make big changes (mainly by changing the name of fortran objects), you  have to adapt the init source files located at  $(true_wrapper_dir) )
+
+
+.. code-block:: bash
+
+      #  copy wished file
+    	cp $(lilian_dir)/init_files/wrapping/__init__.py $(true_wrapper_dir)/$(module_name)/$(wrapping_name)  # f90wrap automaticaly initilisation package file
+    	cp $(lilian_dir)/init_files/main/__init__.py $(true_wrapper_dir)/$(module_name)												#m ain initilisation package file
+    	cp -r $(lilian_dir)/core/*  $(true_wrapper_dir)/$(module_name)/core											             	# scripts pour enrobage des sorties brutes fortran (génération main fonctionalitées pacakge dassflow)
+
+
+    	# add necessary files for package generation
+    	cp $(lilian_dir)/setup.py  $(true_wrapper_dir)
+
+    	# change in wrapping dir yhe  imports of modules
+    	for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py; do \
+    			echo $$file;\
+    			sed -i -e "s/from wrapping/from dassflow2d.wrapping/g" 	$(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
+      done
+
+    		# COMPILE package
+    	pip install --no-compile $(true_wrapper_dir)/.
+
+
+
+
+
+
+================================================================
+EVERYTHING LOWER LEVEL STEP BY STEP
+=================================================================
+
+
+
+
+.. dropdown:: Run direct
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: font-weight-bolder
+
+
+
+    open teminal,  open a python interpreter, replace the **bin_dr** parameter below, and execute the code.
+
+
+    .. code-block:: python
+
+
+
+
+          #===============================================================#
+          #  Set up python intefare
+          #===============================================================#
+
+          #--------------------#
+          #  Source librairies
+          #--------------------#
+          import dassflow2d                # dassflow2d : main package
+          import os                        # os, for shell command execution (mainly for file manipulation)
+          # for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below
+
+          #---------------------#
+          #  Define Parameters
+          #----------------------#
+          bin_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/"
+
+
+
+
+          #===============================================================#
+          #  Set up fortran interface
+          #===============================================================#
+
+          #--------------------------------------------#
+          # Calls fortran routines to initialise MPI
+          # needed even if USE_MPI = 0
+          #--------------------------------------------#
+          # this is necessary for both mpi amodel_directnd non mpi cases in order to initialise some variables
+          dassflow2d.wrapping.m_mpi.init_mpi()         # calls intilisation in fortran
+          rank = dassflow2d.wrapping.m_mpi.get_proc()  # rank
+          nproc = dassflow2d.wrapping.m_mpi.get_np()   # number of processor used
+          mpi = [rank, nproc]
+
+
+          #----------------------------------------------------------------#
+          # initialise wrapped variables and fortran allocate
+          #----------------------------------------------------------------#
+          os.chdir(bin_dir) # set working directory as your bin_directory specified above
+          dassflow2d.wrapping.read_input( bin_dir + "/input.txt") # read inputs and store them in fortran
+          model = dassflow2d.wrapping.call_model.Model()  # initialise Model class
+          model.mesh = dassflow2d.wrapping.m_mesh.msh() # create object (class) Model.mesh
+          model.dof = dassflow2d.wrapping.m_model.unk(model.mesh)  # create object ( of class) Model.unk --> dof
+          model.dof0 = dassflow2d.wrapping.m_model.unk(model.mesh) # create object ( of class) Model.unk --> dof INITIAL
+          dassflow2d.wrapping.call_model.init_solver(model)    # Initialise fortran solver knowing mesh, and solver choosen.
+          dassflow2d.wrapping.call_model.init_friction(model)  # Initialise friction reading input files if mesh type is dassflow, if mesh_type is basic, initialise values from m_user_data.f90
+          dassflow2d.wrapping.call_model.init_fortran(model)   # Pass initialised interfaced variable to fortran variables (+ complete initialisation)
+
+          #----------------------------------------------------------------#
+          # run
+          #----------------------------------------------------------------#
+          dassflow2d.wrapping.call_model.run(model, arg = "direct") # run model
+
+
+          #----------------------------------------------------------------#
+          # clean
+          #----------------------------------------------------------------#
+          dassflow2d.wrapping.call_model.clean_model(model)         # deallocate correctly (necessary action)
+          del model # delete object
+
+
+
+.. dropdown:: inference with fortran kernel - friction parameter -
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: font-weight-bolder
+
+    .. warning::
+
+      if errors, run in terminal ``make cleanres``, ``make cleanmin``
+
+
+    .. code-block:: python
+
+
+
+
+          #===============================================================#
+          #  Set up python intefare
+          #===============================================================#
+
+          #--------------------#
+          #  Source librairies
+          #--------------------#
+          import dassflow2d                # dassflow2d : main package
+          import os                        # os, for shell command execution (mainly for file manipulation)
+          # for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below
+
+          #---------------------#
+          #  Define Parameters
+          #----------------------#
+          bin_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/"
+
+
+
+
+          #===============================================================#
+          #  MAKE DIRECT RUN
+          #===============================================================#
+
+          #--------------------------------------------#
+          # Calls fortran routines to initialise MPI
+          # needed even if USE_MPI = 0
+          #--------------------------------------------#
+          # this is necessary for both mpi amodel_directnd non mpi cases in order to initialise some variables
+          dassflow2d.wrapping.m_mpi.init_mpi()         # calls intilisation in fortran
+          rank = dassflow2d.wrapping.m_mpi.get_proc()  # rank
+          nproc = dassflow2d.wrapping.m_mpi.get_np()   # number of processor used
+          mpi = [rank, nproc]
+
+
+          #----------------------------------------------------------------#
+          # initialise wrapped variables and fortran allocate
+          #----------------------------------------------------------------#
+          os.chdir(bin_dir) # set working directory as your bin_directory specified above
+          dassflow2d.wrapping.read_input( bin_dir + "/input.txt") # read inputs and store them in fortran
+          model = dassflow2d.wrapping.call_model.Model()  # initialise Model class
+          model.mesh = dassflow2d.wrapping.m_mesh.msh() # create object (class) Model.mesh
+          model.dof = dassflow2d.wrapping.m_model.unk(model.mesh)  # create object ( of class) Model.unk --> dof
+          model.dof0 = dassflow2d.wrapping.m_model.unk(model.mesh) # create object ( of class) Model.unk --> dof INITIAL
+          dassflow2d.wrapping.call_model.init_solver(model)    # Initialise fortran solver knowing mesh, and solver choosen.
+          dassflow2d.wrapping.call_model.init_friction(model)  # Initialise friction reading input files if mesh type is dassflow, if mesh_type is basic, initialise values from m_user_data.f90
+          dassflow2d.wrapping.call_model.init_fortran(model)   # Pass initialised interfaced variable to fortran variables (+ complete initialisation)
+
+          #----------------------------------------------------------------#
+          # run
+          #----------------------------------------------------------------#
+          dassflow2d.wrapping.call_model.run(model, arg = "direct") # run model
+
+
+          #----------------------------------------------------------------#
+          # clean
+          #----------------------------------------------------------------#
+          dassflow2d.wrapping.call_model.clean_model(model)         # deallocate correctly (necessary action)
+          del model # delete object
+
+
+          #===============================================================#
+          #  MAKE INFERENCE
+          #===============================================================#
+          # copy results in obs directory ()
+          cp_dir('./res/obs', '.')
+
+
+          # this is necessary for both mpi and non mpi cases in order to initialise some variables
+          dassflow2d.wrapping.m_mpi.init_mpi()
+          # get the rank and number of processors
+          rank = dassflow2d.wrapping.m_mpi.get_proc()
+          nproc = dassflow2d.wrapping.m_mpi.get_np()
+          mpi = [rank, nproc]
+
+
+          os.chdir(bin_dir)
+          dassflow2d.wrapping.read_input( bin_dir + "/input.txt")
+          model2 = dassflow2d.wrapping.call_model.Model()
+          model2.mesh = dassflow2d.wrapping.m_mesh.msh()
+
+          model2.dof = dassflow2d.wrapping.m_model.unk(model2.mesh)
+          model2.dof0 = dassflow2d.wrapping.m_model.unk(model2.mesh)
+          dassflow2d.wrapping.call_model.init_solver(model2)
+          dassflow2d.wrapping.call_model.init_friction(model2)
+
+          model2.my_friction.manning = model2.my_friction.manning *2 # WE REPLACE MANNING PRIOR VALUE
+          dassflow2d.wrapping.call_model.init_fortran(model2)         # UPDATE IN FORTRAN
+          dassflow2d.wrapping.call_model.run(model2, arg = "min")
+
+          dassflow2d.wrapping.call_model.clean_model(model2)
+          del model2
+
+
+
+
+
+
+
+          import dassflow2d
+          from . import utils
+
+          from scipy.optimize import minimize
+
+          import numpy as np
+          import numpy.linalg as npl
+
+          import glob
+          import os
+
+          from mpi4py import MPI
+
+          dassflow2d.m_mpi.init_mpi()
+          rank = dassflow2d.m_mpi.get_proc()
+          np = dassflow2d.m_mpi.get_np()
+
+          class dass_callback_lbfgs(utils.dass_callback):
+          	def __init__(self,model):
+          		super().__init__(model)
+          	def __call__(self,x):
+          		super().__call__(x)
+
+          		if rank == 0:
+          			#move the latest iteration to the directory of lbfgs
+          			list_ite = glob.glob('min/*')
+          			latest = max(list_ite, key=os.path.getmtime).split('/')[1]
+          			print("move file %s to %s"%(latest, 'min/lbfgs'))
+          			os.rename('min/'+latest, "min/lbfgs/"+latest)
+
+          			cost = dassflow2d.m_adjoint.get_cost()
+          			jac_norm = npl.norm(dassflow2d.m_adjoint.get_array_control_back())
+          			# save the cost function and the gradient norm
+
+          			with open('min/lbfgs/min_cost','a') as f:
+          				f.write("%4d %15.7f %15.7f \n" %(self.ite, cost, jac_norm))
+
+
+
+.. dropdown:: inference with python librairy - friction parameter -
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: font-weight-bolder
+
+
+
+    .. code-block:: python
+
+    import dassflow2d
+  from . import utils
+
+  from scipy.optimize import minimize
+
+  import numpy as np
+  import numpy.linalg as npl
+
+  import glob
+  import os
+
+  from mpi4py import MPI
+
+  dassflow2d.m_mpi.init_mpi()
+  rank = dassflow2d.m_mpi.get_proc()
+  np = dassflow2d.m_mpi.get_np()
+
+  class dass_callback_lbfgs(utils.dass_callback):
+  	def __init__(self,model):
+  		super().__init__(model)
+  	def __call__(self,x):
+  		super().__call__(x)
+
+  		if rank == 0:
+  			#move the latest iteration to the directory of lbfgs
+  			list_ite = glob.glob('min/*')
+  			latest = max(list_ite, key=os.path.getmtime).split('/')[1]
+  			print("move file %s to %s"%(latest, 'min/lbfgs'))
+  			os.rename('min/'+latest, "min/lbfgs/"+latest)
+
+  			cost = dassflow2d.m_adjoint.get_cost()
+  			jac_norm = npl.norm(dassflow2d.m_adjoint.get_array_control_back())
+  			# save the cost function and the gradient norm
+
+  			with open('min/lbfgs/min_cost','a') as f:
+  				f.write("%4d %15.7f %15.7f \n" %(self.ite, cost, jac_norm))
+
+
+
+
+  def run_python_min(model):
+
+    	model.init_back()
+
+    	# create directory for lbfgs iterations
+    	try:
+    		os.makedirs("min/lbfgs")
+    	except FileExistsError:
+    		pass
+
+    	# get the initial guess
+    	x0 = dassflow2d.m_adjoint.get_array_control()
+
+    	# output the first guess
+    	dassflow2d.m_adjoint.set_ite_min(0)
+    	dassflow2d.m_adjoint.output_control(model.dof0, model.mesh)
+
+    	if rank == 0:
+    		list_ite = glob.glob('min/*')
+    		latest = max(list_ite, key=os.path.getmtime).split('/')[1]
+    		print("move file %s to %s"%(latest, 'min/lbfgs'))
+    		os.rename('min/'+latest, "min/lbfgs/"+latest)
+
+
+
+    	# build the lbfgs options. Cf the documentation
+    	# "maxcor" : , \ # this parameter is new to lbfgs
+    	opts = {"disp":True, \
+    			"gtol" : dassflow2d.m_common.get_eps_min(), \
+    			"maxfun": dassflow2d.m_common.get_max_nt_for_adjoint(), \
+    			"maxiter": dassflow2d.m_common.get_restart_min(), \
+    			"maxls" : 15, \
+    			}
+
+    	print("minimization options")
+    	print(opts)
+
+    	# create dass_func instance
+    	func = utils.dass_func(model)
+    	callback = dass_callback_lbfgs(model)
+
+    	# define bounds if you want to use L-BFGS-B
+    	# the format of bounds
+    	res_optim = minimize(fun=func, x0 = x0, jac = True, method = 'L-BFGS-B', bounds=None, options= opts, callback = callback)
+    	return res_optim
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

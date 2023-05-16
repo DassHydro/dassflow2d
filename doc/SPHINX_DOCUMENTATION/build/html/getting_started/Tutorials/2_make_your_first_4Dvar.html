@@ -1,0 +1,1054 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inference run &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/Tutorials/2_make_your_first_4Dvar';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Inference run using scipy.minimize" href="3_inference-python.html" />
+    <link rel="prev" title="Forward/Direct run" href="1_make_your_first_run.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_make_your_first_run.html">Forward/Direct run</a></li>
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_inference-python.html">Inference run using scipy.minimize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_gen-user-data.html">Generate  Basic channel</a></li>
+</ul>
+
+  </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <div class="section" id="inference-run">
+<span id="make-your-first-4dvar"></span><h1>Inference run<a class="headerlink" href="#inference-run" title="Permalink to this heading">#</a></h1>
+<p>This tutorial details how to perform an inverse run with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code>. The full process is detailed for building and performing a twin experiment.  i.e. generating observations with a forward run given a true control vector, then using those observations to retrieve with the inverse VDA algorithm this true control vector starting from an a priori background value.
+Here the control vector consists in one unknown discrete parameter among inflow hydrograph or channel friction or bathymetry, and it is retrieved from water level observations in the channel.</p>
+<blockquote>
+<div><p><a href="#id1"><span class="problematic" id="id2">**</span></a>TODO ref to eqs &amp; inv algo **</p>
+</div></blockquote>
+<p>The presented case correspond to the Mac Donald’s type 1D  solution (see shallow water analytical solutions in SWASHES cases <a class="reference external" href="https://hal.archives-ouvertes.fr/hal-00628246/file/SW_analytic-complements.pdf">https://hal.archives-ouvertes.fr/hal-00628246/file/SW_analytic-complements.pdf</a>).</p>
+<div class="section" id="mac-donald-s-type-1d-solution">
+<h2>Mac Donald’s type 1D solution<a class="headerlink" href="#mac-donald-s-type-1d-solution" title="Permalink to this heading">#</a></h2>
+<p>In <em class="xref py py-obj">/dassflow2d-wrap/cases/tuto_cases/2_tuto_twin-expe.py</em> open the script <em class="xref py py-obj">1_tuto_twin-experiment_classic-way.py</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Define the location of your working directory by setting appropriate value to <strong>dassflow_dir</strong>  in the python script</p>
+</div>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+1_tuto_twin-experiment_classic-way.py<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##################################################################</span>
+<span class="c1">##################################################################</span>
+<span class="c1"># PERFORM TWIN EXPERIMENT (DIRECT RUN + INFERENCE RUN)</span>
+<span class="c1">#</span>
+<span class="c1"># Method &quot;old way&quot; using command system and pre-existing files</span>
+<span class="c1">##################################################################</span>
+<span class="c1">##################################################################</span>
+
+
+<span class="c1">#=======================================================#</span>
+<span class="c1">#  define librairies librairies</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>              <span class="c1"># dassflow2d : main package</span>
+<span class="kn">import</span> <span class="nn">os</span>                        <span class="c1"># os, for shell command execution (mainly for file manipulation)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="c1"># for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below</span>
+
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">call</span> <span class="c1"># terminal comand</span>
+
+<span class="kn">import</span> <span class="nn">h5py</span> <span class="c1"># source hdf5 files</span>
+
+
+<span class="c1"># method that copy pre-existing files to bin dir, used in the script</span>
+<span class="c1"># source is the path of the source file and target is the path where to copy the file</span>
+<span class="c1"># it directly use the shell</span>
+<span class="k">def</span> <span class="nf">cp_inference_file</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;inference_files/</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="n">target</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="n">call</span><span class="p">([</span><span class="s1">&#39;rm&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span>
+<span class="n">call</span><span class="p">([</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span> <span class="c1"># Linux</span>
+
+
+<span class="c1"># copy all reference files (for direct run)</span>
+<span class="k">def</span> <span class="nf">cp_reference_file</span><span class="p">():</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;hydrograph_target.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;hydrograph.txt&#39;</span><span class="p">)</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;mesh_target.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;automaticaly_generated_mesh.txt&#39;</span><span class="p">)</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;land_uses_target.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;land_uses.txt&#39;</span><span class="p">)</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_direct.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+
+<span class="c1"># cp_dir copy files from source directory to target directory.</span>
+<span class="c1"># note that the directory is copied (not only the files within)</span>
+<span class="k">def</span> <span class="nf">cp_dir</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="n">call</span><span class="p">([</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span> <span class="c1"># Linux</span>
+
+<span class="c1"># save hdf5 (results) files out of /res directory</span>
+<span class="k">def</span> <span class="nf">cp_hdf5_file</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;res/</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="n">target</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;hdf5/</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="c1">#    call([&#39;mkdir&#39;, &quot;hdf5&quot;])</span>
+<span class="n">call</span><span class="p">([</span><span class="s1">&#39;rm&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span>
+<span class="n">call</span><span class="p">([</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span> <span class="c1"># Linux</span>
+
+
+<span class="c1"># define paths</span>
+<span class="n">dassflow_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/livillenave/Documents/distant/dassflow2d-wrap&quot;</span>
+<span class="n">bin_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span>
+
+
+<span class="c1"># delete all files in your simulation directory before starting</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/*&quot;</span><span class="p">)</span>
+<span class="c1"># Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">//cases/tuto_case/7_tuto_twin-expe/bin_A/* </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make cleanres cleanmin &quot;</span><span class="p">)</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># set up true configuration</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">)</span>
+<span class="n">cp_reference_file</span><span class="p">()</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># direct run of the  model</span>
+<span class="c1">#=======================================================#A</span>
+
+
+<span class="c1"># initialise fortran instance, and python corrponding data</span>
+<span class="n">direct_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">)</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span> <span class="c1"># build pyvista unstructured grid from model.mesh object</span>
+
+
+<span class="c1"># define initial conditions</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">h</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">u</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">v</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span>
+
+<span class="n">direct_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># run model</span>
+
+
+
+
+<span class="n">direct_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span> <span class="c1"># save simulation results in hdf5 files</span>
+<span class="n">cp_hdf5_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;simu.hdf5&quot;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;true.hdf5&quot;</span><span class="p">)</span> <span class="c1">#save hdf5 (results) files out of /res directory</span>
+<span class="n">cp_dir</span><span class="p">(</span><span class="s1">&#39;./res/obs&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="c1"># copy observation files</span>
+
+
+<span class="c1">#----------- plot</span>
+<span class="c1">#direct_model.plot_var(what = &quot;bathy&quot;, when = &quot;initial&quot;, title_plot = &quot;bahtymetry&quot;)</span>
+<span class="c1">#direct_model.plot_var(what = &quot;h&quot;, when = &quot;initial&quot;, title_plot = &quot;h&quot;)</span>
+<span class="c1">#direct_model.plot_var(what = &quot;u&quot;, when = &quot;initial&quot;, title_plot = &quot;u&quot;)</span>
+<span class="c1">#direct_model.plot_var(what = &quot;v&quot;, when = &quot;initial&quot;, title_plot = &quot;v&quot;)</span>
+<span class="c1">#direct_model.plot_var(what = &quot;manning_alpha&quot;, when = &quot;initial&quot;, title_plot = &quot;Manning-Strickler coefficient&quot;)</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/res/simu.hdf5&quot;</span><span class="p">)</span>
+
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+<span class="n">b</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">][:,</span><span class="n">i</span><span class="p">]</span>
+<span class="n">zs</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/h&quot;</span><span class="p">][:,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>  <span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zs</span> <span class="p">)),</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">zs</span><span class="p">,</span>
+            <span class="n">linewidths</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span> <span class="p">)),</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span>
+            <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="n">linewidths</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+
+
+<span class="c1">#bc = df2d.m_model.get_bc()</span>
+
+<span class="n">df2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">clean_model</span><span class="p">(</span><span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>         <span class="c1"># deallocate correctly (necessary action)</span>
+
+
+<span class="c1"># clean eventual hdf5 file open</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_objects</span><span class="p">():</span>   <span class="c1"># Browse through ALL objects</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>   <span class="c1"># Just HDF5 files</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c1"># Was already closed</span>
+
+<span class="c1">###########################################################</span>
+<span class="c1">#===========================================================</span>
+<span class="c1"># RUN INFERENCE</span>
+<span class="c1">#===========================================================</span>
+<span class="c1">###########################################################</span>
+
+
+<span class="c1">#----------------------#</span>
+<span class="c1">#  Define Parameters</span>
+<span class="c1">#----------------------#</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make cleanres cleanmin &quot;</span><span class="p">)</span>
+
+
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm restart.bin &quot;</span><span class="p">)</span>
+
+
+<span class="c1"># /!\ warning :: bathymetry not inferable ? --&gt; lilian = optim not find optimum</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CHOOSE INFERENCE TYPE (1 hydrograph, 2 land_use, 3 = bathy)&quot;</span><span class="p">)</span>
+<span class="n">inference_type</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter 1,2 or 3 </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+<span class="c1"># -- infer hydrograph --</span>
+<span class="n">cp_reference_file</span><span class="p">()</span>
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;hydrograph_prior.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;hydrograph.txt&#39;</span><span class="p">)</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_hydrograph.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+<span class="c1"># -- same for manning -- #</span>
+<span class="n">cp_reference_file</span><span class="p">()</span>
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;land_uses_prior.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;land_uses.txt&#39;</span><span class="p">)</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_land_uses.txt&#39;</span> <span class="p">,</span>
+                  <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span>
+<span class="c1"># -- infer hydrograph --#</span>
+<span class="n">cp_reference_file</span><span class="p">()</span>
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;mesh_prior.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;automaticaly_generated_mesh.txt.txt&#39;</span><span class="p">)</span>
+
+<span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_bathy.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+
+
+
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># Inference</span>
+<span class="c1">#=======================================================#</span>
+
+
+<span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span><span class="p">)</span>
+
+
+<span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">h</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">u</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">v</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">my_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># save simulation results in hdf5 files</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span>
+
+<span class="n">cp_hdf5_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;simu.hdf5&quot;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;inference_manning.hdf5&quot;</span><span class="p">)</span>
+
+<span class="n">inf</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/hdf5/inference_manning.hdf5&quot;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># LOAD HDF5 files</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="c1"># get grid object</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">grid</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_edges</span> <span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cpos</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+
+<span class="n">true</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/hdf5/true.hdf5&quot;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+<span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;null&quot;</span>
+<span class="k">if</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+<span class="c1"># -- infer hydrograph --</span>
+<span class="n">true</span> <span class="o">=</span>  <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">]</span>
+<span class="n">inf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/hydrograph_001.006&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/hydrograph_001.000&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;Inference of hydrograph parameter: Q(m3/s)&quot;</span>
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+<span class="c1"># -- same for manning -- #</span>
+<span class="n">true</span> <span class="o">=</span>  <span class="n">true</span><span class="p">[</span><span class="s2">&quot;spatial_var/manning_alpha&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">inf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/manning.039&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/manning.000&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;inference of manning parameter: n&quot;</span>
+
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span>
+<span class="n">true</span> <span class="o">=</span>  <span class="n">true</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">inf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/bathy.039&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/bathy.000&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;inference of bathymetry parameter (m)&quot;</span>
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)),</span> <span class="n">y</span> <span class="o">=</span> <span class="n">true</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inf</span><span class="p">)),</span> <span class="n">y</span> <span class="o">=</span> <span class="n">inf</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;infered&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prior</span><span class="p">)),</span> <span class="n">y</span> <span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;prior&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">plot_title</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">df2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">clean_model</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>         <span class="c1"># deallocate correctly (necessary action)</span>
+</pre></div>
+</div>
+</div>
+</details><div class="section" id="script-explained-by-block">
+<h3>Script explained by block<a class="headerlink" href="#script-explained-by-block" title="Permalink to this heading">#</a></h3>
+<p>First, the definition necessary librairies:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##################################################################</span>
+<span class="c1">##################################################################</span>
+<span class="c1"># PERFORM TWIN EXPERIMENT (DIRECT RUN + INFERENCE RUN)</span>
+<span class="c1">#</span>
+<span class="c1"># Method &quot;old way&quot; using command system and pre-existing files</span>
+<span class="c1">##################################################################</span>
+<span class="c1">##################################################################</span>
+
+
+<span class="c1">#=======================================================#</span>
+<span class="c1">#  define librairies librairies</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>              <span class="c1"># dassflow2d : main package</span>
+<span class="kn">import</span> <span class="nn">os</span>                        <span class="c1"># os, for shell command execution (mainly for file manipulation)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="c1"># for os.chdir() command, to open current birectory as bin_directory, defined in parameters, just below</span>
+
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">call</span> <span class="c1"># terminal comand</span>
+
+<span class="kn">import</span> <span class="nn">h5py</span> <span class="c1"># source hdf5 files</span>
+
+
+<span class="c1"># method that copy pre-existing files to bin dir, used in the script</span>
+<span class="c1"># source is the path of the source file and target is the path where to copy the file</span>
+<span class="c1"># it directly use the shell</span>
+<span class="k">def</span> <span class="nf">cp_inference_file</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;inference_files/</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;rm&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span>
+    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span> <span class="c1"># Linux</span>
+
+
+<span class="c1"># copy all reference files (for direct run)</span>
+<span class="k">def</span> <span class="nf">cp_reference_file</span><span class="p">():</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;hydrograph_target.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;hydrograph.txt&#39;</span><span class="p">)</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;mesh_target.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;automaticaly_generated_mesh.txt&#39;</span><span class="p">)</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;land_uses_target.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;land_uses.txt&#39;</span><span class="p">)</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_direct.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+
+<span class="c1"># cp_dir copy files from source directory to target directory.</span>
+<span class="c1"># note that the directory is copied (not only the files within)</span>
+<span class="k">def</span> <span class="nf">cp_dir</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+  <span class="n">call</span><span class="p">([</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span> <span class="c1"># Linux</span>
+
+<span class="c1"># save hdf5 (results) files out of /res directory</span>
+<span class="k">def</span> <span class="nf">cp_hdf5_file</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;res/</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;hdf5/</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="c1">#    call([&#39;mkdir&#39;, &quot;hdf5&quot;])</span>
+    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;rm&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span>
+    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span> <span class="c1"># Linux</span>
+</pre></div>
+</div>
+<p>Importing the study case and setting default input data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dassflow_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/livillenave/Documents/distant/dassflow2d-wrap&quot;</span>
+<span class="n">bin_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to paste case files and compile DassFLow&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+<span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+<span class="c1"># delete all files in your simulation directory before starting</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/*&quot;</span><span class="p">)</span>
+<span class="c1"># Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">//cases/tuto_case/7_tuto_twin-expe/* </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make cleanres cleanmin &quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make install&quot;</span><span class="p">)</span>
+<span class="c1">#importlib.reload(df2d)</span>
+
+<span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
+</pre></div>
+</div>
+<p>Importing the “true” or “target” parameter configuration for the twin experiment:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># define paths</span>
+<span class="n">dassflow_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/livillenave/Documents/distant/dassflow2d-wrap&quot;</span>
+<span class="n">bin_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span>
+
+
+<span class="c1"># delete all files in your simulation directory before starting</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/*&quot;</span><span class="p">)</span>
+<span class="c1"># Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">//cases/tuto_case/7_tuto_twin-expe/bin_A/* </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make cleanres cleanmin &quot;</span><span class="p">)</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># set up true configuration</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">)</span>
+<span class="n">cp_reference_file</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Performing the direct run and saving the observations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#=======================================================#</span>
+<span class="c1"># direct run of the  model</span>
+<span class="c1">#=======================================================#A</span>
+
+
+<span class="c1"># initialise fortran instance, and python corrponding data</span>
+<span class="n">direct_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">)</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span> <span class="c1"># build pyvista unstructured grid from model.mesh object</span>
+
+
+<span class="c1"># define initial conditions</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">h</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">u</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">v</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span>
+
+<span class="n">direct_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span>
+<span class="n">direct_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># run model</span>
+
+
+
+
+<span class="n">direct_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span> <span class="c1"># save simulation results in hdf5 files</span>
+<span class="n">cp_hdf5_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;simu.hdf5&quot;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;true.hdf5&quot;</span><span class="p">)</span> <span class="c1">#save hdf5 (results) files out of /res directory</span>
+<span class="n">cp_dir</span><span class="p">(</span><span class="s1">&#39;./res/obs&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="c1"># copy observation files</span>
+</pre></div>
+</div>
+<p>We can have a look at water height evolution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">direct_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span>
+
+
+  <span class="n">a</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/res/simu.hdf5&quot;</span><span class="p">)</span>
+
+
+
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+      <span class="n">b</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">][:,</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">zs</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/h&quot;</span><span class="p">][:,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>  <span class="n">a</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+
+      <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zs</span> <span class="p">)),</span>
+                  <span class="n">y</span> <span class="o">=</span> <span class="n">zs</span><span class="p">,</span>
+                  <span class="n">linewidths</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+
+      <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span> <span class="p">)),</span>
+                  <span class="n">y</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span>
+                  <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                  <span class="n">linewidths</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+
+
+<span class="n">df2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">clean_model</span><span class="p">(</span><span class="n">direct_model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>         <span class="c1"># deallocate correctly (necessary action)</span>
+</pre></div>
+</div>
+<p>Performing the inverse run:</p>
+<ul class="simple">
+<li><p>Importing “prior” or “first guess” data</p></li>
+<li><p>Running the inverse model</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">###########################################################</span>
+<span class="c1">#===========================================================</span>
+<span class="c1"># RUN INFERENCE</span>
+<span class="c1">#===========================================================</span>
+<span class="c1">###########################################################</span>
+
+
+<span class="c1">#----------------------#</span>
+<span class="c1">#  Define Parameters</span>
+<span class="c1">#----------------------#</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make cleanres cleanmin &quot;</span><span class="p">)</span>
+
+
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm restart.bin &quot;</span><span class="p">)</span>
+
+
+<span class="c1"># /!\ warning :: bathymetry not inferable ? --&gt; lilian = optim not find optimum</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CHOOSE INFERENCE TYPE (1 hydrograph, 2 land_use, 3 = bathy)&quot;</span><span class="p">)</span>
+<span class="n">inference_type</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter 1,2 or 3 </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+    <span class="c1"># -- infer hydrograph --</span>
+    <span class="n">cp_reference_file</span><span class="p">()</span>
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;hydrograph_prior.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;hydrograph.txt&#39;</span><span class="p">)</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_hydrograph.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+    <span class="c1"># -- same for manning -- #</span>
+    <span class="n">cp_reference_file</span><span class="p">()</span>
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;land_uses_prior.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;land_uses.txt&#39;</span><span class="p">)</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_land_uses.txt&#39;</span> <span class="p">,</span>
+                      <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span>
+    <span class="c1"># -- infer hydrograph --#</span>
+    <span class="n">cp_reference_file</span><span class="p">()</span>
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;mesh_prior.txt&#39;</span> <span class="p">,</span>
+                          <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;automaticaly_generated_mesh.txt.txt&#39;</span><span class="p">)</span>
+
+    <span class="n">cp_inference_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;input_bathy.txt&#39;</span> <span class="p">,</span>
+                          <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;input.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Performing inference and saving the direct run and minimization results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="n">bin_dir</span><span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span><span class="p">)</span>
+
+<span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">h</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">u</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">v</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">my_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># save simulation results in hdf5 files</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span>
+
+<span class="n">cp_hdf5_file</span><span class="p">(</span><span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;simu.hdf5&quot;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;inference_manning.hdf5&quot;</span><span class="p">)</span>
+
+<span class="n">inf</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/hdf5/inference_manning.hdf5&quot;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Plotting the inferred parameters and resulting hydraulic states:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#=======================================================#</span>
+<span class="c1"># LOAD HDF5 files</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="c1"># get grid object</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">grid</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_edges</span> <span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cpos</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+
+<span class="n">true</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/hdf5/true.hdf5&quot;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+<span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;null&quot;</span>
+<span class="k">if</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+    <span class="c1"># -- infer hydrograph --</span>
+    <span class="n">true</span> <span class="o">=</span>  <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">]</span>
+    <span class="n">inf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/hydrograph_001.006&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/hydrograph_001.000&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;Inference of hydrograph parameter: Q(m3/s)&quot;</span>
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+    <span class="c1"># -- same for manning -- #</span>
+    <span class="n">true</span> <span class="o">=</span>  <span class="n">true</span><span class="p">[</span><span class="s2">&quot;spatial_var/manning_alpha&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">inf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/manning.039&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/manning.000&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;inference of manning parameter: n&quot;</span>
+
+<span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span>
+    <span class="n">true</span> <span class="o">=</span>  <span class="n">true</span><span class="p">[</span><span class="s2">&quot;spatial_var/bathy&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">inf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/bathy.039&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;min/bathy.000&quot;</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;inference of bathymetry parameter (m)&quot;</span>
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)),</span> <span class="n">y</span> <span class="o">=</span> <span class="n">true</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inf</span><span class="p">)),</span> <span class="n">y</span> <span class="o">=</span> <span class="n">inf</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;infered&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prior</span><span class="p">)),</span> <span class="n">y</span> <span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span><span class="s2">&quot;prior&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">plot_title</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">df2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">clean_model</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>         <span class="c1"># deallocate correctly (necessary action)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="1_make_your_first_run.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Forward/Direct run</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="3_inference-python.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Inference run using scipy.minimize</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mac-donald-s-type-1d-solution">
+   Mac Donald’s type 1D solution
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#script-explained-by-block">
+     Script explained by block
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://gitlab.irstea.fr//lilian.villenave/dassflow2d-wrap/-/edit/documentation//doc/SPHINX_DOCUMENTATION/source/getting_started/Tutorials/2_make_your_first_4Dvar.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
+    </a>
+</div>
+
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../../_sources/getting_started/Tutorials/2_make_your_first_4Dvar.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

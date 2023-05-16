@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forward/Direct run &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/Tutorials/1_make_your_first_run';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Inference run" href="2_make_your_first_4Dvar.html" />
+    <link rel="prev" title="Coding Philosophy" href="../CodingPhilosophy/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Forward/Direct run</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="2_make_your_first_4Dvar.html">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_inference-python.html">Inference run using scipy.minimize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_gen-user-data.html">Generate  Basic channel</a></li>
+</ul>
+
+  </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <div class="section" id="forward-direct-run">
+<span id="make-your-first-run"></span><h1>Forward/Direct run<a class="headerlink" href="#forward-direct-run" title="Permalink to this heading">#</a></h1>
+<p>This tutorial details how to perform a direct/forward run with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code>. The 2D SW equations are here solved on an academic case consisting in a lake at rest. <a href="#id1"><span class="problematic" id="id2">**</span></a>TO_DO ref to eqs &amp; solver used **</p>
+<p>The goal of this case is to check whether the equilibrium state is preserved, that is preserving initial states.
+More precisely the “Lake at rest” is performed to validate the well-balanced property of the numerical schemes
+used in DassFlow. The equilibrium challenged here is the equilibrium between fluxes and gravity source term
+<span class="math notranslate nohighlight">\(S_g (U)\)</span> for a perturbed topography.</p>
+<a class="reference internal image-reference" href="../../_images/mesh_clim.png"><img alt="../../_images/mesh_clim.png" src="../../_images/mesh_clim.png" style="width: 600px;" /></a>
+<p>The perturbed topography looks like:</p>
+<a class="reference internal image-reference" href="../../_images/bathy_0.png"><img alt="../../_images/bathy_0.png" src="../../_images/bathy_0.png" style="width: 600px;" /></a>
+<div class="section" id="runnig-lake-at-rest-with-command-lines">
+<h2>Runnig “lake at rest” with command lines<a class="headerlink" href="#runnig-lake-at-rest-with-command-lines" title="Permalink to this heading">#</a></h2>
+<div class="section" id="set-up-your-environment">
+<h3>Set up your environment<a class="headerlink" href="#set-up-your-environment" title="Permalink to this heading">#</a></h3>
+<p>Prepare the simulation files corresponding to “lake at rest” case with:</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>File copy and compilation has just been performed in <a class="reference internal" href="../index.html#getting-started"><span class="std std-ref">Getting started</span></a> introduction, during <a class="reference internal" href="../Installation/index.html#installation"><span class="std std-ref">Installation</span></a> process. Thus, you don’t need to compile the code again.</p>
+</div>
+<p>Open a terminal in (<em class="xref py py-obj">/dassflow2d-wrap/code</em>) and run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># delete all files in your simulation directory before starting</span>
+rm -r ./bin_A/*
+<span class="c1"># Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.</span>
+cp -r ../cases/tuto_case/1_lake-at-rest/bin_A/* ./bin_A
+</pre></div>
+</div>
+<p>Note that this test case “lake at rest” can be viewed as a stability test case where the well-balancedness of the numerical scheme (see. <em class="xref py py-obj">Math_num_doc</em>) is tested in terms of equilibrium preservation. It is a simple test case for which, all the boundaries are set as walls and no inflow or outflow occurs.</p>
+</div>
+<div class="section" id="launch-your-first-run-using-make">
+<h3>Launch your first run using make<a class="headerlink" href="#launch-your-first-run-using-make" title="Permalink to this heading">#</a></h3>
+<p>Write the following command in your terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make rundirect
+</pre></div>
+</div>
+<p>This executes some commands coded in the Makefile and printed in the terminal at the beginning of the execution:</p>
+<a class="reference internal image-reference" href="../../_images/tuto1_make_rundirect_initialization.png"><img alt="../../_images/tuto1_make_rundirect_initialization.png" src="../../_images/tuto1_make_rundirect_initialization.png" style="width: 600px;" /></a>
+<a class="reference internal image-reference" href="../../_images/tuto1_make_rundirect_initialization.png"><img alt="../../_images/tuto1_make_rundirect_initialization.png" src="../../_images/tuto1_make_rundirect_initialization.png" style="width: 600px;" /></a>
+<p>You should see in the terminal the successive temporal iterations of the numerical resolution of the 2D SW model.</p>
+</div>
+<div class="section" id="investigate-results">
+<h3>Investigate results<a class="headerlink" href="#investigate-results" title="Permalink to this heading">#</a></h3>
+<p>Have a look to directory ./dassflow2d-wrap/code/bin_A/res/ and investiguate the result files produced (<em class="xref py py-obj">result_initial.dat</em> and <em class="xref py py-obj">result_final.dat</em>).
+These dat files are in gnuplot format (cf. <a class="reference external" href="http://www.gnuplot.info/">http://www.gnuplot.info/</a>) ; another output format as well as plot tools are available in DassFlow and presented after.</p>
+</div>
+</div>
+<div class="section" id="runnig-lake-at-rest-with-python">
+<h2>Runnig “lake at rest” with Python<a class="headerlink" href="#runnig-lake-at-rest-with-python" title="Permalink to this heading">#</a></h2>
+<p>In <em class="xref py py-obj">/dassflow2d-wrap/cases/tuto_cases/1_lake-at-rest/</em> open the script <em class="xref py py-obj">1_main-tuto_forward_lake_at_rest.py</em>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##########################################################</span>
+<span class="c1">##########################################################</span>
+<span class="c1"># PERFORM A DIRECT SIMULATION WITH  DASSFLOW2D</span>
+<span class="c1"># LAKE AT REST</span>
+<span class="c1">#</span>
+<span class="c1"># Introduction to basic commands to run and visualise simulation reuslt</span>
+<span class="c1">##########################################################</span>
+<span class="c1">##########################################################</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># Source librairies</span>
+<span class="c1">#=======================================================#</span>
+<span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># copy case file</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">dassflow_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../../../&quot;</span><span class="p">)</span>
+<span class="c1"># or absolute path : dassflow_dir =/home/pagarambois/Documents/Distant/dassflow2d-wrap/</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Printing case files </span><span class="se">\n</span><span class="s2"> from </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/cases/tuto_case/0_lake-at-rest/bin_A/* </span><span class="se">\n</span><span class="s2">  to  </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A &quot;</span><span class="p">)</span>
+
+<span class="c1"># delete all files in your simulation directory before starting</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/*&quot;</span><span class="p">)</span>
+<span class="c1"># Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/cases/tuto_case/1_lake-at-rest/bin_A/* </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;make cleanres cleanmin&quot;</span><span class="p">)</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># initialise + run +save results</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span> <span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">)</span> <span class="c1"># initialise fortran/python instance</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span> <span class="c1"># allocate and initialise many fortran variables</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># run model</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span> <span class="c1"># save simulation results in hdf5 files</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span>  <span class="c1"># build a pyvista.unstructuredgrid object, which is used for plots</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># Post-processing</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="c1"># for indication about plot_var method:</span>
+<span class="c1"># help(my_model.plot_var)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to plot some model outputs&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+<span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="ow">or</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;bathy&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;bahtymetry&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/bathy&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL h&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/h_0&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL zs&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/zs_0&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL u&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/u_0&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL v&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/v_0&quot;</span><span class="p">)</span>
+
+    <span class="c1"># etc ...</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL h&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;h at second time step&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/h_fin&quot;</span><span class="p">)</span>
+
+    <span class="c1"># result at the end of the simulation:</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;vel&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;final&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;norm(u,v) at final time step&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/velocity_fin&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;final&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Zs(m) at final time step&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/Zs_fin&quot;</span><span class="p">)</span>
+
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to plot temporal evolution of the free surface&quot;</span><span class="p">)</span>
+ <span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+ <span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="ow">or</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+         <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; h  at wriite timestep= </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># water eight</span>
+
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to plot temporal evolution of the velocity&quot;</span><span class="p">)</span>
+ <span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+ <span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="ow">or</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+        <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;vel&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; norm(u,v) at at wriite timestep= </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Note that the location of the dassflow directory has to be defined by setting appropriate value to <strong>dassflow_dir</strong>  at line 13 of the python script: <em class="xref py py-obj">1_main-tuto_forward_lake_at_rest.py</em>. A relative path has been set here and enables to run the script locally ; an absolute path enables to run the script in terminal from other directories.</p>
+</div>
+<p>Finaly execute the script in a terminal :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 <span class="s2">&quot;path_to_your_script/name_script.py&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-lake-at-rest-with-python-explained-step-by-step">
+<h2>Running “lake at rest” with Python explained step by step<a class="headerlink" href="#running-lake-at-rest-with-python-explained-step-by-step" title="Permalink to this heading">#</a></h2>
+<p>First, source necessary librairies and define necessary inputs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#=======================================================#</span>
+<span class="c1"># Source librairies</span>
+<span class="c1">#=======================================================#</span>
+<span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># copy case file</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">dassflow_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../../../&quot;</span><span class="p">)</span>
+<span class="c1"># or absolute path : dassflow_dir = &quot;/home/pagarambois/Documents/Distant/dassflow2d-wrap/&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Printing case files </span><span class="se">\n</span><span class="s2"> from </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/cases/tuto_case/0_lake-at-rest/bin_A/* </span><span class="se">\n</span><span class="s2">  to  </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A &quot;</span><span class="p">)</span>
+
+<span class="c1"># delete all files in your simulation directory before starting</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/*&quot;</span><span class="p">)</span>
+<span class="c1"># Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp -r </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/cases/tuto_case/0_lake-at-rest/bin_A/* </span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;make cleanres cleanmin&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First initialize the Fortran kernel:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># initialise fortran instance, and python corrponding data</span>
+<span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span> <span class="p">,</span> <span class="n">arg</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You sould observe a corresponding console output :</p>
+<a class="reference internal image-reference" href="../../_images/tuto1_initialisationpython.png"><img alt="../../_images/tuto1_initialisationpython.png" src="../../_images/tuto1_initialisationpython.png" style="width: 600px;" /></a>
+<p>Then you can run the model :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span> <span class="c1"># allocate and initialise many fortran variables</span>
+      <span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># run model</span>
+</pre></div>
+</div>
+<p>The results are calculated at each calculating time steps (depending on <code class="docutils literal notranslate"><span class="pre">clf</span></code> condition) and are written at each writting timestep (<code class="docutils literal notranslate"><span class="pre">dtw</span></code> parameter):</p>
+<p>Initial messages from console</p>
+<a class="reference internal image-reference" href="../../_images/tuto1_calc-start.png"><img alt="../../_images/tuto1_calc-start.png" src="../../_images/tuto1_calc-start.png" style="width: 600px;" /></a>
+<p>Final messages from console</p>
+<a class="reference internal image-reference" href="../../_images/tuto1_calc-end.png"><img alt="../../_images/tuto1_calc-end.png" src="../../_images/tuto1_calc-end.png" style="width: 600px;" /></a>
+<p>Finally you can save the results and perform some plots by executing the last lines of the name_script:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># save simulation results in hdf5 files</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span>
+
+<span class="n">my_model</span><span class="o">.</span><span class="n">build_grid</span><span class="p">()</span> <span class="c1"># necessary for plots # builds callable objects</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">grid</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># Post-processing</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to plot model outputs&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+<span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="ow">or</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;bathy&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;bahtymetry&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL h&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL zs&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL u&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/u_0&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;INITIAL v&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/v_0&quot;</span><span class="p">)</span>
+
+    <span class="c1"># etc ...</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;h at second time step&quot;</span><span class="p">)</span>
+
+    <span class="c1"># result at the end of the simulation:</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;vel&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;final&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;norm(u,v) at final time step&quot;</span><span class="p">)</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="s2">&quot;final&quot;</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Zs(m) at final time step&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;./res/Zs_fin&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First, you can have a look at the bathymetry and initial conditions (of water heigth and free surface height).</p>
+<p>One can note that the initial conditions does not correspond to a state at rest and some time will be necessary before attaining the stationary “at rest” situation</p>
+<a class="reference internal image-reference" href="../../_images/bathy.svg"><img alt="../../_images/bathy.svg" src="../../_images/bathy.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/h_0.svg"><img alt="../../_images/h_0.svg" src="../../_images/h_0.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/zs_0.svg"><img alt="../../_images/zs_0.svg" src="../../_images/zs_0.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/u_0.svg"><img alt="../../_images/u_0.svg" src="../../_images/u_0.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/v_0.svg"><img alt="../../_images/v_0.svg" src="../../_images/v_0.svg" width="600" /></a>
+<p>You can see at second timestep the evolution of water heigths.</p>
+<a class="reference internal image-reference" href="../../_images/h_fin.svg"><img alt="../../_images/h_fin.svg" src="../../_images/h_fin.svg" width="600" /></a>
+<p>You can also see at the end of the simulation, that the velocities are almost null and the lake remains at rest:</p>
+<a class="reference internal image-reference" href="../../_images/velocity_fin.svg"><img alt="../../_images/velocity_fin.svg" src="../../_images/velocity_fin.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/Zs_fin.svg"><img alt="../../_images/Zs_fin.svg" src="../../_images/Zs_fin.svg" width="600" /></a>
+<p>By running the last lines of the script, plotting temporal evolution of free surface height and velocity, you can also check that we atteined the stationnary state:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to plot temporal evolution of the free surface&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+<span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="ow">or</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+        <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; h  at wriite timestep= </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to plot temporal evolution of the velocity&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press Y or N to continue.&quot;</span><span class="p">)</span> <span class="c1"># ajouter exit si pas Y ou N</span>
+
+<span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="ow">or</span> <span class="n">args</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+        <span class="n">my_model</span><span class="o">.</span><span class="n">plot_var</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;vel&quot;</span><span class="p">,</span> <span class="n">when</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; norm(u,v) at at wriite timestep= </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="use-this-script-for-any-direct-run">
+<h1>Use this script for any direct run<a class="headerlink" href="#use-this-script-for-any-direct-run" title="Permalink to this heading">#</a></h1>
+<p>Using this script one can run any other case by simply providing another case data directory with necessary inputs are provided to DassFlow.</p>
+<p>You can change the name of the case data folder <code class="docutils literal notranslate"><span class="pre">/cases/tuto_case/0_lake-at-rest</span></code> by <code class="docutils literal notranslate"><span class="pre">/cases/dev_case/1_qin</span></code> into the python script
+in the line <code class="docutils literal notranslate"><span class="pre">os.system(f&quot;cp</span> <span class="pre">-r</span> <span class="pre">{dassflow_dir}/cases/tuto_case/0_lake-at-rest/*</span> <span class="pre">{dassflow_dir}/code/bin_A&quot;)</span></code>. Then direct runs can be performed with the other test case specified.</p>
+<p>for each test case you run, you can check spatial variables values at any writting timestep using the method <code class="docutils literal notranslate"><span class="pre">dassflow2d.DassFlowModel.plot_var</span></code> (you can acess documentation of the method in <a class="reference internal" href="../../reference/index.html#api"><span class="std std-ref">API Reference</span></a> section, in DassFLowModel/constructor/plot_var) .</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>The last loop on temporal evolution must also be adapted (to the number of writing time steps) or deleted.</p>
+</div>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+The plots produced with the case <strong>1_qin</strong> shoud look like this:<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<a class="reference internal image-reference" href="../../_images/bathy1.svg"><img alt="../../_images/bathy1.svg" src="../../_images/bathy1.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/h_01.svg"><img alt="../../_images/h_01.svg" src="../../_images/h_01.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/zs_01.svg"><img alt="../../_images/zs_01.svg" src="../../_images/zs_01.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/u_01.svg"><img alt="../../_images/u_01.svg" src="../../_images/u_01.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/v_01.svg"><img alt="../../_images/v_01.svg" src="../../_images/v_01.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/velocity_fin1.svg"><img alt="../../_images/velocity_fin1.svg" src="../../_images/velocity_fin1.svg" width="600" /></a>
+<a class="reference internal image-reference" href="../../_images/Zs_fin1.svg"><img alt="../../_images/Zs_fin1.svg" src="../../_images/Zs_fin1.svg" width="600" /></a>
+</div>
+</details></div>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="../CodingPhilosophy/index.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Coding Philosophy</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="2_make_your_first_4Dvar.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Inference run</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Forward/Direct run
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#runnig-lake-at-rest-with-command-lines">
+     Runnig “lake at rest” with command lines
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#set-up-your-environment">
+       Set up your environment
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#launch-your-first-run-using-make">
+       Launch your first run using make
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#investigate-results">
+       Investigate results
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#runnig-lake-at-rest-with-python">
+     Runnig “lake at rest” with Python
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#running-lake-at-rest-with-python-explained-step-by-step">
+     Running “lake at rest” with Python explained step by step
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#use-this-script-for-any-direct-run">
+   Use this script for any direct run
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://gitlab.irstea.fr//lilian.villenave/dassflow2d-wrap/-/edit/documentation//doc/SPHINX_DOCUMENTATION/source/getting_started/Tutorials/1_make_your_first_run.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
+    </a>
+</div>
+
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../../_sources/getting_started/Tutorials/1_make_your_first_run.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,111 @@
+!===========================================================================================================!
+!	Input File for Shallow-Water Model
+!	(configure your text editor with a 4 tabs space for better reading)
+!===========================================================================================================!
+
+&list_input
+
+!===========================================================================================================!
+!  Mesh Type
+!===========================================================================================================!
+
+	mesh_type		=	'basic',				! 'basic' , 'dassflow' , 'gmsh'
+
+	mesh_name		=	'mesh_name.geo'			! Mesh File
+
+!===========================================================================================================!
+!  Structured mesh parameters (in basic case)
+!===========================================================================================================!
+
+	lx				=	1000.,					! Domain length in x horizontal direction
+	ly				=	100.,		    		! Domain length in y vertical direction
+
+	nx				=	100,					! Number of nodes in x horizontal direction
+	ny				=	10,						! Number of nodes in y vertical direction
+
+!===========================================================================================================!
+! Boundary conditions
+!===========================================================================================================!
+
+	bc_N			=	'wall',					! Type of Boundary condition at Mesh North
+	bc_S			=	'wall',					! Type of Boundary condition at Mesh South
+	bc_W			=	'discharg1',			! Type of Boundary condition at Mesh West
+	bc_E			=	'transm',				! Type of Boundary condition at Mesh East
+
+!===========================================================================================================!
+!  Simulation parameters
+!===========================================================================================================!
+
+	ts				=	14400.,					! Simulation Time
+
+	dtw				=	14400.,					! Time-Step to output Result Files
+
+	dtp				=	60.,					! Time-Step to output Post Variables
+
+	dta				=	60.,					! Time Step to Generate BC (for Data Assimilation)
+
+	verbose			=	0,						! Verbosity Level
+
+!===========================================================================================================!
+!  Numerical parameters
+!===========================================================================================================!
+
+	temp_scheme		=	'euler',		   		! Choice of Temporal Scheme ( euler , rk2 )
+	spatial_scheme	=	'first_b1',				! Choice of Spatial Scheme ( first , muscl )
+
+	adapt_dt		=	1,						! Choice of an Adaptative Time-Step (1) or not (0)
+
+	dt				=	0.05,					! Fixed Simulation Time-Step if adapt_dt = 0
+
+	cfl				=	0.8,					! CFL number in case of Adaptative Time Step
+
+	heps			=	0.,						! Cut-off water depth to stabilize SW Numerical Schemes
+
+	friction		=	1,						! Manning Source Term
+
+	feedback_inflow	=	1,
+	coef_feedback	=	0.1,
+
+	max_nt_for_direct	=	10000000,
+
+!===========================================================================================================!
+!  Physical parameters
+!===========================================================================================================!
+
+	g				=	10.,					! Gravity constant
+
+!===========================================================================================================!
+!  Output Results Files Switches
+!===========================================================================================================!
+
+	w_tecplot		=	1,						! in Tecplot format
+	w_vtk			=	1,						! in VTK format
+
+	w_exact			=	0,						! Output Exact Solution (if provided in m_user_data.f90)
+	w_norm			=	0,						! Output Linf, L1 and L2 relative error norms
+
+    w_obs			=	0,						! Writing obs data relating to obs.txt file
+	use_obs			=	0,
+
+!===========================================================================================================!
+!  Variational Data Assimilation Parameters
+!===========================================================================================================!
+
+	c_manning		=	0,
+	c_bathy			=	0,
+	c_ic			=	0,
+	c_hydrograph	=	0,
+	c_ratcurve		=	0,
+
+	eps_manning		=	0.1,
+	eps_bathy		=	0.1,
+	eps_ic			=	0.1,
+	eps_hydrograph	=	0.1,
+	eps_ratcurve	=	0.1,
+
+	max_nt_for_adjoint	=	2500,
+
+	restart_min		=	0,
+	eps_min			=	1.d-4
+
+/

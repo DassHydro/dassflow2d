@@ -1,0 +1,1594 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language french
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement !tbh
+\paperfontsize 11
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 2cm
+\rightmargin 3cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style french
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Wrapping du code de DassFlow-2D
+\end_layout
+
+\begin_layout Date
+01 Septembre 2020
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace{0.5cm}
+\end_layout
+
+\end_inset
+
+ Ce fichier a pour but de représenter la méthodologie du wrapping du code
+ de DassFlow-2D en Python.
+ La générateur utilisée ici est la 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap}
+\end_layout
+
+\end_inset
+
+, une version plus forte de 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py}
+\end_layout
+
+\end_inset
+
+.
+ Alors pourquoi on a choisi cet outil?
+\end_layout
+
+\begin_layout Standard
+Il y a des autres générateurs d'interface de Fortran-Python comme 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py-2e}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{G3 f2py}
+\end_layout
+
+\end_inset
+
+, etc.
+ ceux qui basent aussi sur la 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py}
+\end_layout
+
+\end_inset
+
+ (inclue dans le 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{numpy}
+\end_layout
+
+\end_inset
+
+ de Python).
+ Pourtant, ces outils permettent de résoudre seulement pour des codes simples,
+ il y a une seule la 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f90wrap}
+\end_layout
+
+\end_inset
+
+ développée à partir de 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{f2py}
+\end_layout
+
+\end_inset
+
+ qui fonctionne avec plus des cas complexes (le cas du type de dérivé, etc.).
+ En plus, on peut trouver une solution de wrapper Python-Fortran via un
+ autre langage comme C.
+ Autrement dit, on peut faire le wrapping Fortran-C et puis C-Python (via
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{SWIG}
+\end_layout
+
+\end_inset
+
+ par exemple), comme il est plus facile de traduire du code de Fortran à
+ C et il y a plus des outils qui sont plus fortes pour faire le wrapping
+ de C-Python.
+ Par contre, ce moyen n'est pas optimal car on a besoin d'un troisième langage,
+ ce qui rend beaucoup de complication dans la construction du code.
+\end_layout
+
+\begin_layout Section
+Relance du 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{Makefile}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Modification du chemin de 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+PYTHONPATH
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace{0.5cm}
+\end_layout
+
+\end_inset
+
+ Avant de commencer, on a besoin de modifier un bon chemin pour la variable
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{PYTHONPATH}
+\end_layout
+
+\end_inset
+
+ dans le fichier 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{/scripts/env.sh}
+\end_layout
+
+\end_inset
+
+ pour exécuter le fichier Python qui appelle des fonctions de Fortran quand
+ les modules de Python sont crées.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+PYTHONPATH = Le chemin de votre machine
+\end_layout
+
+\begin_layout Subsection
+Run des commandes
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace{0.5cm}
+\end_layout
+
+\end_inset
+
+ Tout d'abord, on réinstalle les libs et recompile tous les codes du DassFlow-2D
+ par la liste des commandes ci-dessous:
+\end_layout
+
+\begin_layout LyX-Code
+$ make cleanall
+\end_layout
+
+\begin_layout LyX-Code
+$ make lib
+\end_layout
+
+\begin_layout LyX-Code
+$ make bin_files
+\end_layout
+
+\begin_layout LyX-Code
+$ make tap_files
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Une fois les codes sont recompilés, on passe à l'étape du wrapping et puis
+ exécuter le fichier Python à tester pour vérifier que le paquet 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{dassflow2d}
+\end_layout
+
+\end_inset
+
+ est bien importé depuis un fichier Python en tapant les commandes suivants:
+\end_layout
+
+\begin_layout LyX-Code
+$ make clean
+\end_layout
+
+\begin_layout LyX-Code
+$ make wrap
+\end_layout
+
+\begin_layout LyX-Code
+$ source ./scripts/env.sh
+\end_layout
+
+\begin_layout LyX-Code
+$ make testwrap
+\end_layout
+
+\begin_layout Section
+Modification du code de fichiers Fortran
+\end_layout
+
+\begin_layout Standard
+La liste des fichiers modifiés ou rajoutés:
+\end_layout
+
+\begin_layout LyX-Code
+m_common.f90 
+\end_layout
+
+\begin_layout LyX-Code
+m_linear_algebra.f90
+\end_layout
+
+\begin_layout LyX-Code
+m_mesh.f90
+\end_layout
+
+\begin_layout LyX-Code
+m_sw_mono.f90
+\end_layout
+
+\begin_layout LyX-Code
+m_user_data.f90
+\end_layout
+
+\begin_layout LyX-Code
+sw_pre.f90
+\end_layout
+
+\begin_layout LyX-Code
+m_linear_solver.f90
+\end_layout
+
+\begin_layout LyX-Code
+m_numeric.f90
+\end_layout
+
+\begin_layout LyX-Code
+m_obs.f90
+\end_layout
+
+\begin_layout LyX-Code
+boundary.f90
+\end_layout
+
+\begin_layout LyX-Code
+advance_time.f90
+\end_layout
+
+\begin_layout LyX-Code
+numeric_sw.f90
+\end_layout
+
+\begin_layout LyX-Code
+sw_flux.f90
+\end_layout
+
+\begin_layout LyX-Code
+euler_time_step_first.f90
+\end_layout
+
+\begin_layout LyX-Code
+euler_time_step_first_b1.f90	  
+\end_layout
+
+\begin_layout LyX-Code
+sw_post.f90
+\end_layout
+
+\begin_layout LyX-Code
+run_model_sw_mono.f90
+\end_layout
+
+\begin_layout LyX-Code
+call_run_model.f90 
+\color red
+(rajouté)
+\end_layout
+
+\begin_layout LyX-Code
+geometry.f90
+\end_layout
+
+\begin_layout LyX-Code
+initialization.f90
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Notons que tous les compilations conditionnelles (CPP_PASS) rajoutées dans
+ les fichiers Fortran n'affectent qu'à la partie de wrapping.
+\end_layout
+
+\begin_layout Subsection
+Modification général
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+En général, on met la ligne USE m_mpi, tous les routines concernant le mpi
+ comme Time_Init_Part, com_var_r, Time_End_Part et Stopping_Program_Sub
+ et parfois, la ligne USE m_time_screen et l'appel de ses routines en commentair
+e.
+ Voici un exemple pour les différents entre le fichier euler_time_step_first_b1.f
+90 wrappé et non wrappé (voir la figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "diff1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\lang english
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+
+\lang english
+\begin_inset Graphics
+	filename figs/diff1.png
+	lyxscale 40
+	width 100text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\lang english
+Différence entre les fichiers 
+\lang french
+euler_time_step_first_b1.f90 wrappé et non wrappé
+\lang english
+ 
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "diff1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Modification spécifique
+\end_layout
+
+\begin_layout Subsubsection
+Fichier src/common/m_mesh.f90
+\end_layout
+
+\begin_layout Standard
+On rajoute dans ce fichier les routines NodeType_initialise et test.
+\end_layout
+
+\begin_layout Itemize
+Le content du routine NodeType_initialise est pris dans le routine Create_Cartes
+ian_Mesh du fichier src/base/input.f90 mais il est modifié un peu pour adapter
+ au fait de wrapping.
+\end_layout
+
+\begin_layout Itemize
+Le routine test a pour but de tester si la variable du type msh est bien
+ importée car il n'y aucun règle pour d'appeler directement les variables
+ comme Node, Nodeb, etc.
+ de ce type depuis un fichier Python.
+\end_layout
+
+\begin_layout Subsubsection
+Rajout du fichier src/sw_mono/call_run_model.f90
+\end_layout
+
+\begin_layout Standard
+Le fichier call_run_model.f90 crée a pour but de faire une simulation directe
+ à partir des Modules et des routines de la source.
+ La simulation base sur les pas principaux ci-dessous:
+\end_layout
+
+\begin_layout Standard
+- Initialiser la variable mdl du type Model contenant la donnée entrée msh
+ du type Mesh, la position initiale dof du type unk et le coût de function
+ cost.
+\end_layout
+
+\begin_layout Standard
+- Initialiser et set pour les variables msh et dof de mdl
+\end_layout
+
+\begin_layout Standard
+- Lancer le modèle appliqué pour mdl et le résultat est enregistrée dans
+ res cost_func.
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang english
+Lecture du fichier input.txt
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+L'idée c'est l'on lit directement les données à partir du fichier Python
+ et puis les enregistrer dans une variable dont le type est lisible pour
+ Fortran.
+ Enfin, cette variable est utilisé dans un routine de Fortran pour définir
+ les variables entrées comme: mesh_type, mesh_name, ts, dtw, etc.
+ L'intérêt de cette méthode c'est qu'on peut re-compiler le fichier Python
+ avec des différentes valeurs de variables entrées en modifiant le fichier
+ input.txt dans src/wrappers/ et sans relancer la commande pour faire le
+ wrapping make wrap.
+ 
+\end_layout
+
+\begin_layout Paragraph
+Lecture de données avec Python.
+\end_layout
+
+\begin_layout Standard
+Dans les parties # Create a specific data file to read data from Python
+ et # Convert variable type from the specific data file, on a lu des données
+ dans le ficher src/wrappers/input.txt (il est recopié depuis bin/input.txt
+ au cours de lancer la commande make wrap) et puis a converti le type pour
+ chacun de paramètre, tous les paramètres lus sont enregistrés dans la liste
+ input_data.
+\end_layout
+
+\begin_layout Paragraph
+Création d'un type lisible pour Fortran.
+\end_layout
+
+\begin_layout Standard
+On veut maintenant définir la valeur des variables entrées (ts, dtw, bc_N,
+ bc_S, etc.) dans Fortran en prenant la variable input_data créée par Python.
+ Cependant, il n'existe pas une liste avec des éléments de types différents
+ en Fortran, donc il est nécessaire de créer un nouveau type dans Fortran
+ et initialiser la variable de ce nouveau type en Python.
+ Dans le fichier m_sw_mono.f90, on crée ce nouveau type:
+\end_layout
+
+\begin_layout LyX-Code
+TYPE inputdata 
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: mesh_type_
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: mesh_name_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: lx_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: ly_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip) 	     :: nx_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip) 	     :: ny_
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: bc_n_
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: bc_s_
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: bc_w_   	character(len=lchar) :: bc_e_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: ts_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: dtw_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: dtp_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: dta_
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: temp_scheme_
+\end_layout
+
+\begin_layout LyX-Code
+	character(len=lchar) :: spatial_scheme_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: adapt_dt_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: cfl_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: heps_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: friction_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: g_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: w_tecplot_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: w_obs_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: use_obs_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: eps_min_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: c_manning_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: eps_manning_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: regul_manning_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: c_bathy_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: eps_bathy_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: regul_bathy_
+\end_layout
+
+\begin_layout LyX-Code
+	integer(ip)	     :: c_hydrograph_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp) 	     :: eps_hydrograph_
+\end_layout
+
+\begin_layout LyX-Code
+	real(rp)	     :: regul_hydrograph_
+\end_layout
+
+\begin_layout LyX-Code
+END TYPE inputdata
+\end_layout
+
+\begin_layout Standard
+et écrit un routine pour qu'on puisse les appeler et les initialiser dans
+ Python:
+\end_layout
+
+\begin_layout LyX-Code
+subroutine inputdata_initialise(inData) 
+\end_layout
+
+\begin_layout LyX-Code
+  implicit none
+\end_layout
+
+\begin_layout LyX-Code
+  type(inputdata), intent(out) :: inData
+\end_layout
+
+\begin_layout LyX-Code
+end subroutine
+\end_layout
+
+\begin_layout Standard
+Dans le fichier Python, on initialise la variable inData de type inputdata
+ en utilisant la liste input_data:
+\end_layout
+
+\begin_layout LyX-Code
+# Set variable as a type of inputdata    
+\end_layout
+
+\begin_layout LyX-Code
+inData = m_model.inputdata()  
+\end_layout
+
+\begin_layout LyX-Code
+inData.mesh_type_ = input_data[0]
+\end_layout
+
+\begin_layout LyX-Code
+inData.mesh_name_ = input_data[1]    
+\end_layout
+
+\begin_layout LyX-Code
+inData.lx_ = input_data[2] 
+\end_layout
+
+\begin_layout LyX-Code
+inData.ly_ = input_data[3]
+\end_layout
+
+\begin_layout LyX-Code
+...
+\end_layout
+
+\begin_layout Paragraph
+Définir la valeur pour les entrées dans Fortran.
+\end_layout
+
+\begin_layout Standard
+Finalement, on écrit un routine dans m_sw_mono.f90 pour définir les entrées
+ avec la variable inData vient d'être initialisée par Python:
+\end_layout
+
+\begin_layout LyX-Code
+subroutine set_inputdata(inData)
+\end_layout
+
+\begin_layout LyX-Code
+  implicit none
+\end_layout
+
+\begin_layout LyX-Code
+  type(inputdata), intent(in) :: inData
+\end_layout
+
+\begin_layout LyX-Code
+  mesh_type= inData%mesh_type_
+\end_layout
+
+\begin_layout LyX-Code
+  mesh_name= inData%mesh_name_
+\end_layout
+
+\begin_layout LyX-Code
+  lx= inData%lx_
+\end_layout
+
+\begin_layout LyX-Code
+  ly= inData%ly_
+\end_layout
+
+\begin_layout LyX-Code
+	...
+\end_layout
+
+\begin_layout LyX-Code
+end subroutine
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang english
+Lecture des conditions limites
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+La variable bc de type bcs (dans m_sw_mono.f90) définit la condition limite
+ de la simulation: 
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+TYPE bcs
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      integer(ip)  ::  nb , nb_in , nb_out
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      character(len=lchar), dimension(:,:), allocatable  ::  typ
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      integer(ip), dimension(:), allocatable  ::   grpf
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      real(rp), dimension(:), allocatable  ::  inflow       real(rp), dimension(
+:), allocatable  ::  outflow
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      type(hydrograph), dimension(:), allocatable  ::  hyd
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      type(ratcurve), dimension(:), allocatable  ::  rat
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      real(rp), dimension(:), allocatable  ::  sum_mass_flux
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   END TYPE bcs
+\end_layout
+
+\begin_layout Paragraph
+
+\lang english
+Lecture de données (non-wrappé):
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+Les données nécessaires pour déterminer la condition limite sont enregistrées
+ dans des fichiers dans /bin (dans ce cas hydrograph.txt et rating_curve.txt).
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+hydrograph.txt: La variable bc est initialisée par le fichier initialization.f90
+ (la partie 'Boundary Condition Initialization').
+ Pour cela, on a besoin de lire les variables ci-dessous dans le fichier
+ hygrograph.txt:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\lang english
+Le number de hydrographe: bc%nb_in = 1
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Le number de point (ou la taille de t et q): j = 241
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Les temps t: bc%hyd( i ) %t( k )
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Les discharges q: bc%hyd( i )%q( k )
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+
+\lang english
+avec i = 1,bc%nb_in et k = 1,j.
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+Remarque: La variable bc%hyd est de type hydrograph qui est défini dans
+ m_sw_mono.f90:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   TYPE hydrograph
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      integer(ip)  ::  group
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      real(rp), dimension(:), allocatable  ::  t , q
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   END TYPE
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+rating_curve.txt:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\lang english
+Le number de ratcurve: bc%nb_out = 1
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Le number de point: j = 101
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+bc%rat( i )%z_rat_ref = 0
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+h: bc%rat( i )%h( k )
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+q: bc%rat( i )%q( k )
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+
+\lang english
+avec i = 1,bc%nb_out et k = 1,j.
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+Remarque: La variable bc%rat est de type ratcurve qui est défini dans m_sw_mono.f
+90:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   TYPE ratcurve
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      integer(ip)  ::  group
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      real(rp), dimension(:), allocatable  ::  h , q
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+      real(rp)  ::  z_rat_ref , zout , c1 , c2 , pow(2)
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   END TYPE
+\end_layout
+
+\begin_layout Paragraph*
+
+\lang english
+Autre façon afin de lire les données (wrappé):
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Création d'un nouveau type boundarycondition: Dans le fichier sw_mono.f90
+ on crée un nouveau type 'boundarycondition' contenant des variables qui
+ sont importées par les fichiers .txt comme nb_in, nb_out, etc..
+ On définit également une nouvelle variable bc_ du type boundarycondition:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+TYPE boundarycondition
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+	integer(ip)  ::  nb_in_ , j_hyd
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+	integer(ip)  ::  nb_out_ , j_rat
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+	real(rp)     ::  rat_ref
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+	real(rp), dimension(:), allocatable  ::  t_hyd , q_hyd
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+	real(rp), dimension(:), allocatable  ::  h_rat , q_rat
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   END TYPE boundarycondition
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+   type(boundarycondition) :: bc_
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+Cette variable bc_ va être utilisé pour remplacer aux variables qui sont
+ importées par les fichiers .txt.
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+set_boundarycondition: Maintenant, le routine set_boundarycondition() créé
+ dans le fichier sw_mono.f90 permet de définir des valeurs pour tous les
+ paramètres de bc_:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+subroutine set_boundarycondition( t1 , q1 , h2 , q2 )
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+implicit none
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+real(rp), dimension(:), intent(in) :: t1 , q1
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+real(rp), dimension(:), intent(in) :: h2 , q2
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%nb_in_ = 1
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%j_hyd = 241
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%nb_out_ = 1 
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%j_rat = 101 
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%rat_ref = 0._rp
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%t_hyd = t1
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%q_hyd = q1
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%h_rat = h2
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc_%q_rat = q2
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+end subroutine
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+Notons que l'on définit uniquement des paramètres entiers et réel de bc_c,
+ les 4 vecteurs t1 , q1 , h2 , q2 sont importés par le fichier Python.
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Modification du fichier initialization.f90: Dans ce fichier, on remplace
+ les variables importées par Fortran par les paramètres de la variable bc_,
+ par exemple:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+read(10,*) bc%nb_out
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+remplacé par:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc%nb_out = bc_%nb_out_
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+Ou un autre exemple:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+read(10,*) j , bc%rat( i )%z_rat_ref
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+remplacé par:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+j = bc_%j_rat
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+bc%rat( i )%z_rat_ref = bc_%rat_ref
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+Lecture direct des paramètres par Python:
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+##### Import boudary conditions data ######     fname1 = os.path.join("hydrograph.t
+xt")     
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+hyd = np.loadtxt(fname1) # Import average monthly precip to numpy array 
+    
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+t1 = hyd[:,0]     
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+q1 = hyd[:,1]
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+fname2 = os.path.join("rating_curve.txt")     
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+rat = np.loadtxt(fname2) # Import average monthly precip to numpy array 
+    
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+h2 = rat[:,0]     
+\end_layout
+
+\begin_layout LyX-Code
+
+\lang english
+q2 = rat[:,1]
+\end_layout
+
+\begin_layout Subsection
+Visualization de résultats de simulation
+\end_layout
+
+\begin_layout Standard
+Afin de visualisiez les résultats (hauteur d'eau selon l'axe x et l'axe
+ y), on a besoin de créer un nouveau type nommé points dans le fichier src/sw_mo
+no/call_run_model.
+ Une variable pts de ce type contient la coordonnées des points à tracer
+ dans l'espace:
+\end_layout
+
+\begin_layout LyX-Code
+   TYPE points
+\end_layout
+
+\begin_layout LyX-Code
+	  real(rp), dimension(:), allocatable :: x_space
+\end_layout
+
+\begin_layout LyX-Code
+	  real(rp), dimension(:), allocatable :: y_space
+\end_layout
+
+\begin_layout LyX-Code
+   END TYPE
+\end_layout
+
+\begin_layout Standard
+On rajoute une variable sortie pts dans le routine run_direct.
+ Les informations concernant les points à tracer sont dans la variable node
+ du type mesh (mdl%mesh%node).
+ Pour chaque nœud, on recopie les infos de coordonnée dans pts:
+\end_layout
+
+\begin_layout LyX-Code
+do k = 1,mdl%mesh%nn
+\end_layout
+
+\begin_layout LyX-Code
+   pts%x_space(k) = mdl%mesh%node(k)%coord%x
+\end_layout
+
+\begin_layout LyX-Code
+   pts%y_space(k) = mdl%mesh%node(k)%coord%y
+\end_layout
+
+\begin_layout LyX-Code
+end do
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dans le fichier Python, après d'avoir enregistré les résultats de simulation
+ dans les variables h, u, v, x et y (les x, y sont les coordonnées des points
+ à tracer et h est son hauteur) à temps ts.
+ On va ensuite créer un fichier data.plt pour enregistrer ces données:
+\end_layout
+
+\begin_layout LyX-Code
+ #####Create a data file for Plotting data#####
+\end_layout
+
+\begin_layout LyX-Code
+x=result[2].x_space     
+\end_layout
+
+\begin_layout LyX-Code
+y=result[2].y_space
+\end_layout
+
+\begin_layout LyX-Code
+for j in range(size_):     
+\end_layout
+
+\begin_layout LyX-Code
+    name = "t="+str(int(t[j]))         
+\end_layout
+
+\begin_layout LyX-Code
+    filename = "%s.plt" % name         
+\end_layout
+
+\begin_layout LyX-Code
+    filepath = os.path.join('./output_data', filename)       
+\end_layout
+
+\begin_layout LyX-Code
+    if not os.path.exists('./output_data'):              
+\end_layout
+
+\begin_layout LyX-Code
+        os.makedirs('./output_data')         
+\end_layout
+
+\begin_layout LyX-Code
+    f=open(filepath,"w+")         
+\end_layout
+
+\begin_layout LyX-Code
+    f.write('## VARIABLES  =  x  y  h  u  v ' + '
+\backslash
+n')         
+\end_layout
+
+\begin_layout LyX-Code
+    for i in range(len(x)):               
+\end_layout
+
+\begin_layout LyX-Code
+    f.write( str(x[i]) + ' ' + str(y[i]) + ' ' + str(h[j][i]) + '  ' + str(u[j][i
+]) + '  ' + str(v[j][i]) + '
+\backslash
+n' )         
+\end_layout
+
+\begin_layout LyX-Code
+    f.close() 
+\end_layout
+
+\begin_layout Standard
+Une fois les données sont enregistrés dans les fichiers src/wrappers/t=xxx.plt,
+ on utilise le gnuplot pour visualiser les résultats obtenus:
+\end_layout
+
+\begin_layout LyX-Code
+gnuplot> reset 
+\end_layout
+
+\begin_layout LyX-Code
+gnuplot> set hidden3d 
+\end_layout
+
+\begin_layout LyX-Code
+gnuplot> set dgrid3d 50,50 qnorm 2 
+\end_layout
+
+\begin_layout LyX-Code
+gnuplot> set pm3d 
+\end_layout
+
+\begin_layout LyX-Code
+gnuplot> splot "data.plt" using 1:2:3 title 'h' with lines
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\end_body
+\end_document

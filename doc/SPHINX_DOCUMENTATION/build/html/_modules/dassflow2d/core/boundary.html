@@ -1,0 +1,863 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dassflow2d.core.boundary &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dassflow2d/core/boundary';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <h1>Source code for dassflow2d.core.boundary</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">dassflow2d</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">h5py</span>
+
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">ListedColormap</span>
+
+<div class="viewcode-block" id="Boundary"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.html#dassflow2d.core.boundary.Boundary">[docs]</a><span class="k">class</span> <span class="nc">Boundary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Boundary class, contains tables of values, mesh correspondance and inhering meshings:</span>
+<span class="sd">        - self.bc, np.ndarray: table of values of shape (number of values, 2)</span>
+<span class="sd">        - self.corresp, dict:  ids of correspondance between table and self.mesh_fortran object</span>
+<span class="sd">        - self.mesh_fortran, dtype: inherit **mesh_fortran**</span>
+<span class="sd">        - self.mesh_pyvista, pv.unstructured grid: inherit **mesh_pysta** at the same time</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Boundary.__init__"><a class="viewcode-back" href="../../../reference/dassflow2d.core.boundary/dassflow2d.core.boundary.Boundary.__init__.html#dassflow2d.core.boundary.Boundary.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_pyvista</span><span class="p">,</span> <span class="n">mesh_fortran</span><span class="p">):</span> <span class="c1"># mesh_pyvista, mesh_fortran</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        load  mesh_pyvista, mesh_fortran from input, source mesh correspondance  and table of values from fortran kernel</span>
+<span class="sd">            - self.mesh_fortran, dtype:  inherit **mesh_fortran**</span>
+<span class="sd">            - self.mesh_pyvista, pyvista.unstructuredgrid: inherit corresponding **mesh_pysta**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># NECESSARY INITIALISATION</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># store inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mesh_pyvista</span> <span class="o">=</span> <span class="n">mesh_pyvista</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span> <span class="o">=</span> <span class="n">mesh_fortran</span>
+        
+        <span class="c1"># load boundary data </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">()</span>                <span class="c1"># from bc </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_corresp</span><span class="p">()</span>         <span class="c1"># from bc + mesh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span></div>
+        
+    <span class="k">def</span> <span class="nf">get_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get from fortran kernel tables of value of boundaries</span>
+<span class="sd">        </span>
+<span class="sd">        **return**</span>
+<span class="sd">        </span>
+<span class="sd">        self.bc</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">my_bc</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">get_bc</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bc</span> <span class="o">=</span> <span class="n">my_bc</span>
+        
+        
+        
+        
+        <span class="c1"># calculate correspondance between table of value and edges on mesh</span>
+<div class="viewcode-block" id="Boundary.get_mesh_corresp"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.get_mesh_corresp.html#dassflow2d.core.boundary.Boundary.get_mesh_corresp">[docs]</a>    <span class="k">def</span> <span class="nf">get_mesh_corresp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate correspondance between table of value and edges on mesh</span>
+<span class="sd">        </span>
+<span class="sd">        **return**</span>
+<span class="sd">        </span>
+<span class="sd">        self.corresp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">find_indices</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+               <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+
+        <span class="k">def</span> <span class="nf">find_indices_double</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">condition1</span><span class="p">,</span> <span class="n">condition2</span><span class="p">):</span>
+               <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition1</span> <span class="ow">and</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition2</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+        <span class="n">typlim</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># typlim of the edge</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># gorup of the edge</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># global edge index</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edgeb</span><span class="o">.</span><span class="n">indices</span><span class="p">):</span>
+            <span class="n">typlim</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edgeb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">typlim</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">))</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>  <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edgeb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+            <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>  <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edgeb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ind</span><span class="p">)</span>
+            
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;wall&quot;</span> <span class="p">,</span> <span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;neumann&quot;</span><span class="p">,</span> <span class="s2">&quot;ratcurve&quot;</span> <span class="p">,</span><span class="s2">&quot;hpresc&quot;</span> <span class="p">,</span><span class="s2">&quot;zpresc&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span><span class="p">]</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">my_condition</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
+            
+            <span class="n">nb</span> <span class="o">=</span> <span class="n">typlim</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">my_condition</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">nb</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="n">my_ind</span> <span class="o">=</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">typlim</span><span class="p">,</span> <span class="n">my_condition</span> <span class="p">)</span>
+                    <span class="n">all_group</span> <span class="o">=</span><span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">tmp_ind</span> <span class="ow">in</span> <span class="n">my_ind</span><span class="p">:</span>
+                        <span class="n">all_group</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="n">tmp_ind</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">my_condition</span> <span class="o">==</span> <span class="s2">&quot;wall&quot;</span><span class="p">:</span> <span class="c1">#group set to 0</span>
+                        <span class="n">tofind</span> <span class="o">=</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">typlim</span><span class="p">,</span> <span class="n">my_condition</span> <span class="p">)</span>
+                        <span class="n">ind_final</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tofind</span> <span class="p">:</span>
+                            <span class="n">ind_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                        <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id_edge&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ind_final</span><span class="p">)</span>
+                        <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id_edgeb&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tofind</span><span class="p">)</span>
+                        <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id_grp&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+                        <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id_cell&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">id_edge</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+                            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">id_edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span> <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id_edge&quot;</span><span class="p">]</span> <span class="p">)</span> <span class="p">])</span>
+                           
+                    <span class="k">else</span><span class="p">:</span>    
+                        <span class="n">unique_groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_group</span><span class="p">)</span>
+                        <span class="n">nb_grp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">)</span>   
+                        
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_grp</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="n">pointeur</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">all_group</span> <span class="o">==</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="c1"># size of all_group ) size of my_ind</span>
+                            <span class="n">ind_grp</span> <span class="o">=</span> <span class="n">my_ind</span><span class="p">[</span><span class="n">pointeur</span><span class="p">]</span>
+                            <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                            <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="s2">&quot;id_edgeb&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ind_grp</span><span class="p">)</span>
+                            <span class="n">id_edge</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">ind_grp</span><span class="p">)</span>
+                            <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="s2">&quot;id_edge&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">id_edge</span><span class="p">)</span>
+                            <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="s2">&quot;id_grp&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                            <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="s2">&quot;id_cell&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">id_edge</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+                            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">id_edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span> <span class="n">res</span><span class="p">[</span><span class="n">my_condition</span><span class="p">][</span><span class="n">unique_groups</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="s2">&quot;id_edge&quot;</span><span class="p">]</span> <span class="p">)</span> <span class="p">])</span>
+    
+        <span class="c1">#print(res[&quot;discharg1&quot;])</span>
+        <span class="c1">#print(res[&quot;ratcurve&quot;])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span> <span class="o">=</span> <span class="n">res</span>
+        <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+        
+        
+        <span class="c1"># get metadata for calculations,,loops etc..</span>
+<div class="viewcode-block" id="Boundary.get_metadata"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.get_metadata.html#dassflow2d.core.boundary.Boundary.get_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;get metadata for calculations,,loops etc..</span>
+<span class="sd">        </span>
+<span class="sd">        **return**</span>
+<span class="sd">        a dictionary containing metadata</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="c1">#print(&quot;number of each bc type, (wall always = 1) : &quot;)</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+        
+
+
+<div class="viewcode-block" id="Boundary.plot"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.plot.html#dassflow2d.core.boundary.Boundary.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;values&quot;</span><span class="p">,</span><span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;boundaries localisation&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;boundaries_location&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot boundary localisation on mesh</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        self: dassflowmodel  object</span>
+<span class="sd">        </span>
+<span class="sd">        what: str,  either</span>
+<span class="sd">            - &quot;values&quot;: plot hydrograms, rating curve, or any table of value imposed</span>
+<span class="sd">            - &quot;meshing&quot;: plot the localisation of boundary condition imposed</span>
+
+<span class="sd">        title_plot: str, default = &quot;title&quot;,</span>
+<span class="sd">                    title of the plot</span>
+
+<span class="sd">        save_plot: logical, default = False</span>
+<span class="sd">                Do you wish to save the plot or not</span>
+<span class="sd">                </span>
+<span class="sd">        filename: str, default = &quot;tmp&quot;</span>
+<span class="sd">                Path to fsave the graphic file to. (see Plotter.save_graphic)</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">         no example</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        plot_grid: similar method but where you can define your own variable to plot</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">if</span> <span class="n">what</span> <span class="o">==</span> <span class="s1">&#39;meshing&#39;</span> <span class="p">:</span>
+            <span class="n">bc_corresp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span>
+            
+            <span class="k">def</span> <span class="nf">find_indices</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+                       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+
+            <span class="k">def</span> <span class="nf">find_indices_double</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">condition1</span><span class="p">,</span> <span class="n">condition2</span><span class="p">):</span>
+                       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition1</span> <span class="ow">and</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition2</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+            <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span>        <span class="s2">&quot;wall&quot;</span> <span class="p">,</span> <span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;neumann&quot;</span><span class="p">,</span> <span class="s2">&quot;ratcurve&quot;</span>    <span class="p">,</span><span class="s2">&quot;hpresc&quot;</span> <span class="p">,</span><span class="s2">&quot;zpresc&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span><span class="p">]</span>
+            <span class="n">colors</span> <span class="o">=</span>     <span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span>      <span class="p">,</span> <span class="s2">&quot;orange&quot;</span>   <span class="p">,</span> <span class="s2">&quot;yellow&quot;</span> <span class="p">,</span> <span class="s2">&quot;yellow&quot;</span>   <span class="p">,</span><span class="s2">&quot;#779231&quot;</span><span class="p">,</span> <span class="s2">&quot;#329C46&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="s2">&quot;green&quot;</span> <span class="p">]</span>
+
+            <span class="n">newcol</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">]</span>
+            <span class="n">new_cond</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">bc_corresp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="nb">id</span> <span class="o">=</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">conditions</span><span class="p">,</span> <span class="n">k</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+                <span class="n">newcol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="nb">id</span><span class="p">])</span>
+                <span class="n">new_cond</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+            <span class="n">legend_entries</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># not a bc condition given first</span>
+            <span class="n">legend_entries</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">])</span>
+
+            <span class="n">edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="o">.</span><span class="n">extract_all_edges</span><span class="p">()</span>
+            <span class="n">edge_color</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">n_faces</span><span class="p">)</span>
+
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bc_corresp</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">color_index</span><span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="c1"># color index correspond also to the color calue given to edge_color</span>
+                <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">bc_corresp</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+<span class="c1">#                    if k == &#39;wall&#39;:                        </span>
+<span class="c1">#                        edge_color[[x for x in bc_corresp[k][g]]  ] = color_index</span>
+<span class="c1">#                    else:</span>
+                        <span class="n">edge_color</span><span class="p">[[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bc_corresp</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">g</span><span class="p">][</span><span class="s2">&quot;id_edge&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">color_index</span>
+                <span class="c1"># add legend entry</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">newcol</span><span class="p">[</span><span class="n">color_index</span><span class="p">]</span>
+                <span class="c1">#print(i,k,  col)</span>
+                <span class="n">legend_entries</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">])</span>
+
+            <span class="c1"># create scalar typlim (within pyvista polydata object )</span>
+            <span class="n">edges</span><span class="p">[</span><span class="s2">&quot;typlim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_color</span>
+
+            <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">notebook</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">scalars</span> <span class="o">=</span> <span class="s2">&quot;typlim&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">newcol</span><span class="p">),</span> <span class="n">show_scalar_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">add_legend</span><span class="p">(</span><span class="n">legend_entries</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s2">&quot;line&quot;</span><span class="p">)</span>
+    <span class="c1">#        plotter.show_bounds(</span>
+    <span class="c1">#            self.mesh_pyvista=&#39;back&#39;,</span>
+    <span class="c1">#            location=&#39;outer&#39;,</span>
+    <span class="c1">#            all_edges=False)</span>
+    <span class="c1">#        plotter.show_bounds(padding=0.2, location = &#39;outer&#39;)</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">add_title</span><span class="p">(</span><span class="n">title_plot</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="n">plotter</span><span class="o">.</span><span class="n">save_graphic</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">.svg&quot;</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="n">title_plot</span><span class="p">)</span>
+
+            <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cpos</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+            
+            
+        <span class="k">if</span> <span class="n">what</span> <span class="o">==</span> <span class="s1">&#39;values&#39;</span> <span class="p">:</span>
+            <span class="c1"># only arguments are sefl and save_plot (title_plot and filename treated automaticaly)</span>
+
+            <span class="k">def</span> <span class="nf">plot_hyd</span><span class="p">(</span><span class="n">hydrograph</span><span class="p">,</span> <span class="n">title_plot</span><span class="o">=</span> <span class="s2">&quot;Inflow discharge&quot;</span><span class="p">,</span> <span class="n">subtitle</span> <span class="o">=</span> <span class="s2">&quot;group 0&quot;</span><span class="p">,</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hydrograph</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">hydrograph</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Discharge [m3/s]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title_plot</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;group </span><span class="si">{</span><span class="n">hydrograph</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hydrograph_</span><span class="si">{</span><span class="n">hydrograph</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">plot_ratcurve</span><span class="p">(</span><span class="n">rat</span><span class="p">,</span> <span class="n">title_plot</span><span class="o">=</span> <span class="s2">&quot;Rating curve&quot;</span><span class="p">,</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rat</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="n">rat</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Discharge [m3/s]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Water heigth [m]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title_plot</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;group </span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ratcurve_</span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">plot_zpresc</span><span class="p">(</span><span class="n">zpresc</span><span class="p">,</span> <span class="n">title_plot</span><span class="o">=</span> <span class="s2">&quot;prescribed water surface elevation&quot;</span><span class="p">,</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">zpresc</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">zpresc</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Imposed surface elevation [m]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title_plot</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;group </span><span class="si">{</span><span class="n">zpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;zspresc_</span><span class="si">{</span><span class="n">zpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">plot_hpresc</span><span class="p">(</span><span class="n">hpresc</span><span class="p">,</span> <span class="n">title_plot</span><span class="o">=</span> <span class="s2">&quot;prescribed water heigth&quot;</span><span class="p">,</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hpresc</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">hpresc</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Water heigth [m]&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title_plot</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;group </span><span class="si">{</span><span class="n">hpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hpresc_</span><span class="si">{</span><span class="n">hpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="n">metadata_boundary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+            
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metadata_boundary</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nb</span> <span class="o">=</span> <span class="n">metadata_boundary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ratcurve&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">plot_ratcurve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">rat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="n">save_plot</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;hpresc&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">plot_hpresc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">hpresc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="n">save_plot</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;zpresc&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">plot_zpresc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">zpresc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="n">save_plot</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;discharg1&#39;</span> <span class="ow">or</span>  <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;discharge2&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">plot_hyd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">hyd</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">save_plot</span> <span class="o">=</span> <span class="n">save_plot</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Boundary.save"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.save.html#dassflow2d.core.boundary.Boundary.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            save boundary condition in hdf5 file specified</span>
+<span class="sd">            </span>
+<span class="sd">            The following groups are created:</span>
+<span class="sd">            </span>
+<span class="sd">                - f[&quot;boundary&quot;]:</span>
+<span class="sd">                    - f[&quot;values&quot;] : contains table of values</span>
+<span class="sd">                    - f[&quot;corresp&quot;] : contains geometry correspondance, saved as an attributes</span>
+<span class="sd">                    </span>
+<span class="sd">            the following attributes are made available:</span>
+<span class="sd">            </span>
+<span class="sd">                -  f[&quot;boundary&quot;]: print number of each existing bc</span>
+<span class="sd">                    - &quot;wall&quot; , </span>
+<span class="sd">                    - &quot;discharg1&quot;, </span>
+<span class="sd">                    - &quot;discharg2&quot;,</span>
+<span class="sd">                    -&quot;neumann&quot;, </span>
+<span class="sd">                    - &quot;ratcurve&quot;    ,</span>
+<span class="sd">                    - &quot;hpresc&quot; ,</span>
+<span class="sd">                    - &quot;zpresc&quot;, </span>
+<span class="sd">                    - &quot;internal_1D&quot;, </span>
+<span class="sd">                    - &quot;internal_2D&quot;</span>
+
+<span class="sd">            </span>
+<span class="sd">            **parameters**</span>
+<span class="sd">            </span>
+<span class="sd">            </span>
+<span class="sd">            hdf5_path: str, path to hdf5 file to saveS</span>
+<span class="sd">            </span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">def</span> <span class="nf">save_hyd</span><span class="p">(</span><span class="n">hydrograph</span><span class="p">,</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hydrograph</span><span class="o">.</span><span class="n">t</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span> <span class="n">hydrograph</span><span class="o">.</span><span class="n">t</span> 
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="n">hydrograph</span><span class="o">.</span><span class="n">q</span>
+                
+                <span class="c1"># create dataset containing table in hdf5 file</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+                
+                <span class="n">discharge</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="s2">&quot;boundary&quot;</span><span class="p">][</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="s2">&quot;discharge&quot;</span><span class="p">]</span> 
+                <span class="n">discharge</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+                
+                <span class="n">discharge</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="n">table</span>
+                <span class="n">discharge</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hydrograph</span><span class="o">.</span><span class="n">group</span>                
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                
+            <span class="k">def</span> <span class="nf">save_ratcurve</span><span class="p">(</span> <span class="n">rat</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">):</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span> <span class="n">rat</span><span class="o">.</span><span class="n">h</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span>  <span class="n">rat</span><span class="o">.</span><span class="n">h</span> 
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="n">rat</span><span class="o">.</span><span class="n">q</span>
+                <span class="c1"># create dataset containing table in hdf5 file</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>   
+                
+                <span class="n">ratcurve</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="s2">&quot;boundary&quot;</span><span class="p">][</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="s2">&quot;ratcurve&quot;</span><span class="p">]</span> 
+                <span class="n">ratcurve</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+                
+                <span class="n">ratcurve</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="n">table</span>
+                <span class="n">ratcurve</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rat</span><span class="o">.</span><span class="n">group</span>                
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                
+                
+            <span class="k">def</span> <span class="nf">save_zpresc</span><span class="p">(</span><span class="n">zpresc</span><span class="p">,</span>  <span class="n">hdf5_path</span><span class="p">):</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zpresc</span><span class="o">.</span><span class="n">t</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">zpresc</span><span class="o">.</span><span class="n">t</span>
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">zpresc</span><span class="o">.</span><span class="n">z</span>
+                <span class="c1"># create dataset containing table in hdf5 file</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>   
+                
+                <span class="n">zpresc</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="s2">&quot;boundary&quot;</span><span class="p">][</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="s2">&quot;zpresc&quot;</span><span class="p">]</span> 
+                <span class="n">zpresc</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">zpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+                
+                <span class="n">zpresc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="n">table</span>
+                <span class="n">zpresc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rat</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zpresc</span><span class="o">.</span><span class="n">group</span>    
+
+            <span class="k">def</span> <span class="nf">save_hpresc</span><span class="p">(</span><span class="n">hpresc</span><span class="p">,</span>  <span class="n">hdf5_path</span><span class="p">):</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hpresc</span><span class="o">.</span><span class="n">t</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">hpresc</span><span class="o">.</span><span class="n">t</span>
+                <span class="n">table</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">hpresc</span><span class="o">.</span><span class="n">h</span>
+                <span class="c1"># create dataset containing table in hdf5 file</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>   
+                
+                <span class="n">zpresc</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="s2">&quot;boundary&quot;</span><span class="p">][</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="s2">&quot;hpresc&quot;</span><span class="p">]</span> 
+                <span class="n">zpresc</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+                
+                <span class="n">zpresc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][:,:]</span><span class="o">=</span> <span class="n">table</span>
+                <span class="n">zpresc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hpresc</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>            
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">generate_values_groups</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">hdf5_path</span><span class="p">):</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>   
+                <span class="k">try</span><span class="p">:</span>    <span class="c1"># create input group where will be the meshing data</span>
+                        <span class="n">input_group</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span> <span class="c1"># if exist, cant be created, then it is loaded</span>
+                        <span class="n">input_group</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
+                            
+                <span class="n">boundary</span> <span class="o">=</span> <span class="n">input_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">)</span>
+                <span class="c1"># create empty groups</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>                    
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ratcurve&#39;</span><span class="p">:</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;ratcurve&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;hpresc&#39;</span><span class="p">:</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;hpresc&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;zpresc&#39;</span><span class="p">:</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;zpresc&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;discharg1&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;discharge2&#39;</span><span class="p">:</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;discharge&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                
+             <span class="c1"># Load data to save</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_corresp</span><span class="p">()</span>         <span class="c1"># from bc + mesh</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bc</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">get_bc</span><span class="p">()</span> <span class="c1"># from bc </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+             <span class="c1"># group</span>
+            <span class="c1"># 1) Generate empty groups for values</span>
+            <span class="n">generate_values_groups</span><span class="p">(</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">)</span>
+            
+            <span class="c1"># 2) fill them by creating datasets            </span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ratcurve&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">save_ratcurve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">rat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;hpresc&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">save_hpresc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">hpresc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;zpresc&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">save_hpresc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">zpresc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;discharg1&#39;</span> <span class="ow">or</span>  <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;discharge2&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+                        <span class="n">save_hyd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bc</span><span class="o">.</span><span class="n">hyd</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hdf5_path</span> <span class="o">=</span> <span class="n">hdf5_path</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">i</span><span class="p">)</span>
+            
+            <span class="c1"># save geometry correspondance            </span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>   
+            <span class="n">input_group</span><span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
+            <span class="n">boundary_group</span> <span class="o">=</span> <span class="n">input_group</span><span class="p">[</span><span class="s2">&quot;boundary&quot;</span><span class="p">]</span>
+            <span class="n">corresp_group</span> <span class="o">=</span> <span class="n">boundary_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;corresp&quot;</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">key_group</span> <span class="o">=</span> <span class="n">corresp_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    
+                    <span class="k">for</span> <span class="n">key_2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>                    
+                        <span class="n">key2_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_2</span><span class="p">)</span>
+                        <span class="n">data_group</span> <span class="o">=</span> <span class="n">key_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key2_str</span><span class="p">)</span>
+                        
+                        
+                        <span class="k">for</span> <span class="n">key_3</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">key_2</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">key3_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_3</span><span class="p">)</span>
+                            <span class="c1">#if str(self.corresp[&quot;internal_1D&quot;][5][&quot;id_cell&quot;].dtype) == &quot;int32&quot; or str(self.corresp[&quot;internal_1D&quot;][5][&quot;id_cell&quot;].dtype) == &quot;int64&quot;:</span>
+                            <span class="k">try</span><span class="p">:</span>   
+                                <span class="n">dataset_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">key_2</span><span class="p">][</span><span class="n">key_3</span><span class="p">])</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                 <span class="n">dataset_length</span><span class="o">=</span><span class="mi">1</span>
+                            
+                            <span class="n">my_dataset</span> <span class="o">=</span> <span class="n">data_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">key3_str</span><span class="p">,</span> 
+                                                        <span class="p">(</span><span class="n">dataset_length</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+ 
+                               
+                               
+                    
+                        <span class="n">my_dataset</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corresp</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">key_2</span><span class="p">][</span><span class="n">key_3</span><span class="p">])</span>
+            <span class="c1"># save metatdata     </span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>   
+                    <span class="n">boundary_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+            
+            
+            
+</pre></div>
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+</div>
+
+<div class="toc-item">
+  
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

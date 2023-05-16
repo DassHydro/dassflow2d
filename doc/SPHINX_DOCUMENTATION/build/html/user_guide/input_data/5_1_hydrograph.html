@@ -1,0 +1,645 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>hydrograph.txt &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/input_data/5_1_hydrograph';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ratcurve.txt" href="5_2_ratingcurve.html" />
+    <link rel="prev" title="bc.txt" href="4_bcs-txt.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../getting_started/index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Input files</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1_input-txt.html">input.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_mesh-geo.html">mesh.geo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_land-uses.html">land_uses.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_bcs-txt.html">bc.txt</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">hydrograph.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_2_ratingcurve.html">ratcurve.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_3_hpresc.html">hpresc.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_4_zpresc.html">zpresc.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_obs.html">obs.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_ic.html">ic.bin / ic.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_rain.html">obs.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="9_infil.html">infil.txt</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../output_data/index.html">Output files</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../output_data/1_dof-and-more.html">Model unknows and constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../output_data/2_postpro.html">Post processed variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../output_data/3_assim-post.html">observations variables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../adjoint_code/index.html">Adjoint code</a></li>
+</ul>
+
+  </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <div class="section" id="hydrograph-txt">
+<span id="hyd"></span><h1>hydrograph.txt<a class="headerlink" href="#hydrograph-txt" title="Permalink to this heading">#</a></h1>
+<p>the hydrograph.txt file enable the use of tabulated values of the relation <span class="math notranslate nohighlight">\(Q(t)\)</span> .</p>
+<div class="section" id="file-presentation">
+<h2>File presentation<a class="headerlink" href="#file-presentation" title="Permalink to this heading">#</a></h2>
+<p>The file is organised as follow</p>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+template of file<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<blockquote>
+<div><p class="card-text">$ comment line</p>
+<p class="card-text">$ comment line</p>
+<p class="card-text">$ comment line</p>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+<blockquote>
+<div><p class="card-text">number-of-hydrographs</p>
+</div></blockquote>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+<p class="card-text">$ comment line</p>
+<p class="card-text">$ comment line</p>
+<p class="card-text">$ comment line</p>
+</div></blockquote>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+<blockquote>
+<div><p class="card-text">number-of-tabulated-times-hydrograph-1</p>
+</div></blockquote>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+<blockquote>
+<div><p class="card-text">t11 Q11</p>
+<p class="card-text">t12 Q12</p>
+<p class="card-text">…</p>
+<p class="card-text">$ comment line</p>
+<p class="card-text">$ comment line</p>
+<p class="card-text">$ comment line</p>
+</div></blockquote>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+<blockquote>
+<div><p class="card-text">number-of-tabulated-times-hydrograph-2</p>
+</div></blockquote>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+<blockquote>
+<div><p class="card-text">t21 Q21</p>
+<p class="card-text">t22 Q22</p>
+<p class="card-text">…</p>
+</div></blockquote>
+<table class="table">
+<tbody>
+</tbody>
+</table>
+</div>
+</details></div>
+<div class="section" id="take-advantage-of-wrapped-version">
+<h2>Take advantage of wrapped version<a class="headerlink" href="#take-advantage-of-wrapped-version" title="Permalink to this heading">#</a></h2>
+<p>In the directory <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>, execute the commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m numpy.f2py -c -m gen_channel_case _gen_channel_case.f90
+</pre></div>
+</div>
+<div class="section" id="generate-inputs-from-python">
+<h3>generate inputs from python<a class="headerlink" href="#generate-inputs-from-python" title="Permalink to this heading">#</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>path to be updated</strong></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>the generation of file is coded to generate a unique hydrograph presently (case of m ulti-inflow-boundary is not coded)</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;/home/livillenave/Documents/distant/dassflow2d-wrap/Tools/2_gen_basic_channel&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">gen_channel_case</span>
+
+
+<span class="n">qin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+<span class="n">qin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span><span class="mi">1000</span><span class="o">/</span><span class="n">qin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">qin</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+<span class="n">gen_channel_case</span><span class="o">.</span><span class="n">gen_bc_data</span><span class="p">(</span>       <span class="n">bc_typ</span> <span class="o">=</span> <span class="s2">&quot;hydrograph&quot;</span><span class="p">,</span>
+                                                                    <span class="n">nrow</span><span class="o">=</span><span class="n">qin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                    <span class="n">var1</span> <span class="o">=</span><span class="n">qin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+                                                                    <span class="n">var2</span><span class="o">=</span> <span class="n">qin</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>you can paste in your bin directory the file hydrograph.txt produced</strong></p>
+</div>
+<div class="section" id="access-and-update-fortran-kernel-value-in-python">
+<h3>Access and Update fortran kernel value in python<a class="headerlink" href="#access-and-update-fortran-kernel-value-in-python" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
+
+<span class="c1"># initialise fortran instance, and python corrponding data</span>
+<span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/&quot;</span><span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">)</span> <span class="c1"># run_type can be min or direct (grad ?)</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">update_fortran</span><span class="p">()</span>
+
+<span class="c1"># =========================</span>
+<span class="c1"># get bc values</span>
+<span class="c1"># ========================</span>
+<span class="n">my_bc</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">get_bc</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_bc</span><span class="o">.</span><span class="n">hyd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_bc</span><span class="o">.</span><span class="n">hyd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+
+<span class="c1"># =========================</span>
+<span class="c1"># set bc values</span>
+<span class="c1"># ========================</span>
+<span class="n">my_bc</span><span class="o">.</span><span class="n">hyd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">q</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="c1"># =========================</span>
+<span class="c1"># feed fortran kernel with new information</span>
+<span class="c1"># =========================</span>
+
+<span class="n">df2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">my_bc</span><span class="p">)</span>
+
+
+<span class="c1"># =========================</span>
+<span class="c1"># run model</span>
+<span class="c1"># ========================</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="4_bcs-txt.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">bc.txt</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="5_2_ratingcurve.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">ratcurve.txt</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#file-presentation">
+   File presentation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#take-advantage-of-wrapped-version">
+   Take advantage of wrapped version
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generate-inputs-from-python">
+     generate inputs from python
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#access-and-update-fortran-kernel-value-in-python">
+     Access and Update fortran kernel value in python
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://gitlab.irstea.fr//lilian.villenave/dassflow2d-wrap/-/edit/documentation//doc/SPHINX_DOCUMENTATION/source/user_guide/input_data/5_1_hydrograph.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
+    </a>
+</div>
+
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../../_sources/user_guide/input_data/5_1_hydrograph.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>
