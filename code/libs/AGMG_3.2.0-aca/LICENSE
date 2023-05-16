@@ -1,0 +1,320 @@
+AGMG ACADEMIC LICENSE: TERMS AND CONDITIONS.  
+
+These Terms and Conditions apply to the academic version of the AGMG
+software package, release 3.2.0 ("AGMG 3.2.0-aca"). This software
+package is available free of charge under the present license
+agreement.   
+
+1.	RELATIONSHIP WITH ULB 
+
+1.1.	Your use of AGMG 3.2.0-aca is subject to the terms of a legal
+agreement between you and ULB. "ULB" means the Université Libre de
+Bruxelles whose principal place of business if at Av. F.D. Roosevelt,
+50, 1050 Brussels, BELGIUM. This document sets out the terms of that
+agreement. 
+
+1.2.	Unless otherwise agreed in writing with ULB, your agreement
+with ULB will always include, at a minimum, the terms and conditions
+set out in this document. 
+
+2.	ACCEPTING THE TERMS 
+
+2.1.	In order to use AGMG 3.2.0-aca, you must first agree to the
+Terms and Conditions. You may not use AGMG 3.2.0-aca if you do not
+accept the Terms. 
+
+2.2.	You can only accept the Terms by AGMG 3.2.0-aca by filling out
+the present document and return it signed by email to the following
+address: ynotay@ulb.ac.be. 
+
+3.	LICENSE TERMS FOR AGMG 3.2.0-aca 
+
+3. 1.	Definitions 
+
+Whenever used in this Agreement, the following terms shall have the
+following meaning:  
+
+Agreement: the present document and it exhibits which are considered
+to be part of it. 
+
+Confidential Information: the technical information and management
+information which are unknown to the public, can bring economic
+benefits to obligees, have practicability and are subject to the
+confidential measures adopted by the obligees, including but not
+limited to computer software, technical parameters, price lists,
+designs, software documentations, manuals, models and account tables.  
+
+Licensed Programme: the Fortran source code which comprises various
+modules of the Licensed Software Package provided by the Licensor.  
+
+Licensed Information: any information relating to the Licensed
+Programme which is owned by the Licensor and is licensed to the
+Licensee together with the Licensed Programme. Licensed information
+includes such information as input form, user manual, interface format
+and input/output format and is delivered to and used by the Licensee
+as confidential information or proprietary property of the Licensor. 
+
+Licensed Software: Academic version of the software package AGMG,
+release 3.2.0 ("AGMG 3.2.0-aca"), including the Licensed
+Programme and the Licensed Information. 
+
+Commercial purposes: the sale, lease, licence, or other transfer for
+profit of the Licensed Software in whole or in parts or in any
+software including the licensed software. 
+
+Harmful element: any virus, worm, time bomb, time lock, drop dead
+device, trap and access code or anything else that might disrupt,
+disable, harm or impede the operation of any information system, or
+that might corrupt, damage, destroy or render inaccessible any
+software, data or file, or that may allow any unauthorised person to
+gain access to, any information system or any software, data or file
+on it. 
+
+AGMG Website: the website with the URL
+http://homepages.ulb.ac.be/~ynotay/AGMG, and any website that from time to
+time replaces that website. 
+
+Intellectual Property: patents, trademarks, service marks, registered
+designs, copyrights, database rights, design rights, know-how,
+confidential information, applications for any of the above, trade
+secrets and any similar right recognised from time to time in any
+jurisdiction, together with all rights of action in relation to the
+infringement of any of the above. 
+
+3.2.	Grant of License and Limitations 
+
+License of the Licensed Software. In accordance with the terms and
+conditions hereof and in consideration of the confidentiality
+undertakings given by the Licensee pursuant to Article 3.5, the
+Licensor agrees to grant to the Licensee and the Licensee agrees to
+accept an indefinite, non-exclusive, non-transferable, non-assignable,
+non-commercial, royalty-free license to use the Licensed Software
+during the term of the Licence Agreement on the terms and conditions
+of this Licence Agreement provided that: 
+
+(a)	the Licensee is employed by a non-profit educational, academic
+	or research institute; 
+
+(b)	the Licensee does not distribute the Licensed Software to any
+	third party, or share its use with any third party (whether free of
+	charge or otherwise) regardless of whether such third party is from
+	the same institution; 
+
+(c)	the Licensee does not sub-license the use of the Software to
+	any third party; 
+
+(d)	the Licensee does not use the Software on behalf of, or for
+	the benefit of, any third party; 
+
+(e)	the Licensee does not use the Software for any commercial purposes;
+
+(f)	the Licensee does not copy the Software except for the
+	purposes of making a reasonable number of back-up copies;
+
+(g)	the Licensee shall neither modify the Software nor
+	incorporate, nor embed, nor integrate it into any other software
+	products, except to optimise its performance for the Licensee's use on
+	a particular platform. 
+
+The Licensee shall not tamper with, or remove, any copyright or other
+proprietary notice or any disclaimer that appears on or in any part of
+the Software, and will reproduce the same in all copies of any of the
+Software. 
+
+The licence granted in this clause relates only to the release of the
+Licensed Software as is at the date of this Licence Agreement; the
+Licensee must acquire a new licence for any future release or upgrade
+of the Software. 
+
+In any published work produced by the Licensee which includes results
+achieved by using the Software, the Licensee shall acknowledge that
+the Software was used in producing the results contained in such
+publication by including the following citation: 
+"Yvan Notay, AGMG software and documentation; see
+http://homepages.ulb.ac.be/~ynotay/AGMG". 
+
+The licensor may stop providing any assistance or advice in relation
+to, or any corrections, new releases or versions of the Licensed
+Software and may stop updating or publishing the AGMG Website at any
+time. 
+
+Additional rights. The Licensor reserves all rights which are not
+expressly granted to the Licensee in this Agreement. 
+
+3. 3. 	Intellectual Property Rights 
+
+Title to and ownership of the Licensed Software shall at all times
+remain with the Licensor. The Licensed Software is proprietary to the
+Licensor. The Licensee acknowledges that at no time shall the
+copyright or other Intellectual Property rights in all or part of the
+Licensed Software pass to the Licensee. 
+
+Ownership of all complete or partial copies of the Licensed Software
+shall at all times remain with the Licensor. 
+
+3.4.	Warranties, liability and Support services
+
+3.4.1.	Intellectual Property. The Licensor warrants that, to the best
+of its knowledge, the Licensed Software does not infringe any
+copyright, patent or trademark or proprietary information of any third
+party. 
+
+3.4.2.	No warranty. The Licensed Software is provided on an "AS
+IS" without any support, updates or maintenance. Nothing in this
+Agreement shall require the Licensor to provide the Licensee with
+support of fixes to any bug, failure, mis-performance of other defect
+in the Licensed Software. Should such services be requested by the
+Licensee, their provision shall be part of a separate service
+agreement the terms of which shall be discussed in good faith by the
+Parties.  
+
+The Licensor hereby disclaims any warranty that the Software shall be
+error free, without defects or code which may cause damage to
+Licensee's computers or to Licensee, and that the Licensed Software
+shall be functional. Licensor shall only be liable to any damage,
+defect or loss incurred as a result of operating software and
+undertake the risks contained in running the Licensed Software on the
+Licensee's server. 
+
+The Licensor gives no condition, warranty or other term whatsoever,
+either express or implied including, without limitation, any
+condition, warranty or other term as to the condition of the Licensed
+Software, that the Licensed Software is free from any Harmful Element,
+or as to satisfactory quality, fitness for a particular purpose,
+non-infringement, or use of reasonable care and skill. 
+
+The express warranties provided herein are the only warranties made by
+the Licensor in respect of the Licensed Software. 
+
+3.4.3.	Indemnification. The Licensee hereby warrants to hold the
+Licensor harmless and agrees to indemnify the Licensor for any lawsuit
+brought against it in regards to Licensee's use of the Licensed
+Software in means that violate, breach or otherwise circumvent this
+Agreement, Licensor's intellectual property rights or Licensor's
+title in the Licensed Software. Licensor shall promptly notify
+Licensee in case of such legal action and request Licensee's
+consent prior to any settlement in relation to such lawsuit or claim. 
+
+If the Licensed Software is disclosed to any third party or used by
+any such party solely due to the material negligence or intentional
+action of the Licensee, the Licensee shall bear all damages and losses
+incurred by the Licensor. In any event the Licensee shall assume the
+liability to the Licensor arising out of said disclosure or
+unauthorised use of the Licensed Software. 
+
+3.5.	Protection and Confidentiality
+
+3.5.1.	The Licensee agrees to protect the Confidential Information
+disclosed by the Licensor by using the same degree of care, but no
+less than a reasonable degree of care, as the Licensor uses to protect
+its own similar confidential information. Without the written consent
+of the Licensor, the Licensee, its agents, or its employees shall not
+copy or disclose the Confidential Information to any third party to
+use such Confidential Information. 
+
+3.5.2.	The provisions of Article 3.5 shall not apply to information
+which (1) is in the public domain; (2) has been acquired by the
+Licensee by normal means upon the disclosure of the information by the
+Licensor; (3) after the receipt of the information by the Licensee,
+becomes generally available to the public through no fault or
+negligence of the Licensee; (4) is duly obtained by the Licensee
+directly or indirectly from a third party who has independently
+developed the information and is entitled to disclose the information
+to the Licensee, and such disclosure does not directly or indirectly
+violate the confidentiality obligation of such third party. 
+
+3.5.3.	The Parties acknowledge that the provisions of Article 3.5
+shall survive the termination of this Agreement, for whatever cause,
+and this for a term of five (5) years of the date of such
+termination. 
+
+3.5.4.	In case of breach of Article 3.5 by the Licensee, the Licensee
+shall compensate the Licensor for all the losses incurred by the
+Licensor arising out of such breach. 
+
+3. 6	 Term and termination
+
+3.6.1   	The Licensee may terminate the Agreement at any time
+by giving at least 30 days' prior written notice to the Licensor. 
+
+3.6.2   	The Agreement shall terminate automatically in the
+event that the Licensee no longer fulfils the requirements of clause
+3.2. 
+
+3.6.3   	The Licensor may terminate the Agreement immediately
+on giving notice in writing to the Licensee if the Licensee commits
+any serious breach of any term of  this Agreement and fails (in the
+case of a breach capable of being remedied), within 10 days after the
+receipt of a request in writing from the Licensor to do so, to remedy
+the breach (such request to contain a warning of the Licensor's
+intention to terminate). 
+
+3.6.4  	 Immediately upon the termination of the Agreement the
+Licensee shall destroy the Software and all copies of the whole or any
+part thereof and certify in writing to the Licensor that they have
+been destroyed. 
+
+3.6.5   	Any termination of this Agreement (howsoever
+occasioned) shall not affect any accrued rights or liabilities of
+either party nor shall it affect the coming into force or the
+continuance in force of any provision in this Agreement which is
+expressly or by implication intended to come into or continue in force
+on or after such termination. 
+
+3. 7.	General Provisions
+
+3.7.1.	Applicable law. This Agreement shall be governed by and
+construed in accordance with the laws of Belgium. 
+
+3.7.2.	Dispute Resolution. Any dispute arising out of or in relation
+to this Agreement shall be settled by both Parties through
+negotiations. If no settlement is reached through negotiations, the
+conflict shall finally be settled under the CEPANI Arbitration rules
+without recourse to the ordinary courts of law by three (3)
+arbitrators appointed in accordance with said rules. The award
+rendered therein shall be final and binding upon both
+Parties. Arbitration proceedings shall take place in Brussels and
+shall be held in the French language. 
+ 
+3.7.3.	Entire Agreement. This Agreement and the exhibits hereof
+signed by the Parties constitute the entire agreement between them
+with respect to the subject matter hereof, merge all discussions
+between them and supersede all prior agreements, understandings and
+arrangements, oral or written, that may have existed between them.  
+
+3.7.4.	Notices. All notices required under this Agreement shall be in
+writing and shall be addressed to (with the exception of the present
+document signed by the Licensee): 
+
+For the Licensor:
+Université Libre de Bruxelles
+For the attention of Mr Daniele Carati, Head of the Research Department
+Av. F.D. Roosevelt, 50 - CP 161
+1050 Brussels 
+BELGIUM
+
+For the Licensee:
+The name and address of the licensee, as written below on the signed
+license agreement.
+
+All notices shall be done in writing in the French or English
+language. They shall be deemed to have been duly given or submitted
+three (3) days after the mailing thereof, post paid, by registered
+mail, to the party entitled thereto at its above address. 
+
+3.7.5.	No waiver. No waiver of any right under this Agreement shall
+be deemed effective unless the same is set forth in a writing signed
+by the Party giving such waiver, and no waiver of any right shall be
+deemed to be a waiver of any such right, or any other rights
+hereunder, in the future. 
+
+3.7.6.	Severability. In case any of the provisions contained in this
+Agreement should be invalid, illegal or unenforceable in any respect
+in any jurisdiction, the validity, legality and enforceability of such
+provision(s) shall not in any way be affected or impaired thereby in
+any other jurisdiction and the validity, legality and enforceability
+of the remaining provisions contained herein and therein shall not in
+any way be otherwise affected or impaired thereby. 
+
+
+

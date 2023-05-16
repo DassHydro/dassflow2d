@@ -1,0 +1,29 @@
+The Makefile in this directory installs the compiled version of m1qn3 in
+the Libopt environment. This environment has been designed for testing,
+comparing, and profiling solvers on problems belonging to heterogeneous
+collections. To learn more on Libopt, see
+
+   http://www-rocq.inria.fr/estime/modulopt/libopt/libopt.html
+
+Libopt must have been installed before using this Makefile.
+
+------------------------------------------------------------------------
+
+More precisely, the Makefile generates (if necessary) the object file
+
+    ../bin/m1qn3.$LIBOPT_PLAT.o
+    
+from the source code
+
+    ../src/m1qn3.f
+
+in a version depending on the platform environment variable
+$LIBOPT_PLAT. Next, it makes a symbolic link to it from the directory
+
+    $LIBOPT_DIR/solvers/m1qn3/bin
+
+------------------------------------------------------------------------
+
+To realize this, just enter
+
+   make

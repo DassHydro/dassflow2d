@@ -1,0 +1,152 @@
+             Enhancements in successive versions of M1QN3
+
+
+Version 3.3 : October 2009
+
+   1. Reverse communication in now better monitored by the variables
+      'reverse' (now an integer) and 'indic'.
+
+   2. Free call to the simulator is now controlled by imode(3) (no
+      longer a negative value of 'impres').
+
+   3. Bugs corrected:
+      - a benign one,
+      - another when the simulator requires stopping at the first call
+        and a warm restart is asked next (m1qn3 used to refuse
+        restarting).
+
+   4. Examples with warm restarts have been added in the directory
+      'examples': essai_wr.f (in direct communication) and essai_rc_wr.f
+      (in reverse communication).
+      
+   5. Modifications in the documentation.
+
+
+Version 3.2 : December 2008
+
+   1. The software is now distributed under the GNU General Public
+      License.
+
+   2. The norm of the gradient that is used to test optimality can now
+      be the Euclidean norm, the infinity (or sup) norm, or the norm
+      associated with the scalar product defined by the 'prosca' inner
+      product subroutine (previous option).
+
+      As a consequence, the argument 'normtype' has been added.
+
+   3. The contents of the package has been divided in directories. The
+      directories 'cuter' and 'libopt' have been introduced to make
+      easier the installation of 'm1qn3' into the corresponding
+      environments.
+
+   4. A FAQ section has been included in the documentation.
+
+
+Version 3.1 : June 2006
+
+   1. The statement 'save' has now arguments, which is important for
+      some compilers.
+   
+   2. Line 79 used to have more than 72 characters.
+
+   3. Statement 'implicit none' is now used systematically (strange
+      that this was not already so).
+
+
+Version 3.0 : March 2005
+
+   1. Can be used in direct or reverse communication.
+   
+   2. The single precision version has been abandonned. Only the double
+      precision version, now called M1QN3, is maintained.
+
+
+Version 2.0e : December 2000
+
+   1. Parameter "mode" has been split in "imode" (input mode) and
+      "omode" (outpout mode). Parameter "imode" is now a vector
+      (instead of a scalar) and each of its two components has a
+      particular meaning (instead of each of its bits).
+
+
+Version 2.0d : July 1996
+
+   1. Wolfe's parameter has been set to 0.99 (instead of 0.9) to
+      accelerate acceptance of the step by the line-search routine
+      (mlis0).
+
+   2. Some minor `bugs' fixed or modifications brought.
+
+
+Version 2.0c : June 1995
+
+   1. The meaning of the argument IMPRES has slightly changed when it
+      has a negative value. M1QN3 still acts silently but every -IMPRES
+      iteration, it begins by calling the simulator with INDIC=1.
+      Previously, the iteration consisted in this call only. A bug is
+      fixed (there was no stop on NITER if IMPRES<0 and
+      mode(NITER,-IMPRES)=0).
+
+
+Version 2.0b : December 1993
+
+   1. The input parameter niter is now used as the iteration counter
+      inside M1QN3, so that the user can have access to this counter by
+      looking at the value of this variable, owned by the user.
+
+   2. Small modification in mlis0 (LS routine) to accelerate
+      termination in case of a suspected output in mode 6.
+
+
+Version 2.0 : March 1993
+
+   1. M1QN2 and M1QN3 have now been merged in a single module, called
+      M1QN3. The previous versions can be run by setting appropriately
+      the entry argument `mode' when calling M1QN3: the SIS running
+      mode corresponds to the old M1QN2 and the DIS running mode
+      corresponds to the old M1QN3.
+
+      The calling statements of M1QN3 and MUPDTS have changed:
+      - M1QN3: new integer argument IZ(5) and new input meaning for
+        MODE,
+      - MUPDTS: new logical argument SSCALE.
+
+   2. N1QN3 is the double precision version of the new M1QN3 module.
+
+   3. M1QN3 has also two starting modes: cold start or warm restart.
+
+   4. The routines incorporate the `very large scale option' of the
+      former m1qn3-b module.
+
+   See the new write-up for more information (m1qn3.tex file).
+
+
+Version 1.2b : February 1992
+
+   Introduction of the routines MUPDTS and YSTBL in the `b' version of
+   m1qn3 (m1qn3-b.f). By changing these routines, the user can store on
+   an auxilliary device the pairs (y,s) used to construct the current
+   metrics. This allows a reduction of the working storage of m1qn3
+   from 4*n+(2*n+1)*m to 6*n+m, where n is the number of variables and
+   m the number of updates.
+
+   These modifications have not been made in the double precision
+   version of m1qn3-b (n1qn3.f) nor in other versions (m1qn3-a.f,
+   m1qn2.f, n1qn2.f).
+
+
+Version 1.1b : February 1989
+
+   M1qn3-b can use any scalar product provided by the user. M1qn3-a
+   still requires the use of the Euclidean scalar product.
+
+
+Version 1.1 : December 1988
+
+   New version of `mlis0': systematic cubic interpolation and
+   anti-overflows.
+
+
+Version 1.0 : Septembre 1988
+
+   Initial version of m1qn2 and n1qn2.

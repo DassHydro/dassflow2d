@@ -1,0 +1,247 @@
+! COPYRIGHT (c) 2012 Universite Libre de Bruxelles (ULB)
+!
+! This file is part of AGMG software package
+! Release 3.2.0-aca built on "Oct 29 2012" by Yvan Notay
+!
+! ALL USAGE OF AGMG IS SUBJECT TO LICENSE. PLEASE REFER TO THE FILE "LICENSE".
+! IF YOU OBTAINED A COPY OF THIS SOFTWARE WITHOUT THIS FILE,
+! PLEASE CONTACT ynotay@ulb.ac.be
+!
+! In particular, if you have a free academic license:
+!
+! (1) You must be a member of an educational, academic or research institution.
+!     The license agreement automatically terminates once you no longer fulfill
+!     this requirement.
+!
+! (2) You are obliged to cite AGMG in any publication or report as:
+!     "Yvan Notay, AGMG software and documentation;
+!      see http://homepages.ulb.ac.be/~ynotay/AGMG".
+!
+! (3) You may not make available to others the software in any form, either
+!     as source or as a precompiled object.
+!
+! (4) You may not use AGMG for the benefit of any third party or for any
+!     commercial purposes. Note that this excludes the use within the
+!     framework of a contract with an industrial partner.
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+! See the accompanying userguide for more details on how to use the software,
+! and the README file for installation instructions.
+!
+! See the Web pages <http://homepages.ulb.ac.be/~ynotay/AGMG> for
+! release information and possible upgrade.
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! DICLAIMER:
+!    AGMG is provided on an "AS IS" basis, without any explicit or implied
+!    WARRANTY; see the file "LICENSE" for more details.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   If you use AGMG for research, please observe that your work benefits
+!   our past research efforts that allowed the development of AGMG.
+!   Hence, even if you do not see it directly, the results obtained thanks
+!   to the use of AGMG depend on the results in publications [1-3] below,
+!   where the main algorithms used in AGMG are presented and justified.
+!   It is then a normal duty to cite these publications (besides citing
+!   AGMG itself) in any scientific work depending on the usage of AGMG,
+!   as you would do with any former research result you are using.
+!
+! [1] Y. Notay, An aggregation-based algebraic multigrid method,
+!    Electronic Transactions on Numerical Analysis, vol. 37, pp. 123-146, 2010
+!
+! [2] A. Napov and Y. Notay, An algebraic multigrid method with guaranteed
+!    convergence rate, SIAM J. Sci. Comput., vol. 34, pp. A1079-A1109, 2012.
+!
+! [3] Y. Notay, Aggregation-based algebraic multigrid for convection-diffusion
+!    equations, SIAM J. Sci. Comput., vol. 34, pp. A2288-A2316, 2012.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+You read this file because you have successfully downloaded and
+uncompress the package.
+
+Assumed you did this in directory /MYDIR
+(for instance, your home directory)
+This created a directory /MYDIR/AGMG_3.2.0-aca and the present file is
+/MYDIR/AGMG_3.2.0-aca/README
+
+You will find the documentation in /MYDIR/AGMG_3.2.0-aca/Doc/
+(a userguide giving additional information and a related paper).
+
+Fortran 90
+----------
+
+The userguide refers to two examples (one sequential and one parallel).
+The related sources are located in /MYDIR/AGMG_3.2.0-aca/Example_seq/
+and /MYDIR/AGMG_3.2.0-aca/Example_par/, respectively. There you will find also
+a Makefile allowing their compilation entering the command "make".
+You possibly need to edit the Makefile to correct the name of the
+compiler and set your favorite compilation options, while updating
+the references to needed external libraries (see below for details)
+according to your local installation setting.
+
+In fact, these Makefile just make sure that the application program
+is compiled together with the proper sources files in SRC/ ,
+while needed external libraries are referenced.
+You may proceed in a similar way with any application program.
+(Hence, AGMG need not be installed as a library).
+
+Note, however, that the Makefile also avoids recompiling dagmg.f90
+dagmg_mumps.f90 or dagmg_par.f90 when only the application program
+has been changed. This is strongly recommended. In particular,
+the compilation of dagmg_mumps.f90 is time consuming.
+
+The provided examples use the double precision version. To use the
+single, complex or double complex version, proceed similarly
+exchanging in the file the prefix "d" for, respectively, "s", "c" or "z".
+
+AGMG requires LAPACK and BLAS libraries. These software are public domain
+and easily found on the Web, see the userguide for references. In addition,
+LAPACK and BLAS come pre-installed with most compilers.
+If you don't have LAPACK pre-installed, you may compile, instead of downloading
+the full library, the file SRC/lapack_agmg.f together with other program
+files. This will provide needed LAPACK routines. Similarly, if you don't
+have BLAS pre-installed, you may compile, instead of downloading
+the full library, the file SRC/blas_agmg.f together with other program
+files. This will provide needed BLAS routines. We however strongly
+recommend to use pre-installed libraries whenever available.
+
+In addition, the parallel version requires MPI and the parallel MUMPS library,
+which itself requires SCALAPACK. These software are also public domain;
+see the userguide for references. Note that the installation of the
+parallel MUMPS library may be avoided by upgrading to the professional
+version.
+
+
+Matlab
+------
+
+Files for the Matlab interface are located in directory /MYDIR/AGMG_3.2.0-aca/Matlab/
+
+The user interface is in the file agmg.m (Matlab function)
+Enter "help agmg" in the Matlab environment for basic usage.
+A more detailed description of optional parameters and of
+verbose output is provided in the userguide in /MYDIR/AGMG_3.2.0-aca/Doc/
+(see in particular Sections 2.2 and 2.4, and also Sections 4 and 5
+for some special usages)
+
+The function in agmg.m need the objects dmtlagmg.mex??? (for real matrices)
+and zmtlagmg.mex??? (for complex matrices), where ??? depends upon your OS
+and architecture. Currently, we provide precompiled objects for Unix 64 bit,
+Windows 32 bit, Windows 64 bit and Mac OS 64 bit architectures
+(For this latter, the complex version - anyway tentative - is not available).
+If you have one of these architectures, all what you need to run agmg is to
+place the files agmg.m and ?mtlagmg.mex??? in a directory in which Matlab can
+find scripts & executables.
+
+Note, however, that for Windows 32 bit, please note that we did not use
+the compilers officially supported by Matlab, hence the function is possibly
+sub-performant and may be unstable when used with the optional parameter IJOB
+set different from default.
+
+You can anyway generate the objects dmtlagmg.mex??? and zmtlagmg.mex???
+with the commands
+
+mex -O -largeArrayDims dmtlagmg.c dagmg_mex.f90 dagmg_mumps_mex.f90 -lmwlapack -lmwblas
+mex -O -largeArrayDims zmtlagmg.c zagmg_mex.f90 zagmg_mumps_mex.f90 -lmwlapack -lmwblas
+
+on 64 bit architectures, and with the commands
+
+mex -O dmtlagmg.c dagmg_mex.f90 dagmg_mumps_mex.f90 -lmwlapack -lmwblas
+mex -O zmtlagmg.c zagmg_mex.f90 zagmg_mumps_mex.f90 -lmwlapack -lmwblas
+
+on 32 bit architectures.
+(Below are given some more details on how to proceed on Windows systems).
+
+Besides, we also provide in the file agtwolev.m a Matlab function
+that only performs aggregation according to the algorithm in
+either [2] or [3]. This is not intended to help solving linear systems,
+but rather to facilitate further research and developments.
+Enter "help agtwolev" in the matlab environment for more details
+on function usage, which allows to easily play with the parameters
+referenced in [2,3].
+
+This function requires the object dmtlagtwolev.mex???. If you don't
+find a precompiled version for your architecture, you can generate it
+with the command
+
+mex -O -largeArrayDims dmtlagtwolev.c dagtwolev_mex.f90 -lmwlapack -lmwblas
+
+on 64 bit architectures, and with the commands
+
+mex -O dmtlagtwolev.c dagtwolev_mex.f90 -lmwlapack -lmwblas
+
+on 32 bit architectures.
+
+Release notes
+-------------
+See the userguide in /MYDIR/AGMG_3.2.0-aca/Doc/ (in particular Section 1.2)
+for a description of changes from previous releases.
+
+Matlab on Windows system: detailed compilation procedure
+--------------------------------------------------------
+
+1. Install a Fortran compiler that is compatible with Matlab's mex command;
+   there should be also a compatible C compiler;
+   e.g, "Intel Visual Fortran 12.0" with "Microsoft Visual C++ 2010".
+
+2. At the Matlab prompt, run "mex -setup" to select the Fortran compiler
+   ("Intel Visual Fortran 12.0" in the above example) and tell the directory
+   where it is installed.
+
+3. Once the Fortran compiler is configured with Matlab, you can test it on one
+   of the Matlab Fortran/MEX examples they provide.
+
+4. Next, to compile the AGMG code, you must first compile the Fortran files
+into object files (.obj).  Run this at the Matlab prompt:
+--------------------------------------------------------------------------
+mex -largeArrayDims -c  COMPFLAGS="$COMPFLAGS -free"  LINKFLAGS="$LINKFLAGS ...
+    -nofor_main" dagmg_mex.f90 dagmg_mumps_mex.f90 -lmwlapack -lmwblas
+mex -largeArrayDims -c  COMPFLAGS="$COMPFLAGS -free"  LINKFLAGS="$LINKFLAGS ...
+     -nofor_main" zagmg_mex.f90 zagmg_mumps_mex.f90 -lmwlapack -lmwblas
+mex -largeArrayDims -c  COMPFLAGS="$COMPFLAGS -free"  LINKFLAGS="$LINKFLAGS ...
+     -nofor_main" dagtwolev_mex.f90 -lmwlapack -lmwblas
+--------------------------------------------------------------------------
+(Omit -largeArrayDims option on 32 bit systems).
+
+5. Next, you need to rerun "mex -setup" to select the associated C compiler
+   ("Microsoft Visual C++ 2010" in the above example).
+
+6. Open "dmtlagmg.c" and rename "dagmg_" to "DAGMG", with NO underscore;
+   this appears in two places.  This is because Visual Fortran on Windows
+   uses all CAPS without underscores for function names.  Similarly, open
+   "zmtlagmg.c" and rename "zagmg_" to "ZAGMG", with NO underscore; this
+   appears in two places.  Lastly, open "dmtlagtwolev.c" and rename
+   "dag2l_twolev_" to "DAG2L_TWOLEV", with NO underscore; this appears
+   in two places.
+
+7.  Now, link everything together with the following mex commands
+   (thus using now the C compiler - see 5. above):
+--------------------------------------------------------------------------
+mex -O -v -largeArrayDims dmtlagmg.c dagmg_mex.obj dagmg_mumps_mex.obj ...
+   -L"C:\Program Files (x86)\Intel\Composer XE 2011 SP1\compiler\lib\intel64" ...
+   -lifconsol -llibifcoremd -llibifportmd -llibmmd -llibirc -lsvml_dispmd ...
+   -lmwlapack -lmwblas
+mex -O -v -largeArrayDims zmtlagmg.c zagmg_mex.obj zagmg_mumps_mex.obj ...
+  -L"C:\Program Files (x86)\Intel\Composer XE 2011 SP1\compiler\lib\intel64" ...
+  -lifconsol -llibifcoremd -llibifportmd -llibmmd -llibirc -lsvml_dispmd ...
+  -lmwlapack -lmwblas
+mex -O -v -largeArrayDims dmtlagtwolev.c dagtwolev_mex.obj ...
+  -L"C:\Program Files (x86)\Intel\Composer XE 2011 SP1\compiler\lib\intel64" ...
+  -lifconsol -llibifcoremd -llibifportmd -llibmmd -llibirc -lsvml_dispmd ...
+  -lmwlapack -lmwblas
+--------------------------------------------------------------------------
+In these example,
+-L"C:\Program Files (x86)\Intel\Composer XE 2011 SP1\compiler\lib\intel64"
+tells the compiler where to find additional Fortran libraries, and
+-lifconsol -llibifcoremd -llibifportmd -llibmmd -llibirc -lsvml_dispmd
+reference that libraries.
+These options have to be adapted to your particular installation.
+
+Miscellaneous:  the reason for the two compile steps is because Matlab
+in Windows does not allow you to have two compilers (C++ and Fortran)
+work with the "mex" command simultaneously.  Thus, you must do a pre-compile
+step first for the Fortran only files, then finish everything up with the
+C compiler because the mex Gateway Function (mexFunction) is in a C file.
+And this last step requires you to tell the C compiler where the necessary
+Fortran libraries are.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

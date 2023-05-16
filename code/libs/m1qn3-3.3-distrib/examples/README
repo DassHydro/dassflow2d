@@ -1,0 +1,57 @@
+This directory contains two examples of programs that use m1qn3 as an
+optimization solver, namely 'essai' (a 2 variable quadratic function)
+and 'u1mt1' (shallow water equation). Both direct or reverse
+communication can be used and the code corresponding to the latter
+communication protocol is referenced by the suffix '_rc'.
+
+------------------------------------------------------------------------
+
+Before using the Makefile in this 'example' directory, you must define
+a file in the 'm1qn3' directory (or a symbolic link to it), that
+defines the compiler name and options, as well as other variables used
+by Makefile. Before starting to work, the Makefile includes indeed the
+file
+
+   ../make.$PLAT
+   
+where $PLAT is en environment variable that identifies the platform and
+must be set to some string. An example of such a make.$PLAT file is
+
+   ../make.a_platform
+
+The 'm1qn3' solver uses a single BLAS routine, namely 'ddot'. If not
+present in the archive ../bin.libblas.$PLAT.a, the Makefile will use the
+option '-blas' to load it from a standard library.
+
+------------------------------------------------------------------------
+
+To run one of these examples, type
+
+  rm -f res
+  make EXAMPLE
+  EXAMPLE > res
+  diff EXAMPLE.res res
+
+where EXAMPLE stands for one of the following string/program:
+
+  essai
+  essai_wr
+  essai_rc
+  essai_rc_wr
+  u1mt1
+  u1mt1_rc
+
+where the suffix 'rc' refers to 'reverse communication ' and 'wr' to
+'warm restart'. The third command line above puts the result in the file
+'res'. The 'diff' command should not show much differences between the
+result in 'res' and those in 'EXAMPLE.res', which have been obtained by
+the authors of the archive.
+
+------------------------------------------------------------------------
+
+By typing
+
+  make clean
+
+you remove the generated files, hence cleaning up the example
+directory.

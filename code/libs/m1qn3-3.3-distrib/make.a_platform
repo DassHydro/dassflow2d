@@ -1,0 +1,89 @@
+#-----------------------------------------------------------------------
+#  Platform for
+#  - Macintosh computers,
+#  - OSX operating system,
+#  - GNU Compiler Collection (GCC).
+#-----------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+# Archiver
+#-----------------------------------------------------------------------
+
+ARCH         = ar
+ARCHFLAGS    = -rc
+
+#-----------------------------------------------------------------------
+# C compiler
+#-----------------------------------------------------------------------
+
+#CC           = pgcc
+#CFLAGS       = -O
+
+#-----------------------------------------------------------------------
+# Fortran compilers
+#-----------------------------------------------------------------------
+
+# F77, F90, F95: names of the Fortran-77, 90, and 95 compilers
+# F*DBGFLAG:     option to generate debug information in the executable file
+# F*FLAGS:       usual flags to use with F*
+# F*NOLD:        flag preventing from making a laod object
+# F*MDIR:        option introducing a module directory
+# F*LAPACK:      string used to get the LAPACK routines through the compiler if any
+# F*BLAS:        string used to get the BLAS routines through the compiler if any
+
+# To have all the options of gfortran, type "gfortran -v --help"; other possible interesting options include
+# -fbounds-check: generate code to check bounds before indexing arrays (can take much computing time)
+# -fdump-parse-tree: display the code tree after parsing
+# -ffree-line-length-none: allow arbitrary character line width in free mode
+# -std=gnu: conform to nothing in particular
+# -Warray-bounds: warn if an array is accessed out of bounds
+# -Wconversion: warn about implicit conversion
+# -Wextra: print extra (possibly unwanted) warnings
+# -Wshadow: warn when one local variable shadows another
+# -Wsurprising: warn about "suspicious" constructs
+# -Wuninitialized; warn about uninitialized automatic variables
+# -Wunused-parameter: warn when a function parameter is unused
+# -Wunused-variable: warn when a variable is unused
+
+F77          = gfortran
+F77FLAGS     = -O
+F77NOLD      = -c
+F77DBGFLAG   = -g
+
+F90          = gfortran
+F90FLAGS     = -O -ffree-line-length-none -Wsurprising -Wextra
+F90NOLD      = -c
+F90IDIR      = -I
+F90MDIR      = -I
+F90SEARCHDIR = -B
+F90DBGFLAG   = -g
+F90LAPACK    = -llapack
+F90BLAS      = -lblas
+
+F95          = gfortran
+F95FLAGS     = -O -ffree-line-length-none -Wsurprising -Wextra
+F95NOLD      = -c
+F95IDIR      = -I
+F95MDIR      = -I
+F95SEARCHDIR = -B
+F95DBGFLAG   = -g
+F95LAPACK    = -llapack
+F95BLAS      = -lblas
+
+#-----------------------------------------------------------------------
+# Loader
+#-----------------------------------------------------------------------
+
+#LOADER       = ld
+#LOADOPTS     = -r
+
+#MAINOPTS     = -O -w 
+
+#-----------------------------------------------------------------------
+# Sed
+#-----------------------------------------------------------------------
+
+# SED_ERE_FLAG = flag used to force sed to correctly interpret extended regular expressions
+
+SED_ERE_FLAG = -E
+

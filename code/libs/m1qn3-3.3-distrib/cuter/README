@@ -1,0 +1,65 @@
+The Makefile in this directory installs M1QN3 in the CUTEr environment.
+This environment must have been installed before using the Makefile. See
+
+   http://hsl.rl.ac.uk/cuter-www/index.html
+
+to have more information on CUTEr.
+
+------------------------------------------------------------------------
+
+Before using the Makefile in this 'cuter' directory, you must define
+a file in the 'm1qn3' directory (or a symbolic link to it), that
+defines the compiler name and options, as well as other variables used
+by Makefile. Before starting to work, the Makefile includes indeed the
+file
+
+   ../make.$PLAT
+   
+where $PLAT is en environment variable that identifies the platform and
+must be set to some string. An example of such a make.$PLAT file is
+
+   ../make.a_platform
+
+------------------------------------------------------------------------
+
+The Makefile does the following tasks.
+
+1) It generates the CUTEr scripts and specification file
+
+    $MYCUTER/bin/m1qn3
+    $MYCUTER/bin/sdm1qn3
+    $(CUTER)/common/src/pkg/m1qn3/m1qn3.spc
+
+This is actually realized by the Perl script ./make_sdm1qn3, which
+follows the instructions given in section 1.10.1 of the CUTEr manual
+(June 26, 2006).
+
+2) It generates the object files
+
+   ../bin/m1qn3.$PLAT.o
+   ../bin/m1qn3ma.$PLAT.o
+   
+from the source codes
+
+   ../src/m1qn3.f	(M1QN3 source code)
+   ./m1qn3ma.f90	(CUTEr driver, using M1QN3)
+   
+respectively, in a version depending on a platform environment variable
+$PLAT.
+
+
+3) Next, it makes a symbolic link to the files
+
+   ../bin/m1qn3.$PLAT.o
+   ../bin/m1qn3ma.$PLAT.o
+   
+from the CUTEr directory
+
+    $MYCUTER/double/bin.
+
+------------------------------------------------------------------------
+
+To realize these tasks, just enter
+
+   make
+

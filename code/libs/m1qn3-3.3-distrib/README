@@ -1,0 +1,51 @@
+This directory contains all the material related to the 'm1qn3' solver.
+This one can solve unconstrained optimization problems and is
+particularly designed for very large ones.
+
+Contents
+^^^^^^^^
+1. Description of the package
+2. Authors
+
+------------------------------------------------------------------------
+
+1. Description of the package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ COPYING      copyright notice (GPL license),
+ README       this file,
+ VERSION-xx   a description of the successive versions of the software,
+ bin          an empty directory, aimed at receiving binaries generated
+              during compilations,
+ blas         a directory containing the single BLAS routine used in
+              'm1qn3', namely 'ddot'.
+ cuter        a directory aiming at making easy the installation of the
+              software in the CUTEr environment,
+ doc          documentation on the solver,
+ examples     simple examples of optimization problems that use the
+              optimization solver,
+ libopt       a directory aiming at making easy the installation of the
+              software in the Libopt environment,
+ src          provides the source code.
+
+README files in some directories tell you more.
+
+------------------------------------------------------------------------
+
+2. Authors
+^^^^^^^^^^
+Jean Charles Gilbert
+INRIA Paris - Rocquencourt
+Domaine de Voluceau, BP 105    
+78153 Le Chesnay Cedex
+France
+e-mail: Jean-Charles.Gilbert@inria.fr
+
+Claude Lemarechal
+INRIA Grenoble - Rhône-Alpes
+Inovallée
+655 avenue de l'Europe
+Montbonnot
+38 334 Saint Ismier Cedex
+France
+e-mail: Claude.Lemarechal@inria.fr

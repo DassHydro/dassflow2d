@@ -1,0 +1,42 @@
+name: df2d_test
+channels:
+    - conda-forge
+dependencies:
+    - python=3.8
+    - pip
+
+    # compile
+    - make
+    - gcc
+    - gfortran
+    - mpich
+
+    # required dependencies
+    - f90wrap
+    - numpy>=1.13,<1.24
+    - pandas>=1.3.5
+    - matplotlib>=3.4.1
+    - h5py>=3.6.0
+    - scipy >=1.7.1
+    - pyvista
+    - vtk
+    #- gdal
+    #- pyyaml
+    #- tqdm
+    #- SALib
+    #- terminaltables
+
+    # documentation
+    - sphinx
+    - numpydoc
+    - pydata-sphinx-theme
+    - ipython
+    - sphinxcontrib-bibtex
+    - sphinx-design
+    - sphinx-autosummary-accessors
+
+    # test
+    - pytest
+
+    # format
+    - black

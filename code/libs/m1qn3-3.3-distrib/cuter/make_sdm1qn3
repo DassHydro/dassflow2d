@@ -1,0 +1,214 @@
+#!/usr/bin/perl
+
+#-----------------------------------------------------------------------
+#
+#   This Perl script generates the CUTEr scripts
+#
+#      $MYCUTER/bin/m1qn3
+#      $MYCUTER/bin/sdm1qn3
+#
+#   that are used to run M1QN3 on a problem in the CUTEr environment. It
+#   implements the instructions given in section 1.10.1 of the CUTEr
+#   manual (June 26, 2006). It also copy the file './m1qn3.spc', which
+#   must be in the present directory, in
+#
+#      $CUTER/common/src/pkg/m1qn3/m1qn3.spc
+#
+#   It is asked whether the previous versions of the generated files
+#   have to be saved (appropriate names are then created).
+#
+#   To execute it, just enter
+#
+#      make_sdm1qn3 sed_ere_flag
+#
+#   in the present directory, where 'sed_ere_flag' is the flag used to
+#   force sed to correctly interpret extended regular expressions (often
+#   '-E' or '-r').
+#
+#-----------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+# Modify the next lines to adapt the script to another solver (other
+# modifications might be necessary)
+#-----------------------------------------------------------------------
+
+$solver  = "m1qn3";	# solver name appearing in $CUTER/common/src/pkg
+$spcfile = "m1qn3.spc";	# name of the specification file in . and $CUTER/common/src/pkg/$solver
+$solv    = "m1qn3";	# script name in $MYCUTER/bin
+$sdsolv  = "sdm1qn3";	# script name in $MYCUTER/bin
+$SOLV    = "M1QN3";	# solver name in the script comments
+
+#-----------------------------------------------------------------------
+# Get 'sed_ere_flag'
+#-----------------------------------------------------------------------
+
+$sed_ere_flag = shift(@ARGV);
+unless ($sed_ere_flag) {
+    print "(make_$sdsolv) >>> expecting the SED flag for extended regular expressions\n";
+    exit
+}
+
+#-----------------------------------------------------------------------
+# Try to see whether CUTEr has been installed.
+#-----------------------------------------------------------------------
+
+my $cuterdir = $ENV{'CUTER'};
+unless ($cuterdir) {
+    print "(make_$sdsolv) >>> The environment variable \$CUTER associated with CUTEr is not defined; install CUTEr first\n";
+    exit 1;
+}
+unless (-e $cuterdir) {
+    print "(make_$sdsolv) >>> the directory defined by the environment variable \$CUTER does not exist; install CUTEr first\n";
+    exit 1;
+}
+
+my $mycuterdir = $ENV{'MYCUTER'};
+unless ($mycuterdir) {
+    print "(make_$sdsolv) >>> the environment variable \$MYCUTER associated with CUTEr is not defined; install CUTEr first\n";
+    exit 1;
+}
+unless (-e $mycuterdir) {
+    print "(make_$sdsolv) >>> the directory defined by the environment variable \$MYCUTER does not exist; install CUTEr first\n";
+    exit 1;
+}
+
+#-----------------------------------------------------------------------
+# Determine a unique job number
+#-----------------------------------------------------------------------
+
+($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+$year = $year+1900;
+$mon = $mon+1;
+if ($mon < 10) {$mon = "0".$mon;}
+if ($mday < 10) {$mday = "0".$mday;}
+$job = "$year-$mon-$mday-$$";
+
+#-----------------------------------------------------------------------
+# Save existing files SOLV and sdSOLV if desired
+#-----------------------------------------------------------------------
+
+$solvfile = "$mycuterdir/bin/$solv";
+if (-e $solvfile) {
+    print "Script '\$MYCUTER/bin/$solv' exists!  Do you want to save it before its regeneration (y/N)? ";
+    $ans = <STDIN>;
+    chomp $ans;				# remove ending newline
+    $ans =~ s/^[ \t]*//;		# remove leading blanks
+    $ans =~ s/[ \t]*$//;		# remove ending blanks
+    if ($ans eq "") {$ans = "n";}
+    if ($ans =~ /^[Yy]/) {
+        rename $solvfile, "$solvfile-$job";
+        print "... script saved in '\$MYCUTER/bin/$solv-$job'\n";
+    }
+}
+
+$sdsolvfile = "$mycuterdir/bin/$sdsolv";
+if (-e $sdsolvfile) {
+    print "Script '\$MYCUTER/bin/$sdsolv' exists!  Do you want to save it before its regeneration (y/N)? ";
+    $ans = <STDIN>;
+    chomp $ans;				# remove ending newline
+    $ans =~ s/^[ \t]*//;		# remove leading blanks
+    $ans =~ s/[ \t]*$//;		# remove ending blanks
+    if ($ans eq "") {$ans = "n";}
+    if ($ans =~ /^[Yy]/) {
+        rename $sdsolvfile, "$sdsolvfile-$job";
+        print "... script saved in '\$MYCUTER/bin/$sdsolv-$job'\n";
+    }
+}
+
+#-----------------------------------------------------------------------
+# Generate SOLV and sdSOLV
+#-----------------------------------------------------------------------
+
+# open the sed command file and specifies the transformations to do to in SOLV.pro and sdSOLV.pro
+
+$sed_cmd_file = "/tmp/make_$sdsolv_$job";
+
+open SEDCMD, ">".$sed_cmd_file
+    or die "(make_$sdsolv) >>> Cannot open the file '$sed_cmd_file': $!\n";
+print SEDCMD "s/setenv caller gen/setenv caller $solv/g\n";
+print SEDCMD "s/setenv PAC gen/setenv PAC $solv/g\n";
+print SEDCMD "s/setenv PACKAGE gen/setenv PACKAGE $solver/g\n";
+print SEDCMD "s/setenv SYSLIBS \"\"/setenv SYSLIBS \"-lblas\"/g\n";
+print SEDCMD "s/setenv PACKOBJ \"gen.o\"/setenv PACKOBJ \"$solver.o\"/g\n";
+print SEDCMD "s/setenv SPECS \"\"/setenv SPECS \"$spcfile\"/g\n";
+print SEDCMD "s/GEN/$SOLV/g\n";
+print SEDCMD "s/gen/$solv/g\n";
+close SEDCMD;
+
+# generate SOLV.pro and sdSOLV.pro
+
+system "cat $cuterdir/build/prototypes/gen.pro | sed -f $sed_cmd_file > $solv.pro";
+system "cat $cuterdir/build/prototypes/sdgen.pro | sed -f $sed_cmd_file > $sdsolv.pro";
+
+# remove the sed command file
+
+unlink $sed_cmd_file;
+
+# cast the scripts against the machine-dependent specifications and put
+# them in the right place with the right modes
+
+system "sed -f $mycuterdir/double/config/script.sed $solv.pro > $mycuterdir/bin/$solv";
+system "chmod a+x $mycuterdir/bin/$solv";
+system "sed -f $mycuterdir/double/config/script.sed $sdsolv.pro > $mycuterdir/bin/$sdsolv";
+system "chmod a+x $mycuterdir/bin/$sdsolv";
+
+# remove the no longer useful SOLV.pro and sdSOLV.pro prototypes
+
+unlink ("$solv.pro", "$sdsolv.pro");
+
+#-----------------------------------------------------------------------
+# Copy the specfication file
+#-----------------------------------------------------------------------
+
+# create the package directory if necessary
+
+unless (-d "$cuterdir/common/src/pkg/$solver") {
+    mkdir "$cuterdir/common/src/pkg/$solver", 0755
+        or die "(make_sdsqppro) >>> cannot create directory \$CUTER/common/src/pkg/$solver: $!\n";
+}
+
+unless (-e $spcfile) {
+    print ">>> Specification file './$spcfile' not found; '\$CUTER/common/src/pkg/$solver/$spcfile' not generated\n";
+    exit 1;
+}
+
+$fullspcfile = "$cuterdir/common/src/pkg/$solver/$spcfile";
+
+# save existing specification file if desired
+ 
+if (-e $fullspcfile) {
+    print "File '\$CUTER/common/src/pkg/$solver/$spcfile' exists!  Do you want to save it before its regeneration (y/N)? ";
+    $ans = <STDIN>;
+    chomp $ans;				# remove ending newline
+    $ans =~ s/^[ \t]*//;		# remove leading blanks
+    $ans =~ s/[ \t]*$//;		# remove ending blanks
+    if ($ans eq "") {$ans = "n";}
+    if ($ans =~ /^[Yy]/) {
+        rename $fullspcfile, "$fullspcfile-$job";
+        print "... file saved in '\$CUTER/common/src/pkg/$solver/$spcfile-$job'\n";
+    }
+}
+
+## # build the sed command file
+## 
+## $sed_cmd_file = "/tmp/make_$sdsolv_$job";
+## 
+## open SEDCMP, ">$sed_cmd_file"
+##     or die "(make_$sdsolv) >>> Cannot open $sed_cmd_file: $!";
+## print SEDCMP "s/^ *impres +[0-9]+ *!/impres     3      !/\n";
+## print SEDCMP "s/^ *epsg +[0-9\.dDeE+-]* *!/epsg       1.d-5  !/\n";
+## close SEDCMP;
+## 
+## # generate the specification file
+## 
+## system "sed $sed_ere_flag -f $sed_cmd_file $spcfile > $fullspcfile";
+## 
+## # remove the sed command file
+## 
+## unlink $sed_cmd_file;
+
+# copy the specification file
+
+system "cp $spcfile $fullspcfile";
+
+exit;
