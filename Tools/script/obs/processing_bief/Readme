@@ -1,0 +1,18 @@
+processing_bief.py
+
+Description :
+Ce script crée des fichiers de groupe de points ("station_grp_") type dassflow ainsi que le fichier "param_obs.txt" associè à ces groupes à partir des sorties du script Swot_like_data et d'une center line. Les groupes de points sélectionnés sont ceux dont les swots bands associées ne traverse qu'une seule fois la center line (évite des confusions sur le paramètre L).
+
+Inputs : Tout les inputs sont à déclarer directement dans le script processing_bief.py entre les commentaires "To change" et "End to change".
+-SWOTBandDir ( '../SWOT_like_data/orbit891km_Garonne_SWOTswathbands1km/orbit891km_Garonne_SWOTswathbands1km') : Chemin du dossier de sortie des bandes SWOT générées par le script Swot_like_data
+-NodesGrpDir( '../SWOT_like_data/orbit891km_Garonne_SWOTswathbands1km/orbit891km_Garonne_SWOTswathbands1km/groups' ) : Chemin du dossier de sortie des groupes de points générés par le script SWOT_like_data
+-centerline('./inputs/centerline.shp') : Ligne centrale de la rivière. Elle peut ếtre généré tels qu'expliqué dans (http://georezo.net/forum/viewtopic.php?id=94484). Le "nettoyage" de la center line est très important pour le bon fonctionnement du script.
+-outputDir('../SWOT_like_data/ouputs') : Chemin du dossier des sorties du script.
+
+Outputs : 
+-Fichiers "station_grp_" : Ces fichiers suivent le formalise dassflow décrit dans la documentation.
+-Fichier "param_obs.txt" : Ce fichier suit le formalise dassflow décrit dans la documentation.
+
+Utilisation : Pour utiliser le script :
+   - Modifier les paramètres d'entrées (entre les commentaires "To change" et "End to change").
+   - Lancer le script via la commande 'python processing_bief'

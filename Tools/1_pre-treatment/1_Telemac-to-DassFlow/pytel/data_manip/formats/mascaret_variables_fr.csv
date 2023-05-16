@@ -1,0 +1,48 @@
+"varname";"abbr";"unit";"int"
+"Maillage";"X";"m";2
+"Cote du fond";"ZREF";"m";4
+"Cote de la rive gauche";"RGC";"m";4
+"Cote de la rive droite";"RDC";"m";4
+"Coefficient de frottement mineur";"KMIN";"m1/3/s";0
+"Coefficient de frottement majeur";"KMAJ";"m1/3/s";0
+"Cote de l eau";"Z";"m";3
+"Debit total";"Q";"m3/s";3
+"Debit mineur";"QMIN";"m3/s";3
+"Debit majeur";"QMAJ";"m3/s";3
+"Section mouillee mineure";"S1";"m2";2
+"Section mouillee majeure";"S2";"m2";2
+"Largeur au miroir mineure";"B1";"m";2
+"Largeur au miroir majeure";"B2";"m";2
+"Largeur au miroir du stockage";"BS";"m";2
+"Perimetre mouille mineur";"P1";"m";2
+"Perimetre mouille majeur";"P2";"m";2
+"Rayon hydraulique mineur";"RH1";"m";2
+"Rayon hydraulique majeur";"RH2";"m";2
+"Nombre de Froude";"FR";"";5
+"Coefficient beta modele DEBORD";"BETA";"";2
+"Contrainte au fond";"TAUF";"Pa";6
+"Hauteur d'eau";"Y";"m";3
+"Hauteur d'eau moyenne";"HMOY";"m";3
+"Debit majeur gauche";"Q2G";"m3/s";2
+"Debit majeur droit";"Q2D";"m3/s";2
+"Volume du lit actif";"VOL";"m3";0
+"Volume de stockage";"VOLS";"m3";0
+"Charge";"CHAR";"m";2
+"Section mouillee du stockage";"SS";"m2";2
+"Vitesse mineure";"VMIN";"m/s";4
+"Vitesse majeure";"VMAJ";"m/s";4
+"Cote maximale atteinte";"ZMAX";"m";2
+"Instant de cote maximale";"TZMA";"s";1
+"Vitesse a la cote maximale";"VZMX";"m/s";4
+"Cote minimale atteinte";"ZMIN";"m";2
+"Instant de cote minimale";"TZMI";"s";1
+"Vitesse mineure minimale";"VINF";"m/s";4
+"Vitesse mineure maximale";"VSUP";"m/s";4
+"Largeur au miroir maximale";"BMAX";"m";2
+"Instant d'arrivee d'onde";"TOND";"s";1
+"Debit maximal";"QMAX";"m3/s";2
+"Instant de debit maximal";"TQMA";"s";1
+"Energie maximale";"EMAX";"J";3
+"Debit analy";"QVRAI";"m";3
+"Debit deverse";"QDEV";"m3/s";3
+"Flux de masse";"Debi";"m3/s";3

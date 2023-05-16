@@ -1,0 +1,18 @@
+processing_bief1D.py
+
+Description :
+Ce script crée des fichiers de groupe de points ("station_grp_") type dassflow1D_SQ ainsi que le fichier "param_obs.txt" associè à ces groupes à partir des sorties du script Swot_like_data et des points dassFlow géoréférencés. Les groupes de points sélectionnés sont ceux dont les swots bands associées ne voit qu'une seul fois un tronçon de rivière.
+
+Inputs : Tout les inputs sont à déclarer directement dans le script processing_bief.py entre les commentaires "To change" et "End to change".
+-SWOTBandDir ( '../SWOT_like_data/orbit891km_Garonne_SWOTswathbands1km/orbit891km_Garonne_SWOTswathbands1km') : Chemin du dossier de sortie des bandes SWOT générées par le script Swot_like_data
+-centerPoints('./inputs/centerPoints.shp') : centre des cellules géolocalisé aux formats shapefiles du maillage.
+-outputDir('./ouputs') : Chemin du dossier des sorties du script.
+
+Outputs : 
+-Fichiers "station_grp_" : Ces fichiers suivent le formalise dassflow1D_SQ  décrit dans la documentation.
+-Fichier "param_obs.txt" : Ce fichier suit le formalise dassflow1D_SQ  décrit dans la documentation.
+
+
+Utilisation : Pour utiliser le script :
+   - Modifier les paramètres d'entrées (entre les commentaires "To change" et "End to change").
+   - Lancer le script via la commande 'python processing_bief1D'
