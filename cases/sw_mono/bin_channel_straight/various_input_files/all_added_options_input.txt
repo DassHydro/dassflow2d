@@ -1,0 +1,127 @@
+!======================================================================================================================!
+!	Input File for Shallow-Water Model
+!	(configure your text editor with a 4 tabs space for better reading)
+!======================================================================================================================!
+
+&list_input
+
+!======================================================================================================================!
+!  Mesh Type
+!======================================================================================================================!
+
+	mesh_type		=	'dassflow',				! 'basic' , 'dassflow'
+
+	mesh_name		=	'channel.geo',			! mesh name
+
+!======================================================================================================================!
+!  Structured mesh parameters (in basic case)
+!======================================================================================================================!
+
+
+! DassFlow Mesh : information not needed
+
+
+!======================================================================================================================!
+!  Boundary conditions
+!======================================================================================================================!
+
+
+! DassFlow Mesh : information in bc.txt
+
+
+!======================================================================================================================!
+!  Simulation parameters
+!======================================================================================================================!
+
+	ts				=	14400.,					! Simulation Time
+
+	dtw				=	3600.,					! Time Step to Output Result Files
+
+	dtp				=	60.,					! Time Step to Output Post Variables
+
+	dta				=	60.,					! Time Step to Generate BC (for Data Assimilation)
+
+!======================================================================================================================!
+!  Numerical parameters
+!======================================================================================================================!
+
+	temp_scheme		=	'euler',		   		! Temporal Scheme : 'euler' or 'imex'
+
+	spatial_scheme	=	'first_b1',				! Spatial Scheme: first order ('first_b1') or second order (=> 'imex' above)
+
+	adapt_dt		=	1,						! Choice of an Adaptative Time Step (1) or not (0)
+
+	cfl				=	0.8,					! CFL number in case of Adaptative Time Step
+
+	heps			=	0.,						! Cut-off height to stabilize SW Numerical Schemes
+
+	friction		=	1,						! Manning Source Term
+
+!======================================================================================================================!
+!  Physical parameters
+!======================================================================================================================!
+
+	g				=	10.,					! Gravity constant
+
+!======================================================================================================================!
+!  Output Results Files Switches
+!======================================================================================================================!
+
+	w_tecplot		=	1,						! in Tecplot ASCII format
+    	w_obs			=	1,						! Writing obs data relating to obs.txt file
+    	w_vtk =1
+	use_obs			=	1,
+
+!======================================================================================================================!
+!  Variational Data Assimilation Parameters
+!======================================================================================================================!
+	eps_min				=	1.d-8,
+	
+	c_manning_beta = 0,
+	c_manning_alpha			=	0,
+	eps_manning				=	0.2,
+	regul_manning			=	0.,
+
+	c_bathy				=	0,
+	eps_bathy			=	0.01,
+	regul_bathy			=	0.,
+	regul_bathy_d2          = 0.0,		 		! ADDED lilian : regularisation in cost function bathymetry d2
+	
+	c_hydrograph		=   1,
+	eps_hydrograph		=   0.2,
+	regul_hydrograph	=	0.000,
+	
+	c_manning_alpha_cell = 0,		 			! ADDED lilian : regularisation for spatial friction (CAREFULL : friction must be  3 or 4 above)
+	c_manning_beta_cell = 0,		 			! beta param (n = alpha * h^beta ) 
+	c_manning_D_cell = 0,		 				! D param  (8/f = alpha * (h/D)^beta )  
+	
+	manning_alpha_cell_uniform  = 0.5,		 		! ADDED lilian : initialize spatial friction (uniform value) (CARFULL : friction must be  3 or 4 above)
+	manning_beta_cell_uniform = 0.,		 		! 
+	manning_D_cell_uniform = 0.,		 			! 
+
+	
+!======================================================================================================================!
+! regularisation parameters (var_chg : with covariance matrixes)
+!======================================================================================================================!
+var_chg= .true.,		
+
+ 					! hydrograph regul (var_chg : with covariance matrixes)
+mu_hydrograph	=  200,                ! correlation length                 	       
+sigma_hydrograph = 1,			! weigth 
+
+ 					! bathy regul
+mu_bathy = 200,				
+sigma_bathy = 1,				
+
+ 					! friction : manning param regul   (n = alpha * h^beta )  &&   (8/f = alpha * (h/D)^beta )
+ 					! carefull : only sigma_manning_xxxx is effective (exponatial term of covariance matrix is disabled : ==1 )
+sigma_manning_alpha = 1,
+mu_manning_alpha  = 200,			
+sigma_manning_beta = 1,		
+mu_manning_beta  = 200, 					 
+sigma_manning_D = 1,			
+mu_manning_D  = 200,
+
+
+
+/

@@ -1,0 +1,76 @@
+!======================================================================================================================!
+!	Input File for Shallow-Water Model
+!	(configure your text editor with a 4 tabs space for better reading)
+!======================================================================================================================!
+
+&list_input
+
+!======================================================================================================================!
+!  Mesh Type
+!======================================================================================================================!
+
+	mesh_type		=	'dassflow',					! 'basic' , 'dassflow'
+
+	mesh_name		=	'garonne_jack.geo',			! mesh name
+
+!======================================================================================================================!
+!  Simulation parameters
+!======================================================================================================================!
+
+	ts				=	10000000.,	    			! Simulation Time
+
+	dtw				=	2000.,	 	  				! Output Result File Time Step
+
+	dtp				=	2000.,						! Output Post Variables Time Step
+
+!======================================================================================================================!
+!  Numerical parameters
+!======================================================================================================================!
+
+	temp_scheme		=	'euler',		   			! Choice of Temporal Scheme: 'euler' or 'imex'
+
+	spatial_scheme	=	'first_b1',					! Choice of Spatial Scheme: first order ('first_b1') or second order (=> 'imex' above)
+
+	adapt_dt		=	1,							! Choice of an Adaptative Time Step (1) or not (0)
+
+	cfl				=	0.8,						! CFL number in case of Adaptative Time Step
+
+	heps			=	0.,							! Cut-off height to stabilize SW Numerical Schemes
+
+	friction		=	1,							! Manning Source Term
+
+!======================================================================================================================!
+!  Physical parameters
+!======================================================================================================================!
+
+	g				=	9.81,						! Gravity constant
+
+!======================================================================================================================!
+!  Output Results Files Switches
+!======================================================================================================================!
+
+	w_tecplot		=	0,							! in Tecplot ASCII format
+   w_gnuplot		=	1,							! in Tecplot ASCII format
+	w_obs			   =	1,							! Writing obs data relating to obs.txt file
+	use_obs			=	0,
+
+!======================================================================================================================!
+!  Variational Data Assimilation Parameters
+!======================================================================================================================!
+
+	eps_min				=	1.d-8,
+
+	c_manning_alpha			=	1,
+	eps_manning			=	0.2,
+	regul_manning		=	0.,
+
+	c_bathy				=	0,
+	eps_bathy			=	0.01,
+	regul_bathy			=	0.,
+
+	c_hydrograph		=   0,
+	eps_hydrograph		=   0.2,
+	regul_hydrograph	=	0.
+
+
+/

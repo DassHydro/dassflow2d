@@ -1,0 +1,219 @@
+ -------------------------------------------------------------------------------
+ M1QN3 Copyright (C) 2008, J. Ch. Gilbert, Cl. Lemarechal.
+ -------------------------------------------------------------------------------
+ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you
+ are welcome to redistribute it under certain conditions. See the file COPYING 
+ in the root directory of the M1QN3 distribution for details.
+ -------------------------------------------------------------------------------
+
+ M1QN3 (Version 3.3, October 2009): entry point
+     dimension of the problem (n):          1000
+     absolute precision on x (dxmin):          1.00D-05
+     expected decrease for f (df1):            5.00D-01
+     relative precision on g (epsg):           1.00D-08 (two-norm)
+     maximal number of iterations (niter):   100
+     maximal number of simulations (nsim):   100
+     printing level (impres):                  5
+     reverse communication
+
+ m1qn3: Diagonal Initial Scaling mode
+
+     allocated memory (ndz) :   204100
+     used memory :              204100
+     number of updates :           100
+     (y,s) pairs are stored in core memory
+
+ m1qn3: cold start
+
+     f             =  1.00000000D+00
+     two-norm of g =  1.00000000D+00
+
+ m1qn3a: descent direction -g: precon =  0.100D+01
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 1, simul 1, f= 1.00000000D+00, h'(0)=-1.00000D+00
+
+ m1qn3: line search
+
+     mlis3       fpn=-1.000D+00 d2= 1.00D+00  tmin= 1.39D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -3.013D-01  4.622D-01
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  5.692D-01
+     updated diagonal: average value =  5.692D-01, sqrt(variance) =  2.581D-03
+
+ m1qn3: stopping criterion on g:  8.02850D-01
+
+ m1qn3: descent direction d: angle(-g,d) =   3.6 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 2, simul 2, f= 6.98667654D-01, h'(0)=-2.60420D-01
+
+ m1qn3: line search
+
+     mlis3       fpn=-2.604D-01 d2= 1.06D-01  tmin= 4.18D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -1.785D-01 -9.579D-02
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  3.25003D-01
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  1.052D+00
+     updated diagonal: average value =  5.987D-01, sqrt(variance) =  4.203D-03
+
+ m1qn3: stopping criterion on g:  3.90470D-01
+
+ m1qn3: descent direction d: angle(-g,d) =   6.8 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 3, simul 3, f= 5.20156534D-01, h'(0)=-1.97253D-01
+
+ m1qn3: line search
+
+     mlis3       fpn=-1.973D-01 d2= 2.59D-01  tmin= 4.05D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -1.508D-01 -1.188D-01
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  1.56524D+00
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  1.778D+00
+     updated diagonal: average value =  1.065D+00, sqrt(variance) =  2.169D-02
+
+ m1qn3: stopping criterion on g:  3.08582D-01
+
+ m1qn3: descent direction d: angle(-g,d) =  26.9 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 4, simul 4, f= 3.69317606D-01, h'(0)=-3.59979D-01
+
+ m1qn3: line search
+
+     mlis3       fpn=-3.600D-01 d2= 1.71D+00  tmin= 1.50D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -2.124D-01 -1.005D-01
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  2.57230D+00
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  3.901D+00
+     updated diagonal: average value =  4.155D+00, sqrt(variance) =  9.376D-02
+
+ m1qn3: stopping criterion on g:  3.07543D-01
+
+ m1qn3: descent direction d: angle(-g,d) =  59.4 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 5, simul 5, f= 1.56867623D-01, h'(0)=-1.28724D-01
+
+ m1qn3: line search
+
+     mlis3       fpn=-1.287D-01 d2= 6.75D-01  tmin= 3.04D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -7.603D-02 -4.047D-02
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  6.28055D-01
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  5.907D-01
+     updated diagonal: average value =  2.455D+00, sqrt(variance) =  6.908D-02
+
+ m1qn3: stopping criterion on g:  1.13965D-01
+
+ m1qn3: descent direction d: angle(-g,d) =  47.1 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 6, simul 6, f= 8.08340098D-02, h'(0)=-4.30717D-02
+
+ m1qn3: line search
+
+     mlis3       fpn=-4.307D-02 d2= 3.08D-01  tmin= 6.24D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -3.324D-02 -1.865D-02
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  6.75556D-01
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  1.057D+00
+     updated diagonal: average value =  2.596D+00, sqrt(variance) =  8.556D-02
+
+ m1qn3: stopping criterion on g:  8.43422D-02
+
+ m1qn3: descent direction d: angle(-g,d) =  49.7 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 7, simul 7, f= 4.75955703D-02, h'(0)=-3.67147D-02
+
+ m1qn3: line search
+
+     mlis3       fpn=-3.671D-02 d2= 4.54D-01  tmin= 4.81D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -3.439D-02 -1.048D-02
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  1.21338D+00
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  4.040D+00
+     updated diagonal: average value =  1.049D+01, sqrt(variance) =  3.691D-01
+
+ m1qn3: stopping criterion on g:  9.87968D-02
+
+ m1qn3: descent direction d: angle(-g,d) =  61.4 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 8, simul 8, f= 1.32103872D-02, h'(0)=-1.78820D-02
+
+ m1qn3: line search
+
+     mlis3       fpn=-1.788D-02 d2= 1.43D-01  tmin= 8.51D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -9.560D-03 -5.354D-03
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  5.62157D-01
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  2.305D-01
+     updated diagonal: average value =  2.419D+00, sqrt(variance) =  9.608D-02
+
+ m1qn3: stopping criterion on g:  2.09492D-02
+
+ m1qn3: descent direction d: angle(-g,d) =  43.5 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 9, simul 9, f= 3.65058319D-03, h'(0)=-5.52262D-03
+
+ m1qn3: line search
+
+     mlis3       fpn=-5.523D-03 d2= 1.32D-01  tmin= 8.70D-05 tmax= 1.00D+20
+     mlis3     1.000D+00 -2.258D-03  1.489D-03
+
+ m1qn3: convergence rate, s(k)/s(k-1) =  9.60172D-01
+
+ m1qn3: matrix update:
+     fitting the ellipsoid: factor =  4.550D+00
+     updated diagonal: average value =  1.101D+01, sqrt(variance) =  4.382D-01
+
+ m1qn3: stopping criterion on g:  2.03854D-02
+
+ m1qn3: descent direction d: angle(-g,d) =  70.5 degrees
+
+ -------------------------------------------------------------------------------
+
+ m1qn3: iter 10, simul 10, f= 1.39278627D-03, h'(0)=-6.50221D-04
+
+ m1qn3: line search
+
+     mlis3       fpn=-6.502D-04 d2= 9.17D-03  tmin= 1.73D-04 tmax= 1.00D+20
+     mlis3                                      1.000D+00  3.528D-05 -4.824D-04
+     mlis3                                      2.172D-01  5.486D-04  8.261D-05
+     mlis3                                      2.151D-01  5.645D-04  3.015D-05
+     mlis3                                      2.043D-01  6.454D-04  9.667D-05
+     mlis3                                      1.532D-01  3.576D-04  2.540D-04
+     mlis3                                      1.073D-01  5.205D-04 -8.933D-04
+     mlis3                                      7.508D-02  3.328D-04 -8.176D-04
+     mlis3                                      5.256D-02  2.115D-04 -7.705D-04
+     mlis3                                      3.679D-02  1.351D-04 -7.343D-04
+     mlis3                                      2.575D-02  8.970D-05 -7.100D-04
+     mlis3                                      1.803D-02  5.932D-05 -6.919D-04

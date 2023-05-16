@@ -1,0 +1,17 @@
+! !!!!!!!!!!!!              
+! GR4 input data : each catchment in order           
+! !!!!!!!!!!!!              
+! Catchment count             
+2             
+! Catchment parameters : x1 x2 x3 x4            
+560.01 -3.37 78.75 0.167              
+! Initial states (13 reservoirs)             
+374.06254121305    1.53E-02 1.53E-02 1.53E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 52.1994140914368
+! Catchment injection cell id + surf(m2)             
+10 1000
+! Catchment parameters : x1 x2 x3 x4            
+560.01 -3.37 78.75 0.167              
+! Initial states (13 reservoirs)             
+374.06254121305    1.53E-02 1.53E-02 1.53E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 1.54E-02 52.1994140914368
+! Catchment injection cell id + surf(m2)             
+10 1000

@@ -1,0 +1,22 @@
+ !===============================================!
+ !  Number of boundary conditions
+ !===============================================!
+           0
+ !===============================================!
+ !  List of boundary conditions (all unspecified boundaries are set as "wall" boundary condition type ) 
+ !===============================================!
+!      0    wall     
+!      0    wall     
+!      0    wall     
+!      0    wall     
+ !===============================================!
+ !   NOTES                                       !
+ !===============================================!
+ !  File generated using subroutine write_bc()    
+ !======= integer values of bc
+ !bc%nb=           4
+ !bc%nb_in=           0
+ !bc%nb_out=           0
+!bc%typ(:,1)=wall         wall         wall         wall         
+!bc%typ(:,2)=                                                    
+ !bc%grpf(:)=         0         0         0         0

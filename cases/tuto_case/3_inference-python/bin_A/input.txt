@@ -1,0 +1,80 @@
+!======================================================================================================================!
+!	Input File for Shallow-Water Model
+!	(configure your text editor with a 4 tabs space for better reading)
+!======================================================================================================================!
+
+&list_input
+
+!======================================================================================================================!
+!  Mesh Type
+!======================================================================================================================!
+
+	mesh_type	=	'dassflow',					! 'basic' , 'dassflow'
+	mesh_name 	= 	'automaticaly_generated_mesh.txt',
+
+!======================================================================================================================!
+! Boundary conditions
+!======================================================================================================================!
+
+	bc_N	=	'wall',							! Type of Boundary condition at Mesh North
+	bc_S	=	'wall',							! Type of Boundary condition at Mesh South
+	bc_W	=	'discharg1',					! Type of Boundary condition at Mesh West
+	bc_E	=	'hpresc',						! Type of Boundary condition at Mesh East
+
+!======================================================================================================================!
+!  Simulation parameters
+!======================================================================================================================!
+	lx = 1000
+
+	ts		=	10000,							! Simulation Time
+
+	dta		=	1.d2,							! data assimilation
+
+	dtw		=	60.,							! Output Result File Time Step
+	dt		=	0.1,
+	
+!	ts		=	1.d3,							! Simulation Time
+!	dt		=	1.d-1,							! Fixed Time Step - useless if adpt_dt=1 -
+!	dtw		=	60.,							! Output Result File Time Step
+!	dta 		= 	1.d2,
+!======================================================================================================================!
+!  Numerical parameters
+!======================================================================================================================!
+	temp_scheme		=	'euler',					! Choice of Temporal Scheme ( euler , imex )
+	spatial_scheme		=	'first_b1',					! Choice of Spatial Scheme  (first_b1,  )
+
+	adapt_dt		=	1,						! Choice of an Adaptative Time Step (1) or not (0)
+
+	cfl				=	0.5,					! CFL number in case of Adaptative Time Step
+
+	heps			=	0.,						! Cut-off height to stabilize SW Numerical Schemes
+
+	friction		=	1,						! Manning Source Term
+
+!======================================================================================================================!
+!  Physical parameters
+!======================================================================================================================!
+
+	g	=	10.,								! Gravity constant
+
+!======================================================================================================================!
+!  Output Results Files Switches
+!======================================================================================================================!
+!======================================================================================================================!
+
+	w_vtk		=	0,							! in VTK format ( 1 -> ASCII , 2 -> Binary )
+	w_tecplot	=	0,							! in Tecplot ASCII format
+	w_gnuplot       = 	1,
+	w_exact=0,
+	
+	
+	
+	
+	w_obs = 1,
+	use_obs = 1,
+	c_hydrograph=1,
+	c_manning=0,
+	c_manning_beta=0,
+	w_norm		=	0
+
+/

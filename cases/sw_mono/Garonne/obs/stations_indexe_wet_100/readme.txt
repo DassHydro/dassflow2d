@@ -1,0 +1,1 @@
+Pour chaque bande d'observation SWOT, seules les cellules mouillées pour Q=100m3s-1 ont été selectionnées. Un nettoyage a du être fait pour la bande 1 (2 groupes de cellules sont générées initialement à cause d'un méandre) 

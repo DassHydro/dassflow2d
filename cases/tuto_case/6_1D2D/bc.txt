@@ -1,0 +1,17 @@
+!===============================================!
+!  Number of boundary conditions
+!===============================================!
+9
+!===============================================!
+!  List of boundary conditions
+!===============================================!
+1	discharg1	file
+2	discharg1	file
+3	internal_2D	cutcell	6
+4	internal_2D	cutcell	7
+5	internal_1D	cutcell	8
+6	internal_1D	cutcell	3
+7	internal_1D	cutcell	4
+8	internal_2D	cutcell	5
+9	ratcurve	file
+

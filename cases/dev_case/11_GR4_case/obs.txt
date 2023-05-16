@@ -1,0 +1,7 @@
+!=================================================================================================!			
+! File Defining Points and/or Lines to output result in files at a prescribed temporal frequency			
+!=================================================================================================!			
+			
+stations 0
+
+stations_with_group	0

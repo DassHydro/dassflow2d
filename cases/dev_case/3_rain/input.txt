@@ -1,0 +1,110 @@
+!======================================================================================================================!
+!	Input File for Shallow-Water Model
+!	(configure your text editor with a 4 tabs space for better reading)
+!======================================================================================================================!
+
+&list_input
+
+!======================================================================================================================!
+!  Mesh Type
+!======================================================================================================================!
+
+	mesh_type		=	'dassflow',			! 'basic' , 'dassflow'
+
+	mesh_name		=	'channel.geo',			! mesh name
+
+!======================================================================================================================!
+!  Structured mesh parameters (in basic case)
+!======================================================================================================================!
+
+	lx				=	1000.,					! Mesh length in x horizontal direction
+	ly				=	100.,		    		! Mesh length in y vertical direction
+
+	nx				=	100,					! Number of nodes in x horizontal direction
+	ny				=	10,						! Number of nodes in y vertical direction
+
+!======================================================================================================================!
+!  Boundary conditions
+!======================================================================================================================!
+
+	bc_N			=	'wall',					! Type of Boundary condition at Mesh North
+	bc_S			=	'wall',					! Type of Boundary condition at Mesh South
+	bc_W			=	'discharg1',			! Type of Boundary condition at Mesh West
+	bc_E			=	'ratcurve',				! Type of Boundary condition at Mesh East
+	bc_rain 		=       1,
+	bc_infil               =       0,
+
+!======================================================================================================================!
+!  Simulation parameters
+!======================================================================================================================!
+
+	ts				=	4000.,					! Simulation Time
+
+	dtw				=	100.,					! Time Step to Output Result Files
+
+	dtp				=	100.,					! Time Step to Output Post Variables
+
+	dta				=	100.,					! Time Step to Generate BC (for Data Assimilation)
+
+!======================================================================================================================!
+!  Numerical parameters
+!======================================================================================================================!
+
+	temp_scheme		=	'euler',		   		! Temporal Scheme : 'euler' or 'imex'
+
+	spatial_scheme	        =	'first_b1',				! Spatial Scheme: first order ('first_b1') or second order (=> 'imex' above)
+
+	adapt_dt		=	1,					! Choice of an Adaptative Time Step (1) or not (0)
+
+	cfl			=	0.8,					! CFL number in case of Adaptative Time Step
+
+	heps			=	0.,					! Cut-off height to stabilize SW Numerical Schemes
+
+	friction		=	1,					! Manning Source Term
+
+!======================================================================================================================!
+!  Physical parameters
+!======================================================================================================================!
+
+	g				=	9.81,					! Gravity constant
+
+!======================================================================================================================!
+!  Output Results Files Switches
+!======================================================================================================================!
+
+	w_tecplot		=	0,						! in Tecplot ASCII format
+    	w_obs			=	1,						! Writing obs data relating to obs.txt file
+    	w_gnuplot 		= 	1,
+    	w_vtk 			=	1,
+	use_obs		=	0,
+
+
+!======================================================================================================================!
+!  Variational Data Assimilation Parameters
+!======================================================================================================================!
+
+	eps_min				=	1.d-8,
+
+	c_manning			=	0,
+	eps_manning			=	0.2,
+	regul_manning			=	0.,
+
+	c_bathy				=	0,
+	eps_bathy			=	0.01,
+	regul_bathy			=	0.,
+
+	c_hydrograph		=   0,
+	eps_hydrograph		=   0.2,
+	regul_hydrograph	=	0.000,
+
+	c_rain 	= 1,
+	eps_rain	= 0.0001,
+	
+	c_Ks 		= 0,
+	c_PsiF 	= 0,
+	c_DeltaTheta 	= 0,
+	c_lambda 	= 0,
+	c_CN		= 0 
+
+
+/
