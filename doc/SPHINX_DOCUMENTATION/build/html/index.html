@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>DassFlow-2d documentation &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -324,9 +331,9 @@
             
             <article class="bd-article" role="main">
               
-  <span class="target" id="module-dassflow"></span><div class="section" id="dassflow-2d-documentation">
+  <span class="target" id="module-dassflow"></span><section id="dassflow-2d-documentation">
 <h1>DassFlow-2d documentation<a class="headerlink" href="#dassflow-2d-documentation" title="Permalink to this heading">#</a></h1>
-<p><strong>Date</strong>: Nov 08, 2022 <strong>Version</strong>: 1.0</p>
+<p><strong>Date</strong>: Jun 21, 2023 <strong>Version</strong>: 1.0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Package</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code>  is an open source, python library interfacing the Fortran DassFlow2D model. All source files are written in Fortran 2003 and the software is wrapped into Python using f90wrap <span id="id1">[<a class="reference internal" href="#id3" title="James R Kermode. F90wrap: an automated tool for constructing deep python interfaces to modern fortran codes. Journal of Physics: Condensed Matter, 32(30):305901, may 2020. URL: https://doi.org/10.1088/1361-648x/ab82d2, doi:10.1088/1361-648x/ab82d2.">Ker20</a>]</span>.</p>
@@ -423,14 +430,13 @@ the <em>dassflow2d</em> API.</p>
 <div class="toctree-wrapper compound">
 </div>
 <p class="rubric">References</p>
-<div class="docutils container" id="id2">
-<dl class="citation">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">Ker20</a></span></dt>
+<p id="id2"><dl class="citation">
+<dt class="label" id="id3"><span class="brackets">Ker20</span></dt>
 <dd><p>James R Kermode. F90wrap: an automated tool for constructing deep python interfaces to modern fortran codes. <em>Journal of Physics: Condensed Matter</em>, 32(30):305901, may 2020. URL: <a class="reference external" href="https://doi.org/10.1088/1361-648x/ab82d2">https://doi.org/10.1088/1361-648x/ab82d2</a>, <a class="reference external" href="https://doi.org/10.1088/1361-648x/ab82d2">doi:10.1088/1361-648x/ab82d2</a>.</p>
 </dd>
 </dl>
-</div>
-</div>
+</p>
+</section>
 
 
             </article>
@@ -516,7 +522,7 @@ the <em>dassflow2d</em> API.</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

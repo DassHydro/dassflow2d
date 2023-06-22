@@ -1,0 +1,994 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Forward run (simple channel “q_in”) &#8212; DassFlow-2D 1.0 documentation</title>
+  <script>
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+
+  
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/Tutorials/2_make_your_second_run';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Inference run" href="3_make_your_first_4Dvar.html" />
+    <link rel="prev" title="Forward run (lake at rest)" href="1_make_your_first_run.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">DassFlow-2D 1.0 documentation</p>
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      <div class="navbar-end-item navbar-end__search-button-container">
+        
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  <div class="search-button-container--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+  </div>
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="../../Introduction/index.html">
+                        Presentation
+                    </a>
+                </li>
+                
+
+                <li class="nav-item current active">
+                    <a class="nav-link" href="../index.html">
+                        Getting started
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../user_guide/index.html">
+                        User Guide
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../reference/index.html">
+                        API Reference
+                    </a>
+                </li>
+                
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../../numerical_guide/index.html">
+                        Numerical Guide
+                    </a>
+                </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                    <a class="nav-link" href="../../license/index.html">
+                        License
+                    </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <span class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" data-toggle="tooltip">
+    <a class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="fa-regular fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_make_your_first_run.html">Forward run (lake at rest)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Forward run (simple channel “q_in”)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_make_your_first_4Dvar.html">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_inference-python.html">Inference run using scipy.minimize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_gen-user-data.html">Generate  Basic channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
+</ul>
+
+  </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+      </div>
+      <main class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <section id="forward-run-simple-channel-q-in">
+<span id="make-your-second-run"></span><h1>Forward run (simple channel “q_in”)<a class="headerlink" href="#forward-run-simple-channel-q-in" title="Permalink to this heading">#</a></h1>
+<p>This tutorial details how to perform a direct/forward run with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code> on a simple channel case provided in the package.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#####################################################################</span>
+<span class="c1">#####################################################################</span>
+<span class="c1"># PERFORM A DIRECT SIMULATION WITH  DASSFLOW2D</span>
+<span class="c1"># LAKE AT REST</span>
+<span class="c1">#</span>
+<span class="c1"># Introduction to basic commands of run and visualisation of results</span>
+<span class="c1">#####################################################################</span>
+<span class="c1">#####################################################################</span>
+
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># Source librairies</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1">#=======================================================#</span>
+<span class="c1"># copy of case files</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">)</span>
+<span class="n">dassflow_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="c1"># DassFlow directory (you can also impose your absolute path)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dassflow_dir</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DassFlow directory is: &quot;</span><span class="p">,</span> <span class="n">dassflow_dir</span><span class="p">)</span>
+
+<span class="c1"># Define directory where case is run</span>
+<span class="c1"># (its name &#39;bin_A&#39; is imposed in  {dassflow_dir}/code/makefile.inc : CASEDIR=&#39;bin_A&#39;)</span>
+<span class="n">run_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/&quot;</span>
+
+<span class="c1"># Define directory containing case data</span>
+<span class="n">case_data_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/cases/tuto_case/2_qin/bin_A/&quot;</span>
+
+<span class="c1"># Clean run directory</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm -r </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">*&quot;</span><span class="p">)</span>
+
+<span class="c1"># Copy case data to runing directory</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp -r </span><span class="si">{</span><span class="n">case_data_dir</span><span class="si">}</span><span class="s2">* </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Copy of case files from existing case to bin_A</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">/hydrograph_target.txt </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">/hydrograph.txt&quot;</span><span class="p">)</span> <span class="c1"># Copy a &quot;real-like&quot; hydrograph into hydrographt.txt used as inflow</span>
+
+<span class="c1"># Move to</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;make cleanres cleanmin&quot;</span><span class="p">)</span> <span class="c1"># Clean forward run and minimization results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>DassFlow directory is:  /home/pagarambois/Documents/Distant/dassflow2d_git_/dassflow2d
+make[1]: Entering directory &#39;/home/pagarambois/Documents/Distant/dassflow2d_git_/dassflow2d/code&#39;
+rm -rf ./bin_A/res/*
+rm -rf ./bin_A/graph/*
+rm -rf ./bin_A/min/*
+make[1]: Leaving directory &#39;/home/pagarambois/Documents/Distant/dassflow2d_git_/dassflow2d/code&#39;
+</pre></div>
+</div>
+<div class="output text_plain highlight-none notranslate"><div class="highlight"><pre><span></span>0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#=======================================================#</span>
+<span class="c1"># initialization</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="c1"># Creation of dassflowmodel object using case data:</span>
+<span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">dassflowmodel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A&quot;</span><span class="p">,</span> <span class="n">hdf5_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dassflow_dir</span><span class="si">}</span><span class="s2">/code/bin_A/res/simu.hdf5&quot;</span> <span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">,</span> <span class="n">clean</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Initializion of the Fortran kernel (dassflow Python library is obtained by wrapping Fortran source code)</span>
+<span class="c1">#initialise all fortran kernel values and source them into dassflowmodel object</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">init_all</span><span class="p">()</span>
+<span class="n">my_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">dof</span><span class="o">.</span><span class="n">h</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">dof0</span><span class="o">.</span><span class="n">h</span><span class="p">[:]</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>clean= True
+call dassflow2d.wrapping.m_mesh.msh()
+call         dassflow2d.wrapping.call_model.init_solver(self.kernel)
+call   Meshing(mesh_fortran = self.kernel.mesh)
+
+================================================================================
+*  Mesh Loading                                                                *
+================================================================================
+  mesh%file_namechannel.geo                                                                                                                     
+ INTO calc_cells_connectivity
+ STEP 1 DONE
+ OUT calc_cells_connectivity
+ INLET            9           1
+ OUTLET           9           1
+================================================================================
+*  Mesh Loading is OK                                                          *
+================================================================================
+ Read_Dass_Mesh OK --&gt; go out
+  call Read_Dass_Mesh( mesh ) done 
+  call Mesh_Partition_Scotch( mesh ) 
+  call Mesh_Geometric_Properties( mesh ) 
+  done mesh input 
+ call Machine_Number_Limits
+ DONE Machine_Number_Limits
+
+********************************************************************************
+ range     =             307
+ precision =              15
+ zerom     =   1.0730891E-16
+ pinfm     =   9.4967820E+15
+ minfm     =  -9.4967820E+15
+ hugem     =   1.7976931+308
+ tinym     =   2.2250739-308
+********************************************************************************
+ call Init_Linear_Solver(mdl%mesh)
+ done Init_Linear_Solver(mdl%mesh)
+</pre></div>
+</div>
+</div>
+</div>
+<p>First let us have a look to the case mesh and boundary conditions (BCs)</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the mesh and BCs</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">what</span><span class="o">=</span><span class="s2">&quot;meshing&quot;</span><span class="p">,</span> <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># remove jupyter_backend if needed</span>
+
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">what</span><span class="o">=</span><span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2_make_your_second_run_2_0.png" src="../../_images/2_make_your_second_run_2_0.png" />
+<img alt="../../_images/2_make_your_second_run_2_1.png" src="../../_images/2_make_your_second_run_2_1.png" />
+<img alt="../../_images/2_make_your_second_run_2_2.png" src="../../_images/2_make_your_second_run_2_2.png" />
+</div>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#=======================================================#</span>
+<span class="c1"># Run Fortran kernel</span>
+<span class="c1">#=======================================================#</span>
+
+<span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>
+================================================================================
+*  Running Shallow-Water Model in direct mode                                  *
+================================================================================
+================================================================================
+*  Writing Result File                                                         *
+================================================================================
+nt =      149 t =  1.44103E+02 /  1.44000E+04 (   1.0 % ) , dt =  9.815178E-01
+nt =      296 t =  2.88233E+02 /  1.44000E+04 (   2.0 % ) , dt =  9.803240E-01
+nt =      443 t =  4.32597E+02 /  1.44000E+04 (   3.0 % ) , dt =  9.836336E-01
+nt =      589 t =  5.76388E+02 /  1.44000E+04 (   4.0 % ) , dt =  9.859368E-01
+nt =      735 t =  7.20451E+02 /  1.44000E+04 (   5.0 % ) , dt =  9.873989E-01
+nt =      881 t =  8.64682E+02 /  1.44000E+04 (   6.0 % ) , dt =  9.882774E-01
+nt =     1026 t =  1.00802E+03 /  1.44000E+04 (   7.0 % ) , dt =  9.887837E-01
+nt =     1172 t =  1.15241E+03 /  1.44000E+04 (   8.0 % ) , dt =  9.890718E-01
+nt =     1318 t =  1.29683E+03 /  1.44000E+04 (   9.0 % ) , dt =  9.892302E-01
+nt =     1463 t =  1.44027E+03 /  1.44000E+04 (  10.0 % ) , dt =  9.893134E-01
+nt =     1609 t =  1.58471E+03 /  1.44000E+04 (  11.0 % ) , dt =  9.893533E-01
+nt =     1754 t =  1.72817E+03 /  1.44000E+04 (  12.0 % ) , dt =  9.893651E-01
+nt =     1900 t =  1.87262E+03 /  1.44000E+04 (  13.0 % ) , dt =  9.893556E-01
+nt =     2045 t =  2.01607E+03 /  1.44000E+04 (  14.0 % ) , dt =  9.893252E-01
+nt =     2191 t =  2.16051E+03 /  1.44000E+04 (  15.0 % ) , dt =  9.892687E-01
+nt =     2337 t =  2.30494E+03 /  1.44000E+04 (  16.0 % ) , dt =  9.891759E-01
+nt =     2482 t =  2.44836E+03 /  1.44000E+04 (  17.0 % ) , dt =  9.890317E-01
+nt =     2628 t =  2.59274E+03 /  1.44000E+04 (  18.0 % ) , dt =  9.888096E-01
+nt =     2773 t =  2.73610E+03 /  1.44000E+04 (  19.0 % ) , dt =  9.884782E-01
+nt =     2919 t =  2.88038E+03 /  1.44000E+04 (  20.0 % ) , dt =  9.879841E-01
+nt =     3065 t =  3.02458E+03 /  1.44000E+04 (  21.0 % ) , dt =  9.872627E-01
+nt =     3211 t =  3.16864E+03 /  1.44000E+04 (  22.0 % ) , dt =  9.862246E-01
+nt =     3357 t =  3.31253E+03 /  1.44000E+04 (  23.0 % ) , dt =  9.847534E-01
+nt =     3503 t =  3.45616E+03 /  1.44000E+04 (  24.0 % ) , dt =  9.827021E-01
+nt =     3650 t =  3.60036E+03 /  1.44000E+04 (  25.0 % ) , dt =  9.786951E-01
+================================================================================
+*  Writing Result File                                                         *
+================================================================================
+nt =     3798 t =  3.74478E+03 /  1.44000E+04 (  26.0 % ) , dt =  9.727156E-01
+nt =     3946 t =  3.88820E+03 /  1.44000E+04 (  27.0 % ) , dt =  9.651019E-01
+nt =     4096 t =  4.03226E+03 /  1.44000E+04 (  28.0 % ) , dt =  9.554582E-01
+nt =     4248 t =  4.17661E+03 /  1.44000E+04 (  29.0 % ) , dt =  9.436087E-01
+nt =     4402 t =  4.32086E+03 /  1.44000E+04 (  30.0 % ) , dt =  9.293911E-01
+nt =     4558 t =  4.46457E+03 /  1.44000E+04 (  31.0 % ) , dt =  9.128484E-01
+nt =     4717 t =  4.60823E+03 /  1.44000E+04 (  32.0 % ) , dt =  8.940746E-01
+nt =     4880 t =  4.75222E+03 /  1.44000E+04 (  33.0 % ) , dt =  8.721232E-01
+nt =     5048 t =  4.89669E+03 /  1.44000E+04 (  34.0 % ) , dt =  8.478476E-01
+nt =     5220 t =  5.04038E+03 /  1.44000E+04 (  35.0 % ) , dt =  8.231054E-01
+nt =     5398 t =  5.18463E+03 /  1.44000E+04 (  36.0 % ) , dt =  7.980604E-01
+nt =     5581 t =  5.32840E+03 /  1.44000E+04 (  37.0 % ) , dt =  7.735257E-01
+nt =     5770 t =  5.47232E+03 /  1.44000E+04 (  38.0 % ) , dt =  7.498126E-01
+nt =     5965 t =  5.61629E+03 /  1.44000E+04 (  39.0 % ) , dt =  7.272781E-01
+nt =     6166 t =  5.76031E+03 /  1.44000E+04 (  40.0 % ) , dt =  7.062645E-01
+nt =     6373 t =  5.90446E+03 /  1.44000E+04 (  41.0 % ) , dt =  6.869377E-01
+nt =     6585 t =  6.04819E+03 /  1.44000E+04 (  42.0 % ) , dt =  6.695306E-01
+nt =     6803 t =  6.19241E+03 /  1.44000E+04 (  43.0 % ) , dt =  6.540231E-01
+nt =     7025 t =  6.33606E+03 /  1.44000E+04 (  44.0 % ) , dt =  6.405934E-01
+nt =     7252 t =  6.48013E+03 /  1.44000E+04 (  45.0 % ) , dt =  6.291334E-01
+nt =     7483 t =  6.62433E+03 /  1.44000E+04 (  46.0 % ) , dt =  6.197483E-01
+nt =     7717 t =  6.76844E+03 /  1.44000E+04 (  47.0 % ) , dt =  6.123863E-01
+nt =     7953 t =  6.91229E+03 /  1.44000E+04 (  48.0 % ) , dt =  6.070580E-01
+nt =     8191 t =  7.05633E+03 /  1.44000E+04 (  49.0 % ) , dt =  6.036018E-01
+nt =     8430 t =  7.20013E+03 /  1.44000E+04 (  50.0 % ) , dt =  5.998565E-01
+================================================================================
+*  Writing Result File                                                         *
+================================================================================
+nt =     8671 t =  7.34441E+03 /  1.44000E+04 (  51.0 % ) , dt =  5.978553E-01
+nt =     8912 t =  7.48845E+03 /  1.44000E+04 (  52.0 % ) , dt =  5.978084E-01
+nt =     9152 t =  7.63211E+03 /  1.44000E+04 (  53.0 % ) , dt =  5.996510E-01
+nt =     9392 t =  7.77643E+03 /  1.44000E+04 (  54.0 % ) , dt =  6.033548E-01
+nt =     9629 t =  7.92005E+03 /  1.44000E+04 (  55.0 % ) , dt =  6.089087E-01
+nt =     9865 t =  8.06460E+03 /  1.44000E+04 (  56.0 % ) , dt =  6.163348E-01
+nt =    10097 t =  8.20862E+03 /  1.44000E+04 (  57.0 % ) , dt =  6.255455E-01
+nt =    10325 t =  8.35246E+03 /  1.44000E+04 (  58.0 % ) , dt =  6.363907E-01
+nt =    10549 t =  8.49632E+03 /  1.44000E+04 (  59.0 % ) , dt =  6.482856E-01
+nt =    10769 t =  8.64041E+03 /  1.44000E+04 (  60.0 % ) , dt =  6.619281E-01
+nt =    10984 t =  8.78434E+03 /  1.44000E+04 (  61.0 % ) , dt =  6.771821E-01
+nt =    11194 t =  8.92828E+03 /  1.44000E+04 (  62.0 % ) , dt =  6.939375E-01
+nt =    11399 t =  9.07237E+03 /  1.44000E+04 (  63.0 % ) , dt =  7.120375E-01
+nt =    11599 t =  9.21669E+03 /  1.44000E+04 (  64.0 % ) , dt =  7.312766E-01
+nt =    11793 t =  9.36050E+03 /  1.44000E+04 (  65.0 % ) , dt =  7.514199E-01
+nt =    11982 t =  9.50449E+03 /  1.44000E+04 (  66.0 % ) , dt =  7.723765E-01
+nt =    12166 t =  9.64858E+03 /  1.44000E+04 (  67.0 % ) , dt =  7.939091E-01
+nt =    12345 t =  9.79264E+03 /  1.44000E+04 (  68.0 % ) , dt =  8.157308E-01
+nt =    12519 t =  9.93648E+03 /  1.44000E+04 (  69.0 % ) , dt =  8.375120E-01
+nt =    12689 t =  1.00807E+04 /  1.44000E+04 (  70.0 % ) , dt =  8.590306E-01
+nt =    12854 t =  1.02240E+04 /  1.44000E+04 (  71.0 % ) , dt =  8.780281E-01
+nt =    13017 t =  1.03686E+04 /  1.44000E+04 (  72.0 % ) , dt =  8.958446E-01
+nt =    13176 t =  1.05124E+04 /  1.44000E+04 (  73.0 % ) , dt =  9.119836E-01
+nt =    13333 t =  1.06567E+04 /  1.44000E+04 (  74.0 % ) , dt =  9.264382E-01
+nt =    13487 t =  1.08004E+04 /  1.44000E+04 (  75.0 % ) , dt =  9.389920E-01
+================================================================================
+*  Writing Result File                                                         *
+================================================================================
+nt =    13640 t =  1.09449E+04 /  1.44000E+04 (  76.0 % ) , dt =  9.497716E-01
+nt =    13790 t =  1.10881E+04 /  1.44000E+04 (  77.0 % ) , dt =  9.586896E-01
+nt =    13940 t =  1.12324E+04 /  1.44000E+04 (  78.0 % ) , dt =  9.660418E-01
+nt =    14089 t =  1.13768E+04 /  1.44000E+04 (  79.0 % ) , dt =  9.719233E-01
+nt =    14236 t =  1.15201E+04 /  1.44000E+04 (  80.0 % ) , dt =  9.764997E-01
+nt =    14384 t =  1.16649E+04 /  1.44000E+04 (  81.0 % ) , dt =  9.800600E-01
+nt =    14530 t =  1.18081E+04 /  1.44000E+04 (  82.0 % ) , dt =  9.826942E-01
+nt =    14677 t =  1.19528E+04 /  1.44000E+04 (  83.0 % ) , dt =  9.846671E-01
+nt =    14823 t =  1.20966E+04 /  1.44000E+04 (  84.0 % ) , dt =  9.860997E-01
+nt =    14969 t =  1.22407E+04 /  1.44000E+04 (  85.0 % ) , dt =  9.871315E-01
+nt =    15115 t =  1.23849E+04 /  1.44000E+04 (  86.0 % ) , dt =  9.878636E-01
+nt =    15260 t =  1.25281E+04 /  1.44000E+04 (  87.0 % ) , dt =  9.883725E-01
+nt =    15406 t =  1.26725E+04 /  1.44000E+04 (  88.0 % ) , dt =  9.887265E-01
+nt =    15552 t =  1.28168E+04 /  1.44000E+04 (  89.0 % ) , dt =  9.889675E-01
+nt =    15697 t =  1.29603E+04 /  1.44000E+04 (  90.0 % ) , dt =  9.891287E-01
+nt =    15843 t =  1.31047E+04 /  1.44000E+04 (  91.0 % ) , dt =  9.892366E-01
+nt =    15988 t =  1.32481E+04 /  1.44000E+04 (  92.0 % ) , dt =  9.893071E-01
+nt =    16134 t =  1.33926E+04 /  1.44000E+04 (  93.0 % ) , dt =  9.893533E-01
+nt =    16279 t =  1.35360E+04 /  1.44000E+04 (  94.0 % ) , dt =  9.893827E-01
+nt =    16425 t =  1.36805E+04 /  1.44000E+04 (  95.0 % ) , dt =  9.894016E-01
+nt =    16571 t =  1.38249E+04 /  1.44000E+04 (  96.0 % ) , dt =  9.894135E-01
+nt =    16716 t =  1.39684E+04 /  1.44000E+04 (  97.0 % ) , dt =  9.894208E-01
+nt =    16862 t =  1.41128E+04 /  1.44000E+04 (  98.0 % ) , dt =  9.894254E-01
+nt =    17007 t =  1.42563E+04 /  1.44000E+04 (  99.0 % ) , dt =  9.894282E-01
+nt =    17153 t =  1.44000E+04 /  1.44000E+04 ( 100.0 % ) , dt =  2.218442E-01
+================================================================================
+*  Writing Result File                                                         *
+================================================================================
+================================================================================
+*  End of run of the Shallow-Water Model in direct mode                        *
+================================================================================
+
+********************************************************************************
+ Time of simulation   =              2.57
+********************************************************************************
+ Performance          =              0.17 microsecond / dx / dt / proc
+********************************************************************************
+&gt;&gt;&gt; Outputs initialized 
+ - Simulation Result files were loaded from : /home/pagarambois/Documents/Distant/dassflow2d_git_/dassflow2d/code/bin_A/res/ 
+</pre></div>
+</div>
+</div>
+</div>
+<p>The numerical resolution is performed with variable time steps (depending on the CFL condition) and outputs are written at each writting timestep (imposed by the “dtw” parameter).</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#=======================================================#</span>
+<span class="c1"># Vizualize parameters and results</span>
+<span class="c1">#=======================================================#</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+</div>
+</div>
+<p>First, you can have a look at the bathymetry, friction and initial conditions (of water heigth and free surface height).</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot of the 2D bathymetry (input parameter of the 2D shallow water model)</span>
+
+<span class="c1">#Plot bathymetry field</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;bathy&quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Bathymetry elevation&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span> <span class="o">=</span> <span class="kc">True</span> <span class="p">)</span><span class="c1"># for a local run remove notebook option or set notebook=True</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># remove jupyter_backend if needed</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2_make_your_second_run_5_0.png" src="../../_images/2_make_your_second_run_5_0.png" />
+</div>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot a bathymetry longitudinal profile (at y=50m)</span>
+<span class="n">allx</span> <span class="o">=</span><span class="p">[]</span>
+<span class="n">allz</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">nc</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span><span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grav</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grav</span><span class="o">.</span><span class="n">y</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">y</span><span class="o">==</span><span class="mf">50.0</span><span class="p">):</span>
+            <span class="n">allx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">allz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">bathy</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">allx</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">allz</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$Z_b$ [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Bathymetry profile at $y = 50m$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Plot a bathymetry lateral profile (at x=50m)</span>
+<span class="n">ally</span> <span class="o">=</span><span class="p">[]</span>
+<span class="n">allz</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">nc</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span><span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grav</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grav</span><span class="o">.</span><span class="n">y</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="mf">500.0</span><span class="p">):</span>
+            <span class="n">ally</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">allz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">bathy</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ally</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">allz</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;y [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$Z_b$ [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Bathymetry profile at $x = 500m$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2_make_your_second_run_6_0.png" src="../../_images/2_make_your_second_run_6_0.png" />
+<img alt="../../_images/2_make_your_second_run_6_1.png" src="../../_images/2_make_your_second_run_6_1.png" />
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Remark that the bathymetry is more complex along x than an inclined plane as depicted with the 1D profiles. This longitudinal bathymetry variation was hardly visible on the 2D bathymetry plot only and its colorscale linearly spanned between minimum and maximum bathymetry elevations.</p>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the friction parameter field</span>
+
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;manning_alpha&quot;</span><span class="p">,</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;n [m-1/3.s] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Friction parameter (Manning coefficient)&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span> <span class="o">=</span> <span class="kc">True</span> <span class="p">)</span><span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># if used in Jupyter notebook, with notebook = True above</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2_make_your_second_run_7_0.png" src="../../_images/2_make_your_second_run_7_0.png" />
+</div>
+</div>
+<p>The friction is uniform as defined in this case setup.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot intial flow conditions</span>
+
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span>
+                                             <span class="n">when</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;h [m] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Initial water depth&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># remove jupyter_backend if needed</span>
+
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;zs&quot;</span><span class="p">,</span>
+                                             <span class="n">when</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;zs [m] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Initial water surface elevation&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># remove jupyter_backend if needed</span>
+
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span>
+                                             <span class="n">when</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;u [m/s] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Initial velocity u along x&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># remove jupyter_backend if needed</span>
+
+
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span>
+                                             <span class="n">when</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;v [m/s] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Initial velocity v along y&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># remove jupyter_backend if needed</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2_make_your_second_run_8_0.png" src="../../_images/2_make_your_second_run_8_0.png" />
+<img alt="../../_images/2_make_your_second_run_8_1.png" src="../../_images/2_make_your_second_run_8_1.png" />
+<img alt="../../_images/2_make_your_second_run_8_2.png" src="../../_images/2_make_your_second_run_8_2.png" />
+<img alt="../../_images/2_make_your_second_run_8_3.png" src="../../_images/2_make_your_second_run_8_3.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Remark that this initialization corresponds to a dry channel, and with imposed hydrograph it will produce in a wet/dry front propagation at the begining of the simulation.</p>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute velocity magnitude</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">u</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">v</span>
+<span class="n">norm_vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">#compute local Froude number at each mesh cell center</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">h</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">]</span>
+<span class="n">Froude</span> <span class="o">=</span> <span class="n">norm_vel</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">h</span><span class="p">)</span>
+
+<span class="c1"># Print the shape of the output velocity fields</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The shape of the output velocity array is : </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">norm_vel</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The first number corresponds to the number of cells, </span><span class="se">\n</span><span class="s2"> n_cells = &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">norm_vel</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The second number corresponds to the number output time steps </span><span class="se">\n</span><span class="s2"> nt_out = &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">norm_vel</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Maximum lateral velocity v [m/s] in space at each output time step is: </span><span class="se">\n</span><span class="s2"> v_max_x = &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>The shape of the output velocity array is : 
+ (891, 5)
+The first number corresponds to the number of cells, 
+ n_cells =  891
+The second number corresponds to the number output time steps 
+ nt_out =  5
+Maximum lateral velocity v [m/s] in space at each output time step is: 
+ v_max_x =  [0.00000000e+00 7.78724964e-16 1.03608467e-15 5.90766910e-16
+ 5.61617894e-16]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that the lateral velocity v along y is close to zero and can therefore be neglected in the following analysis. This is expected since (i) the bathymetry is invariant along y, (ii) the discharge is inflowed upstream without specific lateral velocity profile, (iii) no lateral momentum exchange is modeled.</p>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Check the maximum Froude number</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Maximum Froude number in space at each output time step is: </span><span class="se">\n</span><span class="s2"> Fr_max_x =&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">Froude</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Maximum Froude number in space at each output time step is: 
+ Fr_max_x = [0.         0.44915849 0.46383183 0.44286978 0.44678422]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that the maximum values of the Froude are smaller than 1 and indicate fluvial flow regimes over the whole spatial domain at output time steps.</p>
+</div>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot velocity magnitude at final time step</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">my_scalar</span> <span class="o">=</span> <span class="n">norm_vel</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;norm(u,v) [m/s] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Velocity magnitude at final time&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># if used in Jupyter notebook, with notebook = True above</span>
+
+<span class="c1"># Plot flow state at a given time</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span>
+                                             <span class="n">when</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;h [m] &quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Water depth at time = </span><span class="si">{</span><span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">all_time</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">  s &quot;</span>  <span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># if used in Jupyter notebook, with notebook = True above</span>
+
+<span class="c1"># Plot Froude number at final time step</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">plot_field</span><span class="p">(</span><span class="n">my_mesh</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_pyvista</span><span class="p">,</span>
+                                             <span class="n">my_scalar</span> <span class="o">=</span> <span class="n">Froude</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                             <span class="n">title_scale_bar</span> <span class="o">=</span><span class="s2">&quot;Froude&quot;</span><span class="p">,</span>
+                                             <span class="n">title_plot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Froude number at final time&quot;</span><span class="p">,</span>
+                                             <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># for a local run remove notebook option or set notebook=False</span>
+
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">jupyter_backend</span><span class="o">=</span><span class="s1">&#39;trame&#39;</span><span class="p">)</span> <span class="c1"># if used in Jupyter notebook, with notebook = True above</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2_make_your_second_run_11_0.png" src="../../_images/2_make_your_second_run_11_0.png" />
+<img alt="../../_images/2_make_your_second_run_11_1.png" src="../../_images/2_make_your_second_run_11_1.png" />
+<img alt="../../_images/2_make_your_second_run_11_2.png" src="../../_images/2_make_your_second_run_11_2.png" />
+</div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The above Python script is available here: <code class="xref download docutils literal notranslate"><span class="pre">2_make_your_second_run.py</span></code></p>
+<p>A Jupyter Notebook version is available here: <a class="reference download internal" download="" href="../../_downloads/4f8861e3f23de90856484619ff4635a1/2_make_your_second_run.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">2_make_your_second_run.ipynb</span></code></a></p>
+</div>
+</section>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="1_make_your_first_run.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Forward run (lake at rest)</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="3_make_your_first_4Dvar.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Inference run</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://gitlab.irstea.fr//lilian.villenave/dassflow2d-wrap/-/edit/documentation//doc/SPHINX_DOCUMENTATION/source/getting_started/Tutorials/2_make_your_second_run.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
+    </a>
+</div>
+
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../../_sources/getting_started/Tutorials/2_make_your_second_run.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright Under Cecil licence.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
+  </body>
+</html>

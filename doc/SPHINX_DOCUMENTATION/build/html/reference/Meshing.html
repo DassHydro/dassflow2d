@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Meshing &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/Meshing';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -354,11 +361,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.param/dassflow2d.core.param.Friction.save_manning.html">dassflow2d.core.param.Friction.save_manning</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="Output.html">Output</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html">dassflow2d.core.output.Output.get_res</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html">dassflow2d.core.output.Output.save_res</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Output.html">Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapping.html">Fortran wrapped modules</a></li>
 
 </ul>
@@ -389,14 +392,14 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="meshing">
+  <section id="meshing">
 <span id="api-meshing"></span><h1>Meshing<a class="headerlink" href="#meshing" title="Permalink to this heading">#</a></h1>
 <p>In Dassflow2d wrap, the meshing is stored two ways:</p>
 <ul class="simple">
 <li><p>in an object: <strong>meshing.mesh_fortran</strong>, it corresponds to the fortran kernel mesh object.</p></li>
 <li><p>in an object: <strong>meshing.mesh_pyvista</strong>, it corresponds toa pyvista unstructured grid object , containing mesh geometry.</p></li>
 </ul>
-<div class="section" id="class">
+<section id="class">
 <h2>class<a class="headerlink" href="#class" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="dassflow2d.core.meshing.Meshing">
@@ -422,7 +425,7 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_id_edgeb</span></code>(id_cell, id_edge)</p></td>
 <td><p># get id of boundary edge from onecell :</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="dassflow2d.core/dassflow2d.core.meshing.Meshing.plot.html#dassflow2d.core.meshing.Meshing.plot" title="dassflow2d.core.meshing.Meshing.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([my_scalar, title_scale_bar, title_plot])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="dassflow2d.core/dassflow2d.core.meshing.Meshing.plot.html#dassflow2d.core.meshing.Meshing.plot" title="dassflow2d.core.meshing.Meshing.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([my_scalar, title_scale_bar, ...])</p></td>
 <td><p>Plot the mesh and define values on all cells for plot</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="dassflow2d.core/dassflow2d.core.meshing.Meshing.plot_dev.html#dassflow2d.core.meshing.Meshing.plot_dev" title="dassflow2d.core.meshing.Meshing.plot_dev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_dev</span></code></a>([what])</p></td>
@@ -435,8 +438,8 @@
 </table>
 </dd></dl>
 
-</div>
-<div class="section" id="methods">
+</section>
+<section id="methods">
 <h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h2>
 <p>The following methods can be applied on objects of class <code class="docutils literal notranslate"><span class="pre">Meshing</span></code></p>
 <blockquote>
@@ -473,8 +476,8 @@
 </tbody>
 </table>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -518,6 +521,17 @@
   <a class="reference internal nav-link" href="#class">
    class
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dassflow2d.core.meshing.Meshing">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Meshing
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#methods">
@@ -591,7 +605,7 @@
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

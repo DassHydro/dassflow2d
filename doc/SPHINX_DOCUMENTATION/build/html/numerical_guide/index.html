@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Numerical Guide &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/dassflow.css" />
@@ -38,12 +41,16 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'numerical_guide/index';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="License" href="../license/index.html" />
-    <link rel="prev" title="dassflow2d.wrapping.m_model.unk.init_array_grad_z" href="../reference/dassflow2d/dassflow2d.wrapping.m_model.unk.init_array_grad_z.html" />
+    <link rel="prev" title="dassflow2d.wrapping.m_model.unk.t_display" href="../reference/dassflow2d/dassflow2d.wrapping.m_model.unk.t_display.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
   </head>
@@ -326,11 +333,11 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="numerical-guide">
+  <section id="numerical-guide">
 <span id="id1"></span><h1>Numerical Guide<a class="headerlink" href="#numerical-guide" title="Permalink to this heading">#</a></h1>
 <p><strong>Renommer en Numerical Guide, place l’onglet avant le dev guide dans le bandeau</strong></p>
-</div>
-<div class="section" id="dassflow-capabilities-at-a-glance">
+</section>
+<section id="dassflow-capabilities-at-a-glance">
 <h1>DassFLow capabilities at a glance<a class="headerlink" href="#dassflow-capabilities-at-a-glance" title="Permalink to this heading">#</a></h1>
 <details class="sphinx-bs dropdown card mb-3 shadow fade-in-slide-down">
 <summary class="summary-title card-header font-weight-bolder">
@@ -364,32 +371,32 @@ DassFlow capabilities at a glance<div class="summary-down docutils">
 <p class="card-text"><em>Variational data assimilation (4D-Var)</em> - Complete Variational Data Assimilation algorithm is available. This enables solving high dimensional optimization problems such as the identification of some input parameters values (eg. the bathymetry, some inflows or physical parametrizations) of the shalow water model from flow observations. The VDA process is based on local minimization algorithms adapted to minimize functions depending on large numbers of variables, such as the quasi-Newton technique L-BFGS method (<strong>todo ref</strong>). The optimization routine M1QN3 (<strong>todo ref</strong>) is directly implemented in the fortran source code but DassFLow wrapping also enables to use python optimization package instead (e.g. scipy).</p>
 </div></blockquote>
 </div>
-</details></div>
-<div class="section" id="full-documentation">
+</details></section>
+<section id="full-documentation">
 <h1>Full documentation<a class="headerlink" href="#full-documentation" title="Permalink to this heading">#</a></h1>
 <p>Here, you can find detailed documentation about the mathematical models and numerical solvers used for their resolution as well as about inverse algorithms. Furthermore, DassFlow website can be found here: &lt;<a class="reference external" href="https://www.math.univ-toulouse.fr/DassFlow/">https://www.math.univ-toulouse.fr/DassFlow/</a>&gt;</p>
-<div class="section" id="mathematical-and-numerical-documentation">
+<section id="mathematical-and-numerical-documentation">
 <span id="math-num-doc"></span><h2>Mathematical and numerical documentation<a class="headerlink" href="#mathematical-and-numerical-documentation" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference download internal" download="" href="../_downloads/db5ec4041ad87e44b1e7047f7ba2e5d6/doc-dassflow2d-num.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-dassflow2d-num.lyx</span></code></a></p></li>
 </ul>
-</div>
-<div class="section" id="previous-documentation">
+</section>
+<section id="previous-documentation">
 <h2>Previous documentation<a class="headerlink" href="#previous-documentation" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference download internal" download="" href="../_downloads/4ce6876da95d2d4f9214e4776746b4ee/doc-dassflow2d-current.pdf"><code class="xref download docutils literal notranslate"><span class="pre">doc_dassflow2d</span> <span class="pre">2013</span> <span class="pre">(&quot;current&quot;)</span></code></a></p></li>
 <li><p><a class="reference download internal" download="" href="../_downloads/1948330fbd13b3eb28d67ca2fa059728/Tolosa-sw.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Tolosa-sw.pdf</span></code></a></p></li>
 </ul>
-</div>
-<div class="section" id="shenyuan-documentation">
+</section>
+<section id="shenyuan-documentation">
 <h2>shenyuan documentation<a class="headerlink" href="#shenyuan-documentation" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference download internal" download="" href="../_downloads/601edae1949e85347b2b814bb7afac14/doc-shenyuan_DF2D-wrappe.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-shenyuan_DF2D-wrappe.lyx</span></code></a></p></li>
 <li><p><a class="reference download internal" download="" href="../_downloads/e79f969360ffb8bbab22ba805345155c/doc-shenyuan_doc_developer.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-shenyuan_doc_developer.lyx</span></code></a></p></li>
 <li><p><a class="reference download internal" download="" href="../_downloads/bf24626fca1bf6109217681ac39e0d54/doc-shenyuan_doc_user.lyx"><code class="xref download docutils literal notranslate"><span class="pre">doc-shenyuan_doc_user.lyx</span></code></a></p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -399,11 +406,11 @@ DassFlow capabilities at a glance<div class="summary-down docutils">
             <footer class="bd-footer-article">
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="../reference/dassflow2d/dassflow2d.wrapping.m_model.unk.init_array_grad_z.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="../reference/dassflow2d/dassflow2d.wrapping.m_model.unk.t_display.html" title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">dassflow2d.wrapping.m_model.unk.init_array_grad_z</p>
+          <p class="prev-next-title">dassflow2d.wrapping.m_model.unk.t_display</p>
       </div>
   </a>
   <a class='right-next' id="next-link" href="../license/index.html" title="next page">
@@ -526,7 +533,7 @@ DassFlow capabilities at a glance<div class="summary-down docutils">
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

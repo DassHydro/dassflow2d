@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Output &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/dassflow.css" />
@@ -38,10 +41,14 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/Output';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="dassflow2d.core.output.Output.get_res" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html" />
+    <link rel="next" title="Fortran wrapped modules" href="wrapping.html" />
     <link rel="prev" title="dassflow2d.core.param.Friction.save_manning" href="dassflow2d.core.param/dassflow2d.core.param.Friction.save_manning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
@@ -354,11 +361,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.param/dassflow2d.core.param.Friction.save_manning.html">dassflow2d.core.param.Friction.save_manning</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Output</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html">dassflow2d.core.output.Output.get_res</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html">dassflow2d.core.output.Output.save_res</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapping.html">Fortran wrapped modules</a></li>
 
 </ul>
@@ -389,13 +392,26 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="output">
+  <section id="output">
 <span id="api-output"></span><h1>Output<a class="headerlink" href="#output" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="dassflow2d.core.output.Output">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dassflow2d.core.output.</span></span><span class="sig-name descname"><span class="pre">Output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dassflow2d/core/output.html#Output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dassflow2d.core.output.Output" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dassflow2d.core.output.</span></span><span class="sig-name descname"><span class="pre">Output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dassflow2d/core/output.html#Output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dassflow2d.core.output.Output" title="Permalink to this definition">#</a></dt>
 <dd><p>define output from fortran kernel simulation results</p>
-<p>inherit <strong>self.bin_dir</strong>, <strong>self.res_dir</strong></p>
+<section id="contains">
+<h2>CONTAINS<a class="headerlink" href="#contains" title="Permalink to this heading">#</a></h2>
+<p>self.results: df2d.core.output.Result object: Result from simulation at each writting timestep
+self.post:    df2d.core.output.Post   object: Post result (flux at boundary edges) at each post writting timestep (to check dassflow_model.config[“dtp”] influence)</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">save</span> <span class="pre">:</span>&#160;&#160;&#160; <span class="pre">save</span> <span class="pre">in</span> <span class="pre">hdf5</span> <span class="pre">file</span> <span class="pre">the</span> <span class="pre">data</span> <span class="pre">stored</span> <span class="pre">in</span> <span class="pre">Output</span> <span class="pre">class</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">source:</span> <span class="pre">source</span> <span class="pre">textfiles</span> <span class="pre">from</span> <span class="pre">bin_dir</span> <span class="pre">and</span> <span class="pre">fills</span> <span class="pre">values</span> <span class="pre">of</span> <span class="pre">self.result</span> <span class="pre">and</span> <span class="pre">self.post</span></span></dt>
+<dd></dd></dl>
+
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -403,17 +419,18 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html#dassflow2d.core.output.Output.get_res" title="dassflow2d.core.output.Output.get_res"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_res</span></code></a>()</p></td>
-<td><p>load out from result_xxx.file</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(hdf5_path)</p></td>
+<td><p>Save in hdf5 format in hdf5_file[&quot;output&quot;] group, both result and post create_dataset</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html#dassflow2d.core.output.Output.save_res" title="dassflow2d.core.output.Output.save_res"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_res</span></code></a>(hdf5_path)</p></td>
-<td><p>save output from result_xxx.file t ohdf5 file</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code>(boundary_metadata)</p></td>
+<td><p>Source from text file both Result and Post objects</p></td>
 </tr>
 </tbody>
 </table>
+</section>
 </dd></dl>
 
-<div class="section" id="methods">
+<section id="methods">
 <h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h2>
 <p>The following methods can be applied on objects of class <code class="docutils literal notranslate"><span class="pre">Output</span></code></p>
 <blockquote>
@@ -423,17 +440,11 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html#dassflow2d.core.output.Output.get_res" title="dassflow2d.core.output.Output.get_res"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Output.get_res</span></code></a>()</p></td>
-<td><p>load out from result_xxx.file</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html#dassflow2d.core.output.Output.save_res" title="dassflow2d.core.output.Output.save_res"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Output.save_res</span></code></a>(hdf5_path)</p></td>
-<td><p>save output from result_xxx.file t ohdf5 file</p></td>
-</tr>
 </tbody>
 </table>
 </div></blockquote>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -450,10 +461,10 @@
           <p class="prev-next-title">dassflow2d.core.param.Friction.save_manning</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html" title="next page">
+  <a class='right-next' id="next-link" href="wrapping.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">dassflow2d.core.output.Output.get_res</p>
+      <p class="prev-next-title">Fortran wrapped modules</p>
   </div>
   <i class="fa-solid fa-angle-right"></i>
   </a>
@@ -473,6 +484,15 @@
 </div>
 <nav id="bd-toc-nav" class="page-toc">
     <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dassflow2d.core.output.Output">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Output
+    </span>
+   </code>
+  </a>
+ </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#methods">
    Methods
@@ -543,7 +563,7 @@
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

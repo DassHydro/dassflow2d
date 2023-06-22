@@ -1,0 +1,13 @@
+prefix=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda
+exec_prefix=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda
+libdir=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/lib
+sharedlibdir=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/lib
+includedir=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

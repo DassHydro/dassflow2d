@@ -1,0 +1,11 @@
+prefix=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda
+exec_prefix=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda
+libdir=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/lib
+includedir=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/include
+
+Name: uuid
+Description: Universally unique id library
+Version: 2.32.1
+Requires:
+Cflags: -I${includedir}/uuid
+Libs: -L${libdir} -luuid

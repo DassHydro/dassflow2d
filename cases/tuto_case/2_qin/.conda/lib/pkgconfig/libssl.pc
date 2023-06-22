@@ -1,0 +1,11 @@
+prefix=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenSSL-libssl
+Description: Secure Sockets Layer and cryptography libraries
+Version: 1.1.1s
+Requires.private: libcrypto
+Libs: -L${libdir} -lssl
+Cflags: -I${includedir}

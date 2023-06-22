@@ -20,7 +20,7 @@ import importlib
 # copy case file
 #=======================================================#
 
-dassflow_dir = "/home/livillenave/Documents/distant/dassflow2d-wrap"
+dassflow_dir = "/home/pagarambois/Documents/Distant/dasshydro"
 # or absolute path : dassflow_dir = "/home/pagarambois/Documents/Distant/dassflow2d-wrap/"
 
 print(f"Printing case files \n from {dassflow_dir}/cases/tuto_case/0_lake-at-rest/bin_A/* \n  to  {dassflow_dir}/code/bin_A ")
@@ -47,50 +47,109 @@ my_model.run()
 
 my_model.save_all() # save simulation results in hdf5 files
 
-
-
 #=======================================================#
 # Post-processing
 #=======================================================#
 
-		
-# for indication about plot_var method:
-# help(my_model.plot_var)
-# ~ print("Would you like to plot some model outputs")
-# ~ args = input("Press Y or N to continue.") # ajouter exit si pas Y ou N
+# Plot of the 2D bathymetry (input parameter of the 2D shallow water model) with package plot function
 
-# ~ if args == "Y" or args == "y":
-    # ~ my_model.plot_var(what = "bathy", when = "initial", title_plot = "bahtymetry", save_plot=True, filename = "./res/bathy")
-    # ~ my_model.plot_var(what = "h", when = "initial", title_plot = "INITIAL h", save_plot=True, filename = "./res/h_0")
-    # ~ my_model.plot_var(what = "zs", when = "initial", title_plot = "INITIAL zs", save_plot=True, filename = "./res/zs_0")
-    # ~ my_model.plot_var(what = "u", when = "initial", title_plot = "INITIAL u", save_plot=True, filename = "./res/u_0")
-    # ~ my_model.plot_var(what = "v", when = "initial", title_plot = "INITIAL v", save_plot=True, filename = "./res/v_0")
-    
-    # ~ # etc ...
-    # ~ my_model.plot_var(what = "h", when = 0, title_plot = "INITIAL h")
-    # ~ my_model.plot_var(what = "h", when = 1, title_plot = "h at second time step", save_plot=True,filename = "./res/h_fin")
-    
-    # ~ # result at the end of the simulation:
-    # ~ my_model.plot_var(what = "vel", when = "final", title_plot = "norm(u,v) at final time step", save_plot=True,filename = "./res/velocity_fin")
-    # ~ my_model.plot_var(what = "zs", when = "final", title_plot = "Zs(m) at final time step", save_plot=True,filename = "./res/Zs_fin")
-    
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                            what = "bathy", 
+                                            title_plot = "Bathymetry elevation",
+                                            notebook = False )# for a local run remove notebook option or set notebook=False 
+                                
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
 
-# ~ print("Would you like to plot temporal evolution of the free surface")
-# ~ args = input("Press Y or N to continue.") # ajouter exit si pas Y ou N
+# Plot the friction parameter field
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                            what = "manning_alpha", 
+                                            title_scale_bar ="n [m-1/3.s] ", 
+                                            title_plot = "Friction parameter (Manning coefficient)", 
+                                            notebook = False )# for a local run remove notebook option or set notebook=False 
+                                
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
 
-# ~ if args == "Y" or args == "y":
-    
-    # ~ for i in range(11):
-        # ~ my_model.plot_var(what = "zs", when = i, title_plot = f" h  at wriite timestep= {i}") # water eight
-        
+# Plot intial flow conditions 
+
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                    what = "h", 
+                                    when = 0,
+                                    title_scale_bar ="h [m] ", 
+                                    title_plot = "Initial water depth", 
+                                    notebook=False) # for a local run remove notebook option or set notebook=False 
+                        
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
+
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                    what = "zs", 
+                                    when = 0,
+                                    title_scale_bar ="zs [m] ", 
+                                    title_plot = "Initial water surface elevation", 
+                                    notebook=False) # for a local run remove notebook option or set notebook=False 
+                        
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
+
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                    what = "u", 
+                                    when = 0,
+                                    title_scale_bar ="u [m/s] ", 
+                                    title_plot = "Initial velocity u along x", 
+                                    notebook=False) # for a local run remove notebook option or set notebook=False 
+                        
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
 
 
-# ~ print("Would you like to plot temporal evolution of the velocitSy")
-# ~ args = input("Press Y or N to continue.") # ajouter exit si pas Y ou N
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                    what = "v", 
+                                    when = 0,
+                                    title_scale_bar ="v [m/s] ", 
+                                    title_plot = "Initial velocity v along y", 
+                                    notebook=False) # for a local run remove notebook option or set notebook=False 
+                        
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
 
-# ~ if args == "Y" or args == "y":
-    
-    # ~ for i in range(11):
-        # ~ my_model.plot_var(what = "vel", when = i, title_plot = f" norm(u,v) at at wriite timestep= {i}")
-        
+# Plot flow depth at a given time
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                            what = "h", 
+                                            when = 3,
+                                            title_scale_bar ="h [m] ", 
+                                            title_plot = f"Water depth at time = {my_model.outputs.result.all_time[3]}  s ", 
+                                            notebook=False) # for a local run remove notebook option or set notebook=False 
+                                
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
 
+# Simulation time steps at which variables have been written 
+print(my_model.outputs.result.all_time)
+
+print("previous plot for t = ", my_model.outputs.result.all_time[3])
+
+# Compute velocity magnitude
+
+u = my_model.outputs.result.u
+v = my_model.outputs.result.v 
+norm_vel = np.sqrt(u**2+v**2)
+
+# Print the shape of the output velocity fields
+print("shape of velocity array is : ", np.shape(norm_vel))
+print("Maximum velocity magnitude at ecah time step is : ", np.amax(norm_vel,axis=0))
+
+
+# Plot velocity magnitude at final time step
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista, 
+                                            my_scalar = norm_vel[:,-1],
+                                            title_scale_bar ="norm(u,v) [m/s] ",
+                                            title_plot = f"Velocity magnitude at final time",
+                                            notebook=False) # for a local run remove notebook option or set notebook=False 
+                                
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed      
+
+# Plot water surface elevation at final time step
+
+plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
+                                            what = "zs",
+                                            when = -1,
+                                            title_scale_bar ="zs [m] ", 
+                                            title_plot = f"Water surface elevation at final time", 
+                                            notebook=False) # for a local run remove notebook option or set notebook=False 
+                                
+# plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed    

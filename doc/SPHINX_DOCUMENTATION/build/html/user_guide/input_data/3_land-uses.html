@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>land_uses.txt &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/input_data/3_land-uses';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -361,9 +368,9 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="land-uses-txt">
+  <section id="land-uses-txt">
 <span id="landuses"></span><h1>land_uses.txt<a class="headerlink" href="#land-uses-txt" title="Permalink to this heading">#</a></h1>
-<div class="section" id="file-presentation">
+<section id="file-presentation">
 <h2>File presentation<a class="headerlink" href="#file-presentation" title="Permalink to this heading">#</a></h2>
 <p>The friction  coefficients are defined as a land use (zoning).
 The land_uses.txt file format is given in the table below :</p>
@@ -397,13 +404,13 @@ the Manning-Strickler coefficient is defined with the associated value to land-c
 <p class="admonition-title">Hint</p>
 <p>macro rugosity for <strong>Ferguson’s law</strong> to be added here ?</p>
 </div>
-<div class="section" id="take-advantage-of-wrapped-version">
+<section id="take-advantage-of-wrapped-version">
 <h3>Take advantage of wrapped version<a class="headerlink" href="#take-advantage-of-wrapped-version" title="Permalink to this heading">#</a></h3>
 <p>In the directory <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>, execute the commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m numpy.f2py -c -m gen_channel_case _gen_channel_case.f90
 </pre></div>
 </div>
-<div class="section" id="generate-land-uses-txt-from-python">
+<section id="generate-land-uses-txt-from-python">
 <h4>generate land_uses.txt from python<a class="headerlink" href="#generate-land-uses-txt-from-python" title="Permalink to this heading">#</a></h4>
 <p>As in the presentation of input.txt file go to the directory  <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>
 You can open the script in   <code class="docutils literal notranslate"><span class="pre">script_example/4_define_land_uses.py</span></code>, it corresponds to the following code:</p>
@@ -423,10 +430,10 @@ You can open the script in   <code class="docutils literal notranslate"><span cl
 <p class="admonition-title">Note</p>
 <p>gen_channel_case can only generate a uniform manning strickler coefficient. More complex generation has to be developed.</p>
 </div>
-</div>
-<div class="section" id="access-and-update-fortran-kernel-value-in-python">
+</section>
+<section id="access-and-update-fortran-kernel-value-in-python">
 <h4>Access and update fortran kernel value in python<a class="headerlink" href="#access-and-update-fortran-kernel-value-in-python" title="Permalink to this heading">#</a></h4>
-<div class="section" id="approach-1">
+<section id="approach-1">
 <h5>Approach 1<a class="headerlink" href="#approach-1" title="Permalink to this heading">#</a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
 
@@ -448,7 +455,7 @@ You can open the script in   <code class="docutils literal notranslate"><span cl
 </pre></div>
 </div>
 <p>You can check the value of manning (not manning beta :( )  in /res/ directory in a result file.</p>
-<div class="section" id="approach-2">
+<section id="approach-2">
 <h6>Approach 2<a class="headerlink" href="#approach-2" title="Permalink to this heading">#</a></h6>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># initialise fortran instance, and python corrponding data</span>
 <span class="n">my_model</span> <span class="o">=</span> <span class="n">df2d</span><span class="o">.</span><span class="n">DassFlowModel</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/livillenave/Documents/distant/dassflow2d-wrap/code/bin_A/&quot;</span><span class="p">,</span> <span class="n">run_type</span> <span class="o">=</span> <span class="s2">&quot;direct&quot;</span><span class="p">)</span> <span class="c1"># run_type can be min or direct (grad ?)</span>
@@ -468,12 +475,12 @@ You can open the script in   <code class="docutils literal notranslate"><span cl
 </pre></div>
 </div>
 <p>You can check the value of manning (not manning beta :( )  in /res/ directory in a result file.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
 
 
             </article>
@@ -616,7 +623,7 @@ You can open the script in   <code class="docutils literal notranslate"><span cl
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

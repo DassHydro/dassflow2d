@@ -1,0 +1,13 @@
+# Package Information for pkg-config
+
+prefix=/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: SQLite
+Description: SQL database engine
+Version: 3.40.1
+Libs: -L${libdir} -lsqlite3
+Libs.private: -lz -lm -ldl -lpthread 
+Cflags: -I${includedir}

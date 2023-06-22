@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>zpresc.txt &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/input_data/5_4_zpresc';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -362,10 +369,10 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="zpresc-txt">
+  <section id="zpresc-txt">
 <span id="zpresc"></span><h1>zpresc.txt<a class="headerlink" href="#zpresc-txt" title="Permalink to this heading">#</a></h1>
 <p>the zpresc.txt file enable the use of tabulated values of the relation <span class="math notranslate nohighlight">\(h(t) +z_{b}\)</span>.</p>
-<div class="section" id="file-presentation">
+<section id="file-presentation">
 <h2>File presentation<a class="headerlink" href="#file-presentation" title="Permalink to this heading">#</a></h2>
 <p>The file is organised as follow</p>
 <details class="sphinx-bs dropdown card mb-3">
@@ -410,14 +417,14 @@ template of file<div class="summary-down docutils">
 <p class="card-text">…
 +———————————————————————————————+</p>
 </div>
-</details></div>
-<div class="section" id="take-advantage-of-wrapped-version">
+</details></section>
+<section id="take-advantage-of-wrapped-version">
 <h2>Take advantage of wrapped version<a class="headerlink" href="#take-advantage-of-wrapped-version" title="Permalink to this heading">#</a></h2>
 <p>In the directory <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>, execute the commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m numpy.f2py -c -m gen_channel_case _gen_channel_case.f90
 </pre></div>
 </div>
-<div class="section" id="generate-inputs-from-python">
+<section id="generate-inputs-from-python">
 <h3>generate inputs from python<a class="headerlink" href="#generate-inputs-from-python" title="Permalink to this heading">#</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -447,8 +454,8 @@ template of file<div class="summary-down docutils">
 </div>
 <p><strong>you can paste in your bin directory the file zpresc.txt produced</strong>, since you also change the bc_type, you <strong>must</strong>
 replace in your bc.txt file, the type of outflow, from ‘ratcurve’ to ‘zpresc’.</p>
-</div>
-<div class="section" id="access-and-update-fortran-kernel-value-in-python">
+</section>
+<section id="access-and-update-fortran-kernel-value-in-python">
 <h3>Access and Update fortran kernel value in python<a class="headerlink" href="#access-and-update-fortran-kernel-value-in-python" title="Permalink to this heading">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dassflow2d</span> <span class="k">as</span> <span class="nn">df2d</span>
 
@@ -483,9 +490,9 @@ replace in your bc.txt file, the type of outflow, from ‘ratcurve’ to ‘zpre
 <span class="n">my_model</span><span class="o">.</span><span class="n">save_res</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
             </article>
@@ -612,7 +619,7 @@ replace in your bc.txt file, the type of outflow, from ‘ratcurve’ to ‘zpre
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

@@ -26,6 +26,8 @@
     href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/dassflow.css" />
@@ -38,6 +40,10 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dassflow2d/core/boundary';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -365,10 +371,10 @@
 <span class="sd">        </span>
 <span class="sd">        **return**</span>
 <span class="sd">        </span>
-<span class="sd">        self.bc</span>
+<span class="sd">        self.bc, a derived type (bcs), which is a copy of model&#39;s bc values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">my_bc</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">get_bc</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bc</span> <span class="o">=</span> <span class="n">my_bc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bc</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">boundaries_copy</span><span class="p">(</span><span class="n">my_bc</span><span class="p">)</span>
         
         
         
@@ -397,7 +403,7 @@
             <span class="n">group</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>  <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edgeb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
             <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>  <span class="bp">self</span><span class="o">.</span><span class="n">mesh_fortran</span><span class="o">.</span><span class="n">edgeb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ind</span><span class="p">)</span>
             
-        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;wall&quot;</span> <span class="p">,</span> <span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;neumann&quot;</span><span class="p">,</span> <span class="s2">&quot;ratcurve&quot;</span> <span class="p">,</span><span class="s2">&quot;hpresc&quot;</span> <span class="p">,</span><span class="s2">&quot;zpresc&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span><span class="p">]</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;wall&quot;</span> <span class="p">,</span> <span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;neumann&quot;</span><span class="p">,</span> <span class="s2">&quot;transm&quot;</span><span class="p">,</span> <span class="s2">&quot;ratcurve&quot;</span> <span class="p">,</span><span class="s2">&quot;hpresc&quot;</span> <span class="p">,</span><span class="s2">&quot;zpresc&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span><span class="p">]</span>
         
         <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
@@ -461,7 +467,7 @@
         
 
 
-<div class="viewcode-block" id="Boundary.plot"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.plot.html#dassflow2d.core.boundary.Boundary.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;values&quot;</span><span class="p">,</span><span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;boundaries localisation&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;boundaries_location&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Boundary.plot"><a class="viewcode-back" href="../../../reference/dassflow2d.core/dassflow2d.core.boundary.Boundary.plot.html#dassflow2d.core.boundary.Boundary.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span> <span class="o">=</span> <span class="s2">&quot;values&quot;</span><span class="p">,</span><span class="n">title_plot</span> <span class="o">=</span> <span class="s2">&quot;Mesh and boundaries&quot;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;boundaries_location&quot;</span><span class="p">,</span> <span class="n">notebook</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot boundary localisation on mesh</span>
 
@@ -501,8 +507,8 @@
             <span class="k">def</span> <span class="nf">find_indices_double</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">condition1</span><span class="p">,</span> <span class="n">condition2</span><span class="p">):</span>
                        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition1</span> <span class="ow">and</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">condition2</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span><span class="p">)</span>
 
-            <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span>        <span class="s2">&quot;wall&quot;</span> <span class="p">,</span> <span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;neumann&quot;</span><span class="p">,</span> <span class="s2">&quot;ratcurve&quot;</span>    <span class="p">,</span><span class="s2">&quot;hpresc&quot;</span> <span class="p">,</span><span class="s2">&quot;zpresc&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span><span class="p">]</span>
-            <span class="n">colors</span> <span class="o">=</span>     <span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span>      <span class="p">,</span> <span class="s2">&quot;orange&quot;</span>   <span class="p">,</span> <span class="s2">&quot;yellow&quot;</span> <span class="p">,</span> <span class="s2">&quot;yellow&quot;</span>   <span class="p">,</span><span class="s2">&quot;#779231&quot;</span><span class="p">,</span> <span class="s2">&quot;#329C46&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="s2">&quot;green&quot;</span> <span class="p">]</span>
+            <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span>        <span class="s2">&quot;wall&quot;</span> <span class="p">,</span> <span class="s2">&quot;discharg1&quot;</span><span class="p">,</span> <span class="s2">&quot;discharg2&quot;</span><span class="p">,</span> <span class="s2">&quot;neumann&quot;</span><span class="p">,</span><span class="s2">&quot;transm&quot;</span><span class="p">,</span>  <span class="s2">&quot;ratcurve&quot;</span>    <span class="p">,</span><span class="s2">&quot;hpresc&quot;</span> <span class="p">,</span><span class="s2">&quot;zpresc&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;internal_2D&quot;</span><span class="p">]</span>
+            <span class="n">colors</span> <span class="o">=</span>     <span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span>      <span class="p">,</span> <span class="s2">&quot;orange&quot;</span>   <span class="p">,</span> <span class="s2">&quot;yellow&quot;</span> <span class="p">,</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;yellow&quot;</span>      <span class="p">,</span><span class="s2">&quot;#779231&quot;</span><span class="p">,</span> <span class="s2">&quot;#329C46&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="s2">&quot;green&quot;</span> <span class="p">]</span>
 
             <span class="n">newcol</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">]</span>
             <span class="n">new_cond</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">]</span>
@@ -535,7 +541,10 @@
             <span class="c1"># create scalar typlim (within pyvista polydata object )</span>
             <span class="n">edges</span><span class="p">[</span><span class="s2">&quot;typlim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_color</span>
 
-            <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">notebook</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">notebook</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+                <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">notebook</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">scalars</span> <span class="o">=</span> <span class="s2">&quot;typlim&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">newcol</span><span class="p">),</span> <span class="n">show_scalar_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">plotter</span><span class="o">.</span><span class="n">add_legend</span><span class="p">(</span><span class="n">legend_entries</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s2">&quot;line&quot;</span><span class="p">)</span>
@@ -548,10 +557,13 @@
 
             <span class="k">if</span><span class="p">(</span><span class="n">save_plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
                 <span class="n">plotter</span><span class="o">.</span><span class="n">save_graphic</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">.svg&quot;</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="n">title_plot</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">notebook</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
+                <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cpos</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+            
+            <span class="k">return</span><span class="p">(</span><span class="n">plotter</span><span class="p">)</span>
+            
 
-            <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cpos</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-            
-            
         <span class="k">if</span> <span class="n">what</span> <span class="o">==</span> <span class="s1">&#39;values&#39;</span> <span class="p">:</span>
             <span class="c1"># only arguments are sefl and save_plot (title_plot and filename treated automaticaly)</span>
 
@@ -635,6 +647,7 @@
 <span class="sd">                    - &quot;discharg1&quot;, </span>
 <span class="sd">                    - &quot;discharg2&quot;,</span>
 <span class="sd">                    -&quot;neumann&quot;, </span>
+<span class="sd">                    - &quot;transm&quot;,</span>
 <span class="sd">                    - &quot;ratcurve&quot;    ,</span>
 <span class="sd">                    - &quot;hpresc&quot; ,</span>
 <span class="sd">                    - &quot;zpresc&quot;, </span>
@@ -852,7 +865,7 @@
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

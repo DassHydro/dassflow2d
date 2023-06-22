@@ -26,6 +26,8 @@
     href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/dassflow.css" />
@@ -38,6 +40,10 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dassflow2d/core/model';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -357,11 +363,11 @@
 
 
 <div class="viewcode-block" id="dassflowmodel"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.html#dassflow2d.dassflowmodel">[docs]</a><span class="k">class</span> <span class="nc">dassflowmodel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	
+    
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main object of ``DassFlow-2d``.</span>
 
-<span class="sd">    &quot;subclasses&quot;</span>
+<span class="sd">    </span>
 <span class="sd">    -------------</span>
 
 <span class="sd">    Parameters</span>
@@ -466,11 +472,11 @@
         <span class="k">if</span> <span class="n">clean</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/res/&quot;</span><span class="p">):</span>
-                	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/res/*&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/res directory</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/res/*&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/res directory</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/min/&quot;</span><span class="p">):</span>
-                	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/min/*&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/res directory</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/min/*&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/res directory</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/msh/&quot;</span><span class="p">):</span>
-                	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/msh/&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/msh directory</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rm -r  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s1">/msh/&#39;</span><span class="p">)</span>               <span class="c1"># removes all in bin_dir/msh directory</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/restart.bin&quot;</span><span class="p">):</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="si">}</span><span class="s2">/restart.bin&quot;</span><span class="p">)</span>   <span class="c1"># removes all in bin_dir/msh directory</span>
 
@@ -497,8 +503,11 @@
 <span class="sd">            self.meshing: dassflow2d.core.Meshing object initialised with fortran kernel values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;call dassflow2d.wrapping.m_mesh.msh()&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">mesh</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_mesh</span><span class="o">.</span><span class="n">msh</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;call         dassflow2d.wrapping.call_model.init_solver(self.kernel)&quot;</span><span class="p">)</span>
         <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">init_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;call   Meshing(mesh_fortran = self.kernel.mesh)&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meshing</span> <span class="o">=</span> <span class="n">Meshing</span><span class="p">(</span><span class="n">mesh_fortran</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">mesh</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="dassflowmodel.init_dof"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.init_dof.html#dassflow2d.dassflowmodel.init_dof">[docs]</a>    <span class="k">def</span> <span class="nf">init_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -558,7 +567,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-    	
+        
 <div class="viewcode-block" id="dassflowmodel.init_all"><a class="viewcode-back" href="../../../reference/dassflow2d/dassflow2d.dassflowmodel.init_all.html#dassflow2d.dassflowmodel.init_all">[docs]</a>    <span class="k">def</span> <span class="nf">init_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform in correct order all fortran initialisation</span>
@@ -599,12 +608,59 @@
 <span class="sd">             (Variational Data Assimilation using the adjoint code)</span>
 <span class="sd">             - &#39;grad&#39;   : if you want to perform a gradient based optimization</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">dof_init</span> <span class="o">=</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">dof_copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">dof</span><span class="p">)</span>
         <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">call_model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="n">arg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_type</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">Output</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_type</span> <span class="o">==</span><span class="s2">&quot;min&quot;</span><span class="p">:</span>
-        	<span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">Min</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span></div>
-
+            <span class="c1"># source minimization result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">Min</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">source_all</span><span class="p">()</span>
+            
+            <span class="c1"># if hydrograph infered, replace the hydrograph.txt file, so that we can perform direct simulation with infered parameter</span>
+            <span class="k">if</span> <span class="n">dassflow2d</span><span class="o">.</span><span class="n">wrapping</span><span class="o">.</span><span class="n">m_model</span><span class="o">.</span><span class="n">get_c_hydrograph</span><span class="p">()</span> <span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;cp ./hydrograph.txt ./hydrograph_prior.txt&#39;</span><span class="p">)</span>
+                <span class="n">key_last_ite</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;hydrograph&quot;</span><span class="p">])</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./hydrograph.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#comment</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#comment</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#comment</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;hydrograph&#39;</span><span class="p">][</span><span class="n">key_last_ite</span><span class="p">])</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key_id_hydrograph</span><span class="p">,</span> <span class="n">hyd</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;hydrograph&quot;</span><span class="p">][</span><span class="n">key_last_ite</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">nb_timstep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">hyd</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#comment</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#comment</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#comment</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">nb_timstep</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">id_timestep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_timstep</span><span class="p">):</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hyd</span><span class="p">[</span><span class="n">id_timestep</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hyd</span><span class="p">[</span><span class="n">id_timestep</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        
+                <span class="c1"># hydrograph.txt file has been rewriten, lets clean the kernel, reinitilize the model, and perform direct simulation with appropriate parameter                </span>
+<span class="c1">#                dassflow2d.wrapping.call_model.clean_model(self.kernel)</span>
+<span class="c1">#</span>
+<span class="c1">#                if os.path.exists(f&quot;{self.bin_dir}/res/obs&quot;):</span>
+<span class="c1">#                    list_paths = os.listdir(f&#39;{self.bin_dir}/res/obs&#39;)</span>
+<span class="c1">#                    for namefile in list_paths:</span>
+<span class="c1">#                    	a_file = open(f&quot;{self.bin_dir}/res/obs/{namefile}&quot;, &quot;r&quot;)</span>
+<span class="c1">#                    	lines = a_file.readlines()</span>
+<span class="c1">#                    	a_file.close()</span>
+<span class="c1">#                    	new_file = open(f&quot;{self.bin_dir}/res/obs/{namefile}&quot;, &quot;w&quot;)</span>
+<span class="c1">#                    	new_file.write(lines[0])</span>
+<span class="c1">#                    	new_file.close()</span>
+<span class="c1">#</span>
+<span class="c1">#                self.init_all()                </span>
+<span class="c1">#                self.kernel.dof = dassflow2d.wrapping.call_model.dof_copy(dof_init)</span>
+<span class="c1">#                self.kernel.dof0 = dassflow2d.wrapping.call_model.dof_copy(dof_init)</span>
+<span class="c1">#                    </span>
+<span class="c1">#                dassflow2d.wrapping.call_model.run(self = self.kernel, arg = &quot;direct&quot;)</span>
+                
+                    
+                    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_type</span> <span class="o">==</span><span class="s2">&quot;direct&quot;</span><span class="p">:</span>
+        	<span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">Output</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_dir</span><span class="p">,</span> 
+                    <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">],</span> 
+                    <span class="n">boundary_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span> <span class="p">)</span></div>
 
 <span class="c1">#=================================================================#</span>
 <span class="c1"># Save result                                                     #</span>
@@ -613,7 +669,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        save all elements</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">save_res</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">)</span> 
@@ -789,7 +845,7 @@
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

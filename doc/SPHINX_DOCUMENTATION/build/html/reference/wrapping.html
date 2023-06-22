@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Fortran wrapped modules &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/dassflow.css" />
@@ -38,11 +41,15 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/wrapping';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="dassflow2d.wrapping.m_mesh" href="dassflow2d.wrapping/dassflow2d.wrapping.m_mesh.html" />
-    <link rel="prev" title="dassflow2d.core.output.Output.save_res" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html" />
+    <link rel="prev" title="Output" href="Output.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
   </head>
@@ -354,11 +361,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.param/dassflow2d.core.param.Friction.save_manning.html">dassflow2d.core.param.Friction.save_manning</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="Output.html">Output</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.get_res.html">dassflow2d.core.output.Output.get_res</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html">dassflow2d.core.output.Output.save_res</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Output.html">Output</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Fortran wrapped modules</a></li>
 
 </ul>
@@ -389,15 +392,15 @@
             
             <article class="bd-article" role="main">
               
-  <span class="target" id="module-wrapping"><span id="api-wrapping"></span></span><div class="section" id="fortran-wrapped-modules">
+  <span class="target" id="module-wrapping"><span id="api-wrapping"></span></span><section id="fortran-wrapped-modules">
 <h1>Fortran wrapped modules<a class="headerlink" href="#fortran-wrapped-modules" title="Permalink to this heading">#</a></h1>
-</div>
-<div class="section" id="api-reference">
+</section>
+<section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">#</a></h1>
 <p>This page gives an overview of all public smash objects, functions and methods.</p>
-<div class="section" id="derived-type">
+<section id="derived-type">
 <h2>Derived Type<a class="headerlink" href="#derived-type" title="Permalink to this heading">#</a></h2>
-<div class="section" id="attributes">
+<section id="attributes">
 <h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -425,9 +428,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="main-called-routines">
+</section>
+</section>
+<section id="main-called-routines">
 <h2>Main called routines<a class="headerlink" href="#main-called-routines" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -458,8 +461,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -469,11 +472,11 @@
             <footer class="bd-footer-article">
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="dassflow2d.core.output/dassflow2d.core.output.Output.save_res.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="Output.html" title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">dassflow2d.core.output.Output.save_res</p>
+          <p class="prev-next-title">Output</p>
       </div>
   </a>
   <a class='right-next' id="next-link" href="dassflow2d.wrapping/dassflow2d.wrapping.m_mesh.html" title="next page">
@@ -593,7 +596,7 @@
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>mesh.geo &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/input_data/2_mesh-geo';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -362,9 +369,9 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="mesh-geo">
+  <section id="mesh-geo">
 <span id="meshfile"></span><h1>mesh.geo<a class="headerlink" href="#mesh-geo" title="Permalink to this heading">#</a></h1>
-<div class="section" id="file-presentation">
+<section id="file-presentation">
 <h2>File presentation<a class="headerlink" href="#file-presentation" title="Permalink to this heading">#</a></h2>
 <p>The mesh file must be created outside <code class="docutils literal notranslate"><span class="pre">DassFlow</span></code> by a mesh generator software [<a class="reference external" href="http://www.robertschneiders.de/meshgeneration/software.html">http://www.robertschneiders.de/meshgeneration/software.html</a>].
 To generate basic mesh (rectangular, with a rectangular extent) you can use the tools provided in  <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code> (see section <strong>xxxx</strong> below).</p>
@@ -3463,20 +3470,20 @@ template of file<div class="summary-down docutils">
 </div></blockquote>
 <p>The <strong>boundary_type</strong> field is obsolete and must exist but is unused.</p>
 </div>
-<div class="section" id="triangular-or-quadrangular-meshing-meshing">
+<section id="triangular-or-quadrangular-meshing-meshing">
 <h3>Triangular or quadrangular meshing meshing<a class="headerlink" href="#triangular-or-quadrangular-meshing-meshing" title="Permalink to this heading">#</a></h3>
 <p>The fortran kernel can process any quadrangular mesh as well as triangular meshing.</p>
 <p>Nothing has to be updated to process quadrangular meshing, while to apply triangular meshing, the <strong>4th</strong> node
 must have the same id as the <strong>1st</strong> node of the cell.</p>
-</div>
-</div>
-<div class="section" id="take-advantage-of-wrapped-version">
+</section>
+</section>
+<section id="take-advantage-of-wrapped-version">
 <h2>Take advantage of wrapped version<a class="headerlink" href="#take-advantage-of-wrapped-version" title="Permalink to this heading">#</a></h2>
 <p>In the directory <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>, execute the commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m numpy.f2py -c -m gen_channel_case _gen_channel_case.f90
 </pre></div>
 </div>
-<div class="section" id="generate-recatangular-meshing-from-python">
+<section id="generate-recatangular-meshing-from-python">
 <h3>Generate recatangular meshing from python<a class="headerlink" href="#generate-recatangular-meshing-from-python" title="Permalink to this heading">#</a></h3>
 <p>As in the presentation of input.txt file go to the directory  <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>
 You can open the script in   <code class="docutils literal notranslate"><span class="pre">script_example/3_define_mesh.py</span></code>, it corresponds to the following code:</p>
@@ -3505,8 +3512,8 @@ python3 run.py
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="access-fortran-kernel-value-in-python">
+</section>
+<section id="access-fortran-kernel-value-in-python">
 <h3>Access fortran kernel value in python<a class="headerlink" href="#access-fortran-kernel-value-in-python" title="Permalink to this heading">#</a></h3>
 <p>Still in the directory <code class="docutils literal notranslate"><span class="pre">/dassflow2d-wrap/Tools/2_gen_basic_channel</span></code>, execute the commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m numpy.f2py -c -m gen_channel_case _gen_channel_case.f90
@@ -3559,19 +3566,19 @@ python3 run.py
 <p class="admonition-title">Danger</p>
 <p>note that not all the variable presented above a correctly filled</p>
 </div>
-</div>
-<div class="section" id="update-fortran-kernel-value-in-python">
+</section>
+<section id="update-fortran-kernel-value-in-python">
 <h3>Update fortran kernel value in python<a class="headerlink" href="#update-fortran-kernel-value-in-python" title="Permalink to this heading">#</a></h3>
-<div class="section" id="geometry">
+<section id="geometry">
 <h4>geometry<a class="headerlink" href="#geometry" title="Permalink to this heading">#</a></h4>
 <p>If you modify values of object <a href="#id1"><span class="problematic" id="id2">``</span></a>my_model.model.mesh.edgeb[i].ind <a href="#id3"><span class="problematic" id="id4">``</span></a>, the modification will go to the fortran kernel directly.**Nonetheless it is not recommended**. We recomand to
 exclusively use the geometry defined in the mesh.geo file. The same reasonment must be applied to the boundaries correspondance definition.</p>
-</div>
-<div class="section" id="land-use">
+</section>
+<section id="land-use">
 <h4>Land use<a class="headerlink" href="#land-use" title="Permalink to this heading">#</a></h4>
 <p>Land type should be defined correctly in the mesh.geo file.</p>
-</div>
-<div class="section" id="bathymetry">
+</section>
+<section id="bathymetry">
 <h4>Bathymetry<a class="headerlink" href="#bathymetry" title="Permalink to this heading">#</a></h4>
 <p>you can access and modify the bathymetry with the following commands</p>
 <div class="admonition warning">
@@ -3610,10 +3617,10 @@ mais si réactivé, on sait que ça marche</p>
 <span class="n">my_model</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
+</section>
 
 
             </article>
@@ -3769,7 +3776,7 @@ mais si réactivé, on sait que ça marche</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

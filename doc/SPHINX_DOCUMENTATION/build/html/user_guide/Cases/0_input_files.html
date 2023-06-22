@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Input files &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/Cases/0_input_files';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -323,7 +330,7 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="input-files">
+  <section id="input-files">
 <span id="id1"></span><h1>Input files<a class="headerlink" href="#input-files" title="Permalink to this heading">#</a></h1>
 <p>To perform simulations using dassflow, some input files are required.
 We list the necessary files below.</p>
@@ -397,8 +404,8 @@ timestep availability</p></td>
 nonetheless, only the values of variables can be modified. (Meaning that the structure and size
 of the object is fixed and can’t be modified once the input files are read)</p>
 </div>
-</div>
-<div class="section" id="generate-input-files">
+</section>
+<section id="generate-input-files">
 <h1>Generate input files<a class="headerlink" href="#generate-input-files" title="Permalink to this heading">#</a></h1>
 <blockquote>
 <div><p>Go to the directory <em class="xref py py-obj">/dassflow2d-wrap/Tools/2_gen_basic_channel</em> and open the note <em class="xref py py-obj">readme.txt</em>.</p>
@@ -415,8 +422,8 @@ It is in the file <code class="docutils literal notranslate"><span class="pre">g
 The fortran subroutines  are documented within fortran script and
 gen_dassflow methods are documented within <code class="docutils literal notranslate"><span class="pre">gen_dassflow.py</span></code> script. (<strong>to be done</strong>)</p>
 </div></blockquote>
-</div>
-<div class="section" id="explore-generated-input-files">
+</section>
+<section id="explore-generated-input-files">
 <h1>Explore generated input files<a class="headerlink" href="#explore-generated-input-files" title="Permalink to this heading">#</a></h1>
 <p>You can see that multiple files have been generated in <em>files/</em> directory :</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls files
@@ -452,8 +459,8 @@ gen_dassflow methods are documented within <code class="docutils literal notrans
 </ul>
 </li>
 </ul>
-</div>
-<div class="section" id="detailed-presentation-of-each-input-files">
+</section>
+<section id="detailed-presentation-of-each-input-files">
 <h1>Detailed presentation of each input files<a class="headerlink" href="#detailed-presentation-of-each-input-files" title="Permalink to this heading">#</a></h1>
 <ul class="simple">
 <li><p><span class="xref std std-ref">Mesh input file</span></p></li>
@@ -469,7 +476,7 @@ boundary file corresponding (such as <code class="docutils literal notranslate">
 which correspond to tables with two entry (time and h/z/q for most files or Q/h correspondance for rating curve).</p>
 <p>Furthermore, some parameter files can be provided, shuch as <code class="docutils literal notranslate"><span class="pre">land_uses.txt</span></code>.</p>
 <p>Finaly, initial conditions can be specified in ic.bin file. <strong>to be documented by a sachant</strong>.</p>
-</div>
+</section>
 
 
             </article>
@@ -580,7 +587,7 @@ which correspond to tables with two entry (time and h/z/q for most files or Q/h 
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

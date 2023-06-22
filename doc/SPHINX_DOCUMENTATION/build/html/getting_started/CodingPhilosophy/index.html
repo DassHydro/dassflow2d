@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Coding Philosophy &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,11 +41,15 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/CodingPhilosophy/index';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Forward/Direct run" href="../Tutorials/1_make_your_first_run.html" />
-    <link rel="prev" title="compilation" href="../Compilation/index.html" />
+    <link rel="next" title="User Guide" href="../../user_guide/index.html" />
+    <link rel="prev" title="Generate Basic channel" href="../Tutorials/5_gen-user-data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
   </head>
@@ -313,13 +320,13 @@
     <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../Installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Coding Philosophy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Tutorials/1_make_your_first_run.html">Forward/Direct run</a></li>
-
-<li class="toctree-l1"><a class="reference internal" href="../Tutorials/2_make_your_first_4Dvar.html">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/1_make_your_first_run.html">Forward run (lake at rest)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/2_make_your_second_run.html">Forward run (simple channel “q_in”)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/3_make_your_first_4Dvar.html">Inference run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Tutorials/3_inference-python.html">Inference run using scipy.minimize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Tutorials/4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Tutorials/5_gen-user-data.html">Generate  Basic channel</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Coding Philosophy</a></li>
 </ul>
 
   </div>
@@ -349,9 +356,9 @@
             <article class="bd-article" role="main">
               
   <p id="coding-philosophy">This short section introduces notions of code requirements pertaining to the Fortran core code and its interfacing with Python.</p>
-<div class="section" id="id1">
+<section id="id1">
 <h1>Coding Philosophy<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h1>
-<div class="section" id="variational-assimilation-through-adjoint-based-method-and-automatic-differentiation">
+<section id="variational-assimilation-through-adjoint-based-method-and-automatic-differentiation">
 <h2>Variational assimilation through adjoint-based method and automatic differentiation<a class="headerlink" href="#variational-assimilation-through-adjoint-based-method-and-automatic-differentiation" title="Permalink to this heading">#</a></h2>
 <p>In this code, Variational Data Assimilation is used as an adapted approach to deal with non-linear dynamic models and with heterogeneous observations in space and time, but also to deal with multivariate data assimilation problems and large control vectors.</p>
 <p>It relies on the gradient of a cost function (e.g. misfit to observations). This gradient is obtained by applying the automatic differentiation tool Tapenade to Fortran source codes found in code/src. The resulting files are called the adjoint code and appear in code/tap. The file names correspond to several routines found in code/src files. In the source code, the <strong>NOADJ</strong> tag indicates that the line or lines are intended to be skipped during this process.</p>
@@ -359,8 +366,8 @@
 <p>As a rule of thumb, any part of the code that does not affect this link between variables and parameters may be flagged as <strong>NOADJ</strong>. For example, many computational checks or result writing routines are currently flagged as <strong>NOADJ</strong>.</p>
 <p>Errors in the differentiation process may or may not cause it to abort. Instead, errors from within /tap files may be raised during a run (direct or inverse). In this case, it is preferable to address the issue from the corresponding /src file or routine than to modify the /tap files.</p>
 <p>Any parameter that is not linked to the <strong>cost</strong> variable and written/read in the <strong>control</strong> will not be inferable, although it may not forbid differentiation and inverse modeling.</p>
-</div>
-<div class="section" id="passing-structures-from-the-computational-core-to-the-corresponding-python-classes">
+</section>
+<section id="passing-structures-from-the-computational-core-to-the-corresponding-python-classes">
 <h2>Passing structures from the computational core to the corresponding Python classes<a class="headerlink" href="#passing-structures-from-the-computational-core-to-the-corresponding-python-classes" title="Permalink to this heading">#</a></h2>
 <p>Python can be used to pre-process and post-process data for DassFlow. The Fortran core will, at the minimum, handle the gradient computation, which benefits from the compiled code’s efficiency, and may also handle gradient minimization (see <em class="xref py py-obj">2_make_your_first_4Dvar</em>) as well as data handling. Python scripts can replace th Fortran code in the latter two of these tasks (see <em class="xref py py-obj">3_inference python</em>).</p>
 <p>Currently, the Fortran code handles most of the reading of input data. If Python is used to read data and passes it to Fortran, it will overwrite potentially existing data read by Fortran earlier in the process. Thus, additional input data may be read using Python without modifying the Fortran code.</p>
@@ -408,8 +415,8 @@ cost</p>
 </ul>
 <p>np (number of CPU cores)</p>
 <p>Note that the order in which you pass data through the interface is important.</p>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -419,17 +426,17 @@ cost</p>
             <footer class="bd-footer-article">
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="../Compilation/index.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="../Tutorials/5_gen-user-data.html" title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">compilation</p>
+          <p class="prev-next-title">Generate  Basic channel</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="../Tutorials/1_make_your_first_run.html" title="next page">
+  <a class='right-next' id="next-link" href="../../user_guide/index.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">Forward/Direct run</p>
+      <p class="prev-next-title">User Guide</p>
   </div>
   <i class="fa-solid fa-angle-right"></i>
   </a>
@@ -524,7 +531,7 @@ cost</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

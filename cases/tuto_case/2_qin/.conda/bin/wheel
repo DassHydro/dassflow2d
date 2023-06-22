@@ -1,0 +1,10 @@
+#!/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/bin/python3.1
+# -*- coding: utf-8 -*-
+import re
+import sys
+
+from wheel.cli import main
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())

@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Presentation &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'Introduction/index';</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -326,11 +333,11 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="presentation">
+  <section id="presentation">
 <span id="introduction"></span><h1>Presentation<a class="headerlink" href="#presentation" title="Permalink to this heading">#</a></h1>
 <p>DassFlow (Data Assimilation for Free Surface Flows) is an open computational software designed to model shallow free surface flows and perform Variational Data Assimilation. The hydrodynamic flow model can be coupled with a hydrological model, therefore providing a complete hydraulic-hydrological chain applicable at basin scale.</p>
-<p>The computational kernel is coded in Fortran 2003, with MPI, and wrapped in Python. The following physical models are available: the 2D Shallow Water (SW) equations in variables <span class="math notranslate nohighlight">\((h,q_{x},q_{y})\)</span>.
-<strong>where</strong> <span class="math notranslate nohighlight">\(x, y  \text{ denotes x and y direction in global coordinate system on mesh} \forall(x,y)\in\mathcal{D}_{\Omega}\)</span>,  <strong>at time</strong> <span class="math notranslate nohighlight">\(t\)</span>, physical time.</p>
+<p>The computational kernel is coded in Fortran 2003 and uses MPI for parallel computing, it is wrapped in Python using the f90wrap library <span id="id1">[<a class="reference internal" href="../index.html#id3" title="James R Kermode. F90wrap: an automated tool for constructing deep python interfaces to modern fortran codes. Journal of Physics: Condensed Matter, 32(30):305901, may 2020. URL: https://doi.org/10.1088/1361-648x/ab82d2, doi:10.1088/1361-648x/ab82d2.">Ker20</a>]</span>. The following physical models are available: the 2D Shallow Water (SW) equations in variables <span class="math notranslate nohighlight">\((h,q_{x},q_{y})\)</span>.
+where <span class="math notranslate nohighlight">\(x, y\)</span>  denotes x and y direction in global coordinate system on mesh <span class="math notranslate nohighlight">\(\forall(x,y)\in\mathcal{D}_{\Omega}\)</span>,  and <span class="math notranslate nohighlight">\(t\)</span> the physical time.</p>
 <p>Note that a 1D version of SW system in variables <span class="math notranslate nohighlight">\((S,Q)\)</span> (Saint-Venant’s equations) is available but in another DassFlow version (please consult DassFlow webpage for details: <a class="reference external" href="https://www.math.univ-toulouse.fr/DassFlow/index.html">https://www.math.univ-toulouse.fr/DassFlow/index.html</a>).</p>
 <p>In the latest version (DassFlowV3), the DassFlow platform includes a Herschel-Bulkley rheology version of the hydraulic equations (for non-Newtonian fluids) and the GR4H rainfall-runoff model implemented in a semi-distributed manner.</p>
 <div class="admonition hint">
@@ -349,15 +356,15 @@
 </div>
 <p>The numerical guide presenting the various numerical schemes and boundary condition treatments available in DassFlow can be downloaded here: <a class="reference download internal" download="" href="../_downloads/db5ec4041ad87e44b1e7047f7ba2e5d6/doc-dassflow2d-num.lyx"><code class="xref download docutils literal notranslate"><span class="pre">../numerical_guide/docs/doc-Dassflow2d-num.lyx</span></code></a></p>
 <p>The present wrapped version is dedicated to river flows simulation and especially designed for variational data assimilation (4D-VAR)</p>
-</div>
-<div class="section" id="why-dassflow2d">
+</section>
+<section id="why-dassflow2d">
 <h1>Why DassFlow2D ?<a class="headerlink" href="#why-dassflow2d" title="Permalink to this heading">#</a></h1>
-<div class="section" id="a-model-dedicated-to-river-flows-simulation">
+<section id="a-model-dedicated-to-river-flows-simulation">
 <h2>A model dedicated to river flows simulation<a class="headerlink" href="#a-model-dedicated-to-river-flows-simulation" title="Permalink to this heading">#</a></h2>
 <p>DassFlow2D solves the Shallow Water equations using various finite-volume method on a computational mesh either of triangular or rectangular elements.</p>
 <p>The numerical schemes are a mix of classical ones and original ones. They are Finite Volume schemes (1st order/2nd order) for shallow flow models and Finite Element schemes (2nd order).</p>
 <p>Boundary conditions required for real-world flows are available. See detailed numerical models statements in <a class="reference download internal" download="" href="../_downloads/db5ec4041ad87e44b1e7047f7ba2e5d6/doc-dassflow2d-num.lyx"><code class="xref download docutils literal notranslate"><span class="pre">../numerical_guide/docs/doc-dassflow2d-num.lyx</span></code></a>.</p>
-<div class="section" id="dassflow2d-can-take-into-account-the-following-phenomena">
+<section id="dassflow2d-can-take-into-account-the-following-phenomena">
 <h3>DassFlow2D can take into account the following phenomena:<a class="headerlink" href="#dassflow2d-can-take-into-account-the-following-phenomena" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Bed friction (Manning-Strickler law and others implemented)</p></li>
@@ -368,8 +375,8 @@
 <li><p>1D-like/2D river networks with a single hydraulic solver</p></li>
 <li><p>Coupling with hydrological modeling (spatially distributed or not) directly implemented in the forward/inverse algorithms (INRAE models available GR4H and SMASH)</p></li>
 </ul>
-</div>
-<div class="section" id="additionnal-capabilities-of-dassflow2d">
+</section>
+<section id="additionnal-capabilities-of-dassflow2d">
 <h3>Additionnal capabilities of DassFlow2D:<a class="headerlink" href="#additionnal-capabilities-of-dassflow2d" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Data assimilation (4D-var)</p></li>
@@ -385,9 +392,9 @@
 <li><p>SMASH interfacing</p></li>
 </ul>
 </div>
-</div>
-</div>
-<div class="section" id="a-model-dedicated-to-inverse-problems-variational-data-assimilation-vda">
+</section>
+</section>
+<section id="a-model-dedicated-to-inverse-problems-variational-data-assimilation-vda">
 <h2>A model dedicated to inverse problems: Variational Data Assimilation (VDA)<a class="headerlink" href="#a-model-dedicated-to-inverse-problems-variational-data-assimilation-vda" title="Permalink to this heading">#</a></h2>
 <p>An important feature of DassFlow is its capability to address inverse problems through VDA, an adjoint-based method).</p>
 <div class="admonition note">
@@ -395,7 +402,7 @@
 <p>Since the Python wrapped versions, combining VDA method (physics-based method) with Deep Learning (data driven estimations) might be much easier.</p>
 <p>Hybrid methods to be developped.</p>
 </div>
-<div class="section" id="dassflow2d-can-ingest-the-following-data-uneven-samplings">
+<section id="dassflow2d-can-ingest-the-following-data-uneven-samplings">
 <h3>DassFlow2D can ingest the following data (uneven samplings):<a class="headerlink" href="#dassflow2d-can-ingest-the-following-data-uneven-samplings" title="Permalink to this heading">#</a></h3>
 <p>Input data required for a forward run:</p>
 <ul class="simple">
@@ -430,8 +437,8 @@
 <p class="admonition-title">Hint</p>
 <p>Remark on multisensor + obs operator and error matrices ?</p>
 </div>
-</div>
-<div class="section" id="dassflow2d-enables-to-simultaneously-infer-large-control-vectors">
+</section>
+<section id="dassflow2d-enables-to-simultaneously-infer-large-control-vectors">
 <h3>DassFlow2D enables to simultaneously infer large control vectors:<a class="headerlink" href="#dassflow2d-enables-to-simultaneously-infer-large-control-vectors" title="Permalink to this heading">#</a></h3>
 <p>Parameters types that can be inferred from observations are any number of combination of the following:</p>
 <ul class="simple">
@@ -445,18 +452,18 @@
 <p>The inference algorithm can be performed in large dimension and regularisations can be used.
 –&gt; implémentation matrices covariance lilian</p>
 </div>
-</div>
-<div class="section" id="inverse-algorithm-principle">
+</section>
+<section id="inverse-algorithm-principle">
 <h3>Inverse algorithm principle<a class="headerlink" href="#inverse-algorithm-principle" title="Permalink to this heading">#</a></h3>
 <p>VDA aims at minimizing the discrepancy between the model output and some flow observations, measured via a cost function <span class="math notranslate nohighlight">\(J\)</span>. This is achieved via the optimization of the flow model parameters with a quasi-Newton algorithm. It uses <span class="math notranslate nohighlight">\(\nabla J\)</span>, the gradient of the cost with regard to parameters, computed by soving the adjoint model (obtained by algorithmic diffrenciation or not). The complete optimization process provides parameters identification, reduced uncertainties, calibrated model(s). VDA formulations are based on priors such as first guess values and covariances operators. Classical and original covariances operators are available. Different regularization terms can be easily introduced in the cost function.</p>
-</div>
-<div class="section" id="gradient-computation-and-optimization-algorithms">
+</section>
+<section id="gradient-computation-and-optimization-algorithms">
 <h3>Gradient computation and optimization algorithms<a class="headerlink" href="#gradient-computation-and-optimization-algorithms" title="Permalink to this heading">#</a></h3>
 <p>For VDA, the gradients are computed using the adjoint method. The adjoint codes are generated either using the automatic differentiation tool Tapenade (INRIA) or by coding the adjoint equations.
 Optimization routines (1st order methods) are either the ones from NumPy library or the L-BFGS quasi-Newton algorithm M1QN3 (from INRIA).
 Local sensitivities are available by plotting the gradients (spatially distributed gradient values).</p>
 <p>Assimilated data can be combinations of in-situ and remote-sensed observations, either time-series or spatially distributed.</p>
-<p>A twin experiment mode (generation next inversions of synthetic data).  <a class="reference internal" href="../getting_started/Tutorials/2_make_your_first_4Dvar.html#make-your-first-4dvar"><span class="std std-ref">is available in getting started section</span></a></p>
+<p>A twin experiment mode (generation next inversions of synthetic data).  <a class="reference internal" href="../getting_started/Tutorials/3_make_your_first_4Dvar.html#make-your-first-4dvar"><span class="std std-ref">is available in getting started section</span></a></p>
 <p>The Python wrapped versions can be easily interfaced or coupled with Python Neural Networks (deep learning) codes.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
@@ -466,10 +473,10 @@ Local sensitivities are available by plotting the gradients (spatially distribut
 <li><p>WIP Superposition of local 2D models over 1D model, with simultaneous data assimilation process.</p></li>
 </ul>
 </div>
-</div>
-</div>
-</div>
-<div class="section" id="what-you-will-get-from-this-documentation">
+</section>
+</section>
+</section>
+<section id="what-you-will-get-from-this-documentation">
 <h1>What you will get from this documentation ?<a class="headerlink" href="#what-you-will-get-from-this-documentation" title="Permalink to this heading">#</a></h1>
 <ul class="simple">
 <li><p>Examples of Python scripts are presented throughout</p></li>
@@ -481,8 +488,8 @@ Local sensitivities are available by plotting the gradients (spatially distribut
 <p><strong>How to run basic direct and inverse runs from Python interface or using commandline</strong>:</p>
 <ul class="simple">
 <li><p>How to run basic direct and inverse runs from Python</p></li>
-<li><p>Direct simulation: <a class="reference internal" href="../getting_started/Tutorials/1_make_your_first_run.html#make-your-first-run"><span class="std std-ref">Forward/Direct run</span></a></p></li>
-<li><p>Inverse run with variational assimilation using Fortran minimizer <a class="reference internal" href="../getting_started/Tutorials/2_make_your_first_4Dvar.html#make-your-first-4dvar"><span class="std std-ref">Inference run</span></a></p></li>
+<li><p>Direct simulation: <a class="reference internal" href="../getting_started/Tutorials/1_make_your_first_run.html#make-your-first-run"><span class="std std-ref">Forward run (lake at rest)</span></a></p></li>
+<li><p>Inverse run with variational assimilation using Fortran minimizer <a class="reference internal" href="../getting_started/Tutorials/3_make_your_first_4Dvar.html#make-your-first-4dvar"><span class="std std-ref">Inference run</span></a></p></li>
 <li><p>Inverse run with variational assimilation using Python minimizer <a class="reference internal" href="../getting_started/Tutorials/3_inference-python.html#inference-python"><span class="std std-ref">Inference run using scipy.minimize</span></a></p></li>
 <li><p>Parallel computation <a class="reference internal" href="../getting_started/Tutorials/4_upgrade-to-parallel.html#make-your-first-parallel"><span class="std std-ref">Upgrade to parallel</span></a></p></li>
 </ul>
@@ -496,8 +503,8 @@ Local sensitivities are available by plotting the gradients (spatially distribut
 <p><strong>Information on code architecture and philosophy:</strong>
 - Fortran architecture
 - Wrapping architecture</p>
-</div>
-<div class="section" id="main-packages-used">
+</section>
+<section id="main-packages-used">
 <h1>Main packages used<a class="headerlink" href="#main-packages-used" title="Permalink to this heading">#</a></h1>
 <p>The main external Python librairies used are:</p>
 <ul class="simple">
@@ -514,12 +521,12 @@ Local sensitivities are available by plotting the gradients (spatially distribut
 <ul class="simple">
 <li><p>os : for console “communication”. See documentation here:  <a class="reference external" href="https://docs.python.org/fr/3/library/os.html">https://docs.python.org/fr/3/library/os.html</a></p></li>
 </ul>
-</div>
-<div class="section" id="acknowledgments">
+</section>
+<section id="acknowledgments">
 <h1>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this heading">#</a></h1>
 <p>The recent DassFlow results rely on a collaboration between IMT-INSA Toulouse (J. Monnier et al., math. modeling-comput. sc.), INRAE (P.-A. Garambois et al., hydrology modeling), CNES-CS group (K. Larnier et al., Senior Engineer, programming-assessing-datasets), with great PhD students and engineers: L. Pujol, L. Villenave, T. Malou, J. Verley and P. Brisset (IMT-INRAe-INSA-Univ. Strasbourg-CNES-CLS group). See publications list.
 Moreover the HiVDI algorithm (K. Larnier, J. Monnier) aiming at estimating river discharges from SWOT data only (forthcoming space mission NASA-CNES et al.) is illustrated.</p>
-</div>
+</section>
 
 
             </article>
@@ -695,7 +702,7 @@ Moreover the HiVDI algorithm (K. Larnier, J. Monnier) aiming at estimating river
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

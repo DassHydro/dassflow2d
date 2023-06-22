@@ -1,0 +1,5 @@
+#!/home/pagarambois/Documents/Distant/dassflow2d-wrap/cases/tuto_case/2_qin/.conda/bin/python3.10
+
+import pydoc
+if __name__ == '__main__':
+    pydoc.cli()

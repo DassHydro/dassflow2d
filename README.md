@@ -58,7 +58,7 @@ export PATH=$PATH:$"tapenade_dir"
 ````
   pip install f90wrap
 ````
-Add the following lines to your ````~/.bashrc```` to add f90wrap to your PATH:
+Add f90wrap to your PATH in ````~/.bashrc````. For example:
 ````
 F90WRAP_HOME=~/.local/bin
 export PATH=$PATH:$F90WRAP_HOME
@@ -96,7 +96,7 @@ make install
 <ol>
   <li> Make sure all the <a href="#req">requirements</a> are met.</li>
   <li> Make sure the project has correctly been installed (<em>see <a href="#ins">Install Project</a></em>).</li>
-  <li> Execute the following commands in the terminal (<em>in your repositoy directory</em>):</li>
+  <li> Execute the following commands in the terminal (<em>in your repository directory</em>):</li>
 </ol>
 
 ````

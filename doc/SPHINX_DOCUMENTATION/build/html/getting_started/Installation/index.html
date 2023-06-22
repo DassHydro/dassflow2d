@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Installation &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,6 +41,10 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/Installation/index';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -313,13 +320,13 @@
     <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Tutorials/1_make_your_first_run.html">Forward/Direct run</a></li>
-
-<li class="toctree-l1"><a class="reference internal" href="../Tutorials/2_make_your_first_4Dvar.html">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/1_make_your_first_run.html">Forward run (lake at rest)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/2_make_your_second_run.html">Forward run (simple channel “q_in”)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Tutorials/3_make_your_first_4Dvar.html">Inference run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Tutorials/3_inference-python.html">Inference run using scipy.minimize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Tutorials/4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Tutorials/5_gen-user-data.html">Generate  Basic channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
 </ul>
 
   </div>
@@ -348,15 +355,15 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="installation">
+  <section id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
 <p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code> can be used under Linux and should work with most distributions. The installation instructions are detailed for Ubuntu.
 Developpement was carried out on Ubuntu 20.04.4 LTS, with Python 3.8 and 3.9.</p>
 <p>Depending on your distribution, you will need to use the correct package manager and insert the appropriate packages. Note that Ubuntu 22.04 LTS relies on Python 3.10, with which the code as not yet been tested.</p>
-<div class="section" id="download-dassflow2d-source-code">
+<section id="download-dassflow2d-source-code">
 <h2>Download <code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code> source code<a class="headerlink" href="#download-dassflow2d-source-code" title="Permalink to this heading">#</a></h2>
 <p>This can be done either via the git repository or via SVN.</p>
-<div class="section" id="from-git-repository">
+<section id="from-git-repository">
 <h3>From git repository<a class="headerlink" href="#from-git-repository" title="Permalink to this heading">#</a></h3>
 <p>To download <code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code>:</p>
 <ol class="arabic simple">
@@ -366,17 +373,17 @@ Developpement was carried out on Ubuntu 20.04.4 LTS, with Python 3.8 and 3.9.</p
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@gitlab-ssh.irstea.fr:lilian.villenave/dassflow2d-wrap.git
 </pre></div>
 </div>
-</div>
-<div class="section" id="from-svn-repository">
+</section>
+<section id="from-svn-repository">
 <h3>From SVN repository<a class="headerlink" href="#from-svn-repository" title="Permalink to this heading">#</a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>SVN repository containing DassFlow is hosted on Sourcesup, which is     a free French academic service.
 You need a Sourcesup account to access the code this way.</p>
 </div>
-</div>
-</div>
-<div class="section" id="requirements-for-the-fortran-code">
+</section>
+</section>
+<section id="requirements-for-the-fortran-code">
 <h2>Requirements for the Fortran code<a class="headerlink" href="#requirements-for-the-fortran-code" title="Permalink to this heading">#</a></h2>
 <p>To take advantage of full capabilities of DassFlow2D, some librairies must be installed.</p>
 <p>A fortran compiler have to be installed: either the <a class="reference external" href="http://gcc.gnu.org/fortran/">GNU FORTRAN compiler</a>  or the   <a class="reference external" href="http://software.intel.com/en-us/intel-compilers">INTEL FORTRAN compiler</a>.</p>
@@ -474,8 +481,8 @@ You sould have a Fortran compiler installed by default on your machine, if not y
 </div></blockquote>
 </div></blockquote>
 </div>
-</details></div>
-<div class="section" id="requirements-for-the-wrapped-code">
+</details></section>
+<section id="requirements-for-the-wrapped-code">
 <h2>Requirements for the wrapped code<a class="headerlink" href="#requirements-for-the-wrapped-code" title="Permalink to this heading">#</a></h2>
 <p>To take advantage of wrapped version of <code class="xref py py-obj docutils literal notranslate"><span class="pre">dassflow2d</span></code>,  a Python interpreter is needed, as well as some specific Python librairies that are used in the code:</p>
 <details class="sphinx-bs dropdown card mb-3 shadow fade-in-slide-down">
@@ -498,8 +505,8 @@ Detailed install - Wrapped requirements<div class="summary-down docutils">
 </div></blockquote>
 </div>
 </details><p>Multiple Python librairies are required. They will be installed automatically if needed during the compilation process.</p>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -637,7 +644,7 @@ Detailed install - Wrapped requirements<div class="summary-down docutils">
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>

@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Generate Basic channel &#8212; DassFlow-2D 1.0 documentation</title>
   <script>
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
@@ -26,6 +27,8 @@
     href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/dassflow.css" />
@@ -38,10 +41,14 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/Tutorials/5_gen-user-data';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="User Guide" href="../../user_guide/index.html" />
+    <link rel="next" title="Coding Philosophy" href="../CodingPhilosophy/index.html" />
     <link rel="prev" title="Upgrade to parallel" href="4_upgrade-to-parallel.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
@@ -313,13 +320,13 @@
     <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../Installation/index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Compilation/index.html">compilation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="1_make_your_first_run.html">Forward/Direct run</a></li>
-
-<li class="toctree-l1"><a class="reference internal" href="2_make_your_first_4Dvar.html">Inference run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_make_your_first_run.html">Forward run (lake at rest)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_make_your_second_run.html">Forward run (simple channel “q_in”)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_make_your_first_4Dvar.html">Inference run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="3_inference-python.html">Inference run using scipy.minimize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="4_upgrade-to-parallel.html">Upgrade to parallel</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Generate  Basic channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CodingPhilosophy/index.html">Coding Philosophy</a></li>
 </ul>
 
   </div>
@@ -348,11 +355,11 @@
             
             <article class="bd-article" role="main">
               
-  <div class="section" id="generate-basic-channel">
+  <section id="generate-basic-channel">
 <span id="gen-user-data"></span><h1>Generate  Basic channel<a class="headerlink" href="#generate-basic-channel" title="Permalink to this heading">#</a></h1>
 <p>you can generate basic meshing and
 necessary input files (defining other parameters files for friction, boundary conditions, observed data etc…) usgin the source code at <em class="xref py py-obj">/dassflow2d-wrap/Tools/1_pre-treatment/0_gen_basic_channel</em> .</p>
-<div class="section" id="generate-input-files">
+<section id="generate-input-files">
 <h2>Generate input files<a class="headerlink" href="#generate-input-files" title="Permalink to this heading">#</a></h2>
 <p>Go to the directory <em class="xref py py-obj">/dassflow2d-wrap/Tools/1_pre-treatment/0_gen_basic_channel</em> and open a terminal.</p>
 <p>run the following command in your terminal (still in directory <em class="xref py py-obj">/dassflow2d-wrap/Tools/2_gen_basic_channel</em>).</p>
@@ -373,8 +380,8 @@ necessary input files (defining other parameters files for friction, boundary co
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make rundirect
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             </article>
@@ -391,10 +398,10 @@ necessary input files (defining other parameters files for friction, boundary co
           <p class="prev-next-title">Upgrade to parallel</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="../../user_guide/index.html" title="next page">
+  <a class='right-next' id="next-link" href="../CodingPhilosophy/index.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">User Guide</p>
+      <p class="prev-next-title">Coding Philosophy</p>
   </div>
   <i class="fa-solid fa-angle-right"></i>
   </a>
@@ -484,7 +491,7 @@ necessary input files (defining other parameters files for friction, boundary co
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0+.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
 
   </div>
