@@ -167,20 +167,20 @@ SUBROUTINE Mesh_Input(mesh)
 
    end select
 
-write(*,*)  " call Read_Dass_Mesh( mesh ) done "
+! write(*,*)  " call Read_Dass_Mesh( mesh ) done "
    !===================================================================================================================!
    !  Mesh Partition
    !===================================================================================================================!
-write(*,*)  " call Mesh_Partition_Scotch( mesh ) "
+! write(*,*)  " call Mesh_Partition_Scotch( mesh ) "
    call Mesh_Partition_Scotch( mesh )
 
    !===================================================================================================================!
    !  Compute geometrical mesh properties Schemes needed
    !===================================================================================================================!
-write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
+! write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
    call Mesh_Geometric_Properties( mesh )
-write(*,*)  " done mesh input "
-!read(*,*)
+
+
 END SUBROUTINE Mesh_Input
 
 
@@ -544,8 +544,6 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !  Local Variables
    !===================================================================================================================!
 
-
-
    integer(ip)  ::  neighb(4) , n1 , n2 , nc_bc , nb_grp_in , nb_grp_out , num_grp , bc_number
    real(rp)  ::  ghost_cell_bathy
    character(6)  ::  bc_type
@@ -576,10 +574,16 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    allocate( land( mesh%nc ) )
 
+    
+   !===================================================================================================================!
+   !  Reading land uses File
+   !===================================================================================================================! 
+   
+
    inquire( file = 'land_uses.txt' , exist = file_exist(1) )
 
    if ( file_exist(1) ) then
-
+   
       open(20,file='land_uses.txt',status='old',form='formatted')
 
       read(20,*)    ! comment line
@@ -599,8 +603,8 @@ SUBROUTINE Read_Dass_Mesh( mesh )
       close(20)
 
    else ! then file not exist
-    write(*,*) "mesh type is basic and no mesh is provided, we stop here"
-    STOP
+    write(*,*) "WARNING: Friction was not initialized from land_uses.txt. You need to initialize it through init_friction."
+
    end if ! end if file exist
 
       manning_data_glob = 1 ! ??
@@ -616,7 +620,6 @@ SUBROUTINE Read_Dass_Mesh( mesh )
       read(10,*)  k , mesh%node(k)%coord%x , mesh%node(k)%coord%y , bathy_node(k)
 
    end do
-!write(*,*)  k , mesh%node(k)%coord%x , mesh%node(k)%coord%y , bathy_node(k)
    !===================================================================================================================!
    !  Reading Nodes connectivity
    !===================================================================================================================!
@@ -630,15 +633,10 @@ SUBROUTINE Read_Dass_Mesh( mesh )
                    mesh%cell(k)%node(2) , &
                    mesh%cell(k)%node(3) , &
                    mesh%cell(k)%node(4) , &
-                   land(k)              , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
+                   tmp             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
                    bathy_cell(k)
-!!write(*,*) k , &
-!             mesh%cell(k)%node(1) , &
-!             mesh%cell(k)%node(2) , &
-!             mesh%cell(k)%node(3) , &
-!             mesh%cell(k)%node(4) , &
-!             land(k)              , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
-!             bathy_cell(k)
+
+      mesh%cell(i)%ind = k
 
       if ( mesh%cell(k)%node(4) == 0 .or. &
            mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
@@ -793,7 +791,6 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    call read_bc_file
 
-!   write(*,*) "called read bc_file"
    !===================================================================================================================!
    !  INLET
    !===================================================================================================================!
@@ -804,10 +801,11 @@ write(*,*)  bc_type , nc_bc , nb_grp_in
    if ( nb_grp_in == 0 ) then
       do i = 1,nc_bc
          read(10,*)  k , j , bc_number , ghost_cell_bathy
-!         ie = mesh%cell(k)%edge(j)
-write(*,*) k , j , bc_number , ghost_cell_bathy
-!write(*,*) "mesh%edge(:)%typlim  ", mesh%edge(ie)%lim
-!write(*,*) ie
+
+!~          ghost_cell_bathy = 0.
+
+         ie = mesh%cell(k)%edge(j)
+! write(*,*) ie, k, j, mesh%edge(:)%lim, bc%typ( 1 , 1 )
          mesh%edgeb( mesh%edge(ie)%lim )%typlim  =  bc%typ( 1 , 1 )
 
          mesh%edgeb( mesh%edge(ie)%lim )%group  =  1
@@ -821,8 +819,6 @@ write(*,*) k , j , bc_number , ghost_cell_bathy
       do i = 1,nc_bc
 
          read(10,*)  k , j , bc_number , ghost_cell_bathy, num_grp
-!  write(*,*) "k , j , bc_number , ghost_cell_bathy, num_grp", k , j , bc_number , ghost_cell_bathy, num_grp
-!  write(*,*) "mesh%edge(ie)%typlim  ", mesh%edge(ie)%lim
 
          ie = mesh%cell(k)%edge(j)
 
@@ -864,7 +860,6 @@ write(*,*)  bc_type , nc_bc , nb_grp_out
       do i = 1,nc_bc
 
          read(10,*)  k , j , bc_number , ghost_cell_bathy , num_grp
-!write(*,*) "k , j , bc_number , ghost_cell_bathy, num_grp", k , j , bc_number , ghost_cell_bathy, num_grp
 
          ie = mesh%cell(k)%edge(j)
 
@@ -887,7 +882,7 @@ write(*,*)  bc_type , nc_bc , nb_grp_out
 
    call Print_Screen( 'end_mesh' )
 
-   write(*,*) 'Read_Dass_Mesh OK --> go out'
+!    write(*,*) 'Read_Dass_Mesh OK --> go out'
 END SUBROUTINE Read_Dass_Mesh
 
 

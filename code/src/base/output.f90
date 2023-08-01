@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -157,7 +157,7 @@ SUBROUTINE write_scalar_in_time( var , file_name )
             !==========================================================================================================!
             !
             !==========================================================================================================!
-            
+
             ! create the target file if not existed
 
             if ( all( is_file_open(:) /= complete_file_name ) ) then
@@ -165,7 +165,7 @@ SUBROUTINE write_scalar_in_time( var , file_name )
                inquire( file = complete_file_name , exist = file_exist(1) )
 
                if ( .not. file_exist(1) ) then
-               
+
                call system('mkdir -p res/post')
 
                   open(10,file=complete_file_name,status='replace',form='formatted')
@@ -195,7 +195,7 @@ SUBROUTINE write_scalar_in_time( var , file_name )
             !==========================================================================================================!
             !
             !==========================================================================================================!
-            
+
             ! write the value in target file
 
             open(10,file=complete_file_name,status='old',position='append',form='formatted')
@@ -304,14 +304,14 @@ SUBROUTINE write_integer_for_all_nt( var , file_name )
          !=============================================================================================================!
          !
          !=============================================================================================================!
-			
+
 			! create the file if doesnot exist
          if ( all( is_file_open(:) /= complete_file_name ) ) then
 
             inquire( file = complete_file_name , exist = file_exist(1) )
 
             if ( .not. file_exist(1) ) then
-            
+
 				call system('mkdir -p res/post')
 
                open(10,file=complete_file_name,status='replace',form='formatted')
@@ -471,7 +471,7 @@ SUBROUTINE write_pscalar_in_time( var , var_names , file_name , nbvars )
                inquire( file = complete_file_name , exist = file_exist(1) )
 
                if ( .not. file_exist(1) ) then
-               
+
                call system('mkdir -p res/post')
 
                   open(10,file=complete_file_name,status='replace',form='formatted')
@@ -570,7 +570,7 @@ END SUBROUTINE write_pscalar_in_time
 
 !>   Generic routine to write n scalars with dtp time step (input.txt)
 !!
-!! \details NOT CHECKED 
+!! \details NOT CHECKED
 !! This subroutine write a real var in the file named 'file_name'.
 !! write nbvars values in time
 !! this routine should also be used inside the main time loop
@@ -663,7 +663,7 @@ SUBROUTINE write_pscalar( var , var_names , file_name , nbvars )
             !==========================================================================================================!
             !
             !==========================================================================================================!
-            
+
             ! create the file if doesnot exist
 
             if ( all( is_file_open(:) /= complete_file_name ) ) then
@@ -769,7 +769,7 @@ END SUBROUTINE write_pscalar
 
 !>  Generic routine to write a scalar field
 !!
-!! \details NOT CHECKED 
+!! \details NOT CHECKED
 !! This subroutine write a real var in the file named 'file_name'.
 !! write nbvars values in time
 !! this routine should also be used inside the main time loop
@@ -835,12 +835,12 @@ SUBROUTINE write_scalar_field( var , mesh , file_name )
          !  Begin Subroutine
          !=============================================================================================================!
 
-!             #ifdef USE_MPI
-!             write(*,*) "MPI_ALLREDUCE in sub_write_tecplot + write_scalar_field"
-!                call MPI_ALLREDUCE( mesh%nc , mesh_total_size , 1 , inttype , MPI_SUM , MPI_COMM_WORLD , code )
-!             #else
-!                mesh_total_size = mesh%nc
-!             #endif
+            #ifdef USE_MPI
+
+               call MPI_ALLREDUCE( mesh%nc , mesh_total_size , 1 , inttype , MPI_SUM , MPI_COMM_WORLD , code )
+            #else
+               mesh_total_size = mesh%nc
+            #endif
 
          !=============================================================================================================!
          !  Opening/Creating result File and Writing Header
@@ -941,7 +941,7 @@ END SUBROUTINE write_scalar_field
 
 !>  Generic routine to write a scalar field
 !!
-!! \details NOT CHECKED 
+!! \details NOT CHECKED
 !! This subroutine write a real var in the file named 'file_name'.
 !! write nbvars values in time
 !! this routine should also be used inside the main time loop
@@ -1008,7 +1008,6 @@ SUBROUTINE write_vector_field( var , mesh , file_name )
          !=============================================================================================================!
 
             #ifdef USE_MPI
-            write(*,*) "MPI_ALLREDUCE in sub_write_tecplot + write_vector_field"
                call MPI_ALLREDUCE( mesh%nc , mesh_total_size , 1 , inttype , MPI_SUM , MPI_COMM_WORLD , code )
             #else
                mesh_total_size = mesh%nc

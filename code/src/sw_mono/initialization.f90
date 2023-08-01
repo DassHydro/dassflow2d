@@ -63,7 +63,7 @@
 !>  Initialization Subroutine specific to Shallow-Water Model
 !!
 !! \details
-SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, my_phys_desc)
+SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, my_phys_desc, my_bc)
 
    USE m_common
    USE m_mesh
@@ -89,6 +89,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    type( infiltration_data ), intent(in   )  ::  my_infiltration
    type( param_model ), intent(in   )  ::  my_param_model
    type( input_data ), intent(in   )  ::  my_phys_desc
+   type( bcs ), intent(in   )  ::  my_bc
 
    !===================================================================================================================!
    !  Local Variables
@@ -96,28 +97,38 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
    character(len=lchar)  ::  filename
 
-   integer(ip)  ::  icod, i_loc, l
+   integer(ip)  ::  icod, i_loc, l, spatial_index
 
    integer(ip), dimension(:), allocatable  ::  index_bathy_min
-
-   real(rp), dimension(:), allocatable  ::  bathy_min , bathy_min_glob,temp
-
-   !===================================================================================================================!
-   !  Bathymetry Initialization --> CLEAN done via text file 'dassflow format'
-   !===================================================================================================================!
+   real(rp), dimension(:), allocatable  ::  bathy_min , bathy_min_glob, temp
 
 !     call my_bathy_2_fortran() !(my_param_model)
-!
-!     call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
-!
+
+     call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
+
      if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
-!      call my_phys_desc_2_fortran(my_phys_desc)
+     if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
+
+     if (allocated(my_bc%rain)) call my_bc_2_fortran(my_bc)
 
 #ifdef USE_MPI
-         call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
-         call reallocate_i( land ,                 mesh%nc   )
-         call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
+
+   call swap_vec_i  ( land , mesh%swap_index( 1 : mesh%nc ) )
+   call reallocate_i( land ,                 mesh%nc   )
+
+   if (bc_rain == 1) then
+         call swap_vec_i  ( bc%rain_land , mesh%swap_index( 1 : mesh%nc ) )
+         call reallocate_i( bc%rain_land ,                 mesh%nc   )
+   endif
+
+   if (bc_infil .ne. 0) then
+         call swap_vec_i  ( infil%land , mesh%swap_index( 1 : mesh%nc ) )
+         call reallocate_i( infil%land ,                 mesh%nc   )
+   endif
+
+   call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
+
 #endif
 
    !===================================================================================================================!
@@ -127,7 +138,9 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
      inquire( file = 'ic.bin'      , exist = file_exist(1) )
      inquire( file = 'restart.bin' , exist = file_exist(2) )
-     inquire( file = 'dof_init.txt' , exist = file_exist(3) )
+     inquire( file = 'dof_init.txt', exist = file_exist(3) )
+     inquire( file = 'zs_init.txt' , exist = file_exist(4) )
+     
      if      ( file_exist(1) ) then
 
         open(10,file='ic.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
@@ -136,6 +149,22 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
         tc0 = 0._rp
 
+     else if (file_exist(3)) then
+
+        open(10,file='dof_init.txt',status='old',form='formatted')
+  		do i = 1,mesh%nc
+  			read(10,*) dof0%h(i), dof0%u(i), dof0%v(i)
+  		end do
+
+
+     else if (file_exist(4)) then
+
+       open(10,file='zs_init.txt',status='old',form='formatted')
+  		do i = 1,mesh%nc
+  			read(10,*) dof0%h(i), dof0%u(i), dof0%v(i)
+!             dof0%h(i) = max(0._rp, dof0%h(i)-bathy_cell(i))
+  		end do
+        
      else if ( file_exist(2) ) then
 
        open(10,file='restart.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
@@ -144,9 +173,12 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
         if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
 
+
+
      end if
 
-     if ( file_exist(1) .or. file_exist(2)) then
+
+     if ( file_exist(1) .or. file_exist(2) ) then
 
         do i = 1,mesh%nc
 
@@ -159,61 +191,11 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
      endif
 
-
-! COMMENTED, need to replace zs0_user, u0_user and v0_user
-!      else
-!
-!         do i = 1,mesh%nc
-!
-!            dof0%h(i)  = max( 0._rp , zs0_user( mesh%cell(i)%grav%x , mesh%cell(i)%grav%y ) - bathy_cell(i) ) ! h_ex(mesh%cell(i)%grav%x , mesh%cell(i)%grav%y)!
-!
-!            if ( dof0%h(i) > heps ) then
-!
-!               dof0%u(i)  =  u0_user( mesh%cell(i)%grav%x , mesh%cell(i)%grav%y )
-!               dof0%v(i)  =  v0_user( mesh%cell(i)%grav%x , mesh%cell(i)%grav%y )
-!            else
-!               dof0%u(i)  =  0._rp
-!               dof0%v(i)  =  0._rp
-!
-!            end if
-!
-!         end do
-!      end if
-
-
-       if(file_exist(3)) then
-
-       open(10,file='dof_init.txt',status='old',form='formatted')
-  		do i = 1,mesh%nc
-
-  			read(10,*) dof0%h(i), dof0%u(i), dof0%v(i)
-
-  		end do
-
-       end if
-
    call com_dof( dof0 , mesh )
 
    !===================================================================================================================!
    !  Boundary Condition Initialization
    !===================================================================================================================!
-
-
-!~    if ( mesh_type == 'basic' ) then
-
-!~       bc%nb = 4
-
-!~       allocate( bc%typ ( bc%nb , 2 ) )
-!~       allocate( bc%grpf( bc%nb     ) )
-
-!~       bc%typ(1,1)  =  bc_W
-!~       bc%typ(2,1)  =  bc_E
-!~       bc%typ(3,1)  =  bc_S
-!~       bc%typ(4,1)  =  bc_N
-
-!~       bc%typ(:,2)  =  ''
-
-!~    end if
 
    allocate( bc%inflow ( 2 * mesh%neb ) )
    allocate( bc%outflow( 2 * mesh%neb ) )
@@ -275,9 +257,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
             allocate( bc%gr4( i )%Q( l ))
 
         do j=1,l
-!             write(*,*) i, j
             read(10,*) bc%gr4( i )%t( j ), bc%gr4( i )%P( j ), bc%gr4( i )%E( j )
-!             write(*,*) bc%gr4( i )%t( j ), bc%gr4( i )%P( j ), bc%gr4( i )%E( j )
         enddo
 
       close(10)
@@ -323,16 +303,16 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
       do i=1,bc%nb_gr4in
 
         read(10,*)
-        read(10,*) l !should be 8670 , i.e. 365 days, for warmup
+        read(10,*) l
 
         allocate( bc%gr4( i )%P0( l ))
         allocate( bc%gr4( i )%E0( l ))
 
         do j=1,l
-         read(10,*) bc%gr4( i )%P0( l ), bc%gr4( i )%E0( l )
+         read(10,*) bc%gr4( i )%P0( j ), bc%gr4( i )%E0( j )
         enddo
 
-     enddo
+      enddo
 
    else
         write(*,*)'No GR4_PEwarmup.txt file found.'
@@ -365,7 +345,6 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
     allocate( bc%hyd( bc%nb_in ) )
 
       do i = 1,bc%nb_in
-     ! write(*,*) "i=",i
         read(10,*)
         read(10,*)
         read(10,*)
@@ -373,16 +352,12 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
         read(10,*) j
        ! write(*,*)"j = ", j
 
-
-
          allocate( bc%hyd( i )%t( j ) )
          allocate( bc%hyd( i )%q( j ) )
 
 
          do k = 1,j
-			!write(*,*) k
             read(10,*) bc%hyd( i ) %t( k ) , bc%hyd( i )%q( k )
-
          end do
 
          if ( mesh_type == 'basic' ) then
@@ -430,7 +405,6 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 !~       end if
 
     end if
-
    !===================================================================================================================!
    !  Loading/Creating hpresc File
    !====================================================================================================
@@ -511,6 +485,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
     end if
 
+   
    !===================================================================================================================!
    !  Loading/Creating rain File
    !===================================================================================================================!
@@ -524,6 +499,8 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    if ( file_exist(1) ) then
 
       open(10,file='rain.txt',status='old')
+
+      if (.not. allocated(bc%rain_land)) allocate(bc%rain_land(mesh%nc)) !in case rain.txt is read directly
 
       read(10,*)
       read(10,*)
@@ -551,75 +528,238 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
          do k = 1,j
             read(10,*) bc%rain(i)%t(k) , bc%rain(i)%q(k)
+            bc%rain(i)%q(k) = bc%rain(i)%q(k) / 1000._rp / 3600._rp
          enddo
-
-      end do
-
+      enddo
       close(10)
-
-    else
-         call Stopping_Program_Sub( 'File rain.txt not provided ...')
-    endif
-
-   else
-
-     allocate( bc%rain(1) )
-     allocate( bc%rain(1)%q(1) )
-     allocate( bc%rain(1)%t(1) )
-
-     bc%rain(1)%q = 0._rp
-     bc%rain(1)%t = 0._rp
-     bc%rain(1)%cumul = 0._rp
-     bc%rain(1)%qin = 0._rp
-
-   end if
-   !===================================================================================================================!
-   !  Rain condition Initialization
-   !===================================================================================================================!
-
-   if (bc_rain == 1) then
+      
+    !    ===================================================================================================================!
+    !     Rain condition Initialization
+    !    ===================================================================================================================!
 
       do i=1,mesh%nc
 
          do k=1,bc%nb_rn
 
-            if ((mesh%cell(i)%grav%x > bc%rain(k)%x_min .and. mesh%cell(i)%grav%x < bc%rain(k)%x_max) .and. &
-                  (mesh%cell(i)%grav%y > bc%rain(k)%y_min .and. mesh%cell(i)%grav%y < bc%rain(k)%y_max)) then
+              call spatial_index_fromxy(mesh, bc%rain(k)%x_min, bc%rain(k)%x_max,&
+                                              bc%rain(k)%y_min, bc%rain(k)%y_max, spatial_index)
 
-                  mesh%cell(i)%rain = k
-                  exit
-            else
-
-                  mesh%cell(i)%rain = 0_ip
-
-            endif
+              if (spatial_index .ne. 0) exit
 
          enddo
 
-
       enddo
 
+!         Output cell/rain attribution
         open(10,file='rain_post.dat',status='replace',form='formatted')
 
         write(10,*) '# Gnuplot DataFile Version'
-        write(10,*) '# x y rain'
+        write(10,*) '# id x y rain_group'
 
-        do i=1,mesh%nc
-                    write(10,'(2ES15.8,i3)') mesh%cell(i)%grav%x    , &
+        do i=1,mesh%nc !ADD ID_CELL AFTER MERGE
+
+                    write(10,'(i5,2ES15.8,i3)') i, mesh%cell(i)%grav%x    , &
                                         mesh%cell(i)%grav%y    , &
-                                        mesh%cell(i)%rain
-
+                                         bc%rain_land(i)
         end do
 
         close(10)
 
-   else
 
-        mesh%cell(:)%rain = 0_ip
+    else
+         mesh%cell(:)%rain = 0_ip
+         write(*,*) "WARNING: Rain was not initialized from rain.txt. You need to initialize it through init_bc."
+!          call Stopping_Program_Sub( 'File rain.txt not provided ...')
+    endif
+
+!    else
+! 
+!      allocate( bc%rain(1) )
+!      allocate( bc%rain(1)%q(1) )
+!      allocate( bc%rain(1)%t(1) )
+! 
+!      bc%rain(1)%q = 0._rp
+!      bc%rain(1)%t = 0._rp
+!      bc%rain(1)%cumul = 0._rp
+!      bc%rain(1)%qin = 0._rp
+
+   end if
+
+
+
+
+!    ===================================================================================================================!
+!     Reading infiltration parameters and localization
+!    ===================================================================================================================!
+
+   infil%nland = 0
+
+   if (( mesh_type == 'dassflow' ) .and. ( .not. allocated(infil%land) )) then ! This is skipped if infiltration_initilise was called through python earlier
+
+    allocate( infil%land( mesh%nc ) )
+
+    inquire( file = 'land_uses_GA.txt' , exist = file_exist(1) )
+    inquire( file = 'land_uses_SCS.txt', exist = file_exist(2) )
+    if ( file_exist(1) ) then
+
+        open(20,file='land_uses_GA.txt',status='old',form='formatted')
+        read(20,*)
+        read(20,*)
+        read(20,*)
+        read(20,*) infil%nland
+        read(20,*)
+        read(20,*)
+        read(20,*)
+
+
+        allocate( infil%GA( infil%nland ) )
+        allocate( infil%SCS( 1 ) )
+        infil%SCS( 1 )%lambdacn = 0._rp
+        infil%SCS( 1 )%CN = 0._rp
+
+        allocate (  infil%coord( 4, infil%nland )   )
+
+
+        do i = 1,infil%nland
+            read(20,*) k , infil%GA(k)%Ks , infil%GA(k)%PsiF ,&
+                            infil%GA(k)%DeltaTheta
+        end do
+
+        read(20,*)
+        read(20,*)
+        read(20,*)
+
+        do i = 1,infil%nland
+!                     read(20,*) infil%x_min(i), infil%x_max(i), &
+!                                infil%y_min(i), infil%y_max(i)
+                      read(20,*) infil%coord(1,i), infil%coord(2,i), &
+                                 infil%coord(3,i), infil%coord(4,i)
+        end do
+
+        close(20)
+
+    elseif ( file_exist(2) ) then
+
+            open(20,file='land_uses_SCS.txt',status='old',form='formatted')
+            read(20,*)
+            read(20,*)
+            read(20,*)
+            read(20,*) infil%nland
+            read(20,*)
+            read(20,*)
+            read(20,*)
+
+            allocate( infil%SCS( infil%nland ) )
+
+            allocate( infil%GA( 1 ) )
+            infil%GA( 1 )%Ks = 0._rp
+            infil%GA( 1 )%DeltaTheta = 0._rp
+            infil%GA( 1 )%PsiF = 0._rp
+
+            allocate (  infil%coord( 4, infil%nland )   )
+
+
+            do i = 1,infil%nland
+                read(20,*) k , infil%SCS(k)%lambdacn , infil%SCS(k)%CN
+            end do
+
+        read(20,*)
+        read(20,*)
+        read(20,*)
+
+        do i = 1,infil%nland
+                    read(20,*) infil%coord(1,i), infil%coord(2,i), &
+                            infil%coord(3,i), infil%coord(4,i)
+        end do
+
+        close(20)
+        
+    else
+    
+        write(*,*) "WARNING: Infiltration was not initialized from land_uses_XX.txt. You need to initialize it through init_infiltration."
+
+    endif
+
+    !===================================================================================================================!
+    !  Handle land parameters attribution to cells from (x,y) tiles
+    !===================================================================================================================!
+
+    if ( file_exist(1) .or. file_exist(2)) then
+    
+       do i=1,mesh%nc
+           do k=1,infil%nland
+
+              call spatial_index_fromxy(mesh, infil%coord(1,k), infil%coord(2,k),&
+                                              infil%coord(3,k), infil%coord(4,k), spatial_index)
+
+              if (spatial_index .ne. 0) exit
+
+           enddo
+!            write(*,*) i,"spatial_index INFIL",spatial_index
+           infil%land(i) = spatial_index
+
+       enddo
+
+        ! Output cell/infiltration attribution
+        open(10,file='infil_post.dat',status='replace',form='formatted')
+
+        write(10,*) '# Gnuplot DataFile Version'
+        write(10,*) '# id x y infil_group'
+
+        do i=1,mesh%nc !ADD ID_CELL AFTER MERGE
+                    write(10,'(i5,2ES15.8,i3)') i, mesh%cell(i)%grav%x    , &
+                                        mesh%cell(i)%grav%y    , &
+                                        infil%land(i)
+        end do
+
+        close(10)
+    endif
 
    endif
 
+   
+   !===================================================================================================================!
+   !  Read geometry parameters if needed
+   !===================================================================================================================!  
+   
+   if (use_xsshp == 1) then
+     inquire( file = 'geometry_params.txt' , exist = file_exist(1) )
+     if ( file_exist(1) ) then
 
+       open(20,file='geometry_params.txt',status='old',form='formatted')
+
+       read(20,*)
+       read(20,*) k
+       read(20,*)
+
+       allocate(XSshape(k))
+       allocate(slope_x(k))
+       allocate(slope_y(k))
+
+       do i = 1,k
+        read(20,*) XSshape(i)%xleft, XSshape(i)%xcenter, XSshape(i)%xright, XSshape(i)%s, XSshape(i)%hmax, &
+        XSshape(i)%topz, slope_x(i), slope_y(i)
+       enddo
+
+       close(20)
+     
+     else
+    
+        write(*,*) "WARNING: you used the option for parameterized bathymetry (use_xsshp == 1), but you did not provide the parameter file (geometry_params.txt)"
+        
+     endif
+     
+   else
+
+    allocate(XSshape(1))
+    allocate(slope_x(1))
+    allocate(slope_y(1))
+    slope_x(1) = 0_ip
+    slope_y(1) = 0_ip
+
+   endif
+   
+   
    !===================================================================================================================!
    !  Loading rating curve
    !===================================================================================================================!
@@ -739,7 +879,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
       if ( bc%typ(i,1)(1:8) == 'discharg' ) then
 
-         call mpi_allgather_r( bathy_min(i) , bathy_min_glob )
+!          call mpi_allgather_r( bathy_min(i) , bathy_min_glob )
 
          if ( index_bathy_min(i) > 0 .and. proc == minloc( bathy_min_glob , 1 ) - 1 ) then
 
@@ -780,7 +920,6 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
    nb_obs = 0
 
-
    inquire( file = 'obs.txt' , exist = file_exist(1) )
 
    if ( w_obs == 1 .and. file_exist(1) ) then
@@ -797,8 +936,10 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
       buffer = '' ; icod = 1
 
       do while ( buffer(1:8) /= 'stations'          .and. &
-                buffer(1:8) /= 'stations_with_grp' .and. &
-                 buffer(1:8) /= 'sections'          .and. icod >= 0 )
+                buffer(1:17) /= 'stations_with_grp' .and. &
+                 buffer(1:8) /= 'sections'          .and.&
+                 buffer(1:10) /= 'stations_Q'          .and. icod >= 0 )
+
 
 
 		read(10,'(A)',iostat=icod) buffer
@@ -811,9 +952,10 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
 		buffer = '' ; icod = 1
 
-		do while ( buffer(1:8) /= 'stations'          .and. &
-				 buffer(1:8) /= 'stations_with_grp' .and. &
-				 buffer(1:8) /= 'sections'          .and. icod >= 0 )
+      do while ( buffer(1:8) /= 'stations'          .and. &
+                buffer(1:17) /= 'stations_with_grp' .and. &
+                 buffer(1:8) /= 'sections'          .and.&
+                 buffer(1:10) /= 'stations_Q'          .and. icod >= 0 )
 
 		read(10,'(A)',iostat=icod) buffer
 
@@ -828,9 +970,10 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
 		buffer = '' ; icod = 1
 
-		do while ( buffer(1:8) /= 'stations'          .and. &
-				 buffer(1:8) /= 'stations_with_grp' .and. &
-				 buffer(1:8) /= 'sections'          .and. icod >= 0 )
+      do while ( buffer(1:8) /= 'stations'          .and. &
+                buffer(1:17) /= 'stations_with_grp' .and. &
+                 buffer(1:8) /= 'sections'          .and.&
+                 buffer(1:10) /= 'stations_Q'          .and. icod >= 0 )
 
 		 read(10,'(A)',iostat=icod) buffer
 
@@ -838,6 +981,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 		end do
 
 		if ( icod >= 0 ) call read_obs_file
+
 
 		!================================================================================================================!
 		!  Closing Data File concerning Stations and Sections Recording at prescribed frequency
@@ -856,7 +1000,9 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 !     Reading param_obs.txt
 !    ===================================================================================================================!
    inquire( file = 'param_obs.txt' , exist = file_exist(1) )
+
    if ( w_obs == 1 .and. file_exist(1) ) then
+
       open(10,file='param_obs.txt',form='formatted',status='old')
       read(10,'(A)',iostat=icod) buffer
 
@@ -872,23 +1018,26 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !  Array dt obs
    !===================================================================================================================!
 
-   if ( w_obs == 1 ) then
+   if (( w_obs == 1 ) .and. (( use_Zobs == 1 ) .or. ( use_UVobs == 1 )))then
 
-    do iobs = 1,size(station)
 
-        station(iobs)%nb_dt=int((ts- station(iobs)%dt_offset)/station(iobs)%dt)+1_ip
+     do iobs = 1,size(station)
 
-        allocate( station(iobs)%dt_obs(station(iobs)%nb_dt  ) )
+        station( iobs )%nb_dt = int( ( ts - station(iobs)%dt_offset ) / station( iobs )%dt ) + 1_ip
 
-        station(iobs)%dt_obs(1)=station(iobs)%dt_offset
+        allocate( station( iobs )%dt_obs( station( iobs )%nb_dt ) )
 
-        do i =2,station(iobs)%nb_dt
-          station(iobs)%dt_obs(i)=station(iobs)%dt_obs(i-1)+station(iobs)%dt ! Create array of observation time ( offset + repitivity satellite)
+        station( iobs )%dt_obs( 1 ) = station( iobs )%dt_offset
+
+        do i = 2, station( iobs )%nb_dt
+
+          station( iobs )%dt_obs( i ) = station( iobs )%dt_obs( i - 1 ) + station( iobs )%dt ! Create array of observation time ( offset + repetivity satellite)
+
         end do
 
-        station( iobs )%ind_t=1_ip
+        station( iobs )%ind_t = 1_ip
 
-    end do
+    enddo
 
   end if
 
@@ -896,69 +1045,117 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !  Initialize obs
    !===================================================================================================================!
 
-   if ( use_obs == 1 ) then
+   ! Allocate and initialize innovation vector for WSE observations
+   ! innovW variable is unused
 
-	call read_stations()
+   if (( use_obs == 1 ) .and. ( use_Zobs == 1 )) then
+
+      call read_stations()
 
       if (allocated( innovation )) deallocate( innovation )
-      if (allocated( innovW )) deallocate( innovW )
-      if (allocated( innovQ )) deallocate( innovQ )
+      if (allocated( innovW ))     deallocate( innovW )
 
 	  allocate( innovation ( size( station ) ) )
-	  allocate( innovW( size( station ) ) )
+	  allocate( innovW (     size( station ) ) )
 
       do iobs = 1,size( station )
 
-     innovation ( iobs )%nb_dt  =  size( station( iobs )%t(:) )
-		 innovW( iobs )%nb_dt  =  size( station( iobs )%t(:) )
+         innovation ( iobs )%nb_dt  =  size( station( iobs )%t(:) )
+		 innovW (     iobs )%nb_dt  =  size( station( iobs )%t(:) )
 
          innovation ( iobs )%nb_dx  =  1
-         innovW( iobs )%nb_dx  =  1
+         innovW (     iobs )%nb_dx  =  1
 
-		if (allocated (innovation ( iobs )%diff)) then
-				write(*,*) "already allocated innovation ( iobs )%diff"
+
+		if ( allocated(innovation ( iobs )%diff) ) then
+				write(*,*) "Already allocated innovation ( iobs )%diff"
 		else
 				allocate( innovation ( iobs )%diff( innovation( iobs )%nb_dt * &
                                             innovation( iobs )%nb_dx ) )
-				allocate( innovW( iobs )%diff( innovW( iobs )%nb_dt * &
-                                            innovW( iobs )%nb_dx ) )
+				allocate( innovW(      iobs )%diff( innovW( iobs )%nb_dt * &
+                                            innovW(     iobs )%nb_dx ) )
 		end if
 
          innovation ( iobs )%diff(:)  =  0._rp
-         innovW( iobs )%diff(:)  =  0._rp
+         innovW(      iobs )%diff(:)  =  0._rp
+
 
       end do
 
   else
 
+      if (allocated( innovation )) deallocate( innovation )
+      if (allocated( innovW     )) deallocate( innovW )
+      allocate( innovation( 1 ) )
+      allocate( innovW(     1 ) )
 
-   end if
+ endif
 
-!#ifdef USE_HYDRO !NOT CLEAN, ADD CORRECT FLAGS
-   if ( use_Qobs == 1 .or. use_Qobs_gr4 == 1) then
+  ! Allocate and initialize innovation vector for velocity observations
+  if (( use_obs == 1 ) .and. ( use_UVobs == 1 )) then
 
-      call read_stationsQ
+      if ( use_Zobs == 0 ) call read_stations()
 
-      allocate( innovQ( size( stationQ ) ) )
+      if (allocated( innovUV )) deallocate( innovUV )
+
+	  allocate( innovUV( size( station ) ) )
+
+      do iobs = 1,size( station )
+
+		 innovUV( iobs )%nb_dt  =  size( station( iobs )%t(:) )
+         innovUV( iobs )%nb_dx  =  1
+
+		if (allocated ( innovUV ( iobs )%diff ) ) then
+				write(*,*) "Already allocated innovUV ( iobs )%diff"
+		else
+                allocate( innovUV( iobs )%diff( innovUV( iobs )%nb_dt * &
+                                                innovUV( iobs )%nb_dx ) )
+		end if
+
+        innovUV( iobs )%diff(:)  =  0._rp
+
+      end do
+
+  else
+
+      if ( allocated( innovUV ) ) deallocate( innovUV )
+      allocate( innovUV( 1 ) )
+
+ endif
+
+   ! Allocate and initialize innovation vector for flow observations
+   ! Either use_Qobs or usse_Qobs_gr4 can be used, not both. This should correspond to most inverse setups.
+   if (( use_obs == 1 ) .and. ((use_Qobs == 1) .or. (use_Qobs_gr4 == 1))) then
+
+      call read_stationsQ()
+
+      if ( allocated( innovQ ) ) deallocate( innovQ )
+
+      allocate( innovQ( size( stationQ ) * 2 ) ) ! The latter half of the innovQ vector is used only with use_NSE = 1.
 
       do iobs = 1,size( stationQ )
 
-         innovQ( iobs )%nb_dt  =  size( stationQ( iobs )%t(:) )
-
+         innovQ( iobs )%nb_dt  =  stationQ( iobs )%nb_dt
          innovQ( iobs )%nb_dx  =  1
 
-         allocate( innovQ( iobs )%diff( innovQ( iobs )%nb_dt ))
+         if (allocated ( innovQ ( iobs )%diff ) ) then
+				write(*,*) "Already allocated innovQ ( iobs )%diff"
+		 else
+                allocate( innovQ( iobs                    )%diff( innovQ( iobs )%nb_dt ))
+                allocate( innovQ( iobs + size( stationQ ) )%diff( innovQ( iobs )%nb_dt ))
+         endif
 
          innovQ( iobs )%diff(:)  =  0._rp
 
       end do
 
    else
-      if (allocated( innovQ )) deallocate( innovQ )
-      allocate( innovQ(1) )
+
+      if ( allocated( innovQ ) ) deallocate( innovQ )
+      allocate( innovQ( 1 ) )
 
    end if
-!#endif
+
 
    time(:) = 0._rp
 
@@ -1001,6 +1198,7 @@ CONTAINS
       backspace 10
 
       read(10,*) buffer , nb_rec
+
       select case( trim(buffer) )
 
          !=============================================================================================================!
@@ -1028,7 +1226,6 @@ CONTAINS
                           station( iobs )%dt            , &
                           station( iobs )%weight
 
-
                !=======================================================================================================!
                !  Searching Cells for Stations
                !=======================================================================================================!
@@ -1045,11 +1242,50 @@ CONTAINS
 
             end do
 
+         case( 'stations_Q' ) !Currently, stations are linked to a boundary condition index. Thus, (x,y) data defined below from obs.txt is not used.
+
+          call alloc_or_realloc_stationQ( stationQ , nb_rec )
+
+          do iobs = 1 , nb_rec
+
+               !=======================================================================================================!
+               !  Allocate Point Coordinate (only one in this case)
+               !=======================================================================================================!
+
+               allocate( stationQ( iobs )%pt(1) )
+
+               !=======================================================================================================!
+               !  Reading Statiostations_Qns Informations in 'obs.txt' File
+               !=======================================================================================================!
+
+               read(10,*) stationQ( iobs )%pt(1)%coord%x , &
+                          stationQ( iobs )%pt(1)%coord%y , &
+                          stationQ( iobs )%dt            , &
+                          stationQ( iobs )%weight
+
+               !=======================================================================================================!
+               !  Searching Cells for Stations
+               !=======================================================================================================!
+
+               stationQ( iobs )%pt(1)%cell = search_cell_inc_point( mesh , stationQ( iobs )%pt(1)%coord )
+
+               !=======================================================================================================!
+               !  Writing Ouput Files to Visualize Stations
+               !=======================================================================================================!
+
+               write(buffer,'(A,I4.4)') 'res/obs/pos_stationQ_', iobs
+
+               call write_station_pos_in_file( buffer , stationQ( iobs )%pt(1)%coord )
+
+          end do
+
+
          !=============================================================================================================!
          !  Stations with a Group of Points Case
          !=============================================================================================================!
 
          case( 'stations_with_grp' )
+
             call alloc_or_realloc_station( station , nb_obs + nb_rec )
 
             do iobs = nb_obs+1 , nb_obs+nb_rec
@@ -1096,7 +1332,8 @@ CONTAINS
 
                      if ( part( cell ) == proc ) then
 
-                        station( iobs )%pt( pt )%cell = inv_swap_index( cell )
+!                         station( iobs )%pt( pt )%cell = mesh%inv_swap_index( cell )
+write(*,*) " line commented temporarily ! station( iobs )%pt( pt )%cell = mesh%inv_swap_index( cell ) "
 
                         station( iobs )%pt( pt )%coord  =  mesh%cell( station( iobs )%pt( pt )%cell )%grav
 
@@ -1323,13 +1560,13 @@ implicit none
    type( friction_data ), intent(in   )  ::  my_friction
 
      nland = my_friction%nland
-!       write(*,*) proc, nland, size( my_friction%land )
+
 !       allocate( land( size( my_friction%land ) ) )
-!       allocate( manning( nland ) )
-!       allocate( manning_beta( nland ) )
+      allocate( manning( my_friction%nland ) )
+      allocate( manning_beta( my_friction%nland ) )
 
       ! loop on all cells to define patch correspondance
-      do i = 1,mesh%nc
+      do i = 1,size(my_friction%land)
           land( i )  =  my_friction%land( i )
       end do
 
@@ -1352,62 +1589,55 @@ implicit none
 
    type( infiltration_data ), intent(in   )  ::  my_infiltration
 
-      infil%nland = my_infiltration%nland
+   infil%nland = my_infiltration%nland
 
-if( infil%nland  > 0) then ! if not zero
+   if( infil%nland  > 0) then
 
-      allocate( infil%land( size(my_infiltration%land ) ) )
-      if (allocated (my_infiltration%GA)) then
-        allocate( infil%GA  ( infil%nland ) )
+      allocate( infil%land( size( my_infiltration%land ) ) )
+
+
+      if (bc_infil == 1) then
+
+        allocate( infil%GA ( size(my_infiltration%GA) ) )
+
         do i = 1, size(my_infiltration%GA)
           infil%GA(i)  = my_infiltration%GA(i)
         enddo
-      else
+
+        allocate( infil%SCS ( 1 ) )
+        infil%SCS  ( 1 )%lambdacn = 0._rp
+        infil%SCS  ( 1 )%CN = 0._rp
+
+      elseif (bc_infil == 2) then
+
+        allocate( infil%SCS ( infil%nland ) )
+
+        do i = 1, size(my_infiltration%SCS)
+          infil%SCS(i) = my_infiltration%SCS(i)
+        enddo
+
         allocate( infil%GA  ( 1 ) )
         infil%GA  ( 1 )%Ks = 0._rp
         infil%GA  ( 1 )%DeltaTheta = 0._rp
         infil%GA  ( 1 )%PsiF = 0._rp
+
       endif
 
-      if (allocated (my_infiltration%SCS)) then
-        allocate( infil%SCS ( infil%nland ) )
-        do i = 1, size(my_infiltration%SCS)
-          infil%SCS(i) = my_infiltration%SCS(i)
-        enddo
-      else
-        allocate( infil%SCS ( 1 ) )
-        infil%SCS  ( 1 )%lambda = 0._rp
-        infil%SCS  ( 1 )%CN = 0._rp
-      endif
+!       allocate( infil%coord ( 4, infil%nland ))
 
-      allocate( infil%x_min ( infil%nland) )
-      allocate( infil%x_max ( infil%nland) )
-      allocate( infil%y_min ( infil%nland) )
-      allocate( infil%y_max ( infil%nland) )
-
-      ! loop on all cells to define patch correspondance
       do i = 1, size(my_infiltration%land )
           infil%land( i )  =  my_infiltration%land( i )
+!           write(*,*) proc, mesh%nc, i, infil%land( i ), my_infiltration%land( i )
       end do
 
-      !define values for each paches
-      do i = 1, nland
-        infil%x_min(i) = my_infiltration%x_min(i)
-        infil%x_max(i) = my_infiltration%x_max(i)
-        infil%y_min(i) = my_infiltration%y_min(i)
-        infil%y_max(i) = my_infiltration%y_max(i)
-      end do
-endif
-
-
-!LEO: to check for infil, bathy seems to work
-!#ifdef USE_MPI
-!    if (bc_infil .ne. 0) then
-!          call swap_vec_r  ( infil%land , swap_index( 1 : mesh%nc ) )
-!          call reallocate_i( infil%land ,                 mesh%nc   )
-!    endif
-!#endif
-
+      !define values for each patch
+!       do i = 1, infil%nland
+!         infil%coord(1,i) = my_infiltration%coord(1,i)
+!         infil%coord(2,i) = my_infiltration%coord(2,i)
+!         infil%coord(3,i) = my_infiltration%coord(3,i)
+!         infil%coord(4,i) = my_infiltration%coord(4,i)
+!       end do
+   endif
 
 END SUBROUTINE my_infiltration_2_fortran
 
@@ -1499,25 +1729,62 @@ implicit none
    type( input_data ), intent(in   )  ::  my_phys_desc
 !
      allocate( phys_desc%soil( size(my_phys_desc%soil) ) )
+     allocate( phys_desc%soil_land( size(my_phys_desc%soil_land) ) )
      allocate( phys_desc%surf( size(my_phys_desc%surf) ) )
      allocate( phys_desc%structures( size(my_phys_desc%structures) ) )
+
 
       do i = 1,size(my_phys_desc%soil)
           phys_desc%soil(i)%clay = my_phys_desc%soil(i)%clay
           phys_desc%soil(i)%silt = my_phys_desc%soil(i)%silt
           phys_desc%soil(i)%sand = my_phys_desc%soil(i)%sand
       enddo
-      do i = 1,size(my_phys_desc%surf)
-          phys_desc%surf(i)%imperm = my_phys_desc%surf(i)%imperm
-          phys_desc%surf(i)%Dmax   = my_phys_desc%surf(i)%Dmax
-      enddo
-      do i = 1,size(my_phys_desc%structures)
-          phys_desc%structures(i)%s_type = my_phys_desc%structures(i)%s_type
-          phys_desc%structures(i)%true_x = my_phys_desc%structures(i)%true_x
-          phys_desc%structures(i)%true_y = my_phys_desc%structures(i)%true_y
-          phys_desc%structures(i)%name   = my_phys_desc%structures(i)%name
-      end do
+
+      phys_desc%soil_land(:) = my_phys_desc%soil_land(:)
+!       do i = 1,size(my_phys_desc%surf)
+!       write(*,*) i
+!           phys_desc%surf(i)%imperm = my_phys_desc%surf(i)%imperm
+!           phys_desc%surf(i)%Dmax   = my_phys_desc%surf(i)%Dmax
+!       enddo
+!       do i = 1,size(my_phys_desc%structures)
+!       write(*,*) i
+!           phys_desc%structures(i)%s_type = my_phys_desc%structures(i)%s_type
+!           phys_desc%structures(i)%true_x = my_phys_desc%structures(i)%true_x
+!           phys_desc%structures(i)%true_y = my_phys_desc%structures(i)%true_y
+!           phys_desc%structures(i)%name   = my_phys_desc%structures(i)%name
+!       end do
 
 END SUBROUTINE my_phys_desc_2_fortran
+
+SUBROUTINE my_bc_2_fortran(my_bc)
+
+    implicit none
+
+    type( bcs ), intent(in   )  ::  my_bc
+
+      allocate(bc%rain(my_bc%nb_rn))
+      bc%nb_rn = my_bc%nb_rn
+
+      do i = 1, my_bc%nb_rn
+        allocate(bc%rain(i)%t(my_bc%nb_rn_t))
+        allocate(bc%rain(i)%q(my_bc%nb_rn_t))
+        bc%rain(i)%t(:) = my_bc%rain(i)%t(:)
+        bc%rain(i)%q(:) = my_bc%rain(i)%q(:)
+        bc%rain(i)%x_min = my_bc%rain(i)%x_min
+        bc%rain(i)%y_min = my_bc%rain(i)%y_min
+        bc%rain(i)%x_max = my_bc%rain(i)%x_max
+        bc%rain(i)%y_max = my_bc%rain(i)%y_max
+        bc%rain(i)%tile_index = my_bc%rain(i)%tile_index
+      enddo
+
+      allocate(bc%rain_land(size(my_bc%rain_land)))
+
+      do i = 1,size(my_bc%rain_land)
+        bc%rain_land(i) = my_bc%rain_land(i)
+      enddo
+!              write(*,*) size(bc%rain(:)%tile_index)
+!              write(*,*) bc%rain(:)%tile_index
+
+END SUBROUTINE my_bc_2_fortran
 
 END SUBROUTINE Initial

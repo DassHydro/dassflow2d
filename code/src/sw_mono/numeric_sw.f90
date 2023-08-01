@@ -90,7 +90,7 @@ SUBROUTINE boundary_post( mass_flux , index_ghost , mesh )
    ib = mesh%edge(ie)%lim
 
    group = mesh%edgeb(ib)%group
-
+    
    if ( mesh%edgeb(ib)%typlim(1:8) == 'discharg' .or. &
         mesh%edgeb(ib)%typlim(1:3) == 'gr4' ) then !.or. &
 !    mesh%edgeb(ib)%typlim(1:17) == 'internal_discharg') then !2nd item = TODO, 3rd item DEPRECATED

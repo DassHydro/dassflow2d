@@ -156,6 +156,12 @@ CONTAINS
 
       call write_control( dof0 , mesh )
 
+      if (size(control) < 20_ip) then
+        write(*,*) "Current control vector is ", control
+      else
+        write(*,*) "Current control vector is too large to show"
+      endif
+
 #ifndef USE_M1QN3
 #ifndef USE_LBFGSB3
       write (*,'(A)') 'Wrong MINMETHOD in Makefile (must be 1 or 2)'
@@ -181,12 +187,15 @@ CONTAINS
       ndz        =   4 * n + 100 * ( 2 * n + 1 )
       reverse    =   1
       indic      =   4
-      max_ite_line_search = 5
+      max_ite_line_search = 25
 
       allocate( dz( ndz ) ) ; dz(:) = 0._rp
       allocate( iz(  5  ) )
 
-      nsim  =  100
+      nsim  = 100 !This should be accessible via Python
+      write(*,*) "---------------------------------------------------------------------------------"
+      write(*,*) "WARNING : Maximum number of inverse model interations (including in-line iterations) is hardcoded to 100 in m_minimization!"
+      write(*,*) "---------------------------------------------------------------------------------"
 
       if ( restart_min == 0 ) then
 
@@ -237,9 +246,9 @@ CONTAINS
 
 
       do while( reverse >= 0 .and. indic /= 0 )
-            write(*,*) "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-            write(*,*) "New loop", "indic=",indic, "reverse=", reverse, "ite_min", ite_min, "ite_line_search", ite_line_search
-            write(*,*) "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+!             write(*,*) "-----------------------------------------------------------------------------"
+!             write(*,*) "New loop ", "indic=",indic, "reverse =", reverse, "ite_min", ite_min, "ite_line_search", ite_line_search
+!             write(*,*) "-----------------------------------------------------------------------------"
          !=============================================================================================================!
          !  Case indic = 4 -> M1QN3 needs new values of the cost and its gradient to compute
          !  either the step descent (line-search) or the new iterate
@@ -269,14 +278,14 @@ CONTAINS
             if ( ite_min == 0 .and. indic == 4 ) then
 
                cost_ini  =  cost
-
+write(*,*) "cost_ini = ", cost_ini
+! write(*,*) "control_back = ", control_back
                i = 1
 
                do k = 1,nb_vars_in_control
-
+! write(*,*) k, i, i - 1 + dim_vars_in_control(k)
                   norm_grad_cost_ini(k) = sqrt( sum( control_back( i : i - 1 + dim_vars_in_control(k) ) * &
                                                      control_back( i : i - 1 + dim_vars_in_control(k) ) ) )
-
                   i = i + dim_vars_in_control(k)
 
                end do
@@ -290,10 +299,10 @@ CONTAINS
             i = 1
 
             do k = 1,nb_vars_in_control
-
+! write(*,*) "control( i : i - 1 + dim_vars_in_control(k) )", control( i : i - 1 + dim_vars_in_control(k) )
                control( i : i - 1 + dim_vars_in_control(k) ) = &
                control( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
-
+! write(*,*) "control( i : i - 1 + dim_vars_in_control(k) )", control( i : i - 1 + dim_vars_in_control(k) )
                i = i + dim_vars_in_control(k)
 
             end do
@@ -311,17 +320,17 @@ CONTAINS
                do k = 1,nb_vars_in_control
 
                   control_back( i : i - 1 + dim_vars_in_control(k) ) = &
-                  control_back( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k)
+                  control_back( i : i - 1 + dim_vars_in_control(k) ) / control_back(k)
 
                   norm_grad_cost(k) = sqrt( sum( control_back( i : i - 1 + dim_vars_in_control(k) ) * &
                                                  control_back( i : i - 1 + dim_vars_in_control(k) ) ) )
-
+! write(*,*) "norm_grad_cost(k)", norm_grad_cost(k)
+! write(*,*) "control_back( i : i - 1 + dim_vars_in_control(k) )", control_back( i : i - 1 + dim_vars_in_control(k) )
                   i = i + dim_vars_in_control(k)
 
                end do
 
                norm_gradJ  =  sqrt( sum( control_back(:) * control_back(:) ) )
-
                write(6,'("ite ",I3," , J =",ES13.6," , |grad J| =",ES13.6, " , time =",ES13.6)') &
                ite_min , cost , norm_gradJ , time(1)
 
@@ -451,15 +460,15 @@ CONTAINS
          call mpi_bcast_i( indic   , 0 )
          call mpi_bcast_i( omode   , 0 )
 
-         call write_restart_m1qn3
+!          call write_restart_m1qn3
+
          !=============================================================================================================!
          !  Case indic = 1 -> M1QN3 has finished an iterate ( imode(3) = 1 )
          !=============================================================================================================!
 
          if      ( indic == 1 ) then
 
-            write(*,*) "Case indic = 1 -> M1QN3 has finished an iterate ( imode(3) = 1 )"
-            write(*,*) "Call output_control"
+!             write(*,*) "Case indic = 1 -> M1QN3 has finished an iterate ( imode(3) = 1 )"
             call output_control( dof0 , mesh )
 
             if ( proc == 0 ) write(30,'(I4,102ES15.7)') ite_min , cost , norm_grad_cost(1:nb_vars_in_control)
@@ -472,7 +481,10 @@ CONTAINS
 
             write(*,*) " indic == 4 .and. ite_line_search > max_ite_line_search"
             call Stopping_Program_Sub( 'Stopping Minimization, too much iterations in line-search' )
+
+            write(*,*) "Warning : dirty stop calibration lilian in m_minimization"
             reverse = -1 ! dirty stop calibration lilian
+
          end if
 
       end do
@@ -482,7 +494,6 @@ CONTAINS
 #endif
 
 #ifdef USE_LBFGSB3
-        write(*,*) 'Calling LBFGSB 3.0'
       !================================================================================================================!
       !  Parameters for LBFGSB 3.0
       !================================================================================================================!
@@ -505,7 +516,6 @@ CONTAINS
       !================================================================================================================!
       call write_control_bounds( dof0 , mesh )
       do k = 1, size(control)
-       ! write(*,*) k, size(control), control_ubound(k), control_lbound(k)
          if (control_ubound(k) - control_lbound(k) < 1e-9) then
             nbd(k) = 0
          else
@@ -585,11 +595,14 @@ CONTAINS
 
 
             ! make plots !
+            if ( c_gr4params == 1 ) then
             open(1234,file="min/gr4_params_states_current",form='formatted')
             do i=1, size(bc%gr4)
                write(1234,*) bc%gr4(i)%params, bc%gr4(i)%state
             enddo
             close(1234)
+            endif
+
             open(1234,file="min/control_back_current",form='formatted')
             do i=1, size(control)
                write(1234,*) control_back(i)

@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -102,7 +102,7 @@ MODULE m_common
 
    integer(ip) :: bc_rain                                      ! rain condition
    integer(ip) :: bc_infil                                     ! infiltration condition
-   
+
    real(rp)     ::  lx                                        !< Lenght of computational domain x horizontal direction if mesh = 'basic'
    real(rp)     ::  ly                                        !< Lenght of computational domain y vertical   direction if mesh = 'basic'
 
@@ -131,9 +131,17 @@ MODULE m_common
 
    integer(ip)  ::  w_obs                                     !< Gen Observation Output File
    integer(ip)  ::  use_obs                                   !< Use Observations in cost function definition
-   integer(ip)  ::  use_Qobs                                   ! Use Observations in cost function definition (model outflow)
-   integer(ip)  ::  use_Qobs_gr4                               ! Use Observations in cost function definition (gr4 basins outflow)
-   
+   integer(ip)  ::  use_Zobs                                  !< Write Water Surface elevation observations  and use them in cost function definition
+   integer(ip)  ::  use_UVobs                                 !< Write Flow velocity observations  and use them in cost function definition
+   integer(ip)  ::  use_HUVobs                                !< UNUSED Write At-a-cell-flow observations  and use them in cost function definition
+   integer(ip)  ::  use_Qobs                                  !< Use Boundary flow observations in cost function definition
+   integer(ip)  ::  use_Qobs_gr4                              !< Use Hydrological flow in cost function definition
+   integer(ip)  ::  use_NSE                                   !< Use Nash-Sutcliffe Efficiency instead of RMSE for cost function definition using Flow observations
+           
+   integer(ip)  ::  use_xsshp                                  !< Use channel shape parameter "geometry_params.txt" file to parameterize cross-section and slope
+   integer(ip)  ::  xsshp_along_x                              !< Toogle whether channel is defined along x-axis
+   integer(ip)  ::  xsshp_along_y                              !< Toogle whether channel is defined along y-axis
+
    character(len=lchar)  ::  spatial_scheme                   !< Name of Spatial  Discretization Scheme ('muscl' only)
    character(len=lchar)  ::  temp_scheme                      !< Name of Temporal Discretization Scheme ('imex' or 'euler')
 
@@ -207,7 +215,7 @@ MODULE m_common
    real(rp), parameter  ::  d3p2   =   3._rp / 2._rp            !<  Constant : 3/2
    real(rp), parameter  ::  d3p5   =   3._rp / 5._rp            !<  Constant : 3/5
    real(rp), parameter  ::  d3p8   =   3._rp / 8._rp            !<  Constant : 3/8
-    
+
    real(rp), parameter  ::  pi  =  3.14159265358979_rp          !<  Constant : pi
 
 
@@ -220,30 +228,6 @@ MODULE m_common
       real(rp), dimension(:), allocatable  ::  weights          !< Weight of the observations. -->  IF VAR_chg other treatment ?
 
    END TYPE
-
-!===================================================================================================================!
-!  Recording Structures
-!===================================================================================================================!
-   
-   TYPE station_obsQ
-
-      integer(ip) :: nb
-      
-      real(rp)  :: weight    ! weight of observations
-
-      integer(ip) :: ind_t   ! Index observation time
-
-      integer(ip) :: nb_dt   ! Number of observation time
-      
-      real(rp), dimension(:), allocatable  ::  t , q
-
-   END TYPE station_obsQ
-      
-!===================================================================================================================!
-!  Recording Variables
-!===================================================================================================================!
-
-   type( station_obsQ ), dimension(:), allocatable ::  stationQ
    
 CONTAINS
 
@@ -258,7 +242,7 @@ CONTAINS
    !> Function testing best matching simulation times each given dt.
    !!
    !! \details If the dt_to_test is the more close to time step of the dt possible, this function return true,
-   !! else return false. 
+   !! else return false.
    !! \param[in] dt_to_test Time step to test.
    !! \returns Boolean returned
    logical FUNCTION test_dt_nearest( dt_to_test )
@@ -303,7 +287,7 @@ CONTAINS
 
    !> Function testing best matching simulation times each given dt.
    !!
-   !! \details If the dt_to_test is the dt just after the actual dt, this function return true, else return false. 
+   !! \details If the dt_to_test is the dt just after the actual dt, this function return true, else return false.
    !! \param[in] dt_to_test Time step to test.
    !! \returns Boolean returned
    logical FUNCTION test_dt_just_after( dt_to_test )
@@ -356,7 +340,7 @@ CONTAINS
 !**********************************************************************************************************************!
 
    !> Reading eventual arguments passed on the command line when the program was invoked.
-   !> \detail NO ADJ IN THE 1D version 
+   !> \detail NO ADJ IN THE 1D version
    SUBROUTINE reading_args
 
       implicit none
@@ -397,7 +381,7 @@ CONTAINS
 
    !> Subroutine which allocate or reaallocate space to a variable (real case).
    !!
-   !! \details This function allocate more space to an original real variable. If this space is already allocate to this 
+   !! \details This function allocate more space to an original real variable. If this space is already allocate to this
    !! variable, space is added. If space is not allocate, the function allocates space to the time for this variable (of
    !! lenght new).
    !! \param[inout] var Original variable.
@@ -424,8 +408,8 @@ CONTAINS
 
    !> Subroutine which allocate or reaallocate space to a variable (real case).
    !!
-   !! \details This function allocate more space to an original real variable. If this space is already allocate to this 
-   !! variable, space is added only if new is greater than lenght of the original variable. If space is not allocate, 
+   !! \details This function allocate more space to an original real variable. If this space is already allocate to this
+   !! variable, space is added only if new is greater than lenght of the original variable. If space is not allocate,
    !! the function allocates space to the time for this variable (of lenght new).
    !! \param[inout] var Original variable.
    !! \param[in] new Size to allocate.
@@ -455,7 +439,7 @@ CONTAINS
 
    !> Subroutine which allocate or reaallocate space to a variable (real case).
    !!
-   !! \details This function allocate more space to an original real variable. 
+   !! \details This function allocate more space to an original real variable.
    !!    - If the allocate space length is equal to new: do nothing.
    !!    - else if the allocate space length is smaller than the original variable: change structuration of the
    !! original variable (original to the end).
@@ -507,7 +491,7 @@ CONTAINS
 
    !> Subroutine which allocate or reaallocate space to a variable (integer case).
    !!
-   !! \details This function allocate more space to an original integer variable. If this space is already allocate to this 
+   !! \details This function allocate more space to an original integer variable. If this space is already allocate to this
    !! variable, space is added. If space is not allocate, the function allocates space to the time for this variable (of
    !! lenght new).
    !! \param[inout] var Original variable.
@@ -534,8 +518,8 @@ CONTAINS
 
    !> Subroutine which allocate or reaallocate space to a variable (integer case).
    !!
-   !! \details This function allocate more space to an original integer variable. If this space is already allocate to this 
-   !! variable, space is added only if new is greater than lenght of the original variable. If space is not allocate, 
+   !! \details This function allocate more space to an original integer variable. If this space is already allocate to this
+   !! variable, space is added only if new is greater than lenght of the original variable. If space is not allocate,
    !! the function allocates space to the time for this variable (of lenght new).
    !! \param[inout] var Original variable.
    !! \param[in] new Size to allocate.
@@ -565,7 +549,7 @@ CONTAINS
 
    !> Subroutine which allocate or reaallocate space to a variable (integer case).
    !!
-   !! \details This function allocate more space to an original integer variable. 
+   !! \details This function allocate more space to an original integer variable.
    !!    - If the allocate space length is equal to new: do nothing.
    !!    - else if the allocate space length is smaller than the original variable: change structuration of the
    !! original variable (original to the end).
@@ -779,7 +763,7 @@ CONTAINS
       do k = 1,size(swap)
 
          if ( swap(k) == 0 .or. swap(k) == k ) cycle
-
+         
          vec( k ) = temp( swap(k) )
 
       end do
@@ -871,7 +855,7 @@ CONTAINS
    !> Ascending sorts.
    !!
    !! \details In lexicographic order, the statement "X < Y", applied to two real vectors X and Y of length M,
-   !! means that there is some index I, with 1 <= I <= M, with the property that X(J) = Y(J) for J < I, and 
+   !! means that there is some index I, with 1 <= I <= M, with the property that X(J) = Y(J) for J < I, and
    !! X(I) < Y(I).In other words, the first time they differ, X is smaller.
    !! \author John Burkardt (GNU LGPL license)
    !! \param[in] m length of x.
@@ -946,7 +930,7 @@ CONTAINS
 
    !> Externally sorts a list of items into ascending order.
    !!
-   !! \details The actual list of data is not passed to the routine.  Hence this routine may be used to sort integer 
+   !! \details The actual list of data is not passed to the routine.  Hence this routine may be used to sort integer
    !! (ip)s, reals, numbers, names, dates, shoe sizes, and so on.  After each call, the routine asks the user to compare
    !! or interchange two items, until a special return value signals that the sorting is completed.
    !! \author John Burkardt (GNU LGPL license)
@@ -1194,7 +1178,6 @@ CONTAINS
 
    END SUBROUTINE i4col_compare
 
-
 !**********************************************************************************************************************!
 !**********************************************************************************************************************!
 !
@@ -1279,6 +1262,8 @@ CONTAINS
       close(100)
 
    END FUNCTION
-
+   
+   
+   
 
 END MODULE m_common

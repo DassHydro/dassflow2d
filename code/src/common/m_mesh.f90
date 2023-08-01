@@ -114,6 +114,8 @@ MODULE m_mesh
     !> Cell Structure
    TYPE CellType
 
+      integer(ip) :: ind
+
       integer(ip), dimension(maxed)  ::  node      !< Suited list of Nodes connecting the Cell
 
       integer(ip), dimension(maxed)  ::  cell      !< Neighboring Cells Index (referenced to upper Nodes list)
@@ -233,6 +235,8 @@ MODULE m_mesh
       real(rp)  ::  scal                                             !< Mesh scaling factor
 
       real(rp)  ::  surf                                             !< Mesh total surface
+
+      integer(ip), dimension(:), allocatable  ::  swap_index , inv_swap_index
 
    END TYPE msh
 
@@ -641,7 +645,6 @@ CONTAINS
       mesh%cell(:)%nbed = maxed
 
       j = 0
-write(*,*)"INTO calc_cells_connectivity"
 
 		! following loop compute the table col
 		! 	1. first and second lines of col contain the global indices of nodes that are in the same edge
@@ -679,7 +682,6 @@ write(*,*)"INTO calc_cells_connectivity"
          end do
 
       end do
-write(*,*)"STEP 1 DONE"
 
       ! after sorting, column(s) that contain the same edge will be adjacent in col
       ! the same pair of indices (an edge) appears 2 times or 1 time in col
@@ -687,8 +689,6 @@ write(*,*)"STEP 1 DONE"
       ! 1 time => the edge is on the boundary
 
       call i4col_sort_a( 4 , j , col )
-
-
 
       mesh%ne  = 0
       mesh%neb = 0
@@ -731,7 +731,7 @@ write(*,*)"STEP 1 DONE"
          i = i + 2 ! jump to the next edge
 
       end do
-write(*,*)"OUT calc_cells_connectivity"
+! write(*,*)"OUT calc_cells_connectivity"
 
    END SUBROUTINE calc_cells_connectivity
 

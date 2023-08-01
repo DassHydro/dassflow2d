@@ -48,11 +48,9 @@
         ! Launch the model
         Call GR4_STSP(Evap,Rain_gr4,ll)
         write(10,*) ll,Evap, Rain_gr4, MISC(17), bc%gr4(catchnb)%state
-       ! write(*,*) catchnb, size(bc%gr4(catchnb)%q)
-        
         ! Get output data
         MISCO(ll,:)=MISC(:)
-       ! bc%gr4(catchnb)%Q(ll) = MISC(17)
+
 
         
       enddo
@@ -102,6 +100,5 @@
 
 
       enddo
-      close(10)
 
       end subroutine MOD_WARMUP

@@ -133,6 +133,13 @@ MODULE m_adjoint
     real(rp)     ::  x4_lbound
     real(rp)     ::  x4_ubound
 
+    real(rp)     ::  Ks_lbound
+    real(rp)     ::  Ks_ubound
+    real(rp)     ::  PsiF_lbound
+    real(rp)     ::  PsiF_ubound
+    real(rp)     ::  DeltaTheta_lbound
+    real(rp)     ::  DeltaTheta_ubound
+
     integer(ip)  ::  n_bathyb
     integer(ip)  ::  n_manningb
 
@@ -337,18 +344,26 @@ CONTAINS
          infil_back%GA(:)%Ks           = 0._rp
          infil_back%GA(:)%PsiF         = 0._rp
          infil_back%GA(:)%DeltaTheta   = 0._rp
-         infil_back%SCS(:)%lambda       = 0._rp
+         infil_back%SCS(:)%lambdacn       = 0._rp
          infil_back%SCS(:)%CN           = 0._rp
 
          bathy_cell_back(:) = 0._rp
 
+         XSshape_back(1)%xleft = 0._rp
+         XSshape_back(1)%xcenter = 0._rp
+         XSshape_back(1)%xright = 0._rp
+         XSshape_back(1)%s = 0._rp
+         XSshape_back(1)%hmax = 0._rp
+         XSshape_back(1)%topz = 0._rp
+
          manning_back(:) = 0._rp
          manning_beta_back(:) = 0._rp
 
-        !write(*,*) "call run_model_back"
+         slope_y_back = 0._rp
+         slope_x_back = 0._rp
+
          call run_model_back( mesh , dof0 , dof0_back , dof , dof_back , cost , cost_back )
 
-        !write(*,*) "DONE call run_model_back"
       #endif
 
       call Time_End(1_ip)
@@ -357,10 +372,8 @@ CONTAINS
       !  Filling control_back vector (cost gradient vector)
       !================================================================================================================!
 
-! write(*,*) "call write_control_back "
       call write_control_back( dof0_back , mesh )
-! write(*,*) "done run_model_back "
-! write(*,*) "cost at end of adjoint model", cost
+      
    END SUBROUTINE adjoint_model
 
 
@@ -684,9 +697,23 @@ CONTAINS
         ! call mpi_wait_all ! lilian --> var_2_control et control_2_var ? LEO: no need for this on my machine
       #ifdef USE_SW_MONO
 
+         if ( c_shape_s == 1 ) then
+            call var_2_control( XSshape(:)%s    , 1   , 0 )
+        endif
+        if ( c_hmax == 1 ) then
+            call var_2_control( XSshape(:)%hmax    , 1   , 0 )
+        endif
+        if ( c_xcenter == 1 ) then
+            call var_2_control( XSshape(:)%xcenter    , 1   , 0 )
+         endif
+
          if ( c_manning == 1 ) call var_2_control( manning    , nland   , manning_data_glob )
          if ( c_manning_beta == 1 ) call var_2_control( manning_beta    , nland   , manning_data_glob )
-         if ( c_bathy   == 1 ) call var_2_control( bathy_cell , mesh%nc , 0                 )
+         if ( c_bathy   == 1 ) call var_2_control( bathy_cell, mesh%nc , 0                 )
+
+         if ( c_slope_y == 1 ) call var_2_control( slope_y , size(slope_y) , 0                 )
+         if ( c_slope_x == 1 ) call var_2_control( slope_x , size(slope_x) , 0                 )
+
          if ( c_ic      == 1 ) call var_2_control( dof0%h     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call var_2_control( dof0%u     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call var_2_control( dof0%v     , mesh%nc , 0                 )
@@ -703,10 +730,7 @@ CONTAINS
           x4min = 0.1_rp
           x4max = 0.2_rp
 
-
-          do k = 1,bc%nb_gr4in
-
-
+      do k = 1,bc%nb_gr4in
 
        write(*,*) ''
        write(*,*) 'old gr4 params'
@@ -731,10 +755,11 @@ CONTAINS
 #endif
 
 
+
          if ( c_Ks == 1         ) call var_2_control( infil%GA(:)%Ks , infil%nland , 0 )
          if ( c_PsiF == 1       ) call var_2_control( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta == 1 ) call var_2_control( infil%GA(:)%DeltaTheta, infil%nland , 0 )
-         if ( c_lambda == 1     ) call var_2_control( infil%SCS(:)%lambda , infil%nland , 0 )
+         if ( c_lambda == 1     ) call var_2_control( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN == 1         ) call var_2_control( infil%SCS(:)%CN, infil%nland , 0 )
 
 
@@ -772,7 +797,7 @@ CONTAINS
          dof0_copy  =  dof0
 
       #endif
-
+! write(*,*) "control", control
 
    CONTAINS
 
@@ -870,9 +895,23 @@ CONTAINS
 
       #ifdef USE_SW_MONO
 
+        if ( c_shape_s == 1 ) then
+            call var_2_control_diff( eps_bathy * XSshape(:)%s    , size(XSshape)   , 0 )
+        endif
+        if ( c_hmax == 1 ) then
+            call var_2_control_diff( eps_bathy * XSshape(:)%hmax    , size(XSshape)   , 0 )
+        endif
+        if ( c_xcenter == 1 ) then
+            call var_2_control_diff( eps_bathy * XSshape(:)%xcenter    , size(XSshape)   , 0 )
+         endif
+
          if ( c_manning == 1 ) call var_2_control_diff( eps_manning * manning    , nland   , manning_data_glob )
          if ( c_manning_beta == 1 ) call var_2_control_diff( eps_manning * manning_beta    , nland   , manning_data_glob ) ! should have manning_BETA_data_glob ??
          if ( c_bathy   == 1 ) call var_2_control_diff( eps_bathy   * bathy_cell , mesh%nc , 0                 )
+
+         if ( c_slope_y == 1 ) call var_2_control_diff( slope_y , size(slope_y) , 0                 )
+         if ( c_slope_x == 1 ) call var_2_control_diff( slope_x , size(slope_x) , 0                 )
+
          if ( c_ic      == 1 ) call var_2_control_diff( eps_ic      * dof0%h     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call var_2_control_diff( eps_ic      * dof0%u     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call var_2_control_diff( eps_ic      * dof0%v     , mesh%nc , 0                 )
@@ -893,7 +932,7 @@ CONTAINS
          if ( c_Ks == 1 ) call var_2_control_diff( eps_Ks * infil%GA(:)%Ks , infil%nland , 0 )
          if ( c_PsiF == 1 ) call var_2_control_diff( eps_PsiF * infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta == 1 ) call var_2_control_diff( eps_DeltaTheta * infil%GA(:)%DeltaTheta, infil%nland , 0 )
-         if ( c_lambda == 1 ) call var_2_control_diff( infil%SCS(:)%lambda , infil%nland , 0 )
+         if ( c_lambda == 1 ) call var_2_control_diff( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN == 1 ) call var_2_control_diff(infil%SCS(:)%CN, infil%nland , 0 )
 
          if ( c_hydrograph == 1 ) then
@@ -1065,9 +1104,24 @@ CONTAINS
 
          end do
 
+
+        if ( c_shape_s == 1 ) then
+            call var_2_control_back( XSshape_back(:)%s    ,  size(XSshape_back)   , 0 )
+        endif
+        if ( c_hmax == 1 ) then
+            call var_2_control_back( XSshape_back(:)%hmax    ,  size(XSshape_back)   , 0 )
+        endif
+        if ( c_xcenter == 1 ) then
+            call var_2_control_back( XSshape_back(:)%xcenter    ,  size(XSshape_back)   , 0 )
+         endif
+
          if ( c_manning == 1 ) call var_2_control_back( manning_back    , nland   , manning_data_glob )
          if ( c_manning_beta == 1 ) call var_2_control_back( manning_beta_back    , nland   , manning_data_glob )
-         if ( c_bathy   == 1 ) call var_2_control_back( bathy_cell_back , mesh%nc , 0                 )
+         if ( c_bathy   == 1 ) call var_2_control_back( bathy_cell_back, mesh%nc , 0                 )
+
+         if ( c_slope_y == 1 ) call var_2_control_back( slope_y , size(slope_y) , 0                 )
+         if ( c_slope_x == 1 ) call var_2_control_back( slope_x , size(slope_x) , 0                 )
+
          if ( c_ic      == 1 ) call var_2_control_back( dof0_back%h     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call var_2_control_back( dof0_back%u     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call var_2_control_back( dof0_back%v     , mesh%nc , 0                 )
@@ -1087,7 +1141,7 @@ CONTAINS
          if ( c_Ks              == 1 ) call var_2_control_back( infil_back%GA%Ks   , infil%nland      , manning_data_glob )
          if ( c_PsiF            == 1 ) call var_2_control_back( infil_back%GA%PsiF , infil%nland      , 0                 )
          if ( c_DeltaTheta      == 1 ) call var_2_control_back( infil_back%GA%DeltaTheta   , infil%nland , 0      )
-         if ( c_lambda          == 1 ) call var_2_control_back( infil_back%SCS%lambda, infil%nland    , 0                 )
+         if ( c_lambda          == 1 ) call var_2_control_back( infil_back%SCS%lambdacn, infil%nland    , 0                 )
          if ( c_CN              == 1 ) call var_2_control_back( infil_back%SCS%CN    , infil%nland    , 0                 )
 
          if ( c_hydrograph == 1 ) then
@@ -1142,7 +1196,7 @@ CONTAINS
          !
          !=============================================================================================================!
 
-         do k_loc = 0,np-1
+         do k_loc = 0,np+1
 
             if ( k_loc == 0 ) then
 
@@ -1357,6 +1411,7 @@ x4_ubound = 1_rp
 
       character(len=lchar)  ::  file_name
       real(rp) :: x1min,x1max,x2min,x2max,x3min,x3max,x4min,x4max
+      real(rp) :: Ksmin, Ksmax, PsiFmin, PsiFmax, DeltaThetamin, DeltaThetamax
       !================================================================================================================!
       !  Filling input control vector ( control )
       !================================================================================================================!
@@ -1370,9 +1425,23 @@ x4_ubound = 1_rp
 !          dof0 = dof0_copy
 ! write(*,*) "dof0=dof0_copy line commented out in read_control. Causes issues in MPI. Serves inknown function. (tested with NP = 3, using ic.bin, values of both structures seem identical, have no reasonnot to be ?)"
 
+
+        if ( c_shape_s == 1 ) then
+            call control_2_var( XSshape(:)%s    , size(XSshape)   , 0 )
+        endif
+        if ( c_hmax == 1 ) then
+            call control_2_var( XSshape(:)%hmax    , size(XSshape)   , 0 )
+        endif
+        if ( c_xcenter == 1 ) then
+            call control_2_var( XSshape(:)%xcenter    , size(XSshape)   , 0 )
+        endif
+
          if ( c_manning == 1 ) call control_2_var( manning    , nland   , manning_data_glob )
          if ( c_manning_beta == 1 ) call control_2_var( manning_beta    , nland   , manning_data_glob )
-         if ( c_bathy   == 1 ) call control_2_var( bathy_cell , mesh%nc , 0                 )
+         if ( c_bathy   == 1 ) call control_2_var( bathy_cell, mesh%nc , 0                 )
+
+         if ( c_slope_y == 1 ) call control_2_var( slope_y , size(slope_y) , 0                 )
+         if ( c_slope_x == 1 ) call control_2_var( slope_x , size(slope_x) , 0                 )
 
          do ie = 1,mesh%neb
 
@@ -1431,7 +1500,7 @@ x4_ubound = 1_rp
          if ( c_Ks          == 1 ) call control_2_var( infil%GA(:)%Ks , infil%nland , 0 )
          if ( c_PsiF        == 1 ) call control_2_var( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta  == 1 ) call control_2_var( infil%GA(:)%DeltaTheta, infil%nland , 0 )
-         if ( c_lambda      == 1 ) call control_2_var( infil%SCS(:)%lambda , infil%nland , 0 )
+         if ( c_lambda      == 1 ) call control_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN          == 1 ) call control_2_var( infil%SCS(:)%CN, infil%nland , 0 )
 
          if ( c_hydrograph == 1 ) then
@@ -1551,11 +1620,20 @@ x4_ubound = 1_rp
          dof0_diff%u    (:)  =  0._rp
          dof0_diff%v    (:)  =  0._rp
 
+         slope_y_diff = 0._rp
+         slope_x_diff = 0._rp
+
          infil_diff%GA(:)%Ks           = 0._rp
          infil_diff%GA(:)%PsiF         = 0._rp
          infil_diff%GA(:)%DeltaTheta   = 0._rp
-         infil_diff%SCS(:)%lambda       = 0._rp
+         infil_diff%SCS(:)%lambdacn       = 0._rp
          infil_diff%SCS(:)%CN           = 0._rp
+
+#ifdef USE_HYDRO
+         do k = 1,bc%nb_gr4in
+            bc_diff%gr4( k )%params(:)  =  0._rp
+         end do
+#endif
 
 #ifdef USE_HYDRO
          do k = 1,bc%nb_gr4in
@@ -1576,9 +1654,24 @@ x4_ubound = 1_rp
             bc_diff%rain( k )%q(:)  =  0._rp
          end do
 
+
+        if ( c_shape_s == 1 ) then
+            call control_diff_2_var( XSshape_diff(:)%s    ,size(XSshape_diff)   , 0 )
+        endif
+        if ( c_hmax == 1 ) then
+            call control_diff_2_var( XSshape_diff(:)%hmax    ,size(XSshape_diff)   , 0 )
+        endif
+        if ( c_xcenter == 1 ) then
+            call control_diff_2_var( XSshape_diff(:)%xcenter    ,size(XSshape_diff)   , 0 )
+        endif
+
          if ( c_manning == 1 ) call control_diff_2_var( manning_diff    , nland   , manning_data_glob )
          if ( c_manning_beta == 1 ) call control_diff_2_var( manning_beta_diff    , nland   , manning_data_glob )
          if ( c_bathy   == 1 ) call control_diff_2_var( bathy_cell_diff , mesh%nc , 0                 )
+
+         if ( c_slope_y == 1 ) call control_diff_2_var( slope_y , size(slope_y) , 0                 )
+         if ( c_slope_x == 1 ) call control_diff_2_var( slope_x , size(slope_x) , 0                 )
+
          if ( c_ic      == 1 ) call control_diff_2_var( dof0_diff%h     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call control_diff_2_var( dof0_diff%u     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call control_diff_2_var( dof0_diff%v     , mesh%nc , 0                 )
@@ -1596,7 +1689,7 @@ x4_ubound = 1_rp
          if ( c_Ks          == 1 ) call control_diff_2_var( infil%GA(:)%Ks , infil%nland , 0 )
          if ( c_PsiF        == 1 ) call control_diff_2_var( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta  == 1 ) call control_diff_2_var( infil%GA(:)%DeltaTheta, infil%nland , 0 )
-         if ( c_lambda      == 1 ) call control_diff_2_var( infil%SCS(:)%lambda , infil%nland , 0 )
+         if ( c_lambda      == 1 ) call control_diff_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN          == 1 ) call control_diff_2_var(infil%SCS(:)%CN, infil%nland , 0 )
 
          if ( c_hydrograph == 1 ) then
@@ -1713,9 +1806,24 @@ x4_ubound = 1_rp
 
          dof0 = dof0_copy
 
+
+        if ( c_shape_s == 1 ) then
+            call control_perturb_2_var( XSshape(:)%s    , size(XSshape)   , 0 )
+        endif
+        if ( c_hmax == 1 ) then
+            call control_perturb_2_var( XSshape(:)%hmax    , size(XSshape)   , 0 )
+        endif
+        if ( c_xcenter == 1 ) then
+            call control_perturb_2_var( XSshape(:)%xcenter    , size(XSshape)   , 0 )
+        endif
+
          if ( c_manning == 1 ) call control_perturb_2_var( manning    , nland   , manning_data_glob )
          if ( c_manning_beta == 1 ) call control_perturb_2_var( manning_beta    , nland   , manning_data_glob )
          if ( c_bathy   == 1 ) call control_perturb_2_var( bathy_cell , mesh%nc , 0                 )
+
+         if ( c_slope_y == 1 ) call control_perturb_2_var( slope_y , size(slope_y) , 0                 )
+         if ( c_slope_x == 1 ) call control_perturb_2_var( slope_x , size(slope_x) , 0                 )
+
          if ( c_ic      == 1 ) call control_perturb_2_var( dof0%h     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call control_perturb_2_var( dof0%u     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call control_perturb_2_var( dof0%v     , mesh%nc , 0                 )
@@ -1723,7 +1831,7 @@ x4_ubound = 1_rp
          if ( c_Ks          == 1 ) call control_perturb_2_var( infil%GA(:)%Ks , infil%nland , 0 )
          if ( c_PsiF        == 1 ) call control_perturb_2_var( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta  == 1 ) call control_perturb_2_var(infil%GA(:)%DeltaTheta, infil%nland , 0 )
-         if ( c_lambda      == 1 ) call control_perturb_2_var( infil%SCS(:)%lambda , infil%nland , 0 )
+         if ( c_lambda      == 1 ) call control_perturb_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN          == 1 ) call control_perturb_2_var(infil%SCS(:)%CN, infil%nland , 0 )
 
 #ifdef USE_HYDRO
@@ -1956,12 +2064,18 @@ x4_ubound = 1_rp
 
          end if
 
-         if ( c_bathy == 1 ) then
+         if ( proc == 0 .and. c_bathy == 1 ) then
 
             write(file_name,'(A,I3.3)') 'min/bathy.' , ite_min
 
-            call write_scalar_field( bathy_cell , mesh , file_name )
+            open(10,file=file_name,status='replace',form='formatted')
 
+!             call write_scalar_field( bathy_cell , mesh , file_name )
+              do i = 1,mesh%nc
+                write(10,*) i , bathy_cell(i)
+              enddo
+
+            close(10)
          end if
 
 
@@ -2009,13 +2123,13 @@ x4_ubound = 1_rp
 
          if ( proc == 0 .and. c_lambda == 1  ) then
 
-            write(file_name,'(A,I3.3)') 'min/lambda.' , ite_min
+            write(file_name,'(A,I3.3)') 'min/lambdacn.' , ite_min
 
             open(10,file=file_name,status='replace',form='formatted')
 
             do i=1,infil%nland
 
-               write(10,*) i , infil%SCS(i)%lambda
+               write(10,*) i , infil%SCS(i)%lambdacn
 
             enddo
 
@@ -2034,6 +2148,46 @@ x4_ubound = 1_rp
             enddo
 
          endif
+
+         if ( proc == 0 .and. ((c_shape_s == 1) .or. (c_hmax == 1) .or. (c_xcenter == 1))) then
+
+            write(file_name,'(A,I3.3)') 'min/xshape.' , ite_min
+
+            open(10,file=file_name,status='replace',form='formatted')
+
+!             call write_scalar_field( bathy_cell , mesh , file_name )
+              do i = 1,size(XSshape)
+                write(10,*) i , XSshape(i)%s , XSshape(i)%xcenter , XSshape(i)%hmax
+              enddo
+
+            close(10)
+         end if
+
+         if ( proc == 0 .and. c_slope_y == 1 ) then
+
+            write(file_name,'(A,I3.3)') 'min/slope_y.' , ite_min
+
+            open(10,file=file_name,status='replace',form='formatted')
+
+              do i = 1,size(slope_y)
+                write(10,*) i , slope_y(i)
+              enddo
+
+            close(10)
+         end if
+
+         if ( proc == 0 .and. c_slope_x == 1 ) then
+
+            write(file_name,'(A,I3.3)') 'min/slope_x.' , ite_min
+
+            open(10,file=file_name,status='replace',form='formatted')
+
+              do i = 1,size(slope_x)
+                write(10,*) i , slope_x(i)
+              enddo
+
+            close(10)
+         end if
 
       #endif
 
@@ -2125,7 +2279,20 @@ x4_ubound = 1_rp
 
          end if
 
-         call write_scalar_field( bathy_cell_back , mesh , 'grad/bathy_grad' )
+!          call write_scalar_field( bathy_cell_back , mesh , 'grad/bathy_grad' )
+
+
+
+               write(file_name,'(A,I3.3,A)') 'grad/bathy_grad'
+
+               open(10,file=file_name,status='replace',form='formatted')
+
+               do i = 1,mesh%nc
+                  write(10,*) i, bathy_cell_back(i)
+               end do
+
+               close(10)
+
 
          do i = 1,mesh%nc
             temp(i)  =  manning_back( land(i) )

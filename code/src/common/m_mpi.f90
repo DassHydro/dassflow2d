@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -73,7 +73,6 @@ MODULE m_mpi
    implicit none
 
    #if defined USE_MPI
-   
 	  include 'mpif.h'
       include 'scotchf.h'
 
@@ -84,7 +83,7 @@ MODULE m_mpi
    integer(ip)  ::  code         !> ???
    integer(ip)  ::  nneighb      !> number of neighboring proc
 
-   integer(ip), dimension(:), allocatable  ::  swap_index , inv_swap_index !> ??? !> ?????
+    integer(ip), dimension(:), allocatable  ::  swap_index , inv_swap_index !> ??? !> ?????
 
    #if defined USE_MPI
 
@@ -97,14 +96,14 @@ MODULE m_mpi
 
       real(rp), dimension( Scotch_graphdim )  ::  Scotchgraph       !> ???
       real(rp), dimension( Scotch_stratdim )  ::  Scotchstrat       !> ???
-      
+
 
    #endif
 
    integer(ip), dimension(:  ), allocatable  ::  part               !> ???
-   integer(ip), dimension(:  ), allocatable  ::  part_size          !> ???          
+   integer(ip), dimension(:  ), allocatable  ::  part_size          !> ???
    integer(ip), dimension(:,:), allocatable  ::  part_neighbs       !> ???
-   
+
 
    real(rp)  ::  val_tmp_r                                          !> ???
 
@@ -126,15 +125,15 @@ CONTAINS
    SUBROUTINE Init_MPI
 
       implicit none
-		
+
 !~ 		integer(ip), intent(in) :: comm
       #if defined USE_MPI
-		
+
 !~ 		MPI_COMM_WORLD = comm
          call MPI_INIT     (                         code ) ! define the integer code
          call MPI_COMM_SIZE( MPI_COMM_WORLD , np   , code )   ! np   ->  number of processes
          call MPI_COMM_RANK( MPI_COMM_WORLD , proc , code )   ! proc ->  process number from 0 to np-1
-
+write(*,*) "mpi in fortran:np, proc", np, proc
       #else
 
          proc  =  0   ! compatible execution value for sequential Dassflow version
@@ -206,7 +205,7 @@ CONTAINS
          !=============================================================================================================!
          !  Begin Subroutine
          !=============================================================================================================!
-		
+
          if ( proc == 0 ) then
 
             write(6,'(A)')
@@ -338,8 +337,8 @@ CONTAINS
 
          do i = 1,mesh%nc
 
-!~ 			indicates which proc the cell i belongs to 
-            write(10+proc,'(2I10)') i-1 , part(i) 
+!~ 			indicates which proc the cell i belongs to
+            write(10+proc,'(2I10)') i-1 , part(i)
 
          end do
 
@@ -403,7 +402,7 @@ CONTAINS
 
                         i = i + 1
 
-                        swap_index( part_size( proc ) +  i ) = k !? add cell k to be the "ghost cell" of local mesh 
+                        swap_index( part_size( proc ) +  i ) = k !? add cell k to be the "ghost cell" of local mesh
 
                         exit
 
@@ -468,7 +467,7 @@ CONTAINS
          !=============================================================================================================!
          !  Communication Data Array Construction
          !=============================================================================================================!
-
+         if (allocated (type_com)) deallocate (type_com)
          allocate( long_bloc  ( 1 : sum( part_neighbs( 0 : np-1 , proc ) ) ) )
          allocate( depla_bloc ( 1 : sum( part_neighbs( 0 : np-1 , proc ) ) ) )
          allocate( type_com   ( 0 : np-1                                   ) )
@@ -509,6 +508,19 @@ CONTAINS
 
          swap_index( part_size( proc ) + 1 + part_neighbs(proc,np) : mesh%nc ) = 0
 
+
+
+      !=============================================================================================================!
+    !Get swap index without border cells, to send to python
+      allocate( mesh%swap_index ( size( swap_index) ) )
+!       allocate( mesh%inv_swap_index ( size( inv_swap_index) ) )
+      do i=1, size(swap_index)
+        mesh%swap_index(i) = swap_index(i)
+     enddo
+!       mesh%inv_swap_index = inv_swap_index
+!=============================================================================================================!
+
+
          !=============================================================================================================!
          !  Array Index Reorganisation
          !=============================================================================================================!
@@ -516,7 +528,7 @@ CONTAINS
          allocate( inv_swap_index( mesh%nc ) ) ; inv_swap_index(:) = 0
 
          call fill_swap_lists( mesh )
-         
+
          call swap_mesh( swap_index , inv_swap_index , mesh ) !some pb in this function ?
 
          !=============================================================================================================!
@@ -538,7 +550,7 @@ CONTAINS
 
 !~ 		   print *, proc, mesh%edge(mesh%ne)%node(1:2)
       #else
-         
+
          allocate( swap_index( mesh%nc ) ) ; swap_index(:) = (/ ( i , i=1,mesh%nc ) /)
          allocate( part( mesh%nc ) )       ; part      (:) = 0! (/ ( i , i=1,mesh%nc ) /)
          allocate( inv_swap_index( mesh%nc ) ) ; inv_swap_index(:) = (/ ( i , i=1,mesh%nc ) /)
@@ -659,7 +671,7 @@ CONTAINS
 
                mesh%edge( ie )%cell(1) = k
                mesh%edge( ie )%cell(2) = mesh%cell(k)%cell(ke)
-               
+
 !~                if (mesh_tmp%edge(je)%node(1) == 0 .and. mesh_tmp%edge(je)%node(2) == 0) print *, "proc : ", proc, "edge : ",je, "nodes : ", mesh_tmp%edge(je)%node(1:2)
 
             end if
@@ -737,7 +749,7 @@ CONTAINS
       !================================================================================================================!
       !  Swapping Mesh Boundaries
       !================================================================================================================!
-
+!       call reallocate_i( mesh%swap_index , mesh%nc )
       call reallocate_i( swap , mesh%nc + mesh%ncb )
 
       do i = 1,mesh%neb
@@ -747,7 +759,7 @@ CONTAINS
          mesh%edgeb(i)%typlim  =  mesh_tmp%edgeb( mesh_tmp%edge( ie )%lim )%typlim
          mesh%edgeb(i)%group   =  mesh_tmp%edgeb( mesh_tmp%edge( ie )%lim )%group
 
-         swap( mesh%nc + part_neighbs( proc , np ) + i ) = mesh_tmp%edge( ie )%cell(2)
+         swap_index( mesh%nc + part_neighbs( proc , np ) + i ) = mesh_tmp%edge( ie )%cell(2)
 
       end do
 
@@ -777,7 +789,7 @@ CONTAINS
       !  Interface Variables
       !================================================================================================================!
 
-      type(msh), intent(in)  ::  mesh
+      type(msh), intent(inout)  ::  mesh
 
       !================================================================================================================!
       !   Constructing base inv_swap_index
@@ -805,7 +817,7 @@ CONTAINS
 
          if ( inv_swap_index(j) == 0 ) then
 
-                swap_index(i) = j
+            swap_index(i) = j
 
             inv_swap_index(j) = i
 
@@ -835,7 +847,7 @@ CONTAINS
       !  Interface Variables
       !================================================================================================================!
 
-      type(msh), intent(in)  ::  mesh
+      type(msh), intent(inout)  ::  mesh
 
       !================================================================================================================!
       !  Filling swap_index vector
@@ -879,7 +891,7 @@ CONTAINS
       !  Interface Variables
       !================================================================================================================!
 
-      type(msh), intent(in)  ::  mesh
+      type(msh), intent(inout)  ::  mesh
 
       !================================================================================================================!
       !  Filling inv_swap_index vector
