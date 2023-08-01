@@ -301,7 +301,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          if ( bc_infil == 2 ) then ! If SCS-type infiltration is selected and this cell does have an infiltration value attributed
 
             S = 25.4_rp * ( 1000._rp / abs(infil%SCS( infil%land( i ) )%CN) - 10._rp ) / 1000._rp
-! write(*,*) proc, k, i, infil%land( i ),infil%SCS( infil%land( i ) )%lambdacn, bc%rain(k)%qin, bc%rain( k )%cumul
+
             if ( bc%rain(k)%cumul > abs(infil%SCS( infil%land(i) )%lambdacn) * S ) then
                Fn1 = S * abs( infil%SCS( infil%land( i ) )%lambdacn ) + &
                      S * ( bc%rain( k )%cumul -      abs(infil%SCS( infil%land( i ) )%lambdacn)   * S ) / &

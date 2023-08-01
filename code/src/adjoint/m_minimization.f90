@@ -278,12 +278,11 @@ CONTAINS
             if ( ite_min == 0 .and. indic == 4 ) then
 
                cost_ini  =  cost
-write(*,*) "cost_ini = ", cost_ini
-! write(*,*) "control_back = ", control_back
+
                i = 1
 
                do k = 1,nb_vars_in_control
-! write(*,*) k, i, i - 1 + dim_vars_in_control(k)
+
                   norm_grad_cost_ini(k) = sqrt( sum( control_back( i : i - 1 + dim_vars_in_control(k) ) * &
                                                      control_back( i : i - 1 + dim_vars_in_control(k) ) ) )
                   i = i + dim_vars_in_control(k)
@@ -299,10 +298,10 @@ write(*,*) "cost_ini = ", cost_ini
             i = 1
 
             do k = 1,nb_vars_in_control
-! write(*,*) "control( i : i - 1 + dim_vars_in_control(k) )", control( i : i - 1 + dim_vars_in_control(k) )
+
                control( i : i - 1 + dim_vars_in_control(k) ) = &
                control( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
-! write(*,*) "control( i : i - 1 + dim_vars_in_control(k) )", control( i : i - 1 + dim_vars_in_control(k) )
+
                i = i + dim_vars_in_control(k)
 
             end do
@@ -324,8 +323,7 @@ write(*,*) "cost_ini = ", cost_ini
 
                   norm_grad_cost(k) = sqrt( sum( control_back( i : i - 1 + dim_vars_in_control(k) ) * &
                                                  control_back( i : i - 1 + dim_vars_in_control(k) ) ) )
-! write(*,*) "norm_grad_cost(k)", norm_grad_cost(k)
-! write(*,*) "control_back( i : i - 1 + dim_vars_in_control(k) )", control_back( i : i - 1 + dim_vars_in_control(k) )
+
                   i = i + dim_vars_in_control(k)
 
                end do
@@ -655,7 +653,6 @@ write(*,*) "cost_ini = ", cost_ini
                 control_ubound( i : i - 1 + dim_vars_in_control(k) ) = &
                 control_ubound( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
                 i = i + dim_vars_in_control(k)
-!write(*,*) 'lbfgsb3 - normalized control and bounds', control, control_lbound, control_ubound
             end do
          end if
 

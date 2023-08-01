@@ -167,17 +167,17 @@ SUBROUTINE Mesh_Input(mesh)
 
    end select
 
-! write(*,*)  " call Read_Dass_Mesh( mesh ) done "
+write(*,*)  " call Read_Dass_Mesh( mesh ) done "
    !===================================================================================================================!
    !  Mesh Partition
    !===================================================================================================================!
-! write(*,*)  " call Mesh_Partition_Scotch( mesh ) "
+write(*,*)  " call Mesh_Partition_Scotch( mesh ) "
    call Mesh_Partition_Scotch( mesh )
 
    !===================================================================================================================!
    !  Compute geometrical mesh properties Schemes needed
    !===================================================================================================================!
-! write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
+write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
    call Mesh_Geometric_Properties( mesh )
 
 
@@ -627,7 +627,7 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    read(10,*)
 
    do i = 1,mesh%nc
-!write(*,*) i
+
       read(10,*)   k , &
                    mesh%cell(k)%node(1) , &
                    mesh%cell(k)%node(2) , &
@@ -805,7 +805,7 @@ write(*,*)  bc_type , nc_bc , nb_grp_in
 !~          ghost_cell_bathy = 0.
 
          ie = mesh%cell(k)%edge(j)
-! write(*,*) ie, k, j, mesh%edge(:)%lim, bc%typ( 1 , 1 )
+         
          mesh%edgeb( mesh%edge(ie)%lim )%typlim  =  bc%typ( 1 , 1 )
 
          mesh%edgeb( mesh%edge(ie)%lim )%group  =  1

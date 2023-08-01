@@ -731,7 +731,7 @@ CONTAINS
          i = i + 2 ! jump to the next edge
 
       end do
-! write(*,*)"OUT calc_cells_connectivity"
+write(*,*)"OUT calc_cells_connectivity"
 
    END SUBROUTINE calc_cells_connectivity
 

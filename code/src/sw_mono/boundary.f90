@@ -260,7 +260,6 @@ SUBROUTINE calc_boundary_state( mesh , hL , zL , uL , vL , hR , zR , uR , vR )
          uR  =  uL  +  two * sqrt(g) * ( sqrt( hL ) - sqrt( hR ) )
 
          vR  =  vL
-		!write(*,*) "hr = ", hR
 
    !===================================================================================================================!
    !  Wall Instead

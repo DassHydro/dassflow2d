@@ -196,10 +196,9 @@ SUBROUTINE calc_innovQ_gr4( dof,mesh )
         !!!!!!!!!!!!!!!!!!!
         !Classical RMSE
         !!!!!!!!!!!!!!!!!!!        
-! write(*,*) iobs, (bc%gr4( iobs )%Q( searched_time ) / bc%gr4(iobs)%surf * 3.6_rp) , stationQ( iobs )%Q( searched_time )
+
          innovQ ( iobs )%diff( searched_time )    = (bc%gr4( iobs )%Q( searched_time ) / bc%gr4(iobs)%surf * 3.6_rp) &
          - stationQ( iobs )%Q( searched_time ) !! mm/h, not m3/s !
-
 
         !!!!!!!!!!!!!!!!!!!
         !NSE
@@ -529,9 +528,6 @@ SUBROUTINE write_stations( dof ,mesh )
             searched_time  =  station( iobs )%ind_t
 
             if ( searched_time > station( iobs )%nb_dt ) cycle
-!write(*,*) "end_time_loop 3.3.2 -- into write_stations",end_time_loop
-
-
 
             if ( tc >= station( iobs )%dt_obs( searched_time ) ) then
 
@@ -563,14 +559,11 @@ SUBROUTINE write_stations( dof ,mesh )
 
                if ( station( iobs )%pt(1)%cell > 0 .and. all( is_file_open(:) /= file_name ) ) then
                   inquire( file = file_name , exist = file_exist(1) )
-!write(*,*) "end_time_loop 3.3.3.2 ",end_time_loop
 
                   if ( .not. file_exist(1) ) then
                      if ( file_type /= 'bin' ) then
-!write(*,*) "end_time_loop 3.3.3.4 ",end_time_loop
 
                         open(10,file=file_name,status='replace',form='formatted')
-!write(*,*) "end_time_loop 3.3.3.5 ",end_time_loop
 
                         select case( file_type )
 
@@ -583,34 +576,22 @@ SUBROUTINE write_stations( dof ,mesh )
                               write(10,'(A)') 'time h_mean u_mean v_mean w_mean'
 
                         end select
-!write(*,*) "end_time_loop 3.3.3.6",end_time_loop
 
                      else
-!write(*,*) "end_time_loop 3.3.3.7",end_time_loop
 
                         open(10,file=file_name,status='replace',form='unformatted')
 
                      end if
-!write(*,*) "end_time_loop 3.3.3.8",end_time_loop
 
                   end if
-!write(*,*) "end_time_loop 3.3.3.9",end_time_loop
 
                   close(10)
 
-!write(*,*) "close file"
                   file_open_counter = file_open_counter + 1
-!write(*,*) "end_time_loop 3.3.3.10",end_time_loop
 
                   is_file_open( file_open_counter ) = file_name
-                  
-!write(*,*) "file_open_counter", file_open_counter
-!write(*,*) "file_name=", file_name
-!write(*,*) "is_file_open(:)=", is_file_open(:)
-!write(*,*) "end_time_loop 3.3.3.11",end_time_loop
 
                end if
-!write(*,*) "end_time_loop 3.3.4 ",end_time_loop
                !==========================================================================================================!
                !
                !==========================================================================================================!
@@ -660,7 +641,7 @@ SUBROUTINE write_stations( dof ,mesh )
                   end if
 
                end do
-!write(*,*) "done loop on station( iobs )%pt( pt )"
+
                call mpi_sum_r( h_mean )
                call mpi_sum_r( u_mean )
                call mpi_sum_r( v_mean )
@@ -764,7 +745,7 @@ SUBROUTINE read_stations
    !===================================================================================================================!
    !  Reading Stations Records in File
    !===================================================================================================================!
-! write(*,*) "in read_stations"
+
    if ( w_tecplot == 1 ) then
 
       call sub_read( 'tecplot' ) ; return
@@ -1042,7 +1023,6 @@ SUBROUTINE write_sections( dof,mesh )
          !=============================================================================================================!
          !  Begin Subroutine
          !=============================================================================================================!
-		!write(*,*) "in sub_write_file"
 
             do iobs = 1,size( section )
             if ( .not. test_dt_just_after( section( iobs )%dt ) ) cycle
@@ -1314,9 +1294,9 @@ SUBROUTINE write_sections( dof,mesh )
          end do
 
          q = q * section( iobs )%dx
-! write(*,*) "call mpi_max_r( h )", proc
+
          call mpi_max_r( h )
-!          write(*,*) "call mpi_sum_r( q )", proc
+
          call mpi_sum_r( q )
 
       END SUBROUTINE

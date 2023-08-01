@@ -119,7 +119,6 @@ SUBROUTINE write_results( dof , mesh )
 
    #endif
 
-!write(*,*) "out write_results routine"
 END SUBROUTINE write_results
 
 
@@ -159,7 +158,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
    !===================================================================================================================!
    !  Creating result file name
    !===================================================================================================================!
-!write(*,*) "whithin write result file"
+
    if      ( tc < zerom ) then
 
       write(filename,'(A,"_initial")') namefile
@@ -192,7 +191,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
       call v_vtk_bin( dof , mesh , trim(filename)//'.vtk' )
 
    end if
-! write(*,*) "--> vtk done"
+
    !===================================================================================================================!
    !  Tecplot result file output
    !===================================================================================================================!
@@ -202,7 +201,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
       call v_tecplot( dof , mesh , trim(filename)//'.plt' )
 
    end if
-! write(*,*) "--> Tecplot done"
+
    !===================================================================================================================!
    !  Gnuplot result file output
    !===================================================================================================================!
@@ -214,7 +213,6 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
     !  call v_gnuplot_with_ghostcells( dof , mesh , trim(filename)//'_with_ghostcells.dat' )
    end if
 
-! write(*,*) "--> Gnuplot done"
 
    !===================================================================================================================!
    !  Infiltration write , TODO make its own routine
@@ -230,9 +228,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
 
         close(10)
    endif
-! write(*,*) "--> infil done"
-
-
+   
    !===================================================================================================================!
    !  Infiltration write , TODO make its own routine
    !===================================================================================================================!

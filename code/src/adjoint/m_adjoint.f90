@@ -797,7 +797,6 @@ CONTAINS
          dof0_copy  =  dof0
 
       #endif
-! write(*,*) "control", control
 
    CONTAINS
 
@@ -1421,10 +1420,6 @@ x4_ubound = 1_rp
       #ifdef USE_SW_MONO
 
          bathy_cell(:) = bathy_cell_copy(:)
-
-!          dof0 = dof0_copy
-! write(*,*) "dof0=dof0_copy line commented out in read_control. Causes issues in MPI. Serves inknown function. (tested with NP = 3, using ic.bin, values of both structures seem identical, have no reasonnot to be ?)"
-
 
         if ( c_shape_s == 1 ) then
             call control_2_var( XSshape(:)%s    , size(XSshape)   , 0 )
@@ -2255,8 +2250,7 @@ x4_ubound = 1_rp
                open(10,file=file_name,status='replace',form='formatted')
 
                do i = 1,size( bc%hyd( k )%t(:) )
-                  write(10,*) bc%hyd( k )%t(i) , bc_back%hyd( k )%q(i) !,bc_diff%hyd( k )%q(i)
-                  !write(*,*) bc%hyd( k )%t(i) , bc_back%hyd( k )%q(i)
+                  write(10,*) bc%hyd( k )%t(i) , bc_back%hyd( k )%q(i) 
                end do
 
                close(10)

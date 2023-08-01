@@ -350,7 +350,6 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
         read(10,*)
 
         read(10,*) j
-       ! write(*,*)"j = ", j
 
          allocate( bc%hyd( i )%t( j ) )
          allocate( bc%hyd( i )%q( j ) )
