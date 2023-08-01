@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -88,8 +88,8 @@ SUBROUTINE advance_time( dof , mesh )
 !  Interface Variables
 !======================================================================================================================!
 
-   TYPE( unk ), intent(in)  ::  dof    
-   TYPE( msh ), intent(in)  ::  mesh    
+   TYPE( unk ), intent(in)  ::  dof
+   TYPE( msh ), intent(in)  ::  mesh
 
 !======================================================================================================================!
 !  Local Variables
@@ -105,7 +105,7 @@ SUBROUTINE advance_time( dof , mesh )
    integer(ip)  ::  iL , iR
 
    real(rp)  ::  hL , hR , hM , uM , dL , dR
-   
+
    integer(ip) :: imin
 
 !======================================================================================================================!
@@ -146,7 +146,6 @@ SUBROUTINE advance_time( dof , mesh )
             vel = sqrt( dof%u(i)**2 + dof%v(i)**2 )
 
             dt_min = min( dt , dist / ( vel + c ) )
-  
             if (dt_min <= dt) then
 				dt = dt_min
 				imin = i
@@ -154,7 +153,7 @@ SUBROUTINE advance_time( dof , mesh )
             end if
 
          end if
-	
+
       end do
 
 
@@ -164,7 +163,7 @@ SUBROUTINE advance_time( dof , mesh )
       dt = cfl * dt
 
 
-	if(dt >100000) dt = 0.1
+	if(dt >10) dt = 10
 
       if ( tc + dt < ts ) then
 
@@ -177,7 +176,7 @@ SUBROUTINE advance_time( dof , mesh )
          end_time_loop = .true.
 
       end if
-      
+
       call write_scalar_in_time( dt , 'time_step' )
       if ( fix_time_step_serie == 1 .and. proc == 0 ) write(80) tc , dt , end_time_loop
 

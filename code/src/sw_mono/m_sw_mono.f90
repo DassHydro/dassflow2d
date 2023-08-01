@@ -114,6 +114,7 @@ MODULE m_model
    real(rp), dimension(:), allocatable  ::  bathy_cell         !> Bathymetry at mesh cells gravity center
    real(rp), dimension(:), allocatable  ::  manning            !> Manning coefficient for mesh cells
    real(rp), dimension(:), allocatable  ::  manning_beta           !> Manning's beta (for power of h) coefficient for mesh cells
+
    integer(ip)  ::  nland                                      !> Total number of land associated to Manning
 
    integer(ip), dimension(:), allocatable  ::  land            !> Cells land number associated to Manning
@@ -124,6 +125,31 @@ MODULE m_model
 
    real(rp)  ::  mass_cut                                    !> ??????? mystery
    integer(ip)  ::  manning_data_glob                        !> ??????? mystery
+
+
+   real(rp), dimension(:), allocatable :: slope_y !Added for Andromede, to expand
+   real(rp), dimension(:), allocatable :: slope_x !Added for Andromede, to expand
+
+!    TYPE bathy_params
+!
+!     type(XSshape), dimension(:), allocatable :: XSshape !Added for Andromede, to expand
+!
+!    END TYPE bathy_params
+
+   TYPE xsshp
+
+    real(rp) :: xleft
+    real(rp) :: xcenter
+    real(rp) :: xright
+    real(rp) :: s
+    real(rp) :: hmax
+    real(rp) :: topz
+
+   END TYPE xsshp
+
+   type(xsshp), dimension(:), allocatable :: XSshape
+
+!    type(bathy_params) :: bathy_params
 
    !===================================================================================================================!
    !  Infiltration parameters Structure
@@ -139,7 +165,7 @@ MODULE m_model
 
    TYPE scs_cn
 
-    real(rp) :: lambda             ! initial abstraction ratio
+    real(rp) :: lambdacn             ! initial abstraction ratio
     real(rp) :: CN                 ! Curve Number
 
    END TYPE
@@ -149,19 +175,16 @@ MODULE m_model
     integer(ip) :: nland
 
     integer(ip), dimension(:), allocatable  ::  land      ! Cells land number associated to infilration
-    real(rp)   , dimension(:), allocatable  ::  infil_qty     ! Infiltrated quantity at each cell
+    !real(rp)   , dimension(:), allocatable  ::  infil_qty     ! Infiltrated quantity at each cell NOW IN DOF%INFIL
 
     type(greenampt), dimension(:), allocatable :: GA
     type(scs_cn)   , dimension(:), allocatable :: SCS
 
-    real(rp), dimension(:), allocatable :: x_min
-    real(rp), dimension(:), allocatable :: x_max
-    real(rp), dimension(:), allocatable :: y_min
-    real(rp), dimension(:), allocatable :: y_max
+    real(rp), dimension(:,:), allocatable :: coord
 
    END TYPE
 
-   type( infiltration_data ) :: infil
+   type( infiltration_data ), target :: infil
 
 
 
@@ -255,7 +278,7 @@ MODULE m_model
    !> Boundaries conditions structure
    TYPE bcs
 
-      integer(ip)  ::  nb , nb_in , nb_out , nb_rn, nb_gr4in
+      integer(ip)  ::  nb , nb_in , nb_out , nb_rn, nb_rn_t, nb_gr4in
 
       character(len=lchar), dimension(:,:), allocatable  ::  typ
 
@@ -271,6 +294,7 @@ MODULE m_model
       type(zspresc), dimension(:), allocatable::  zspresc
 
       type(rain), dimension(:), allocatable :: rain
+      integer(ip), dimension(:), allocatable  ::  rain_land
 
       real(rp), dimension(:), allocatable  ::  sum_mass_flux
 
@@ -317,13 +341,38 @@ MODULE m_model
 
    END TYPE section_obs
 
+   TYPE station_obsQ
+
+      type( point_in_mesh ), dimension(:), allocatable  ::  pt
+
+      real(rp)  :: weight    ! weight of observations
+
+      real(rp)  :: length    ! Length of river
+
+      real(rp)  :: dt_offset ! Time of first observation
+
+      real(rp)  :: dt        ! Frequency of observation ( satellite time repetitiveness)
+
+      real(rp),dimension(:), allocatable :: dt_obs   ! Array with observation time
+
+      integer(ip) :: ind_t   ! Index observation time
+
+      integer(ip) :: ind_bc   ! related BC index, as defined in bc.txt
+
+      integer(ip) :: nb_dt   ! Number of observation time
+
+      real(rp), dimension(:), allocatable  ::  t , h , u , v , Q, w
+
+   END TYPE station_obsQ
+
+
    !===================================================================================================================!
    !  Recording Variables
    !===================================================================================================================!
 
    type(station_obs), dimension(:), allocatable  ::  station    !> definition stations obs
    type(section_obs), dimension(:), allocatable  ::  section    !> definition section (obs?)
-
+   type(station_obsQ), dimension(:), allocatable ::  stationQ
 
    !===================================================================================================================!
    !  Input data and physical descriptors type
@@ -335,7 +384,7 @@ MODULE m_model
     real(rp)  ::  silt !>  Soil percentage of silt at each cell
     real(rp)  ::  sand !>  Soil percentage of sand at each cell
 
-    integer(ip) :: soil_group !>  Group of clay/silt/sand repartition derived from topographic maps pre-processed in Python
+!     integer(ip) :: soil_group !>  Group of clay/silt/sand repartition derived from topographic maps pre-processed in Python
 
    END TYPE soil_data
 
@@ -343,19 +392,19 @@ MODULE m_model
    TYPE surface_data
 
     real(rp)  ::  imperm  !>  Surface impermeabilisation percentage at each cell
-    integer(ip) :: imperm_group !>  Group of impermeabilization percentage derived from topographic maps pre-processed in Python
+!     integer(ip) :: imperm_group !>  Group of impermeabilization percentage derived from topographic maps pre-processed in Python
 
     real(rp)  ::  Dmax !>  Support rugosity at each cell
-    integer(ip) :: Dmax_group !>  Group of support rugosity
+!     integer(ip) :: Dmax_group !>  Group of support rugosity
 
-    integer(ip)  ::  soil_occ_type  !>  Index of the occupation type
+!     integer(ip)  ::  soil_occ_type  !>  Index of the occupation type
 
    END TYPE surface_data
 
 
    TYPE structure_data
 
-    integer(ip) ::  s_type !>  Index of the structure type
+!     integer(ip) ::  s_type !>  Index of the structure type
 
     character(len=lchar), dimension(:,:), allocatable :: name  !>  Name of the structure
 
@@ -369,16 +418,24 @@ MODULE m_model
    END TYPE structure_data
 
 
-
    TYPE input_data !> This structure should contain model parameters that are not meant to be inferred by VDA (physical descriptors)
 
     type(soil_data), dimension(:), allocatable  ::  soil      !>  Subsurface soil data
+    integer(ip)  ::  soil_nland            !> Number of distinct lands associated to soil
+    integer(ip), dimension(:), allocatable  ::  soil_land            !> Cells land number associated to soil
+
     type(surface_data), dimension(:), allocatable  ::  surf   !>  Surface data
+    integer(ip)  ::  surf_nland            !> Number of distinct lands associated to surfaces
+    integer(ip), dimension(:), allocatable  ::  surf_land            !> Cells land number associated to soil
+
     type(structure_data), dimension(:), allocatable  ::  structures !>  Hydraulic structures data
+    integer(ip)  ::  struct_nland            !> Number of distinct lands associated to structures
+    integer(ip), dimension(:), allocatable  ::  struct_land            !> Cells land number associated to soil
 
    END TYPE input_data
 
-   type(input_data)  ::  phys_desc
+   type(input_data), target ::  phys_desc
+
 
    !===================================================================================================================!
    !  Input variables specific to model (in addition to m_common)
@@ -390,9 +447,14 @@ MODULE m_model
 
    ! Variables in control vector ( X )
    ! derivated by adjoint model ( grad(X) )
+   integer(ip)  ::  c_shape_s
+   integer(ip)  ::  c_xcenter
+   integer(ip)  ::  c_hmax
    integer(ip)  ::  c_manning                         !> activate inference of manning alpha parameter
    integer(ip)  ::  c_manning_beta                    !> activate inference of manning_beta parameter
    integer(ip)  ::  c_bathy                           !> activate inference of bathymetry
+   integer(ip)  ::  c_slope_y
+   integer(ip)  ::  c_slope_x
    integer(ip)  ::  c_ic                              !> activate inference of ????
    integer(ip)  ::  c_hydrograph                      !> activate inference of hydrograph
    integer(ip)  ::  c_ratcurve                        !> activate inference of rating curve
@@ -422,6 +484,8 @@ MODULE m_model
    real(rp)     ::  regul_manning                     !
 !   real(rp)     ::  regul_manning_beta                     ! TO ADD
    real(rp)     ::  regul_bathy                       !
+   integer(ip)     ::  regul_bathy_grad                       !
+   integer(ip)     ::  regul_bathy_shape                       !
    real(rp)     ::  regul_ic                          !
    real(rp)     ::  regul_hydrograph                  !
    real(rp)     ::  regul_ratcurve                    !
@@ -467,8 +531,16 @@ MODULE m_model
       w_obs, &
 
       use_obs,&
+      use_Zobs,&
+      use_UVobs,&
+      use_HUVobs,&
       use_Qobs,&
       use_Qobs_gr4,&
+      use_NSE,&
+
+      use_xsshp,&
+      xsshp_along_x,&
+      xsshp_along_y,&
 
       spatial_scheme, &
       temp_scheme, &
@@ -484,9 +556,14 @@ MODULE m_model
       friction, &
       feedback_inflow, &
       coef_feedback, &
+      c_shape_s, &
+      c_xcenter, &
+      c_hmax, &
       c_manning, &
       c_manning_beta, &
       c_bathy, &
+      c_slope_y,&
+      c_slope_x,&
       c_ic, &
       c_hydrograph, &
       c_ratcurve, &
@@ -514,6 +591,8 @@ MODULE m_model
 
       regul_manning, &
       regul_bathy, &
+      regul_bathy_grad, &
+      regul_bathy_shape, &
       regul_ic, &
       regul_hydrograph, &
       regul_ratcurve, &
@@ -559,10 +638,18 @@ MODULE m_model
  		integer(ip)  ::  w_exact                                    !> Exact Solution Output File
  		integer(ip)  ::  w_norm                                     !> Error Norms Calculation
 
- 		integer(ip)  ::  w_obs                                      !> Gen Observation Output File
- 		integer(ip)  ::  use_obs                                    !> Use Observations in cost function definition
- 		integer(ip)  ::  use_Qobs
- 		integer(ip)  ::  use_Qobs_gr4
+ 		integer(ip)  ::  w_obs                                     !< Gen Observation Output File
+        integer(ip)  ::  use_obs                                   !< Use Observations in cost function definition
+        integer(ip)  ::  use_Zobs                                  !< Write Water Surface elevation observations  and use them in cost function definition
+        integer(ip)  ::  use_UVobs                                 !< Write Flow velocity observations  and use them in cost function definition
+        integer(ip)  ::  use_HUVobs                                !< UNUSED Write At-a-cell-flow observations  and use them in cost function definition
+        integer(ip)  ::  use_Qobs                                  !< Use Boundary flow observations in cost function definition
+        integer(ip)  ::  use_Qobs_gr4                              !< Use Hydrological flow in cost function definition
+        integer(ip)  ::  use_NSE                                   !< Use Nash-Sutcliffe Efficiency instead of RMSE for cost function definition using Flow observations
+
+        integer(ip)  ::  use_xsshp                                  !< Use channel shape parameter "geometry_params.txt" file to parameterize cross-section and slope
+        integer(ip)  ::  xsshp_along_x                              !< Toogle whether channel is defined along x-axis
+        integer(ip)  ::  xsshp_along_y                              !< Toogle whether channel is defined along y-axis
 
 		character(len=lchar)  ::  spatial_scheme                    !> Name of Spatial  Discretization Scheme ('first_b1' only at the moment)
  		character(len=lchar)  ::  temp_scheme                       !> Name of Temporal Discretization Scheme ('euler' or 'imex' at the moment )
@@ -586,6 +673,12 @@ MODULE m_model
  		integer(ip)  ::  c_hydrograph                      !> activate inference of hydrograph r (if c_xxx = 1)
  		integer(ip)  ::  c_ratcurve                        !> activate inference of rating curve (if c_xxx = 1)
  		integer(ip)  ::  c_rain                            !> activate inference of rain r (if c_xxx = 1)
+ 		integer(ip)  ::  c_gr4params                       !> activate inference of all 4 gr4 parameters
+ 		integer(ip)  ::  c_Ks                             ! GA Infiltration parameter
+ 		integer(ip)  ::  c_PsiF                           ! GA Infiltration parameter
+ 		integer(ip)  ::  c_DeltaTheta                     ! GA Infiltration parameter
+ 		integer(ip)  ::  c_lambda                         ! SCS-CN Infiltration parameter
+ 		integer(ip)  ::  c_CN                             ! SCS-CN Infiltration parameter
 
      ! Each variable eps in perturbation control vector
      ! used to test validity of the adjoint model
@@ -604,6 +697,8 @@ MODULE m_model
      ! regularisation coeff ??? (weight given to each control variable?)
  		real(rp)     ::  regul_manning                     !
  		real(rp)     ::  regul_bathy                       !
+ 		integer(ip)     ::  regul_bathy_grad                       !
+ 		integer(ip)     ::  regul_bathy_shape                       !
 		real(rp)     ::  regul_ic                          !
  		real(rp)     ::  regul_hydrograph                  !
  		real(rp)     ::  regul_ratcurve                    !
@@ -637,8 +732,16 @@ CONTAINS
       w_obs     =  0_ip
 
       use_obs   =  0_ip
+      use_Zobs  =  0_ip
+      use_UVobs =  0_ip
+      use_HUVobs =  0_ip
       use_Qobs   =  0_ip
       use_Qobs_gr4   =  0_ip
+      use_NSE   =  0_ip
+
+      use_xsshp = 0_ip
+      xsshp_along_x = 1_ip
+      xsshp_along_y = 0_ip
 
       do_warmup = .True.
 
@@ -652,9 +755,14 @@ CONTAINS
       heps      =  0.001
       friction  =  1_ip
 
+      c_shape_s = 0_ip
+      c_xcenter = 0_ip
+      c_hmax = 0_ip
       c_manning     =  0_ip
       c_manning_beta   =  0_ip
       c_bathy       =  0_ip
+      c_slope_y     =  0_ip
+      c_slope_x     =  0_ip
       c_ic          =  0_ip
       c_hydrograph  =  0_ip
       c_ratcurve    =  0_ip
@@ -681,6 +789,8 @@ CONTAINS
 
       regul_manning     =  0._rp
       regul_bathy       =  0._rp
+      regul_bathy_grad       =  0_ip
+      regul_bathy_shape      =  0_ip
       regul_ic          =  0._rp
       regul_hydrograph  =  0._rp
       regul_ratcurve    =  0._rp
@@ -824,12 +934,22 @@ CONTAINS
 
       if ( allocated( bathy_node ) ) 		deallocate( bathy_node )
       if ( allocated( bathy_cell ) ) 		deallocate( bathy_cell )
+      if ( allocated( XSshape ) ) 		    deallocate( XSshape )
+      if ( allocated( slope_y ) ) 		    deallocate( slope_y )
+      if ( allocated( slope_x ) ) 		    deallocate( slope_x )
       if ( allocated( land       ) ) 		deallocate( land       )
       if ( allocated( manning    ) ) 		deallocate( manning    )
       if ( allocated( manning_beta ) ) 		deallocate( manning_beta )
       if ( allocated( infil%land ) ) 		deallocate( infil%land )
+      if ( allocated( infil%coord ) ) 		deallocate( infil%coord )
       if ( allocated( infil%GA   ) ) 		deallocate( infil%GA   )
       if ( allocated( infil%SCS  ) ) 		deallocate( infil%SCS  )
+      if ( allocated( phys_desc%soil_land ) ) 		deallocate( phys_desc%soil_land )
+      if ( allocated( phys_desc%soil ) ) 		deallocate( phys_desc%soil )
+      if ( allocated( phys_desc%surf_land ) ) 		deallocate( phys_desc%surf_land )
+      if ( allocated( phys_desc%surf ) ) 		deallocate( phys_desc%surf )
+      if ( allocated( phys_desc%struct_land ) ) 		deallocate( phys_desc%struct_land )
+      if ( allocated( phys_desc%structures ) ) 		deallocate( phys_desc%structures )
 
       !------------------------------------------------!
       ! millascenious forgoten variables to deallocate
@@ -846,6 +966,8 @@ CONTAINS
       if ( allocated( bc%rain ) ) 			deallocate(bc%rain)
       if ( allocated( bc%rat ) ) 			deallocate(bc%rat)
       if ( allocated( bc%sum_mass_flux ) ) 	deallocate(bc%sum_mass_flux)
+      if ( allocated( bc%rain_land ) ) 	deallocate(bc%rain_land)
+      if ( allocated( bc%rain ) ) 	deallocate(bc%rain)
 
 
       if ( allocated( swap_index ) ) deallocate(swap_index)
@@ -866,6 +988,7 @@ CONTAINS
 
 
 		if ( allocated( station ) ) deallocate(station)
+		if ( allocated( stationQ ) ) deallocate(stationQ)
 		if ( allocated( section ) ) deallocate(section)
 		! measure stations
 !~       if ( allocated( station%pt ) ) deallocate(station%pt)
@@ -997,6 +1120,64 @@ CONTAINS
 
    END SUBROUTINE alloc_or_realloc_station
 
+   SUBROUTINE alloc_or_realloc_stationQ( station_inout , new )
+
+      implicit none
+
+      type( station_obsQ ), dimension(:), allocatable, intent(inout)  ::  station_inout
+
+      integer(ip), intent(in)  ::  new
+
+      integer(ip)  ::  old , iobs , pt
+
+      type( station_obsQ ), dimension(:), allocatable  ::  station_tmp
+
+      intrinsic move_alloc
+
+      if ( .not. allocated( station_inout ) ) then
+
+         allocate( station_inout( new ) )
+
+         return
+
+      end if
+
+      old = size( station_inout )
+
+      if     ( new == old ) then
+
+         return
+
+      else if ( new > old ) then
+
+         allocate( station_tmp( new ) )
+
+         do iobs = 1,old
+
+            station_tmp( iobs )%dt      =  station_inout( iobs )%dt
+           station_tmp( iobs )%weight  =  station_inout( iobs )%weight
+
+            allocate( station_tmp( iobs )%pt( size(station_inout( iobs )%pt ) ) )
+
+            do pt = 1,size( station_inout( iobs )%pt )
+
+               station_tmp( iobs )%pt( pt )%cell   =  station_inout( iobs )%pt( pt )%cell
+               station_tmp( iobs )%pt( pt )%coord  =  station_inout( iobs )%pt( pt )%coord
+
+            end do
+
+         end do
+
+         call move_alloc( station_tmp , station_inout )
+
+      else
+
+         call Stopping_Program_Sub( 'Wrong Station Dimension for Allocation' )
+
+      end if
+
+   END SUBROUTINE alloc_or_realloc_stationQ
+
 !**********************************************************************************************************************!
 !**********************************************************************************************************************!
 !
@@ -1067,7 +1248,42 @@ CONTAINS
    END SUBROUTINE
 
 
+
+
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+!
+!  Get cell spatial index from tile coordinates, for land attribution
+!
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+
+   !>  Get cell spatial index from square tile coordinates
+   !!
+   !! \details From a file name and a extension ('tecplot', 'gnuplot', ...) complete file name.
+   !! \param[in]  mesh Mesh
+   !! \param[in]  xmin, xmax, ymin, ymax Coordinates of the tile
+   !! \param[in]  spatial_index Cell index
+   !! \return The spatial index of the cell.
+
+   SUBROUTINE spatial_index_fromxy(mesh, xmin, xmax, ymin, ymax, spatial_index)
+
+    type(msh), intent(  in) :: mesh
+    real(rp),  intent(  in) :: xmin, xmax, ymin, ymax
+    integer(ip), intent( out) :: spatial_index
+
+    spatial_index = 0_ip
+
+    if ((mesh%cell(i)%grav%x > xmin) .and. (mesh%cell(i)%grav%x < xmax) .and. &
+        (mesh%cell(i)%grav%y > ymin) .and. (mesh%cell(i)%grav%y < ymax)) then
+
+        spatial_index = k
+
+    endif
+
+   END SUBROUTINE spatial_index_fromxy
+
+
 																													!>NOADJ
-                                                                                                                    
 
 END MODULE m_model

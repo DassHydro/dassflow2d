@@ -417,6 +417,9 @@ CONTAINS
 
                   write(6,'(A80)') '================================================================================'
                   write(6,'(A80)') '*  Writing Result File                                                         *'
+write(6,'("nt = ",I8," t = ",ES12.5," / ",ES12.5," ( ",F5.1," % ) , dt = ",ES13.6)') &
+
+                  nt , tc , ts , 100._rp * tc / ts , dt
                   write(6,'(A80)') '================================================================================'
 
                end if
@@ -511,8 +514,7 @@ CONTAINS
 
       end if
 
-      call mpi_wait_all
-
+       call mpi_wait_all
    END SUBROUTINE Print_Screen
 
 

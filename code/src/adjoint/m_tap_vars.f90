@@ -69,15 +69,20 @@ MODULE m_tap_vars
    type(bcs), target  ::  bc_diff
    type(bcs), target  ::  bc_back
 
+   type(xsshp), dimension(:), allocatable, target  ::  XSshape_back
+   type(xsshp), dimension(:), allocatable, target  ::  XSshape_diff
+
    type(infiltration_data), target  ::  infil_diff
    type(infiltration_data), target  ::  infil_back
 
-   type( innovation_obs ), dimension(:), allocatable, target  ::  innovation_diff
-   type( innovation_obs ), dimension(:), allocatable, target  ::  innovation_back
-   type( innovation_obs ), dimension(:), allocatable, target  ::  innovW_diff
-   type( innovation_obs ), dimension(:), allocatable, target  ::  innovW_back
-   type( innovation_obs ), dimension(:), allocatable  ::  innovQ_diff
-   type( innovation_obs ), dimension(:), allocatable  ::  innovQ_back
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovation_diff
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovation_back
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovW_diff
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovW_back
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovUV_diff
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovUV_back
+   type(innovation_obs ), dimension(:), allocatable  ::  innovQ_diff
+   type(innovation_obs ), dimension(:), allocatable  ::  innovQ_back
 
 
 #ifdef USE_HYDRO
@@ -86,7 +91,9 @@ MODULE m_tap_vars
 
 #ifdef USE_SW_MONO
       real(rp), dimension(:), allocatable  ::  manning_diff , manning_beta_diff, bathy_cell_diff
-      real(rp), dimension(:), allocatable  ::  manning_back ,manning_beta_back, bathy_cell_back
+      real(rp), dimension(:), allocatable  ::  manning_back , manning_beta_back, bathy_cell_back
+      real(rp), dimension(:), allocatable  ::  slope_y_back, slope_y_diff
+      real(rp), dimension(:), allocatable  ::  slope_x_back, slope_x_diff
 #endif
 
 
@@ -181,6 +188,11 @@ CONTAINS
          innovW_diff( iobs )%diff(:)  =  0._rp
       end do
 
+      do iobs = 1,size( innovUV )
+         allocate( innovUV_diff( iobs )%diff( size( innovUV( iobs )%diff ) ) )
+         innovUV_diff( iobs )%diff(:)  =  0._rp
+      end do
+
       do iobs = 1,size( innovQ )
          allocate( innovQ_diff( iobs )%diff( size( innovQ( iobs )%diff ) ) )
          innovQ_diff( iobs )%diff(:)  =  0._rp
@@ -189,13 +201,26 @@ CONTAINS
       dt_diff = 0._rp
       #ifdef USE_SW_MONO
 
+         allocate( XSshape_diff        ( size( XSshape    ) ) )
+
          allocate( manning_diff        ( size( manning    ) ) )
          allocate( manning_beta_diff   ( size( manning_beta    ) ) )
          allocate( bathy_cell_diff     ( size( bathy_cell ) ) )
+         allocate( slope_y_diff (1_ip))
+         allocate( slope_x_diff (1_ip))
+
+         XSshape_diff(1)%xleft = 0._rp
+         XSshape_diff(1)%xcenter = 0._rp
+         XSshape_diff(1)%xright = 0._rp
+         XSshape_diff(1)%s = 0._rp
+         XSshape_diff(1)%hmax = 0._rp
+         XSshape_diff(1)%topz = 0._rp
 
          manning_diff(:)     =  0._rp
          manning_beta_diff(:)=  0._rp
          bathy_cell_diff(:)  =  0._rp
+         slope_y_diff(:) = 0._rp
+         slope_x_diff(:) = 0._rp
 
          allocate( bc_diff%sum_mass_flux( bc%nb ) )
 
@@ -313,12 +338,13 @@ CONTAINS
       infil_back%GA(:)%Ks           =  0._rp
       infil_back%GA(:)%PsiF         =  0._rp
       infil_back%GA(:)%DeltaTheta   =  0._rp
-      infil_back%SCS(:)%lambda      =  0._rp
+      infil_back%SCS(:)%lambdacn      =  0._rp
       infil_back%SCS(:)%CN          =  0._rp
 
 
       allocate( innovation_back ( size( innovation ) ) )
       allocate( innovW_back     ( size( innovW ) ) )
+      allocate( innovUV_back     ( size( innovUV ) ) )
       allocate( innovQ_back( size( innovQ ) ) )
 
       do iobs = 1,size( innovation )
@@ -331,6 +357,11 @@ CONTAINS
          innovW_back( iobs )%diff(:)  =  0._rp
       end do
 
+      do iobs = 1,size( innovUV )
+         allocate( innovUV_back( iobs )%diff( size( innovUV( iobs )%diff ) ) )
+         innovUV_back( iobs )%diff(:)  =  0._rp
+      end do
+
       do iobs = 1,size( innovQ )
          allocate( innovQ_back( iobs )%diff( size( innovQ( iobs )%diff ) ) )
          innovQ_back( iobs )%diff(:)  =  0._rp
@@ -341,13 +372,25 @@ CONTAINS
 
       #ifdef USE_SW_MONO
 
+         allocate( XSshape_back   ( size( XSshape    ) ) )
          allocate( manning_back   ( size( manning    ) ) )
          allocate( manning_beta_back   ( size( manning_beta    ) ) )
          allocate( bathy_cell_back( size( bathy_cell ) ) )
+         allocate( slope_y_back (1_ip))
+         allocate( slope_x_back (1_ip))
+
+         XSshape_back(1)%xleft = 0._rp
+         XSshape_back(1)%xcenter = 0._rp
+         XSshape_back(1)%xright = 0._rp
+         XSshape_back(1)%s = 0._rp
+         XSshape_back(1)%hmax = 0._rp
+         XSshape_back(1)%topz = 0._rp
 
          manning_back(:)      =  0._rp
          manning_beta_back(:) =  0._rp
          bathy_cell_back(:)   =  0._rp
+         slope_y_back(:)   =  0._rp
+         slope_x_back(:)   =  0._rp
 
          allocate( bc_back%sum_mass_flux( bc%nb ) )
 
@@ -365,6 +408,9 @@ SUBROUTINE dealloc_back_vars()
       if(allocated(bc_back%outflow )) deallocate(bc_back%outflow )
       if(allocated(bc_back%rat )) deallocate(bc_back%rat )
       if(allocated(bc_back%hyd )) deallocate(bc_back%hyd )
+      if(allocated(XSshape_back )) deallocate(XSshape_back )
+      if(allocated(slope_x_back )) deallocate(slope_x_back )
+      if(allocated(slope_y_back )) deallocate(slope_y_back )
       #ifdef USE_HYDRO
       if(allocated(bc_back%gr4 )) deallocate(bc_back%gr4 )
       #endif USE_HYDRO
@@ -373,6 +419,7 @@ SUBROUTINE dealloc_back_vars()
       if(allocated(infil_back%SCS  )) deallocate(infil_back%SCS)
 
       if(allocated(innovation_back)) deallocate(innovation_back)
+      if(allocated(innovUV_back)) deallocate(innovUV_back)
       if(allocated(innovW_back)) deallocate(innovW_back)
       if(allocated(innovQ_back)) deallocate(innovQ_back)
 

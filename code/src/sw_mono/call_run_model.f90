@@ -101,9 +101,14 @@ MODULE call_model
  	type(Input_Param) :: param     !> not used yet
 	type(friction_data) :: my_friction !> friction parameterisation
 	type(infiltration_data) :: my_infiltration !> infiltration parameterisation
+!     type(greenampt)  :: my_greenampt
+
 	type(input_data)  :: my_phys_desc !> Physical descriptors
+
+
 	type(param_model) ::  my_param_model         !> Bathymetry at mesh cells gravity center
-    !type(bcs) :: my_bc
+
+    type(bcs) :: my_bc
 
    END TYPE
 
@@ -136,12 +141,19 @@ CONTAINS
 	call unk_finalise(mdl%dof)
 	call msh_finalise(mdl%mesh)
 
+    call infiltration_finalise(mdl%my_infiltration)
+    call phys_desc_finalise(mdl%my_phys_desc)
+    call bc_finalise(mdl%my_bc)
 	! deallocate fortran
+
    call dealloc_model()
+
    call dealloc_m_numeric()
 
    if(allocated(innovation)) deallocate(innovation)
+   if(allocated(innovUV)) deallocate(innovUV)
    if(allocated(innovW))	deallocate(innovW)
+   if(allocated(innovQ))	deallocate(innovQ)
 
    end subroutine Model_finalise
 
@@ -169,25 +181,21 @@ CONTAINS
 	!<   Machine precision limits numbers
 	!< ======================================================================================================================!
 
-write(*,*)  "call Machine_Number_Limits"
     call Machine_Number_Limits
-write(*,*)  "DONE Machine_Number_Limits"
+
 	call Print_Screen( 'number_limits' )
 
 	!<======================================================================================================================!
 	!<  Initialization of the linear solver (MUMPS, AGMG for the moment)
 	!<======================================================================================================================!
 
-
-write(*,*)  "call Init_Linear_Solver(mdl%mesh)"
 	call Init_Linear_Solver(mdl%mesh)
-write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
 
    end subroutine init_solver
 
    subroutine init_friction(mdl)
 	   !>> init_friction solver
-	   !>call f90 routine friction_initialise, infiltration_initialise,
+	   !>call f90 routine friction_initialise
 	   !>blablas
 	   !>blablasS
 	   !>blablassss
@@ -200,13 +208,66 @@ write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
 		!<  Model Variables Initialization (Using m_user_data.f90 file provided in the /bin directory)
 		!<======================================================================================================================!
 
-! 		call friction_initialise(mdl%my_friction, mdl%mesh) ! can be called in the python
-! 		call infiltration_initialise(mdl%my_infiltration, mdl%mesh) ! can be called in the python
-! 		call my_param_model_initialise(mdl%my_param_model, mdl%mesh) ! can be called in the python
-		!call my_bc_initialise(mdl%my_bc, bc, mdl%mesh,mdl%dof0)
+ 		call friction_initialise(mdl%my_friction, mdl%mesh) ! can be called in the python
 
+! 		call my_param_model_initialise(mdl%my_param_model, mdl%mesh) ! can be called in the python
+! 		call my_bc_initialise(mdl%my_bc, bc, mdl%mesh,mdl%dof0)
 
    end subroutine init_friction
+
+
+   subroutine init_infiltration(mdl)
+	   !>> init_infiltration solver
+	   !>call f90 routine infiltration_initialise,
+
+		implicit none
+
+		! input/ output variables
+		type(Model), intent(inout) :: mdl
+
+		!<======================================================================================================================!
+		!<  Model Variables Initialization (Using m_user_data.f90 file provided in the /bin directory)
+		!<======================================================================================================================!
+
+ 		call infiltration_initialise(mdl%my_infiltration, mdl%mesh) ! can be called in the python
+
+   end subroutine init_infiltration
+
+
+   subroutine init_phys_desc(mdl)
+	   !>> init_phys_desc solver
+	   !>call f90 routine phys_desc_initialise
+
+		implicit none
+
+		! input/ output variables
+		type(Model), intent(inout) :: mdl
+
+		!<======================================================================================================================!
+		!<  Model Variables Initialization (Using m_user_data.f90 file provided in the /bin directory)
+		!<======================================================================================================================!
+
+        call phys_desc_initialise(mdl%my_phys_desc, mdl%mesh)
+
+   end subroutine init_phys_desc
+
+
+   subroutine init_bc(mdl)
+	   !>> init_bc solver
+	   !>call f90 routine bc_initialise
+
+		implicit none
+
+		! input/ output variables
+		type(Model), intent(inout) :: mdl
+
+		!<======================================================================================================================!
+		!<  Model Variables Initialization (Using m_user_data.f90 file provided in the /bin directory)
+		!<======================================================================================================================!
+
+        call bc_initialise(mdl%my_bc, mdl%mesh)
+
+   end subroutine init_bc
 
 
    subroutine init_fortran(mdl)
@@ -233,7 +294,7 @@ write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
 		type(Model), intent(inout) :: mdl
 
 		call Initial(mdl%dof0, mdl%mesh, mdl%my_friction, mdl%my_infiltration, &
-		mdl%my_param_model, mdl%my_phys_desc)
+		mdl%my_param_model, mdl%my_phys_desc, mdl%my_bc)
 
 		!>======================================================================================================================!
 		!>  Fill arrays usefull to save time computation for some schemes (MUSCL, Diamond Scheme, etc ... )
@@ -249,19 +310,18 @@ write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
    end subroutine init_fortran
 
 
-   subroutine Init_all(mdl)
-   !>> Init_all solver
-   !> call f90 routine friction_initialise, infiltration_initialise,
-
-	implicit none
-
-	type(Model), intent(inout) :: mdl
-
-	call init_solver(mdl)
-	call init_friction(mdl)
-	call init_fortran(mdl)
-
-	end subroutine  Init_all
+!    subroutine Init_all
+!    !>> Init_all solver
+!    !> call f90 routine friction_initialise, infiltration_initialise,
+!
+! 	implicit none
+!
+!
+! ! 	call init_solver(mdl)
+! ! 	call init_friction(mdl)
+! ! 	call init_fortran(mdl)
+!
+! 	end subroutine  Init_all
 
 
 #ifdef USE_ADJ
@@ -444,84 +504,64 @@ write(*,*)  "done Init_Linear_Solver(mdl%mesh)"
     !> define my_friction fortran type (linked to mdl%my_friction)
     !> allocate my_friction%xxx and set values from text file
 
-        implicit none
-        type(msh), intent(in)  ::  mesh
-        type(friction_data), intent(out) :: my_friction
-   !  Local Variables
-    real(rp)  ::  tmp                                     ! temporary variable to store useless data that we read
+    implicit none
+    !  Global Variables
+    type(msh), intent(in)  ::  mesh
+    type(friction_data), intent(inout) :: my_friction
+    !  Local Variables
+    real(rp)  ::  tmp                                     !
+    integer(ip) :: mesh_total_cells
+    
+   inquire( file = 'land_uses.txt' , exist = file_exist(1) )
+   if ( file_exist(1) ) write(*,*) "WARNING: you are trying to allocate manning from land_uses.txt and from init_friction"
+    
+   if(mesh_type=="dassflow") then
 
-
-     if(mesh_type=="dassflow") then
+      mesh_total_cells = mesh%nc
+      call mpi_sum_i( mesh_total_cells )
 
 !===================================================================================================================!
 ! set the correspondance between cell and land value
 !===================================================================================================================!
-! write(*,*) proc, mesh%nc
-    allocate( my_friction%land( mesh%nc ) )
-! write(*,*) proc, size(my_friction%land)
-!          call mpi_wait_all
-!          write(*,*) proc
-!          stop
 
-    open(10,file=mesh%file_name ,status='old')
+      allocate( my_friction%land( mesh_total_cells ) )
+
+      open(10,file=mesh%file_name ,status='old')
    ! skip rows to access wished info
-    read(10,*) ! comment line (# Simple channel mesh)
-    read(10,*) ! nc, nn, ne line
-    read(10,*)  ! comment line (# node)
-   do i = 1,mesh%nn
-      read(10,*) ! node coordinates
-   end do
-    read(10,*) ! comment line (# cells)
+      read(10,*) ! comment line (# Simple channel mesh)
+      read(10,*) ! nc, nn, ne line
+      read(10,*)  ! comment line (# node)
+      do i = 1,mesh%nn
+         read(10,*) ! node coordinates
+      end do
+      read(10,*) ! comment line (# cells)
 
-   do i = 1,mesh%nc
+      do i = 1,mesh_total_cells
 
-      read(10,*)   k , &
+         read(10,*)   k , &
                    tmp , & !node1 but useless here
                    tmp , & !node2 but useless here
                    tmp , & !node3 but useless here
                    tmp , & !node4 but useless here
                    my_friction%land(k) , &
                    tmp   ! bathymetry value but useless here
-   end do
 
-    close(10)
-!
-!    !===================================================================================================================!
-!    ! set values of manning for the nland defined
-!    !===================================================================================================================!
-   inquire( file = 'land_uses.txt' , exist = file_exist(1) )
-   if ( file_exist(1) ) then
+      enddo
 
-      open(20,file='land_uses.txt',status='old',form='formatted')
+   close(10)
 
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-      read(20,*) my_friction%nland
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-
+      !my_friction%nland = !maxval(my_friction%land(:))
       allocate( my_friction%manning( my_friction%nland ) )
       allocate( my_friction%manning_beta( my_friction%nland ) )
 
+      my_friction%manning(:) = 0._rp
       my_friction%manning_beta(:) = 0._rp
 
-      do i = 1,my_friction%nland
-         read(20,*) k , my_friction%manning(k),  my_friction%manning_beta(k)
-      end do
+   else
+        write(*,*) "only 'dassflow' mesh_type formats is implemented"
+   endif
 
-      close(20)
 
-   else ! then file not exist
-    write(*,*) "mesh type is basic and no mesh is provided, we stop here"
-    STOP
-   end if ! end if file exist
-
-      manning_data_glob = 1 ! ??
-else
- write(*,*) "only 'dassflow' mesh_type formats is implemented"
- end if
   END SUBROUTINE friction_initialise
 
   SUBROUTINE friction_finalise(my_friction)
@@ -529,7 +569,8 @@ else
    !>FORTRAN DOCUMENTATION
    !>++++++++++++++++++++++++++++++++++++++++++++++++
    !> deallocate my_friction%xxx derived type
-
+      implicit none
+      !  Global Variables
       type(friction_data), intent(inout)  ::  my_friction
 
       if (allocated(my_friction%land))         deallocate(my_friction%land)
@@ -544,157 +585,78 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    !>FORTRAN DOCUMENTATION
    !>++++++++++++++++++++++++++++++++++++++++++++++++
    ! initialise friction (allocate and set values from file)
-        implicit none
-        type(msh), intent(in)  ::  mesh
-        type(infiltration_data), intent(out) :: my_infiltration
+   implicit none
+   !  Global Variables
+   type(msh), intent(in)  ::  mesh
+   type(infiltration_data), intent(inout) :: my_infiltration
+   !  Local Variables
+   integer(ip) :: mesh_total_cells
 
-! default values for infiltration
-   my_infiltration%nland = 0
-
+   inquire( file = 'land_uses_GA.txt' , exist = file_exist(1) )
+   if ( file_exist(1) ) write(*,*) "WARNING: you are trying to allocate infiltration from land_uses_GA.txt and from init_infiltration"
+   inquire( file = 'land_uses_SCS.txt' , exist = file_exist(1) )
+   if ( file_exist(1) ) write(*,*) "WARNING: you are trying to allocate infiltration from land_uses_SCS.txt and from init_infiltration"
+   
    if (mesh_type=='dassflow') then
+
+      mesh_total_cells = mesh%nc
+      call mpi_sum_i( mesh_total_cells )
 
    !===================================================================================================================!
    ! set the correspondance between cell and land value
    !===================================================================================================================!
 
-   allocate( my_infiltration%land( mesh%nc ) )
+      if (bc_infil == 1) then
 
-   inquire( file = 'land_uses_GA.txt' , exist = file_exist(1) )
-   inquire( file = 'land_uses_SCS.txt', exist = file_exist(2) )
-   if ( file_exist(1) ) then
+        allocate( my_infiltration%land( mesh_total_cells ) )
+        #allocate( my_infiltration%coord( 4, my_infiltration%nland )   )
+        allocate( my_infiltration%GA( my_infiltration%nland ) )
+        allocate( my_infiltration%SCS( 1 ) )
 
-      open(20,file='land_uses_GA.txt',status='old',form='formatted')
-      read(20,*)
-      read(20,*)
-      read(20,*)
-      read(20,*) my_infiltration%nland
-      read(20,*)
-      read(20,*)
-      read(20,*)
+      elseif ( bc_infil == 2 ) then
 
-
-      allocate( my_infiltration%GA( my_infiltration%nland ) )
-      allocate( my_infiltration%SCS( 1 ) )
-      my_infiltration%SCS( 1 )%lambda = 0._rp
-      my_infiltration%SCS( 1 )%CN = 0._rp
-
-      allocate (  my_infiltration%x_min( my_infiltration%nland )   )
-      allocate (  my_infiltration%x_max( my_infiltration%nland )   )
-      allocate (  my_infiltration%y_min( my_infiltration%nland )   )
-      allocate (  my_infiltration%y_max( my_infiltration%nland )   )
-
-      do i = 1,my_infiltration%nland
-         read(20,*) k , my_infiltration%GA(k)%Ks , my_infiltration%GA(k)%PsiF ,&
-                        my_infiltration%GA(k)%DeltaTheta
-      end do
-
-      read(20,*)
-      read(20,*)
-      read(20,*)
-
-      do i = 1,my_infiltration%nland
-                read(20,*) my_infiltration%x_min(i), my_infiltration%x_max(i), &
-                           my_infiltration%y_min(i), my_infiltration%y_max(i)
-      end do
-
-      close(20)
-
-        !===================================================================================================================!
-        !  Handle land parameters attribution to cells from xytile
-        !===================================================================================================================!
-
-        do i=1,mesh%nc
-            do k=1,my_infiltration%nland
-
-                    if ((mesh%cell(i)%grav%x > my_infiltration%x_min(k) .and. mesh%cell(i)%grav%x < my_infiltration%x_max(k)) .and. &
-                        (mesh%cell(i)%grav%y > my_infiltration%y_min(k) .and. mesh%cell(i)%grav%y < my_infiltration%y_max(k))) then
-
-                        my_infiltration%land(i) = k
-                        exit
-
-                    else
-                        my_infiltration%land(i) = 0_ip
-                    endif
-
-            enddo
-        enddo
-
-   elseif ( file_exist(2) ) then
-
-        open(20,file='land_uses_SCS.txt',status='old',form='formatted')
-        read(20,*)
-        read(20,*)
-        read(20,*)
-        read(20,*) my_infiltration%nland
-        read(20,*)
-        read(20,*)
-        read(20,*)
-
+        allocate( my_infiltration%land( mesh_total_cells ) )
+        allocate( my_infiltration%coord( 4, my_infiltration%nland )   )
         allocate( my_infiltration%SCS( my_infiltration%nland ) )
-
         allocate( my_infiltration%GA( 1 ) )
-        my_infiltration%GA( 1 )%Ks = 0._rp
-        my_infiltration%GA( 1 )%DeltaTheta = 0._rp
-        my_infiltration%GA( 1 )%PsiF = 0._rp
 
-        allocate (  my_infiltration%x_min( my_infiltration%nland )   )
-        allocate (  my_infiltration%x_max( my_infiltration%nland )   )
-        allocate (  my_infiltration%y_min( my_infiltration%nland )   )
-        allocate (  my_infiltration%y_max( my_infiltration%nland )   )
+      else
 
-        do i = 1,my_infiltration%nland
-            read(20,*) k , my_infiltration%SCS(k)%lambda , my_infiltration%SCS(k)%CN
-        end do
+        allocate( my_infiltration%land ( 1 ) )
+        allocate( my_infiltration%coord( 4, 1 )   )
+        allocate( my_infiltration%SCS  ( 1 ) )
+        allocate( my_infiltration%GA   ( 1 ) )
 
-      read(20,*)
-      read(20,*)
-      read(20,*)
+      endif
 
-      do i = 1,my_infiltration%nland
-                read(20,*) my_infiltration%x_min(i), my_infiltration%x_max(i), &
-                           my_infiltration%y_min(i), my_infiltration%y_max(i)
-      end do
 
-      close(20)
-        !===================================================================================================================!
-        !  Handle land parameters attribution to cells from xytile
-        !===================================================================================================================!
+      my_infiltration%GA( : )%ks = -1._rp
+      my_infiltration%GA( : )%psif = -1._rp
+      my_infiltration%GA( : )%deltatheta = -1._rp
+      my_infiltration%SCS( : )%lambdacn = -1._rp
+      my_infiltration%SCS( : )%CN = -1._rp
 
-        do i=1,mesh%nc
-            do k=1,my_infiltration%nland
+    endif
 
-                    if ((mesh%cell(i)%grav%x > my_infiltration%x_min(k) .and. mesh%cell(i)%grav%x < my_infiltration%x_max(k)) .and. &
-                        (mesh%cell(i)%grav%y > my_infiltration%y_min(k) .and. mesh%cell(i)%grav%y < my_infiltration%y_max(k))) then
-
-                        my_infiltration%land(i) = k
-                        exit
-
-                    else
-                        my_infiltration%land(i) = 0_ip
-                    endif
-
-            enddo
-        enddo
-
-   endif
-
-   end if
+!     do i = 1, mesh%nc
+!       do j  = 1,my_infiltration%nland
+!         if (mesh%cell(i)%grav%x < my_infiltration%coord(1,j) .and. mesh%cell(i)%grav%x > my_infiltration%coord(2,j) .and.  mesh%cell(i)%grav%y < my_infiltration%coord(3,j) .and. mesh%cell(i)%grav%y > my_infiltration%coord(4,j)) then
+!             my_infiltration%land(i) = j
+!       enddo
+!     enddo
 
   END SUBROUTINE infiltration_initialise
 
   SUBROUTINE infiltration_finalise(my_infiltration)
 
       implicit none
+      !  Global Variables
       type(infiltration_data), intent(inout)  ::  my_infiltration
 
       if (allocated(my_infiltration%land)) deallocate(my_infiltration%land)
       if (allocated(my_infiltration%GA))   deallocate(my_infiltration%GA)
       if (allocated(my_infiltration%SCS))  deallocate(my_infiltration%SCS)
-
-      if (allocated(my_infiltration%x_min)) deallocate(my_infiltration%x_min)
-      if (allocated(my_infiltration%x_max)) deallocate(my_infiltration%x_max)
-      if (allocated(my_infiltration%y_min)) deallocate(my_infiltration%y_min)
-      if (allocated(my_infiltration%y_max)) deallocate(my_infiltration%y_max)
+      if (allocated(my_infiltration%coord)) deallocate(my_infiltration%coord)
 
   END SUBROUTINE infiltration_finalise
 
@@ -702,25 +664,94 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
   SUBROUTINE phys_desc_initialise(my_phys_desc, mesh)
 
       implicit none
-      type(input_data), intent(out)  ::  my_phys_desc
+      !  Global Variables
+      type(input_data), intent(inout)  ::  my_phys_desc
       type(msh), intent(in)  ::  mesh
+      !  Local Variables
+      integer(ip) :: mesh_total_cells
 
-      allocate(my_phys_desc%soil(mesh%nc))
-      allocate(my_phys_desc%surf(mesh%nc))
-      allocate(my_phys_desc%structures(mesh%nc))
+      mesh_total_cells = mesh%nc
+      call mpi_sum_i( mesh_total_cells )
+
+      allocate(my_phys_desc%soil_land(mesh_total_cells))!mesh%nc))
+      allocate(my_phys_desc%soil(my_phys_desc%soil_nland))!my_phys_desc%soil_nland))
+      my_phys_desc%soil(:)%clay = 0._rp
+      my_phys_desc%soil(:)%silt = 0._rp
+      my_phys_desc%soil(:)%sand = 0._rp
+
+      allocate(my_phys_desc%surf_land(mesh_total_cells))!mesh%nc))
+      allocate(my_phys_desc%surf(my_phys_desc%surf_nland))!my_phys_desc%surf_nland))
+      my_phys_desc%surf(:)%imperm = 0._rp
+      my_phys_desc%surf(:)%Dmax = 0._rp
+
+      allocate(my_phys_desc%struct_land(mesh_total_cells))!mesh%nc))
+      allocate(my_phys_desc%structures(my_phys_desc%struct_nland))!my_phys_desc%struct_nland))
+      my_phys_desc%structures(:)%C1 = 0._rp
+      my_phys_desc%structures(:)%C2 = 0._rp
+      my_phys_desc%structures(:)%C3 = 0._rp
+      my_phys_desc%structures(:)%true_x = 0._rp
+      my_phys_desc%structures(:)%true_y = 0._rp
 
   END SUBROUTINE phys_desc_initialise
 
   SUBROUTINE phys_desc_finalise(my_phys_desc)
 
       implicit none
+      !  Global Variables
       type(input_data), intent(inout)  ::  my_phys_desc
 
       if (allocated(my_phys_desc%soil)) deallocate(my_phys_desc%soil)
+      if (allocated(my_phys_desc%soil_land)) deallocate(my_phys_desc%soil_land)
+
       if (allocated(my_phys_desc%surf))   deallocate(my_phys_desc%surf)
+      if (allocated(my_phys_desc%surf_land))   deallocate(my_phys_desc%surf_land)
+
       if (allocated(my_phys_desc%structures))  deallocate(my_phys_desc%structures)
+      if (allocated(my_phys_desc%struct_land))  deallocate(my_phys_desc%struct_land)
 
   END SUBROUTINE phys_desc_finalise
+
+
+  SUBROUTINE bc_initialise(my_bc, mesh)
+
+      implicit none
+      !  Global Variables
+      type(bcs), intent(inout)  ::  my_bc
+      type(msh), intent(inout)  ::  mesh
+      !  Local Variables
+      integer(ip) :: mesh_total_cells
+
+      
+      inquire( file = 'rain.txt' , exist = file_exist(1) )
+       if ( file_exist(1) ) write(*,*) "WARNING: you are trying to allocate rain from rain.txt and from init_bc"
+   
+      mesh_total_cells = mesh%nc
+      call mpi_sum_i( mesh_total_cells )
+
+
+      allocate(my_bc%rain(my_bc%nb_rn))
+      allocate(my_bc%rain_land(mesh_total_cells))
+      my_bc%rain_land(:) = 0._ip
+
+      do i = 1, my_bc%nb_rn
+
+        allocate(my_bc%rain(i)%t(my_bc%nb_rn_t))
+        allocate(my_bc%rain(i)%q(my_bc%nb_rn_t))
+      enddo
+
+
+  END SUBROUTINE bc_initialise
+
+  SUBROUTINE bc_finalise(my_bc)
+
+    implicit none
+    !   Global Variables
+    type(bcs), intent(inout)  ::  my_bc
+
+    if (allocated(my_bc%rain)) deallocate(my_bc%rain)
+    if (allocated(my_bc%rain_land)) deallocate(my_bc%rain_land)
+
+  END SUBROUTINE bc_finalise
 
  	subroutine func(mdl,ctrl_in, cost_func, grad_func)
    !>++++++++++++++++++++++++++++++++++++++++++++++++
@@ -746,6 +777,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
  		real(rp), dimension(dim_all), intent(out) :: grad_func
 
  		! set the input control vector
+
  		control(:) = ctrl_in(:)
 
  		cost_back = one
@@ -884,7 +916,7 @@ nb_cell_out = 0
 
     ! get corresponding index in object mesh%edge
         global_edge_index =  mesh%edgeb(boundary_edge_index)%ind
-        write(*,*) mesh%edgeb( boundary_edge_index  )%typlim(1:9)
+!         write(*,*) mesh%edgeb( boundary_edge_index  )%typlim(1:9)
 
     ! check if this boundary typlim is one of discharg1 or dischard2
         if (mesh%edgeb( boundary_edge_index  )%typlim(1:9) == 'discharg1'  .or. mesh%edgeb( boundary_edge_index   )%typlim(1:9) == 'discharg2' ) then

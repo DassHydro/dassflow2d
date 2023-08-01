@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -64,22 +64,22 @@
 !> \brief Fill Ghost Cells with appropriate values depending of the type of the boundary considered
 !! \detail Fill Ghost Cells with appropriate values depending of the type of the boundary considered with eventual pre calculation using Subroutine set_bc
 !! set up h, u, v on the boundary
-!! define boundary condition depending on cases : 
+!! define boundary condition depending on cases :
 !!  - default (badly d ined) is WALL condition
 !!  - neumann
 !!  - wall
-!!  - discharg1 
+!!  - discharg1
 !!  - discharg2
-!!  - transm 
-!!  - ratcurve 
-!!  - zspresc 
+!!  - transm
+!!  - ratcurve
+!!  - zspresc
 !!  - hpresc
 SUBROUTINE calc_boundary_state( mesh , hL , zL , uL , vL , hR , zR , uR , vR )
 
    USE m_numeric ! add lilian for linear interp
    USE m_model
    USE m_mpi
-   
+
 #ifdef USE_HYDRO
 !    USE m_gr4
 #endif
@@ -144,11 +144,11 @@ SUBROUTINE calc_boundary_state( mesh , hL , zL , uL , vL , hR , zR , uR , vR )
    !===================================================================================================================!
 
 !       case( 'internal_discharg1' )
-! 
+!
 !          hR  =  hL
-! 
+!
 !          uR  =  bc%inflow(ib)
-! 
+!
 !          vR  =  vL
 
    !===================================================================================================================!
@@ -211,34 +211,40 @@ SUBROUTINE calc_boundary_state( mesh , hL , zL , uL , vL , hR , zR , uR , vR )
 
          vR  =  vL
 
-         
    !===================================================================================================================!
    !  Outflow Boundary : imposed water depth at internal border !DEPRECATED
    !===================================================================================================================!
 
-!       case( 'internal_ratcurve' ) 
-! 
+!       case( 'internal_ratcurve' )
+!
 !          hR  =  bc%outflow(ib)
-! 
+!
 !          uR  =  bc%outflow( mesh%neb + ib )
-! 
+!
 !          vR  =  vL
-!          
+!
    !===================================================================================================================!
    !  Outflow Boundary  :  'zspresc'
    !===================================================================================================================!
 
       case( 'zspresc' )
 
-         hR  =   max(0._rp , linear_interp( bc%zspresc( 1 )%t , &
-											bc%zspresc( 1 )%z , tc ) &
-							 -bathy_cell( mesh%edge(ie)%cell(2) ))
-                                 !max( 0._rp , outflow_user( tc , mesh%cellb(ib)%grav%x , mesh%cellb(ib)%grav%y ) - &
-                             !bathy_cell( mesh%edge(ie)%cell(2) ) )
+         hR  =   max(0._rp , &
+                linear_interp( bc%zspresc( 1 )%t ,bc%zspresc( 1 )%z , tc ) &
+               - bathy_cell( mesh%edge(ie)%cell(1) ) )! &
+!                - slope_y(1) * mesh%cell( mesh%edge(ie)%cell(1) )%surf / mesh%edge(ie)%length &
+!                - slope_x(1) * mesh%cell( mesh%edge(ie)%cell(1) )%surf / mesh%edge(ie)%length)
 
-         uR  =  uL  +  two * sqrt(g) * ( sqrt( hL ) - sqrt( hR ) )
+         uR  =  max(0._rp, uL +  two * sqrt( g ) * ( sqrt( hL ) - sqrt( hR ) ))
 
          vR  =  vL
+
+ !<NOADJ
+!   write(*,*) mesh%edge(ie)%cell(1), bathy_cell( mesh%edge(ie)%cell(1) ), hR - hL, linear_interp( bc%zspresc( 1 )%t ,bc%zspresc( 1 )%z , tc ), &
+!   slope_y(1) * mesh%cell( mesh%edge(ie)%cell(1) )%surf / mesh%edge(ie)%length &
+! + slope_x(1) * mesh%cell( mesh%edge(ie)%cell(1) )%surf / mesh%edge(ie)%length
+ !>NOADJ
+
 
    !===================================================================================================================!
    !  Outflow Boundary  :  'hpresc'
@@ -247,14 +253,13 @@ SUBROUTINE calc_boundary_state( mesh , hL , zL , uL , vL , hR , zR , uR , vR )
       case( 'hpresc' )
 
          hR  = linear_interp( bc%hpresc( 1 )%t , &
-                                 bc%hpresc( 1 )%h , tc )
+                              bc%hpresc( 1 )%h , tc )
          !FORMER M_USER_DATA outflow_user( tc , mesh%cellb(ib)%grav%x , mesh%cellb(ib)%grav%y )
              !=  linear_interp(tc, )
 
          uR  =  uL  +  two * sqrt(g) * ( sqrt( hL ) - sqrt( hR ) )
 
          vR  =  vL
-		!write(*,*) "hr = ", hR
 
    !===================================================================================================================!
    !  Wall Instead
@@ -320,8 +325,8 @@ SUBROUTINE fill_bc( dof , mesh )
          hL  =  dof%h( iL )
          hR  =  dof%h( iR )
 
-         zL  =  bathy_cell( iL )
-         zR  =  bathy_cell( iR )
+         zL  =  bathy_cell( iL ) !+ slope_y(1) * mesh%cell(iL)%grav%y
+         zR  =  bathy_cell( iR ) !+ slope_y(1) * mesh%cell(iR)%grav%y
 
          uL  =  mesh%edge(ie)%normal%x * dof%u( iL ) + &
                 mesh%edge(ie)%normal%y * dof%v( iL )
@@ -359,13 +364,12 @@ END SUBROUTINE fill_bc
 !!  - 'discharg2' case  : note that bc%inflow(ib ) corespond to water heigh h, and bc%inflow(ib+mesh%neb ) is not defined
 !!      - same treatment of files as in discharge 1
 !!      - PLUS call of Newton_Qin routine
-!!  - 'ratcurve' case : similar treatment as discharges: note that  bc%outflow(ib ) correspond to water height h and bc%outflow(ib +mesh%neb) to speed u 
+!!  - 'ratcurve' case : similar treatment as discharges: note that  bc%outflow(ib ) correspond to water height h and bc%outflow(ib +mesh%neb) to speed u
 SUBROUTINE set_bc( dof , mesh )
 
    USE m_numeric
    USE m_model
    USE m_mpi
-   
 #ifdef USE_HYDRO
 !    USE m_gr4
 #endif
@@ -411,7 +415,7 @@ SUBROUTINE set_bc( dof , mesh )
 
             qin = linear_interp( bc%hyd( bc%grpf( num_bc ) )%t , &
                                  bc%hyd( bc%grpf( num_bc ) )%q , tc )
-
+!bc%hyd( bc%grpf( num_bc ) )%q(1)
          else
 
 				!write(*,*) " bc%typ(num_bc,2) == 'file'  must be fill to define qin bc"
@@ -465,22 +469,23 @@ SUBROUTINE set_bc( dof , mesh )
 
          end do
 
-      end if
 
+      end if
+! read(*,*)
 !       !================================================================================================================!
 !       !  internal discharg boundary !DEPRECATED
 !       !================================================================================================================!
-! 
+!
 !       if ( bc%typ(num_bc,1) == 'internal_discharg1' ) then
-! 
+!
 !          !=============================================================================================================!
 !          !  loading Qin
 !          !=============================================================================================================!
-! 
-!          if ( bc%typ(num_bc,2) == 'cutcell') then! .or. bc%typ(num_bc,2) == 'poiseuille') then 
-! 
+!
+!          if ( bc%typ(num_bc,2) == 'cutcell') then! .or. bc%typ(num_bc,2) == 'poiseuille') then
+!
 !             read(bc%typ (num_bc, 3 ),'(i3)') up_num_bc
-!          
+!
 !             if (nt == 0) then
 !                 qin = 0.0_rp !q0_user
 !             else
@@ -490,64 +495,64 @@ SUBROUTINE set_bc( dof , mesh )
 !          else
 !             !qin = inflow_user( tc , zero , zero )
 !          end if
-!          
+!
 !          if (bc%typ(num_bc,2) == 'poiseuille') then
-!          
+!
 !             !=============================================================================================================!
 !             ! Velocity shape repartition !TODO
 !             !=============================================================================================================!
-!          
+!
 !          else
-! 
+!
 !             !=============================================================================================================!
 !             ! Classical repartition
 !             !=============================================================================================================!
-! 
+!
 !             sum_pow_h  =  zero
-! 
+!
 !             do ib = 1,mesh%neb
-! 
+!
 !                 if ( mesh%edgeb(ib)%typlim == 'internal_discharg1' .and. mesh%edgeb(ib)%group  == num_bc ) then
-! 
+!
 !                 ie  =  mesh%edgeb(ib)%ind
-! 
+!
 !                 i  =  mesh%edge(ie)%cell(1)
-! 
+!
 !                 if ( dof%h(i) > heps ) sum_pow_h  =  sum_pow_h  +  dof%h(i)**d5p3 * mesh%edge(ie)%length
-! 
+!
 !                 end if
-! 
+!
 !             end do
-! 
+!
 !             call mpi_sum_r( sum_pow_h )
-! 
+!
 !             !=============================================================================================================!
 !             !
 !             !=============================================================================================================!
-! 
+!
 !             do ib = 1,mesh%neb
-! 
+!
 !                 if ( mesh%edgeb(ib)%typlim == 'internal_discharg1' .and. mesh%edgeb(ib)%group  == num_bc ) then
-! 
+!
 !                 ie  =  mesh%edgeb(ib)%ind
-! 
+!
 !                 i  =  mesh%edge(ie)%cell(1)
-! 
+!
 !                     if ( dof%h(i) > heps ) then
-! 
+!
 !                         bc%inflow(            ib )  =  -  qin * dof%h(i)**d2p3 / sum_pow_h
-! 
+!
 !                         bc%inflow( mesh%neb + ib )  =     dof%h(i) * bc%inflow( ib )
-! 
+!
 !                     end if
-! 
+!
 !                 end if
-! 
+!
 !             end do
-! 
+!
 !         end if
-!         
-! 
+!
+!
 !       endif
 
       !================================================================================================================!
@@ -702,97 +707,97 @@ SUBROUTINE set_bc( dof , mesh )
 !        !================================================================================================================!
 !     !  Internal boundary : 1D-2D !DEPRECATED
 !     !================================================================================================================!
-!       
+!
 !     if ( bc%typ (num_bc, 1 ) == 'internal_ratcurve') then
-!     
+!
 !     !=============================================================================================================!
 !     ! "Cutcell" repartition : flow section pro rata
 !     !=============================================================================================================!
-! 
+!
 !          sum_pow_h  =  zero
-! 
+!
 !          hmoy = zero
 !          umoy = zero
-!          
+!
 !          read(bc%typ (num_bc, 3 ),'(i3)') down_num_bc
-!          
+!
 !          do ib = 1,mesh%neb
-! 
+!
 !             if ( mesh%edgeb(ib)%group  ==  down_num_bc ) then
-! 
+!
 !                ie  =  mesh%edgeb(ib)%ind
-! 
+!
 !                i  =  mesh%edge(ie)%cell(1)
 !                j  =  mesh%edge(ie)%cell(2)
-! 
+!
 !                if ( dof%h(i) > heps ) then
-! 
+!
 !                 sum_pow_h  =  sum_pow_h  +  dof%h(i) * mesh%edge(ie)%length
-!                 
+!
 !                end if
-! 
+!
 !              endif
-! 
+!
 !          enddo
-! 
+!
 !          call mpi_sum_r( sum_pow_h )
-! 
+!
 !          if ( sum_pow_h > zerom ) then
-! 
+!
 !             do ib = 1,mesh%neb
-! 
+!
 !                if ( mesh%edgeb(ib)%group  ==  down_num_bc ) then
-! 
+!
 !                   ie  =  mesh%edgeb(ib)%ind
-! 
+!
 !                   i  =  mesh%edge(ie)%cell(1)
 !                   j  =  mesh%edge(ie)%cell(2)
-! 
+!
 !                   hmoy  =  hmoy  +  dof%h(i)  *  dof%h(i) * mesh%edge(ie)%length / sum_pow_h
-!                   
+!
 !                   umoy  =  umoy  +  dof%u(i)  *  dof%h(i) * mesh%edge(ie)%length / sum_pow_h
-!                   
+!
 !                 endif
-! 
+!
 !             enddo
-! 
+!
 !             call mpi_sum_r( hmoy )
 !             call mpi_sum_r( umoy )
-!             
+!
 !             do ib = 1,mesh%neb
-! 
+!
 !                if ( mesh%edgeb(ib)%group  ==  num_bc ) then
-!                 
+!
 !                 bc%outflow(ib) = hmoy
-!                 
+!
 !                 bc%outflow( mesh%neb + ib) = umoy
-! 
+!
 !                endif
-!                
+!
 !             enddo
-! 
-!       
+!
+!
 !     !=============================================================================================================!
 !     ! "Poiseuille" repartition : velocity shape
 !     !=============================================================================================================!
-!       
+!
 !         elseif ( bc%typ (num_bc, 2 ) == 'poiseuille') then
-!         
+!
 !                   qin  = 1_rp
 !                   bc%inflow( mesh%neb + ib )  =  0.1_rp
-!                   
+!
 !         endif
-!         
-!      
+!
+!
 !     endif
 
 #ifdef USE_HYDRO
     !================================================================================================================!
     !  GR4 state-space
     !================================================================================================================!
-      
+
     if ( bc%typ(num_bc,1) == 'gr4' ) then
-                              
+
          !=============================================================================================================!
          !  Loading Qin from hydrology module results
          !=============================================================================================================!
@@ -807,7 +812,7 @@ SUBROUTINE set_bc( dof , mesh )
             !qin = inflow_user( tc , zero , zero )
 
          endif
-         
+
 
          !=============================================================================================================!
          !
@@ -859,20 +864,20 @@ SUBROUTINE set_bc( dof , mesh )
 #endif
 
    end do
-   
+
        !================================================================================================================!
     !  Rain as boundary
     !================================================================================================================!
-    
+
    if ( bc_rain == 1 ) then
       do i=1,bc%nb_rn
          bc%rain(i)%qin = linear_interp(bc%rain(i)%t,bc%rain(i)%q,tc)
       enddo
-   else
-      bc%rain(1)%qin = 0._rp
+!    else
+!       bc%rain(1)%qin = 0._rp
    endif
-   
-   
+
+
 END SUBROUTINE set_bc
 
 

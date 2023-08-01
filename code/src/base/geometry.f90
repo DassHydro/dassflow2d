@@ -118,7 +118,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 !   - Connected Cells
 !
 !======================================================================================================================!
-! WRITE(*,*) "INTO Mesh_Geometric_Properties"
+!write(*,*) "INTO Mesh_Geometric_Properties"
    if ( maxed > 4 ) call Stopping_Program_Sub( 'Fix Mesh_Geometric_Properties for maxed > 4' )
 
    mesh%surf  =  0._rp
@@ -394,9 +394,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 ! WRITE(*,*) "edge3-----"
 
    do i = 1,size(mesh%node)
-!~ 		if (proc == 2) print *, proc, i, connected_to_node(i)
       allocate( mesh%node(i)%edge( connected_to_node(i) ) )
-
    end do
 
    connected_to_node(:)  =  0

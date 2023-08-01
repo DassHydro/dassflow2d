@@ -100,7 +100,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    real(rp)  :: S                                        ! potential maximal retention
    real(rp)  :: Fn1                                      ! Temporal Fn+1
    real(rp)  :: aFn1 , bFn1
-   real(rp)  :: h_infil                                  ! local variable of infil calculated depth 
+   real(rp)  :: h_infil                                  !local variable of infil calculated depth
    real(rp)  ::  vel                                     ! Velocity norm
    real(rp)  ::  sfl                                     ! Manning
    real(rp)  :: madd                                     ! mass rain >TGADJ
@@ -108,11 +108,11 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    !  Begin Subroutine
    !===================================================================================================================!
 
- !write(*,*) "/\/\/\ WITHIN euler_time_step_first_b1"
+
    tflux(:,:)  =  0._rp
 
    do ie = 1,mesh%ne
- !write(*,*) "--- edge=",ie
+
       !================================================================================================================!
       !  Calculate Left and Right States
       !================================================================================================================!
@@ -120,51 +120,56 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
       iL  =  mesh%edge(ie)%cell(1)
       iR  =  mesh%edge(ie)%cell(2) !Left cell id for a normal cell
 
-
-!write(*,*) "--- IL,iR set"
 !     Get right cell id for internal BC cells
     if ( mesh%edge(ie)%boundary ) then !Check if bounfary first so typlim exists
-        if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_1D' ) cycle
-        if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
 
-!write(*,*) "mesh%edge(ie)%cell1D2D", mesh%edge(ie)%cell1D2D
+        if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_1D' ) cycle
+
+        if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
             iR  =  mesh%edge(ie)%cell1D2D !Get id of the single 1D-like cell with interface in the connected bc number => this should be done once!
-!write(*,*) "IR=", iR, "(id edge = )", ie
-!if (iR .gt. 1953) then
-!write(*,*) "cells", mesh%edge(ie)%cell(0), mesh%edge(ie)%cell(1)
-!end if
-!if (ie .eq. 34) then
-!read(*,*)
-!endif
         endif
+
     endif
-!write(*,*) "--- internal boundary treatment "
 
       hL(1)  =  dof%h( iL )
-!write(*,*) "+++ hL ok"
       hR(1)  =  dof%h( iR )
-!write(*,*) "+++ hR ok"
 
-!write(*,*) "--- Hr, Hl set"
        if ( hL(1) > heps .or. hR(1) > heps ) then
 
-         zL  =  bathy_cell( iL )! + global_bathy_shift(1)
-         zR  =  bathy_cell( iR )! + global_bathy_shift(1)
+         !zL  =  bathy_cell( iL )! + global_bathy_shift(1)
+         !zR  =  bathy_cell( iR )! + global_bathy_shift(1)
 
          uL(1)  =  dof%u( iL )
          vL(1)  =  dof%v( iL )
 
          uL(2)  =  mesh%edge(ie)%normal%x * uL(1) + mesh%edge(ie)%normal%y * vL(1)
          vL(2)  =  mesh%edge(ie)%normal%x * vL(1) - mesh%edge(ie)%normal%y * uL(1)
-!write(*,*) "--- z,u,v R ok"
 
          if ( mesh%edge(ie)%boundary) then
+
+         zL  =  bathy_cell( iL )
+
+
+          !================= TEMP FOR ANDROMEDE
+            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
+                zR  =  bathy_cell( iL ) !&
+                        !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+                       !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
+                zR  =  bathy_cell( iL ) &
+                 + slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+                 + slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+            else if  ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
+                zR  =  bathy_cell( iL )
+            endif
+          !================= END TEMP
+!          write(*,*) mesh%edgeb(mesh%edge(ie)%lim)%typlim, iL, iR, zR, zL !NOADJ
 
              if (.not. ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' )) then !do not call boundary calculations for internal BCs
 
                 call calc_boundary_state( mesh , hL(1) , zL , uL(2) , vL(2) , &
                                                  hR(1) , zR , uR(2) , vR(2) )
-!write(*,*) "--- boundary state ok"
+
              else
 
                 uR(1)  =  dof%u( iR )
@@ -172,10 +177,13 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
                 uR(2)  =  mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
                 vR(2)  =  mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
-!write(*,*) "--- uv, ok pour de vraie ok"
+
             endif
 
          else
+
+            zL  =  bathy_cell( iL )
+            zR  =  bathy_cell( iR )
 
             uR(1)  =  dof%u( iR )
             vR(1)  =  dof%v( iR )
@@ -183,11 +191,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
             uR(2)  =  mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
             vR(2)  =  mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
 
-!write(*,*) "---u,v R ok"
          end if
-!write(*,*) "--- treatment5 ok"
 
-!write(*,*) "--- done calculating edges value=",ie
          !=============================================================================================================!
          !   New reconstructed well balanced water depth
          !=============================================================================================================!
@@ -208,7 +213,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          !    - Calculation of nflux sum for each inflow
          !=============================================================================================================!
 
-!write(*,*) "--- treatment4 ok"
          if ( mesh%edge(ie)%boundary ) call boundary_post( nflux(1) , iR , mesh )
 
          !=============================================================================================================!
@@ -231,7 +235,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          tflux( 3 , iL )  =  tflux( 3 , iL )  +  mesh%edge(ie)%normal%y * mesh%edge(ie)%length * 0.5_rp * g * ( &
                                                  ( hL(1)**2 - hL(2)**2 ) )
 
-!write(*,*) "--- treatment4 ok"
          if ( .not. mesh%edge(ie)%boundary .and. .not. mesh%edge(ie)%subdomain ) then
 
             tflux( 1 , iR )  =  tflux( 1 , iR )  -  lflux(1)
@@ -246,7 +249,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
          end if
 
-!write(*,*) "--- treatmen5 ok"
          if ( mesh%edge(ie)%boundary ) then
             if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then
 
@@ -265,19 +267,17 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
       end if
 
-!write(*,*) " end do loop ok"
    end do
 
-!write(*,*) "/\/\/\ done solving homogeneous equation"
    !===================================================================================================================!
    !  Cumulative rain Calculation
    !===================================================================================================================!
 
    do k=1,bc%nb_rn
-      bc%rain(k)%cumul = bc%rain(k)%cumul + dt*bc%rain(k)%qin
-   end do
 
-!write(*,*) "/\/\/\ done rain treatment"
+      bc%rain(k)%cumul = bc%rain(k)%cumul + dt*bc%rain(k)%qin
+
+   end do
 
    !===================================================================================================================!
    !  Euler Time Step
@@ -291,71 +291,68 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
       dof%h(i)  =  max( 0._rp , h  -  dt * tflux(1,i) * mesh%cell(i)%invsurf )
 
-! !     !Add rain
+    ! Add rain source term
     if (bc_rain == 1) then
 
-      k = mesh%cell(i)%rain !Get rain group for current cell
+      k = bc%rain_land(i)!mesh%cell(i)%rain !Get rain group for current cell
 
-      if (k > 0) then
-         !SCS coefficient
-         if (( bc_infil == 2) .and. (infil%land(i) /= 0)) then
+      if (k > 0) then !If the cell does have a rain value attributed
 
-            S = 25.4_rp * ( 1000._rp / abs(infil%SCS( infil%land(i) )%CN) - 10._rp ) / 1000._rp ! infil%land(i) is infiltration group for current cell
+         if ( bc_infil == 2 ) then ! If SCS-type infiltration is selected and this cell does have an infiltration value attributed
 
-            if ( bc%rain(k)%cumul > abs(infil%SCS( infil%land(i) )%lambda) * S ) then
-               Fn1 = abs(infil%SCS( infil%land(i) )%lambda) * S + &
-                     S*( bc%rain(k)%cumul - abs(infil%SCS( infil%land(i) )%lambda) * S ) &
-                     / ( bc%rain(k)%cumul + (1 - abs(infil%SCS( infil%land(i) )%lambda) ) * S )
+            S = 25.4_rp * ( 1000._rp / abs(infil%SCS( infil%land( i ) )%CN) - 10._rp ) / 1000._rp
+
+            if ( bc%rain(k)%cumul > abs(infil%SCS( infil%land(i) )%lambdacn) * S ) then
+               Fn1 = S * abs( infil%SCS( infil%land( i ) )%lambdacn ) + &
+                     S * ( bc%rain( k )%cumul -      abs(infil%SCS( infil%land( i ) )%lambdacn)   * S ) / &
+                         ( bc%rain( k )%cumul + (1 - abs(infil%SCS( infil%land( i ) )%lambdacn) ) * S )
 
             else
-               Fn1 = dof%infil(i) + dt*bc%rain(k)%qin
+
+               Fn1 = dof%infil(i) + dt*bc%rain( k )%qin
+
             endif
 
-            dof%h(i) = dof%h(i) + dt*bc%rain(k)%qin - Fn1 + dof%infil(i) !SCS-modified rain
-            dof%infil(i) = Fn1
+            dof%h( i     ) = dof%h( i ) + dt * bc%rain( k )%qin - Fn1 + dof%infil( i ) ! Output SCS-modified rain
+            dof%infil( i ) = Fn1
 
          else !Unmodified rain
-            dof%h(i) = dof%h(i) + dt*bc%rain(k)%qin
+
+            dof%h( i     ) = dof%h( i ) + dt * bc%rain( k )%qin
+
          endif
+
        endif
 
     endif
 
-! ! !       Green-Ampt infiltration  	  ! Ks  PsiF DeltaTheta
-     if ((bc_infil == 1) ) then
+     if ( bc_infil == 1 ) then !If Green-Ampt infiltration is selected
 
-       if (infil%land(i) /= 0) then
+        if (infil%land(i) .ne. 0) then !If the current cell does have an infiltration value attributed
 
-         aFn1 = dof%infil(i) +  dt * infil%GA( infil%land(i) )%Ks * ( 1._rp - infil%GA( infil%land(i) )%DeltaTheta ) !CHECK FORMULATION !CHECK FORMULATION
+         aFn1 = dof%infil(i) + dt * infil%GA( infil%land( i ) )%Ks * ( 1._rp - infil%GA( infil%land( i ) )%DeltaTheta )
 
-         bFn1 = infil%GA( infil%land(i) )%Ks*dt*infil%GA( infil%land(i) )%DeltaTheta*( dof%infil(i) + dof%h(i) &
-		             + infil%GA( infil%land(i) )%PsiF )  ! infil%land(i) is infiltration group for current cell
+         bFn1 = infil%GA( infil%land( i ) )%Ks * dt * infil%GA( infil%land(i) )%DeltaTheta * &
+                ( dof%infil(i) + dof%h(i) + infil%GA( infil%land(i) )%PsiF )
 
-         Fn1 = ( aFn1 + sqrt( aFn1**2._rp + 4._rp*bFn1 ) ) / 2._rp !CHECK FORMULATION
-
-         !-------original code-----
-         !dof%h(i) = dof%h(i) + dof%infil(i) - Fn1
+         Fn1 = ( aFn1 + sqrt( aFn1**2._rp + 4._rp * bFn1 ) ) / 2._rp
 
 		 h_infil = dof%h(i) + dof%infil(i) - Fn1
 
-		 !-------original code-------
-         !if (dof%h(i)  <  0._rp ) then
-		 !    dof%h(i) = 0._rp
-         !    Fn1 = dof%h(i) + dof%infil(i)
-         !endif
-
 		 if (h_infil  <  0._rp ) then
-             Fn1 = dof%h(i) + dof%infil(i)
-			 h_infil = 0.000001_rp
+
+             Fn1 = dof%h( i ) + dof%infil( i )
+			 h_infil = 0._rp
+
          endif
 
-		 dof%h(i) = h_infil  !replace the local variable h_infil
-         dof%infil(i) = Fn1
-       endif
+		 dof%h( i ) = h_infil  !Replace the local variable h_infil
+         dof%infil( i ) = Fn1
+
+        endif
 
       endif
 
-!write(*,*) "/\/\/\ done infil treatment"
 
       !================================================================================================================!
       !   Positivity cut-off
@@ -375,18 +372,18 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          !   Semi-Implicit Treatment of Friction Source Term (Manning/Strickler Formula)
          !=============================================================================================================!
 
-         if      ( friction == 1 ) then
+         if ( friction == 1 ) then
 
-            vel  =  sqrt( dof%u(i)**2 + dof%v(i)**2 )
+            vel  =  sqrt( dof%u( i )**2 + dof%v( i )**2 )
 
-            sfl  =  dof%h(i)**d2p3 + sqrt( dof%h(i)**d4p3 + 4._rp * dt * g * &
-                   (manning(land(i))*dof%h(i)**manning_beta(land(i)))**2 * vel )
+            sfl  =  dof%h( i )**d2p3 + sqrt( dof%h(  i)**d4p3 + 4._rp * dt * g * &
+                   ( manning( land( i ) ) * dof%h( i )**manning_beta( land( i ) ))**2 * vel )
 
-            sfl  =  2._rp * dof%h(i)**d2p3 / sfl
+            sfl  =  2._rp * dof%h( i )**d2p3 / sfl
 
          else if ( friction == 2 ) then
 
-            sfl  =  one - dt * manning( land(i) )
+            sfl  =  one - dt * manning( land( i ) )
 
          else
 
@@ -394,14 +391,12 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
          end if
 
-         dof%u(i)  =  dof%u(i) * sfl
-         dof%v(i)  =  dof%v(i) * sfl
+         dof%u( i )  =  dof%u( i ) * sfl
+         dof%v( i )  =  dof%v( i ) * sfl
 
       end if
 
    end do
-
-!         write(*,*) "/\/\/\ done friction treatment"
 
    !===================================================================================================================!
    !  Calling MPI and filling ghost cells

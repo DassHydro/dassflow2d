@@ -27,7 +27,7 @@
 !               R. Madec   (Mathematics Institute of Toulouse IMT).
 !  plus less recent other developers (M. Honnorat and J. Marin).
 !
-!  Contact : see the DassFlow webpage 
+!  Contact : see the DassFlow webpage
 !
 !  This software is governed by the CeCILL license under French law and abiding by the rules of distribution
 !  of free software. You can use, modify and/or redistribute the software under the terms of the CeCILL license
@@ -88,7 +88,7 @@ MODULE m_obs
 
    END TYPE
 
-   type( innovation_obs ), dimension(:), allocatable  ::  innovation, innovW, innovQ
+   type( innovation_obs ), dimension(:), allocatable  ::  innovation, innovW, innovQ, innovUV
 
    integer(ip)  ::  nb_obs , nb_grp , iobs
 
@@ -128,18 +128,24 @@ CONTAINS
 
       real(rp)  ::  cost_part(3) , filtered(4)
 
-      integer(ip)  ::  idiff
+      integer(ip)  ::  idiff, temp, sizeQ
 
       type( vec2d ), dimension( mesh%nc + mesh%ncb )  ::  grad_var
+      real(rp) , dimension( mesh%nc + mesh%ncb )  ::  bathy_temp
 
       !================================================================================================================!
       !  Loop on observations and quadratic norm of innovation vector / Regularization terms
       !================================================================================================================!
 
-      #ifdef USE_SW_MONO
+#ifdef USE_SW_MONO
 
-         if ( use_obs == 1 ) then
-
+            if ( use_obs == 1 ) then
+!<NOADJ
+             if (( use_Zobs  == 0 ) .and. ( use_Qobs     == 0 ).and. &
+                 ( use_UVobs == 0 ) .and. ( use_Qobs_gr4 == 0 )) then
+                call Stopping_Program_Sub( 'You need to pick at least one observation type to be used with use_obs = 1. Please set any of use_Zobs, use_Qobs, use_Qobs_gr4 or use_UVobs to 1 and provide the appropriate observation files.')
+            endif
+!>NOADJ
             !==========================================================================================================!
             !  Initialisation to zero of each part
             !==========================================================================================================!
@@ -151,12 +157,34 @@ CONTAINS
             !  Loop on observations in Time/Space
             !==========================================================================================================!
 
-            do iobs = 1,size( station )
-               do idiff = 1,size( innovation( iobs )%diff )
-                  cost_part(1)  =  cost_part(1)   +  station( iobs )%weight * innovation ( iobs )%diff( idiff )**2 
-               end do
+            if ( use_Zobs == 1 ) then
 
-            end do
+                do iobs = 1,size( station )
+
+                  do idiff = 1,size( innovation( iobs )%diff )
+                    cost_part(1)  =  cost_part(1)   +  station( iobs )%weight * innovation ( iobs )%diff( idiff )**2
+                  enddo
+
+                enddo
+
+            endif
+
+
+            if ( use_UVobs == 1 ) then
+
+                do iobs = 1,size( station )
+
+                  do idiff = 1,size( innovUV( iobs )%diff )
+                    cost_part(1)  =  cost_part(1)   +  station( iobs )%weight * innovUV ( iobs )%diff( idiff )**2
+                  enddo
+
+                enddo
+
+            endif
+
+            !!!!!!!!!!!!!
+            ! InnovW
+            !!!!!!!!!!!!!
 
             !!!!!!!!!!!!!
             ! InnovW
@@ -164,65 +192,208 @@ CONTAINS
             
             !do iobs = 1,size( station )
             !   do idiff = 1,size( innovW( iobs )%diff )
-            !      cost_part(1)  =  cost_part(1)   +  station( iobs )%weight * innovW ( iobs )%diff( idiff )**2  
+            !      cost_part(1)  =  cost_part(1)   +  station( iobs )%weight * innovW ( iobs )%diff( idiff )**2
             !   end do
             !end do
-            
-            !!!!!!!!!!!!!            
-            ! InnovQ with RMSE 
-            !!!!!!!!!!!!!
-            
-            if (use_Qobs == 1 .or. use_Qobs_gr4 == 1) then
-                do iobs = 1,size( stationQ )
-!                 write(*,*) iobs, size( stationQ ), size( innovQ( iobs )%diff )
+
+            if (( use_Qobs == 1 ) .or. ( use_Qobs_gr4 == 1 )) then
+
+                if ( use_NSE == 0 ) then
+
+
+                 ! InnovQ with RMSE
+                  do iobs = 1,size( stationQ )
+
                     do idiff = 1,size( innovQ( iobs )%diff )
-!                     write(*,*) iobs,  idiff, stationQ( iobs )%weight, innovQ ( iobs )%diff( idiff )
                         cost_part(1)  =  cost_part(1)   +   stationQ( iobs )%weight * innovQ ( iobs )%diff( idiff )**2
-
                     end do
-                end do
+
+                  end do
+
+                else
+
+
+                  ! InnovQ with NSE
+                  sizeQ = size( stationQ )
+
+                  do iobs = 1,size( stationQ )
+
+                    cost_part(3) = 0._rp
+                    cost_part(2) = 0._rp
+
+                      do idiff = 1,size( innovQ( iobs )%diff )
+                        cost_part(2)  =  cost_part(2)   +   (innovQ ( iobs         )%diff( idiff ))**2
+                        cost_part(3)  =  cost_part(3)   +   (innovQ ( iobs + sizeQ )%diff( idiff ))**2
+                      end do
+
+                    cost_part(1)  =  cost_part(1)   +  cost_part(2) / cost_part(3)
+
+                  enddo
+
+                endif
+
             endif
-            
-            !!!!!!!!!!!!!            
-            ! InnovQ with NSE 
-            !!!!!!!!!!!!!
-            
-            
-!             if (use_Qobs_gr4 == 1) then !Nash, temp use of cost part 2 and 3
-!         
-!                 do iobs = 1,size( stationQ )
-! !                 write(*,*) iobs
-!                     cost_part(3) = 0._rp
-!                     cost_part(2) = 0._rp
-!                     do idiff = 1,size( innovQ( iobs )%diff )
-! !                     write(*,*) idiff
-!                         cost_part(2)  =  cost_part(2)   +   (innovQ ( iobs                  )%diff( idiff ))**2
-!                     end do
-!                     do idiff = 1,size( innovQ( iobs )%diff )
-! !                     write(*,*) idiff
-!                         cost_part(3)  =  cost_part(3)   +   (innovQ ( iobs + size(stationQ) )%diff( idiff ))**2
-!                     end do !FOR NSE
-!                     cost_part(1)  =  cost_part(1)   +  cost_part(2) / cost_part(3)
-!                     write(*,*)  'cost_part(1) in obs gr4 Nash',  cost_part(2) / cost_part(3) 
-!                 end do
-!             endif
 
-
-             call mpi_sum_r( cost_part(1) )
+          call mpi_sum_r( cost_part(1) )
 
 
 !~             !==========================================================================================================!
 !~             !  Bathymetry Regularization Term
 !~             !==========================================================================================================!
 
-             call FV_Cell_Grad( grad_var , bathy_cell , mesh )
+!~          !==========================================================================================================!
+!~          !  Bathymetry Regularization Term
+!~          !==========================================================================================================!
 
-            do i = 1,mesh%nc
-               cost_part(2) = cost_part(2) + ( ( grad_var(i)%x )**2 +  ( grad_var(i)%y )**2 )
-            end do
+            !~  !  Regularize with bathymetry gradient (either full gradient, or only the free distributed bathymetry
+            if (regul_bathy_grad == 1) then
 
-            call mpi_sum_r( cost_part(2) )
+                call FV_Cell_Grad( grad_var , bathy_cell , mesh )
 
+            elseif  ((regul_bathy_grad .eq. 2) .and. (use_xsshp .eq. 1)) then
+
+                bathy_temp(:) = 0._rp
+   
+                if (xsshp_along_x == 1) then
+
+                    do ie = 1, mesh%nc
+                    if (mesh%cell(ie)%grav%x <= XSshape(1)%xcenter) then
+
+                        bathy_temp( ie ) = bathy_cell(ie) - ( &
+                        XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
+                        (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
+                        (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                        ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                        + slope_y(1) * mesh%cell(ie)%grav%y &
+                        + slope_x(1) * mesh%cell(ie)%grav%x )
+
+                    else
+
+                        bathy_temp( ie ) = bathy_cell(ie) - ( &
+                        XSshape(1)%topz + &
+                        min( 0._rp, - abs(XSshape(1)%hmax) *&
+                        (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
+                        (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                        ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                        + slope_y(1) * mesh%cell(ie)%grav%y &
+                        + slope_x(1) * mesh%cell(ie)%grav%x )
+
+                    endif
+                    enddo
+                
+                elseif (xsshp_along_y == 1) then
+                    
+                    do ie = 1, mesh%nc
+                    if (mesh%cell(ie)%grav%y <= XSshape(1)%xcenter) then
+
+                        bathy_temp( ie ) = bathy_cell(ie) - ( &
+                        XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
+                        (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
+                        (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                        ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                        + slope_y(1) * mesh%cell(ie)%grav%y &
+                        + slope_x(1) * mesh%cell(ie)%grav%x )
+
+                    else
+
+                        bathy_temp( ie ) = bathy_cell(ie) - ( &
+                        XSshape(1)%topz + &
+                        min( 0._rp, - abs(XSshape(1)%hmax) *&
+                        (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
+                        (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                        ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                        + slope_y(1) * mesh%cell(ie)%grav%y &
+                        + slope_x(1) * mesh%cell(ie)%grav%x )
+
+                    endif
+                    enddo
+                    
+                else
+                    write(*,*) "ERROR: You must define a direction (x or y-axis) for the cross-section parameterization, with xsshp_along_x or xsshp_along_y." !NOADJ
+                endif
+                
+                call FV_Cell_Grad( grad_var , bathy_temp , mesh )
+                
+            elseif (regul_bathy_grad .eq. 2) then
+            
+                write(*,*) "ERROR: regul_bathy_grad is equal to 2 but use_xsshp is not equal to 1. You need to use cross-section parameterization to use this bathymetry gradient regularization." !NOADJ
+
+            endif
+
+
+            if (regul_bathy_grad .ne. 0) then
+            
+                do i = 1,mesh%nc
+                    cost_part(2) = cost_part(2) + ( ( grad_var(i)%x )**2 +  ( grad_var(i)%y )**2 )
+                end do
+                call mpi_sum_r( cost_part(2) )
+
+            endif
+
+        !~  !  Regularize with free bathymetry misfit to XS shape and slope
+            if ((regul_bathy_shape .eq. 1) .and. (use_xsshp .eq. 1)) then
+
+   
+              if (xsshp_along_x == 1) then
+                do ie= 1,mesh%nc
+                  if (mesh%cell(ie)%grav%x <= XSshape(1)%xcenter) then
+
+                    cost_part(2) = cost_part(2) + ( bathy_cell(ie) - ( &
+                    XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
+                    (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
+                    (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                    ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                    + slope_y(1) * mesh%cell(ie)%grav%y &
+                    + slope_x(1) * mesh%cell(ie)%grav%x ) ) ** 2
+
+                  else
+
+                    cost_part(2) = cost_part(2) + ( bathy_cell(ie) - ( &
+                    XSshape(1)%topz + &
+                    min( 0._rp, - abs(XSshape(1)%hmax) *&
+                    (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
+                    (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                    ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                    + slope_y(1) * mesh%cell(ie)%grav%y &
+                    + slope_x(1) * mesh%cell(ie)%grav%x ) ) **2
+
+                  endif
+                enddo
+                
+                call mpi_sum_r( cost_part(2) )
+                  
+              elseif (xsshp_along_y == 1) then
+              
+                do ie= 1,mesh%nc
+                  if (mesh%cell(ie)%grav%y <= XSshape(1)%xcenter) then
+
+                    cost_part(2) = cost_part(2) + ( bathy_cell(ie) - ( &
+                    XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
+                    (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
+                    (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                    ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                    + slope_y(1) * mesh%cell(ie)%grav%y &
+                    + slope_x(1) * mesh%cell(ie)%grav%x ) ) ** 2
+
+                  else
+
+                    cost_part(2) = cost_part(2) + ( bathy_cell(ie) - ( &
+                    XSshape(1)%topz + &
+                    min( 0._rp, - abs(XSshape(1)%hmax) *&
+                    (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
+                    (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+                    ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                    + slope_y(1) * mesh%cell(ie)%grav%y &
+                    + slope_x(1) * mesh%cell(ie)%grav%x ) ) **2
+
+                  endif
+                end do
+
+                call mpi_sum_r( cost_part(2) )
+
+              endif
+            endif
+!             write(*,*) "Cost due to gradient + shape misfit regularization", cost_part(2) * regul_bathy
             cost_part(2) = cost_part(2) * regul_bathy
 
 !~             !==========================================================================================================!
@@ -255,14 +426,14 @@ CONTAINS
 
            cost = sum( cost_part )
 
-         end if
 
-      #endif
+endif
+
+#endif
 
       !================================================================================================================!
       !  Fake operation for Tapenade Automatic Differentiation (Last operation ...)
       !================================================================================================================!
-
       cost = sqrt( cost**2 )
 
    END SUBROUTINE calc_cost_function
@@ -303,7 +474,7 @@ CONTAINS
       !================================================================================================================!
 
       #ifdef USE_SW_MONO
-      
+
         if (.not. allocated( station ) )  return
 
          do iobs = 1,size( station )

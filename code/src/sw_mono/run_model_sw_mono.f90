@@ -81,15 +81,105 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !===================================================================================================================!
 
    type( msh ), intent(inout)  ::  mesh
-   type( unk ), intent(in   )  ::  dof0
+   type( unk ), intent(inout)  ::  dof0
    type( unk ), intent(inout)  ::  dof
 
    real(rp), intent(out)  ::  cost
 
+   !===================================================================================================================!
    !  Local Variables
    !===================================================================================================================!
 
-   integer(ip)  ::  sub_nt
+   integer(ip)  ::  sub_nt, iR, iL
+    real(rp) :: bathy_temp
+
+
+   !===================================================================================================================!
+   !  Define parameterized bathymetry
+   !===================================================================================================================!
+
+   if (use_xsshp == 1) then
+      if (xsshp_along_x == 1) then
+      
+        do ie = 1,mesh%nc
+
+            bathy_temp = bathy_cell(ie)
+
+            if (mesh%cell(ie)%grav%x <= XSshape(1)%xcenter) then
+
+            bathy_cell( ie ) = XSshape(1)%topz + &
+            min( 0._rp, - abs(XSshape(1)%hmax) *&
+            (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
+            (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+            ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+            + bathy_temp &
+            + slope_y(1) * mesh%cell(ie)%grav%y &
+            + slope_x(1) * mesh%cell(ie)%grav%x
+
+            else
+
+            bathy_cell( ie ) = XSshape(1)%topz + &
+            min( 0._rp, - abs(XSshape(1)%hmax) *&
+            (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
+            (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+            ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+            + bathy_temp &
+            + slope_y(1) * mesh%cell(ie)%grav%y &
+            + slope_x(1) * mesh%cell(ie)%grav%x
+
+            endif
+            
+        enddo
+        
+     elseif (xsshp_along_y == 1) then
+        
+        do ie = 1,mesh%nc
+
+            bathy_temp = bathy_cell(ie)
+            
+            if (mesh%cell(ie)%grav%y <= XSshape(1)%xcenter) then
+
+            bathy_cell( ie ) = XSshape(1)%topz + &
+            min( 0._rp, - abs(XSshape(1)%hmax) *&
+            (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
+            (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+            ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+            + bathy_temp &
+            + slope_y(1) * mesh%cell(ie)%grav%y &
+            + slope_x(1) * mesh%cell(ie)%grav%x
+
+            else
+
+            bathy_cell( ie ) = XSshape(1)%topz + &
+            min( 0._rp, - abs(XSshape(1)%hmax) *&
+            (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
+            (XSshape(1)%xcenter-XSshape(1)%xleft))/&
+            ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+            + bathy_temp &
+            + slope_y(1) * mesh%cell(ie)%grav%y &
+            + slope_x(1) * mesh%cell(ie)%grav%x
+
+            endif
+
+        enddo
+
+      endif
+   endif
+
+
+   !===================================================================================================================!
+   !  ZSinit.txt
+   !===================================================================================================================!
+
+    inquire( file = 'zs_init.txt' , exist = file_exist(1) )
+
+    if ( file_exist(1) ) then
+        do i = 1, mesh%nc
+            dof0%h(i) = max(0._rp, dof0%h(i) - bathy_cell(i) &
+                    + slope_y(1) * mesh%cell(i)%grav%y &
+                    + slope_x(1) * mesh%cell(i)%grav%x)
+        enddo
+    endif
 
 
     !======================================================================================================================!
@@ -118,10 +208,22 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    tc  =  tc0
    nt  =  nt0
 
-   if ( use_obs == 1 ) then
-      innovation (:)%ind_t    =  1_ip
-      innovW(:)%ind_t  =  1_ip
-   end if
+    if ( use_obs == 1 ) then
+
+        if ( use_Zobs == 1 ) then
+            innovation(:)%ind_t =  1_ip
+!             innovW(:)%ind_t     =  1_ip
+        end if
+
+        if ( use_UVobs == 1 ) then
+            innovUV(:)%ind_t = 1_ip
+        end if
+
+        if ( (use_Qobs == 1) .or. (use_Qobs_gr4 == 1) ) then
+            innovQ(:)%ind_t = 1_ip
+        endif
+
+    endif
 
    if ( use_Qobs == 1 .or. use_Qobs_gr4 == 1) then
       innovQ(:)%ind_t  =  1_ip
@@ -132,15 +234,15 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !===================================================================================================================!
    !  Writing Initial Condition Output File
    !===================================================================================================================!
-!write(*,*) "+ do  call write_results( dof0 , mesh )      "
+
    call write_results( dof0 , mesh )                                                                              !NOADJ
-!write(*,*) "+ done  call write_results( dof0 , mesh )      "
+
    !===================================================================================================================!
    !  Initializing post treatment variables
    !===================================================================================================================!
-!write(*,*) "+ do  call sw_pre_treatment( dof0 , mesh      "
+
    call sw_pre_treatment( dof0 , mesh )                                                                           !NOADJ
-!write(*,*) "+ done call sw_pre_treatment( dof0 , mesh       "
+
 
    !===================================================================================================================!
    !  SW Model Loop Time
@@ -149,9 +251,8 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    end_time_loop = .false.
 
    do while( .not. end_time_loop)
-!write(*,*) "+ do call sub_run_model"
+
       call sub_run_model
-!write(*,*) "+ done call sub_run_model"
 
    end do
 
@@ -159,6 +260,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !===================================================================================================================!
    !  Cost Function Calculation using Innovation Vector
    !===================================================================================================================!
+
    call calc_cost_function( cost , mesh )
 
 CONTAINS
@@ -170,24 +272,19 @@ CONTAINS
 
       sub_nt = 0
 
-!write(*,*) "++ ENTER WHILE LOOP: while ( .not. end_time_loop .and. sub_nt < max_nt_for_adjoint )"
       do while ( .not. end_time_loop .and. sub_nt < max_nt_for_adjoint )
 
          !=============================================================================================================!
          !  Boundary Conditions
          !=============================================================================================================!
 
-!write(*,*) "--- do  call set_bc( dof , mesh )"
          call set_bc( dof , mesh )
-!write(*,*) "--- donr call set_bc( dof , mesh )"
 
          !=============================================================================================================!
          !  Time Control
          !=============================================================================================================!
 
-!write(*,*) "--- do  call advance_time( dof , mesh )"
          call advance_time( dof , mesh )
-!write(*,*) "--- done  call advance_time( dof , mesh )"
 
          !=============================================================================================================!
          !  Reinitialization of post variables
@@ -199,12 +296,12 @@ CONTAINS
          !  Time Stepping Performing ( Euler + first_b1, IMEX +  )
          !=============================================================================================================!
 
-!write(*,*) "--- do  call appropriate scheme"
 	select case( temp_scheme )
 
 				case( 'euler' )
 
 				   select case( spatial_scheme )
+
 
 						case( 'first_b1' )
 
@@ -235,60 +332,53 @@ CONTAINS
 
 	end select
 
-!write(*,*) "--- done  call appropriate scheme"
          !============================================================================!
          !  Post-processing
          !=============================================================================================================!
-!write(*,*) ">>> do      call sw_post_treatment( dof , mesh )"
+
          call sw_post_treatment( dof , mesh )
-!write(*,*) ">>> done      call sw_post_treatment( dof , mesh )"
-         !=============================================================================================================!
-         !  Writing Output Result File
-         !=============================================================================================================!
-!write(*,*) ">>> do      call write_results( dof , mesh )          "
-         call write_results( dof , mesh )                                                                         !NOADJ
-!write(*,*) ">>> done      call write_results( dof , mesh ) "
 
          !=============================================================================================================!
          !  Filling Innovation Vector
          !=============================================================================================================!
 
-         if ( use_obs == 1 ) then
-!write(*,*) ">>> do  call calc_innovation( dof,mesh )         "
+    if ( use_obs == 1 ) then
+
+         if ( use_Zobs == 1) then
             call calc_innovation( dof,mesh )
-           ! call calc_innovW( dof,mesh )
-!write(*,*) ">>> done  call calc_innovation( dof,mesh )         "
+        endif
+
+        if ( use_UVobs == 1 ) then
+            call calc_innovUV( dof,mesh )
         endif
 
 #ifdef USE_HYDRO
          if ( use_Qobs_gr4 == 1 ) then
-!write(*,*) ">>> do  call calc_innovQ_gr4( dof,mesh )      "
-!             write(*,*) 'Using flow observations at GR4 outputs.'
             call calc_innovQ_gr4( dof,mesh )
-!write(*,*) ">>> done  call calc_innovQ_gr4( dof,mesh )      "
         endif
 #endif
 
          if ( use_Qobs == 1 ) then
-!write(*,*) ">>> do  call calc_innovQ( dof,mesh )     "
-            !write(*,*) 'Calling flow observations at hydraulic station.t'
             call calc_innovQ( dof,mesh )
-!write(*,*) ">>> done   call calc_innovQ( dof,mesh )      "
         endif
 
-         if ( .not. use_obs == 1 .and. .not. use_Qobs_gr4 == 1 .and. .not. use_Qobs == 1) then
-!write(*,*) ">>> do  call update_cost_function( dof , cost )     "
+         if ( .not. use_obs == 1 ) then
             call update_cost_function( dof , cost )
-!write(*,*) ">>> done  call update_cost_function( dof , cost )     "
          endif
+
 
          sub_nt = sub_nt + 1
 
-!write(*,*) "tc=", tc
-!write(*,*) "ts=", ts
 
-      end do
-!write(*,*) ">>>> OUT sub_run_model"
+    endif
+         !=============================================================================================================!
+         !  Writing Output Result File, now with innovUV
+         !=============================================================================================================!
+
+         call write_results( dof , mesh )                                                                         !NOADJ
+
+   end do
+
    END SUBROUTINE sub_run_model
 
 

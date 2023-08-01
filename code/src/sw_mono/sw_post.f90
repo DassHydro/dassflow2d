@@ -85,9 +85,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
    !===================================================================================================================!
    !  Total flow rates at boundaries inputs and outputs
    !===================================================================================================================!
-!write(*,*) "= = = = = = = = = = = = = ="
-!write(*,*) "INTO SW POSTTREATMENT"
-!write(*,*) "= = = = = = = = = = = = = ="
+
    do num_bc = 1,bc%nb
 
       call mpi_sum_r( bc%sum_mass_flux( num_bc ) )
@@ -138,18 +136,14 @@ SUBROUTINE sw_post_treatment( dof , mesh )
    !  Output in File prescribed Stations/Sections at given dtp frequency
    !===================================================================================================================!
 
-!write(*,*) "end_time_loop 3.2 -- before call write_stations",end_time_loop
    call write_stations( dof, mesh )
-!write(*,*) "end_time_loop 3.3 -- after call write_stations",end_time_loop
+
 ! call write_sections( dof )
 
    !===================================================================================================================!
    !  Output Total flow rates at boundaries inputs and outputs
    !===================================================================================================================!
 
-!write(*,*) "=============="
-!write(*,*) "POST boundaries"
-!write(*,*) "=============="
    do num_bc = 1,bc%nb
 
       buffer = ''
@@ -198,9 +192,6 @@ SUBROUTINE sw_post_treatment( dof , mesh )
    !  Test qin/qout
    !===================================================================================================================!
 
-!write(*,*) "=============="
-!write(*,*) " Test qin/qout"
-!write(*,*) "=============="
    do num_bc = 1,bc%nb
 
       discharg  = zero
@@ -275,9 +266,6 @@ SUBROUTINE sw_post_treatment( dof , mesh )
    !  Rain write
    !===================================================================================================================!
 
-!write(*,*) "=============="
-!write(*,*) " rain"
-!write(*,*) "=============="
    if (bc_rain /= 0) then
 
 

@@ -78,7 +78,6 @@ SUBROUTINE write_results( dof , mesh )
    !===================================================================================================================!
    !  Testing if it is time to write a result file
    !===================================================================================================================!
-!write(*,*) "Within write results ---"
 !#	write(*,*) 'tc', tc
 !#	write(*,*)  'dt', dt
    if ( .not. test_dt_just_after( dtw ) .and. &
@@ -96,13 +95,12 @@ SUBROUTINE write_results( dof , mesh )
    !  Writing Result File
    !===================================================================================================================!
 
-   call system('mkdir -p res')
-!write(*,*) "call write results files"
-    call write_result_file( dof , mesh , 'res/result' )
-!write(*,*) "out results files"
+    call system('mkdir -p res')
 
-    ! call write_restart_direct( dof , mesh ) >>> replaced with tc0 : TC=0
-    call write_restart_with_tc0( dof , mesh )
+    call write_result_file( dof , mesh , 'res/result' )
+
+!     call write_restart_direct( dof , mesh )
+
    !===================================================================================================================!
    !  Writing Exact Solution
    !===================================================================================================================!
@@ -121,7 +119,6 @@ SUBROUTINE write_results( dof , mesh )
 
    #endif
 
-!write(*,*) "out write_results routine"
 END SUBROUTINE write_results
 
 
@@ -161,7 +158,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
    !===================================================================================================================!
    !  Creating result file name
    !===================================================================================================================!
-!write(*,*) "whithin write result file"
+
    if      ( tc < zerom ) then
 
       write(filename,'(A,"_initial")') namefile
@@ -182,6 +179,11 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
 
    if      ( w_vtk == 1 ) then
 
+      if      ( tc < zerom ) then
+
+        call v_vtk_init    ( mesh , trim(filename)//'_spatialparams.vtk' )
+      endif
+
       call v_vtk    ( dof , mesh , trim(filename)//'.vtk' )
 
    else if ( w_vtk == 2 ) then
@@ -189,7 +191,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
       call v_vtk_bin( dof , mesh , trim(filename)//'.vtk' )
 
    end if
-! write(*,*) "--> vtk done"
+
    !===================================================================================================================!
    !  Tecplot result file output
    !===================================================================================================================!
@@ -199,7 +201,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
       call v_tecplot( dof , mesh , trim(filename)//'.plt' )
 
    end if
-! write(*,*) "--> Tecplot done"
+
    !===================================================================================================================!
    !  Gnuplot result file output
    !===================================================================================================================!
@@ -211,7 +213,6 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
     !  call v_gnuplot_with_ghostcells( dof , mesh , trim(filename)//'_with_ghostcells.dat' )
    end if
 
-! write(*,*) "--> Gnuplot done"
 
    !===================================================================================================================!
    !  Infiltration write , TODO make its own routine
@@ -227,10 +228,22 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
 
         close(10)
    endif
-! write(*,*) "--> infil done"
+   
+   !===================================================================================================================!
+   !  Infiltration write , TODO make its own routine
+   !===================================================================================================================!
+!    if (bc_infil .ne. 0) then
+!     open(10,file= trim(filename)//'_infil_qty.dat',status='replace',form='formatted')
+!
+!     write(10,*) '# id_cell infil_group infil_qty'
+!
+!     do i=1,mesh%nc
+!                 write(10,'(2i4, ES15.8)') i, infil%land(i), dof%infil(i)
+!     end do
+!
+!     close(10)
+!    endif
 
-
-! write(*,*) "OUT Write_result_file"
 END SUBROUTINE write_result_file
 
 
@@ -661,7 +674,6 @@ SUBROUTINE v_tecplot_direct( dof , mesh , filename )
    !===================================================================================================================!
 
    mesh_total_size = mesh%nc
-
    call mpi_sum_i( mesh_total_size )
 
    open(10,file=filename,status='replace',form='formatted',access='direct',recl=16)
@@ -940,6 +952,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
          open(10,file=filename,status='old',position='append',form='formatted')
 
          do i=1,mesh%nc
+
             write(10,'(I5,8(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
@@ -949,7 +962,6 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  manning( land(i) )     , &
                                  dof%u(i)               , &
                                  dof%v(i)
-
          end do
 
 
@@ -981,6 +993,8 @@ SUBROUTINE v_vtk( dof , mesh , filename )
    USE m_common
    USE m_mpi
    USE m_model
+   USE m_obs
+   USE m_numeric
 
    implicit none
 
@@ -1065,24 +1079,6 @@ SUBROUTINE v_vtk( dof , mesh , filename )
    rec_index = rec_index + 2
 
    !===================================================================================================================!
-   !  Writing VTK file bathy cell data
-   !===================================================================================================================!
-
-   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-   write(10,rec=rec_index+2,fmt='(A16   )') 'bathy           '
-   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-
-   rec_index = rec_index + 5
-
-   do i = 1,mesh%nc
-      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') bathy_cell(i) , char(10)
-   end do
-
-   rec_index = rec_index + mesh%nc
-
-   !===================================================================================================================!
    !  Writing VTK file h cell data
    !===================================================================================================================!
 
@@ -1099,6 +1095,46 @@ SUBROUTINE v_vtk( dof , mesh , filename )
    end do
 
    rec_index = rec_index + mesh%nc
+
+   !===================================================================================================================!
+   !  Writing VTK file rain cell data
+   !===================================================================================================================!
+   if (bc_rain == 1) then
+
+    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+    write(10,rec=rec_index+2,fmt='(A16   )') 'current_rain               '
+    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+    rec_index = rec_index + 5
+
+    do i = 1,mesh%nc
+        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') bc%rain( bc%rain_land(i) )%qin , char(10)
+    end do
+
+    rec_index = rec_index + mesh%nc
+   endif
+
+   !===================================================================================================================!
+   !  Writing VTK file h_infil cell data
+   !===================================================================================================================!
+   if (bc_infil/=0) then
+
+    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+    write(10,rec=rec_index+2,fmt='(A16   )') 'hinfil               '
+    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+    rec_index = rec_index + 5
+
+    do i = 1,mesh%nc
+        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%infil(i) , char(10)
+    end do
+
+    rec_index = rec_index + mesh%nc
+   endif
 
    !===================================================================================================================!
    !  Writing VTK file zs cell data
@@ -1119,22 +1155,44 @@ SUBROUTINE v_vtk( dof , mesh , filename )
    rec_index = rec_index + mesh%nc
 
    !===================================================================================================================!
-   !   Writing VTK file Manning cell data
+   !  Writing VTK file rain cell data
    !===================================================================================================================!
+   if (bc_rain == 1) then
 
-   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-   write(10,rec=rec_index+2,fmt='(A16   )') 'Manning         '
-   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+    write(10,rec=rec_index+2,fmt='(A16   )') 'current_rain               '
+    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
-   rec_index = rec_index + 5
+    rec_index = rec_index + 5
 
-   do i = 1,mesh%nc
-      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') manning( land(i) ) , char(10)
-   end do
+    do i = 1,mesh%nc
+        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') bc%rain( bc%rain_land(i) )%qin , char(10)
+    end do
 
-   rec_index = rec_index + mesh%nc
+    rec_index = rec_index + mesh%nc
+   endif
+
+   !===================================================================================================================!
+   !  Writing VTK file h_infil cell data
+   !===================================================================================================================!
+   if (bc_infil/=0) then
+
+    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+    write(10,rec=rec_index+2,fmt='(A16   )') 'hinfil               '
+    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+    rec_index = rec_index + 5
+
+    do i = 1,mesh%nc
+        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%infil(i) , char(10)
+    end do
+
+    rec_index = rec_index + mesh%nc
+   endif
 
    !===================================================================================================================!
    !   Writing VTK file u cell data
@@ -1172,9 +1230,485 @@ SUBROUTINE v_vtk( dof , mesh , filename )
 
    rec_index = rec_index + mesh%nc
 
+   !===================================================================================================================!
+   !   Writing VTK file u cell data
+   !===================================================================================================================!
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'u               '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%u(i) , char(10)
+   end do
+
+   rec_index = rec_index + mesh%nc
+
+   if (use_UVobs == 1 .and. use_obs == 1) then
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'innovUV               '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+
+    do i = 1,mesh%nc
+    do iobs = 1, size( station )
+        if (innovUV( iobs )%ind_t > 1_ip) then
+        !   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
+        !   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
+            j = station( iobs )%pt( 1 )%cell
+
+                    if (i == j) then
+                        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') innovUV ( iobs )%diff( innovUV( iobs )%ind_t - 1_ip ) , char(10)
+                        exit
+                    elseif (iobs == size(station)) then
+                        write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
+                        exit
+                    endif
+
+        endif
+    enddo
+    enddo
+
+    rec_index = rec_index + mesh%nc
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'obsU               '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+
+    do i = 1,mesh%nc
+    do iobs = 1, size( station )
+
+!   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
+!   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
+    j = station( iobs )%pt( 1 )%cell
+
+            if (i == j) then
+                write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') station( iobs )%u( innovUV( iobs )%ind_t - 1_ip ) , char(10)
+                exit
+            elseif (iobs == size(station)) then
+                write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
+                exit
+            endif
+
+!   endif
+    enddo
+    enddo
+
+    rec_index = rec_index + mesh%nc
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'obsV               '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+
+    do i = 1,mesh%nc
+    do iobs = 1, size( station )
+
+!   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
+!   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
+    j = station( iobs )%pt( 1 )%cell
+
+            if (i == j) then
+                write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') station( iobs )%V( innovUV( iobs )%ind_t - 1_ip ) , char(10)
+                exit
+            elseif (iobs == size(station)) then
+                write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
+                exit
+            endif
+
+!   endif
+    enddo
+    enddo
+    rec_index = rec_index + mesh%nc
+
+   endif
+
+   call mpi_wait_all
+close(10)
+END SUBROUTINE v_vtk
+
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+!
+!  Write an ASCII VTK Output Result File
+!
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+
+
+SUBROUTINE v_vtk_init( mesh , filename )
+
+   USE m_common
+   USE m_mpi
+   USE m_model
+
+   implicit none
+
+   !===================================================================================================================!
+   !  Interface Variables
+   !===================================================================================================================!
+
+   TYPE( msh ), intent(in)  ::  mesh
+
+   character(len=*), intent(in)  ::  filename
+
+   !===================================================================================================================!
+   !  Local Variables
+   !===================================================================================================================!
+
+   integer(ip)  ::  rec_index, iobs
+
+   real(rp)  ::  h , u , v , c , dtx , dty , dmin
+
+   !===================================================================================================================!
+   !  Begin Subroutine
+   !===================================================================================================================!
+
+   open(10,file=filename,status='replace',form='formatted',access='direct',recl=16)
+
+   !===================================================================================================================!
+   !  Creating VTK file and header
+   !===================================================================================================================!
+
+   write(10,rec= 1,fmt='(A16   )') '# vtk DataFile V'
+   write(10,rec= 2,fmt='(A15,A1)') 'ersion 3.0     ', char(10)
+   write(10,rec= 3,fmt='(A16   )') 'DassFlow Output '
+   write(10,rec= 4,fmt='(A15,A1)') 'File           ', char(10)
+   write(10,rec= 5,fmt='(A15,A1)') 'ASCII          ', char(10)
+   write(10,rec= 6,fmt='(A16   )') 'DATASET UNSTRUCT'
+   write(10,rec= 7,fmt='(A15,A1)') 'URED_GRID      ', char(10)
+   write(10,rec= 8,fmt='(A16   )') 'POINTS          '
+   write(10,rec= 9,fmt='(I16   )')  mesh%nn
+   write(10,rec=10,fmt='(A15,A1)') ' double        ', char(10)
+
+   rec_index = 10
+
+   do i = 1,mesh%nn
+      write(10,rec=rec_index+3*i-2,fmt='(ES15.8   )') mesh%node(i)%coord%x
+      write(10,rec=rec_index+3*i-1,fmt='(ES15.8   )') mesh%node(i)%coord%y
+      write(10,rec=rec_index+3*i  ,fmt='(ES15.8,A1)') 0._rp , char(10)
+   end do
+
+   rec_index = rec_index + 3 * mesh%nn
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'CELLS          '
+   write(10,rec=rec_index+2,fmt='(I15   )')  mesh%nc
+   write(10,rec=rec_index+3,fmt='(I15,A1)')  mesh%nc*5 , char(10)
+
+   rec_index = rec_index + 3
+
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+5*swap_index(i)-4,fmt='(I15   )') 4
+      write(10,rec=rec_index+5*swap_index(i)-3,fmt='(I15   )') mesh%cell(i)%node(1)-1
+      write(10,rec=rec_index+5*swap_index(i)-2,fmt='(I15   )') mesh%cell(i)%node(2)-1
+      write(10,rec=rec_index+5*swap_index(i)-1,fmt='(I15   )') mesh%cell(i)%node(3)-1
+      write(10,rec=rec_index+5*swap_index(i)  ,fmt='(I15,A1)') mesh%cell(i)%node(4)-1, char(10)
+   end do
+
+   rec_index = rec_index + 5 * mesh%nc
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'CELL_TYPES      '
+   write(10,rec=rec_index+2,fmt='(I15,A1)')  mesh%nc , char(10)
+
+   rec_index = rec_index + 2
+
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+i,fmt='(I15,A1)') 9 , char(10)
+   end do
+
+   rec_index = rec_index + mesh%nc
+
+   write(10,rec=rec_index+1,fmt='(A16   )')  'CELL_DATA       '
+   write(10,rec=rec_index+2,fmt='(I15,A1)')  mesh%nc , char(10)
+
+   rec_index = rec_index + 2
+
+   !===================================================================================================================!
+   !  Writing VTK file bathy cell data
+   !===================================================================================================================!
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'bathy           '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') bathy_cell(i) &
+                                + slope_y(1) * mesh%cell(i)%grav%y &
+                                + slope_x(1) * mesh%cell(i)%grav%x , char(10)
+   end do
+
+   rec_index = rec_index + mesh%nc
+   !===================================================================================================================!
+   !   Writing VTK file Manning cell data
+   !===================================================================================================================!
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'Manning         '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') manning( land(i) ) , char(10)
+   end do
+
+   rec_index = rec_index + mesh%nc
+
    call mpi_wait_all
 
-END SUBROUTINE v_vtk
+
+   !===================================================================================================================!
+   !   Writing VTK file infiltration params cell data
+   !===================================================================================================================!
+
+   if (bc_rain == 1) then
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'rain-land      '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') bc%rain_land(i) , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+    endif
+
+    if (bc_infil == 1) then
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'GA-land      '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') infil%land(i) , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'GA-Ks         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') infil%GA( infil%land(i) )%Ks , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'GA-Psif         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') infil%GA( infil%land(i) )%Psif , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'GA-Deltatheta         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') infil%GA( infil%land(i) )%Deltatheta , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+    elseif (bc_infil == 2) then
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'SCS-land      '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') infil%land(i) , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'SCS-CN       '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') infil%SCS( infil%land(i) )%CN , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'SCS-lambda         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') infil%SCS( infil%land(i) )%lambdacn , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+    endif
+
+
+    ! Physical descriptors
+    if (allocated(phys_desc%soil_land)) then
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-land      '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') phys_desc%soil_land(i) , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'clay       '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%clay , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'sand         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%sand , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'silt         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%silt , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+    endif
+
+    if (use_obs == 1) then
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'obs_location         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+
+ do i = 1,mesh%nc
+
+ do iobs = 1, size( station )
+
+!   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
+!   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
+    j = station( iobs )%pt( 1 )%cell
+
+            if (i == j) then
+                write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') iobs , char(10)
+!                 write(*,*) "OBS POINT AT CELL ", i, j, iobs
+                exit
+            elseif (iobs == size(station)) then
+                write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
+!                 write(*,*) "NO OBS POINT AT CELL ", i, j, iobs
+                exit
+            endif
+
+!   endif
+ enddo
+ enddo
+rec_index = rec_index + mesh%nc
+
+ endif
+
+   call mpi_wait_all
+close(10)
+
+END SUBROUTINE v_vtk_init
 
 
 !**********************************************************************************************************************!
@@ -1214,7 +1748,6 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
    !===================================================================================================================!
 
    mesh_total_size = mesh%nc
-
    call mpi_sum_i( mesh_total_size )
 
    if ( proc == 0 ) then
@@ -1297,7 +1830,6 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
                              write(10) bathy_cell(1:mesh%nc)
          if ( proc == np-1 ) write(10) char(10)
-
          close(10)
 
       end if
@@ -1352,7 +1884,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 
    end do
 
-   !===================================================================================================================!
+      !===================================================================================================================!
    !   Writing VTK file v cell data
    !===================================================================================================================!
 
@@ -1374,6 +1906,151 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
       call mpi_wait_all
 
    end do
+
+   !===================================================================================================================!
+   !   Writing VTK file manning cell data
+   !===================================================================================================================!
+
+!    do k = 0,np-1
+! 
+!       if ( proc == k ) then
+! 
+!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+! 
+!    	   if ( proc == 0    ) write(10) 'SCALARS '//'manning'//' double 1'//char(10)
+!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+!                              write(10) manning(1:mesh%nc)
+!          if ( proc == np-1 ) write(10) char(10)
+! 
+!          close(10)
+! 
+!       end if
+! 
+!       call mpi_wait_all
+! 
+!    end do
+
+
+      !===================================================================================================================!
+   !   Writing VTK file dof%infil cell data
+   !===================================================================================================================!
+if (bc_infil .ne. 0) then
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'dof_infil'//' double 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) dof%infil(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+
+
+   !===================================================================================================================!
+   !   Writing VTK file infil_land cell data
+   !===================================================================================================================!
+
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'infil_land'//' integer 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) infil%land(1:mesh%nc)
+!                              write(*,*)  infil%land(1:mesh%nc), proc, mesh%nc, maxval(infil%land(1:mesh%nc)), minval(infil%land(1:mesh%nc))
+
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+
+ endif
+      !===================================================================================================================!
+   !   Writing VTK file manning_land cell data
+   !===================================================================================================================!
+
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'manning_land'//' integer 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) land(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+
+   !===================================================================================================================!
+   !   Writing VTK file rain_land cell data
+   !===================================================================================================================!
+if (bc_rain == 1) then
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'rain_land'//' integer 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) bc%rain_land(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+endif
+
+
+   !===================================================================================================================!
+   !   Writing VTK file soil-land cell data
+   !===================================================================================================================!
+
+!    do k = 0,np-1
+!
+!       if ( proc == k ) then
+!
+!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+!
+!    	   if ( proc == 0    ) write(10) 'SCALARS '//'soil-land'//' integer 1'//char(10)
+!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+!                              write(10) phys_desc%soil_land(1:mesh%nc)
+!          if ( proc == np-1 ) write(10) char(10)
+!
+!          close(10)
+!
+!       end if
+!
+!       call mpi_wait_all
+!
+!    end do
+
 
 END SUBROUTINE v_vtk_bin
 

@@ -110,10 +110,10 @@ class dassflowmodel(object):
         
         # ------------ FIRST mpi treatment------------------
         # this is necessary for both mpi and non mpi cases in order to initialise some variables
-        dassflow2d.wrapping.m_mpi.init_mpi()
-        rank = dassflow2d.wrapping.m_mpi.get_proc() # get the rank and number of processors
-        nproc = dassflow2d.wrapping.m_mpi.get_np()
-        self.mpi = [rank, nproc]
+        #dassflow2d.wrapping.m_mpi.init_mpi()
+        #rank = dassflow2d.wrapping.m_mpi.get_proc() # get the rank and number of processors
+        #nproc = dassflow2d.wrapping.m_mpi.get_np()
+        #self.mpi = [rank, nproc]
         
         
         
@@ -171,11 +171,11 @@ class dassflowmodel(object):
             self.meshing: dassflow2d.core.Meshing object initialised with fortran kernel values
         """
         os.chdir(self.bin_dir)
-        print("call dassflow2d.wrapping.m_mesh.msh()")
+        #print("call dassflow2d.wrapping.m_mesh.msh()")
         self.kernel.mesh = dassflow2d.wrapping.m_mesh.msh()
-        print("call         dassflow2d.wrapping.call_model.init_solver(self.kernel)")
+        #print("call         dassflow2d.wrapping.call_model.init_solver(self.kernel)")
         dassflow2d.wrapping.call_model.init_solver(self.kernel)
-        print("call   Meshing(mesh_fortran = self.kernel.mesh)")
+        #print("call   Meshing(mesh_fortran = self.kernel.mesh)")
         self.meshing = Meshing(mesh_fortran = self.kernel.mesh)
         
     def init_dof(self, **kwargs):
@@ -241,7 +241,7 @@ class dassflowmodel(object):
         Perform in correct order all fortran initialisation
         build ready to run model
         """
-        self.init_mesh()
+        #self.init_mesh()
         # initialise dof structure
         self.init_dof() 
         # initialise remaining structures

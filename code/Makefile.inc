@@ -78,7 +78,7 @@ CASEDIR	= ./bin_A
 #Fortran compiler: 	'0' for GNU, '1' for Intel
 COMPILO	= 0
 #Debug mode: 		'1' to activate. Not activating when computing adjoint model may cause errors.
-OPTIM		= 1
+OPTIM		= 0
 #SW model: 		'0' to not compile, '1' to compile SW_MONO, '2' to compile SW_HB, '3' to compile SW_MULTI
 MODEL		= 1
 #Hydrological model: 	'0' to not compile, '1' to compile
@@ -91,8 +91,9 @@ MINMETHOD	= 1
 SOLVER		= 0
 
 #Parallel computing: 	'1' to use
-MPI		=0
+MPI		= 1
 #If MPI=1, number of processors to use
-NB_PROC	= 0
+NB_PROC	= 2
+
 DEBUG_WRAPPING = 0
 

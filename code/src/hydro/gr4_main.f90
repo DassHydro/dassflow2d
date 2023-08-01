@@ -57,7 +57,7 @@
 
       
       Ndata_Hour = SIZE(bc%gr4(catchnb)%t)
-! write(*,*) mode
+
 !         bc%gr4( 1 )%params(2) = 0.148
 !         bc%gr4( 2 )%params(2) = -6.278
 !         bc%gr4( 3 )%params(2) = 1.363
