@@ -1612,6 +1612,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
 
     ! Physical descriptors
+
     if ((allocated(phys_desc%soil_land)) .or. (size(phys_desc%soil_land) .gt. 0)) then
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
@@ -1682,30 +1683,30 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
         rec_index = rec_index + 5
 
-
         do i = 1,mesh%nc
 
-        do iobs = 1, size( station )
+          do iobs = 1, size( station )
 
-        !   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
-        !   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
-            j = station( iobs )%pt( 1 )%cell
+          !   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
+          !   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
+              j = station( iobs )%pt( 1 )%cell
 
-                    if (i == j) then
-                        write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') iobs , char(10)
-        !                 write(*,*) "OBS POINT AT CELL ", i, j, iobs
-                        exit
-                    elseif (iobs == size(station)) then
-                        write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
-        !                 write(*,*) "NO OBS POINT AT CELL ", i, j, iobs
-                        exit
-                    endif
+                      if (i == j) then
+                          write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') iobs , char(10)
+          !                 write(*,*) "OBS POINT AT CELL ", i, j, iobs
+                          exit
+                      elseif (iobs == size(station)) then
+                          write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
+          !                 write(*,*) "NO OBS POINT AT CELL ", i, j, iobs
+                          exit
+                      endif
 
-        !   endif
-        enddo
+          !   endif
+          enddo
         enddo
         
         rec_index = rec_index + mesh%nc
+
 
  endif
 
@@ -1973,6 +1974,151 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
         end do
         
     endif
+
+
+   !===================================================================================================================!
+   !   Writing VTK file manning cell data
+   !===================================================================================================================!
+
+!    do k = 0,np-1
+! 
+!       if ( proc == k ) then
+! 
+!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+! 
+!    	   if ( proc == 0    ) write(10) 'SCALARS '//'manning'//' double 1'//char(10)
+!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+!                              write(10) manning(1:mesh%nc)
+!          if ( proc == np-1 ) write(10) char(10)
+! 
+!          close(10)
+! 
+!       end if
+! 
+!       call mpi_wait_all
+! 
+!    end do
+
+
+      !===================================================================================================================!
+   !   Writing VTK file dof%infil cell data
+   !===================================================================================================================!
+if (bc_infil .ne. 0) then
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'dof_infil'//' double 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) dof%infil(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+
+
+   !===================================================================================================================!
+   !   Writing VTK file infil_land cell data
+   !===================================================================================================================!
+
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'infil_land'//' integer 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) infil%land(1:mesh%nc)
+!                              write(*,*)  infil%land(1:mesh%nc), proc, mesh%nc, maxval(infil%land(1:mesh%nc)), minval(infil%land(1:mesh%nc))
+
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+
+ endif
+      !===================================================================================================================!
+   !   Writing VTK file manning_land cell data
+   !===================================================================================================================!
+
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'manning_land'//' integer 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) land(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+
+   !===================================================================================================================!
+   !   Writing VTK file rain_land cell data
+   !===================================================================================================================!
+if (bc_rain == 1) then
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'rain_land'//' integer 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) bc%rain_land(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   end do
+endif
+
+
+   !===================================================================================================================!
+   !   Writing VTK file soil-land cell data
+   !===================================================================================================================!
+
+!    do k = 0,np-1
+!
+!       if ( proc == k ) then
+!
+!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+!
+!    	   if ( proc == 0    ) write(10) 'SCALARS '//'soil-land'//' integer 1'//char(10)
+!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+!                              write(10) phys_desc%soil_land(1:mesh%nc)
+!          if ( proc == np-1 ) write(10) char(10)
+!
+!          close(10)
+!
+!       end if
+!
+!       call mpi_wait_all
+!
+!    end do
 
 
 END SUBROUTINE v_vtk_bin
