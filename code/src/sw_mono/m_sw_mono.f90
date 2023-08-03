@@ -752,7 +752,7 @@ CONTAINS
       max_nt_for_adjoint  =  100000000_ip
 
       g         =  9.81_rp
-      heps      =  0.001
+      heps      =  0.00000001
       friction  =  1_ip
 
       c_shape_s = 0_ip

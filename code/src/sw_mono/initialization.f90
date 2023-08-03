@@ -921,7 +921,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
    inquire( file = 'obs.txt' , exist = file_exist(1) )
 
-   if ( w_obs == 1 .and. file_exist(1) ) then
+   if ( file_exist(1) ) then
       !================================================================================================================!
       !  Opening Data File concerning Stations and Sections Recording at prescribed frequency
       !================================================================================================================!
@@ -1205,7 +1205,7 @@ CONTAINS
          !=============================================================================================================!
 
 		case( 'stations' )
-!~ 			print *, buffer, nb_rec
+
             call alloc_or_realloc_station( station , nb_obs + nb_rec )
 
             do iobs = nb_obs+1 , nb_obs+nb_rec
