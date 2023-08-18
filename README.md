@@ -82,7 +82,7 @@ python3 -m pip install sphinx-autosummary-accessors
 ## 4. Install project
 <ul>
   <li> Make sure all the <a href="#req">requirements</a> are met.</li>
-  <li> Execute the following commands in the terminal (<em>in your repositoy directory</em>):</li>
+  <li> Execute the following commands in the terminal (<em>in your repository directory</em>):</li>
 </ul>
 
 ````
@@ -107,4 +107,4 @@ make clean html
 ## 6. First steps and more
 <em>Please refer to the <a href="#doc">SPHINX documentation</a> for more information, simple test cases and further details.</em>
 
-<em>\*\*TBA : website, for more on dassflow2d\*\*</em>
+<em>You can visit our [website]() for more information on dassflow2d and other versions.</em>
