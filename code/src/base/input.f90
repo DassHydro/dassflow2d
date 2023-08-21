@@ -653,8 +653,9 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !  Reading Nodes connectivity
    !===================================================================================================================!
 
-   read(10,*, err=100, end=100)
-   line_read = line_read + 1
+  read(10,*, err=100, end=100)
+    line_read = line_read + 1
+ if (allocated(manning)) then
 
    do i = 1,mesh%nc
 
@@ -663,7 +664,7 @@ SUBROUTINE Read_Dass_Mesh( mesh )
                    mesh%cell(k)%node(2) , &
                    mesh%cell(k)%node(3) , &
                    mesh%cell(k)%node(4) , &
-                   tmp             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
+                   land(k)             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
                    bathy_cell(k)
       line_read = line_read + 1
 
@@ -673,7 +674,27 @@ SUBROUTINE Read_Dass_Mesh( mesh )
            mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
 
    end do
+   
+ else
+ 
+    do i = 1,mesh%nc
 
+      read(10,*)   k , &
+                   mesh%cell(k)%node(1) , &
+                   mesh%cell(k)%node(2) , &
+                   mesh%cell(k)%node(3) , &
+                   mesh%cell(k)%node(4) , &
+                   tmp             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
+                   bathy_cell(k)
+
+      mesh%cell(i)%ind = k
+
+      if ( mesh%cell(k)%node(4) == 0 .or. &
+           mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
+
+   end do
+   
+ endif
    !===================================================================================================================!
    !  Calculating Cells connectivity + Edges count
    !===================================================================================================================!
@@ -830,11 +851,12 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !  INLET
    !===================================================================================================================!
 
+
    read(10,*, err=100, end=100) buffer
    line_read = line_read + 1
    read(10,*, err=100, end=100)  bc_type , nc_bc , nb_grp_in
    line_read = line_read + 1
-write(*,*)  bc_type , nc_bc , nb_grp_in
+
    if ( nb_grp_in == 0 ) then
       do i = 1,nc_bc
          read(10,*, err=100, end=100)  k , j , bc_number , ghost_cell_bathy
@@ -875,9 +897,9 @@ write(*,*)  bc_type , nc_bc , nb_grp_in
    !  OUTLET
    !===================================================================================================================!
 
+
    read(10,*, err=100, end=100)  bc_type , nc_bc , nb_grp_out
    line_read = line_read + 1
-write(*,*)  bc_type , nc_bc , nb_grp_out
 
    if ( nb_grp_out == 0 ) then
 

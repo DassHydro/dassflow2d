@@ -111,7 +111,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
 !     call my_bathy_2_fortran() !(my_param_model)
 
-     call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
+     if (.not. allocated(manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
 
      if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
@@ -121,16 +121,16 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
 #ifdef USE_MPI
 
-   call swap_vec_i  ( land , mesh%swap_index( 1 : mesh%nc ) )
+   call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
    call reallocate_i( land ,                 mesh%nc   )
 
    if (bc_rain == 1) then
-         call swap_vec_i  ( bc%rain_land , mesh%swap_index( 1 : mesh%nc ) )
+         call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( bc%rain_land ,                 mesh%nc   )
    endif
 
    if (bc_infil .ne. 0) then
-         call swap_vec_i  ( infil%land , mesh%swap_index( 1 : mesh%nc ) )
+         call swap_vec_i  ( infil%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( infil%land ,                 mesh%nc   )
    endif
 

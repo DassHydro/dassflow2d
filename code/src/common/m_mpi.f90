@@ -512,11 +512,11 @@ write(*,*) "mpi in fortran:np, proc", np, proc
 
       !=============================================================================================================!
     !Get swap index without border cells, to send to python
-      allocate( mesh%swap_index ( size( swap_index) ) )
-!       allocate( mesh%inv_swap_index ( size( inv_swap_index) ) )
-      do i=1, size(swap_index)
-        mesh%swap_index(i) = swap_index(i)
-     enddo
+!       allocate( mesh%swap_index ( size( swap_index) ) )
+! !       allocate( mesh%inv_swap_index ( size( inv_swap_index) ) )
+!       do i=1, size(swap_index)
+!         mesh%swap_index(i) = swap_index(i)
+!      enddo
 !       mesh%inv_swap_index = inv_swap_index
 !=============================================================================================================!
 
