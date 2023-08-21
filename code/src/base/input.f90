@@ -625,8 +625,28 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !===================================================================================================================!
 
    read(10,*)
-
+ if (allocated(manning)) then
+ 
    do i = 1,mesh%nc
+
+      read(10,*)   k , &
+                   mesh%cell(k)%node(1) , &
+                   mesh%cell(k)%node(2) , &
+                   mesh%cell(k)%node(3) , &
+                   mesh%cell(k)%node(4) , &
+                   land(k)             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
+                   bathy_cell(k)
+
+      mesh%cell(i)%ind = k
+
+      if ( mesh%cell(k)%node(4) == 0 .or. &
+           mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
+
+   end do
+   
+ else
+ 
+    do i = 1,mesh%nc
 
       read(10,*)   k , &
                    mesh%cell(k)%node(1) , &
@@ -642,7 +662,8 @@ SUBROUTINE Read_Dass_Mesh( mesh )
            mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
 
    end do
-
+   
+ endif
    !===================================================================================================================!
    !  Calculating Cells connectivity + Edges count
    !===================================================================================================================!
@@ -797,7 +818,7 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    read(10,*) buffer
    read(10,*)  bc_type , nc_bc , nb_grp_in
-write(*,*)  bc_type , nc_bc , nb_grp_in
+
    if ( nb_grp_in == 0 ) then
       do i = 1,nc_bc
          read(10,*)  k , j , bc_number , ghost_cell_bathy
@@ -837,7 +858,6 @@ write(*,*)  bc_type , nc_bc , nb_grp_in
    !===================================================================================================================!
 
    read(10,*)  bc_type , nc_bc , nb_grp_out
-write(*,*)  bc_type , nc_bc , nb_grp_out
 
    if ( nb_grp_out == 0 ) then
 
