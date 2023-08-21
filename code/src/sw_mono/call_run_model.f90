@@ -87,8 +87,6 @@ MODULE call_model
 !>  Type Model : contain global variables (not initialised in modules) of the Dassflow-2D
    TYPE Model
 
-!>  Type Model : contain global variables (not initialised in modules) of the Dassflow-2D
-!>   blablablal
 	type(msh)  ::  mesh             !> mesh of the model
 
    	type(unk)  ::  dof0            !> initial conditions of the unknown of the probelm
@@ -196,9 +194,6 @@ CONTAINS
    subroutine init_friction(mdl)
 	   !>> init_friction solver
 	   !>call f90 routine friction_initialise
-	   !>blablas
-	   !>blablasS
-	   !>blablassss
 		implicit none
 
 		! input/ output variables
@@ -512,6 +507,12 @@ CONTAINS
     real(rp)  ::  tmp                                     !
     integer(ip) :: mesh_total_cells
     
+    ! name of file / line currently read
+    character(20)  ::  file_read
+    integer(ip)  ::  line_read
+    ! error message
+    character(512)  ::  err_msg
+    
    inquire( file = 'land_uses.txt' , exist = file_exist(1) )
    if ( file_exist(1) ) write(*,*) "WARNING: you are trying to allocate manning from land_uses.txt and from init_friction"
     
@@ -526,26 +527,33 @@ CONTAINS
 
       allocate( my_friction%land( mesh_total_cells ) )
 
+      file_read=mesh%file_name
       open(10,file=mesh%file_name ,status='old')
+      line_read = 1
    ! skip rows to access wished info
-      read(10,*) ! comment line (# Simple channel mesh)
-      read(10,*) ! nc, nn, ne line
-      read(10,*)  ! comment line (# node)
+      read(10,*, err=100, end=100) ! comment line (# Simple channel mesh)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) ! nc, nn, ne line
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)  ! comment line (# node)
+      line_read = line_read + 1
       do i = 1,mesh%nn
-         read(10,*) ! node coordinates
+         read(10,*, err=100, end=100) ! node coordinates
+         line_read = line_read + 1
       end do
-      read(10,*) ! comment line (# cells)
+      read(10,*, err=100, end=100) ! comment line (# cells)
+      line_read = line_read + 1
 
       do i = 1,mesh_total_cells
 
-         read(10,*)   k , &
+         read(10,*, err=100, end=100)   k , &
                    tmp , & !node1 but useless here
                    tmp , & !node2 but useless here
                    tmp , & !node3 but useless here
                    tmp , & !node4 but useless here
                    my_friction%land(k) , &
                    tmp   ! bathymetry value but useless here
-
+         line_read = line_read + 1
       enddo
 
    close(10)
@@ -561,6 +569,11 @@ CONTAINS
         write(*,*) "only 'dassflow' mesh_type formats is implemented"
    endif
 
+   return
+
+  100 write(err_msg, '(3A, I4)') "error in file ", file_read," at line ", line_read
+      close(10)
+      call f90wrap_abort(err_msg)
 
   END SUBROUTINE friction_initialise
 

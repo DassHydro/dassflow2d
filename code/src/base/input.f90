@@ -72,6 +72,8 @@ SUBROUTINE Read_Input(filename)
 
    implicit none
    character(len=*), intent(in) :: filename
+   character(len=512)  ::  err_msg  ! error message for read errors / eof
+
 
    !===================================================================================================================!
    !
@@ -95,9 +97,15 @@ SUBROUTINE Read_Input(filename)
 
    open(10,file='input.post',form='formatted',status='old')
 
-   read(10,nml=list_input)
+   read(10,nml=list_input, err=100, end=100)
 
    close(10)
+
+   return
+
+   100 write(err_msg, '(2A)') "ERROR in file input.txt, see below for more information on the error."
+       close(10)
+       print *, err_msg
 
 END SUBROUTINE
 
@@ -180,6 +188,7 @@ write(*,*)  " call Mesh_Partition_Scotch( mesh ) "
 write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
    call Mesh_Geometric_Properties( mesh )
 
+return
 
 END SUBROUTINE Mesh_Input
 
@@ -548,6 +557,9 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    real(rp)  ::  ghost_cell_bathy
    character(6)  ::  bc_type
    real(rp)  :: tmp  ! temporary variable to store useless data that are read (here, it is cell's nland value, that is read and applied in initialize subroutine)
+   integer(ip)  ::  line_read    ! line currently read
+   character(20)  ::  file_read  ! file currently read
+   character(512)  ::  err_msg   ! error message to be displayed should a read statement not terminate normally
 
    !===================================================================================================================!
    !  Begin Subroutine
@@ -556,16 +568,21 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    call Print_Screen( 'start_mesh' )
 
    mesh%file_name = mesh_name
-   write(*,*)  " mesh%file_name",  mesh%file_name
+   write(*,*)  " mesh%file_name: ",  mesh%file_name
 
+
+   file_read = mesh_name
    open(10,file=mesh%file_name,status='old')
+   line_read = 1
 
    !===================================================================================================================!
    !  Reading header
    !===================================================================================================================!
 
-   read(10,*)
-   read(10,*) mesh%nn , mesh%nc , mesh%scal
+   read(10,*, err=100, end=100)
+   line_read = line_read + 1
+   read(10,*, err=100, end=100) mesh%nn , mesh%nc , mesh%scal
+   line_read = line_read + 1
 
    allocate( mesh%cell( mesh%nc ) )
    allocate( mesh%node( mesh%nn ) )
@@ -584,21 +601,31 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    if ( file_exist(1) ) then
    
+      file_read = "land_uses.txt"
       open(20,file='land_uses.txt',status='old',form='formatted')
+      line_read = 1
 
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-      read(20,*)    nland
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
-      read(20,*)    ! comment line
+      read(20,*, err=100, end=100)    ! comment line
+      line_read = line_read + 1
+      read(20,*, err=100, end=100)    ! comment line
+      line_read = line_read + 1
+      read(20,*, err=100, end=100)    ! comment line
+      line_read = line_read + 1
+      read(20,*, err=100, end=100)    nland
+      line_read = line_read + 1
+      read(20,*, err=100, end=100)    ! comment line
+      line_read = line_read + 1
+      read(20,*, err=100, end=100)    ! comment line
+      line_read = line_read + 1
+      read(20,*, err=100, end=100)    ! comment line
+      line_read = line_read + 1
 
       allocate( manning( nland ) )
       allocate( manning_beta( nland ) )
 
       do i = 1,nland
-         read(20,*) k , manning(k),  manning_beta(k)
+         read(20,*, err=100, end=100) k , manning(k),  manning_beta(k)
+         line_read = line_read + 1
       end do
       close(20)
 
@@ -613,29 +640,33 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !  Reading Nodes
    !===================================================================================================================!
 
-   read(10,*)
+   read(10,*, err=100, end=100)
+   line_read = line_read + 1
 
    do i = 1,mesh%nn
 
-      read(10,*)  k , mesh%node(k)%coord%x , mesh%node(k)%coord%y , bathy_node(k)
+      read(10,*, err=100, end=100)  k , mesh%node(k)%coord%x , mesh%node(k)%coord%y , bathy_node(k)
+      line_read = line_read + 1
 
    end do
    !===================================================================================================================!
    !  Reading Nodes connectivity
    !===================================================================================================================!
 
-   read(10,*)
+  read(10,*, err=100, end=100)
+    line_read = line_read + 1
  if (allocated(manning)) then
- 
+
    do i = 1,mesh%nc
 
-      read(10,*)   k , &
+      read(10,*, err=100, end=100)   k , &
                    mesh%cell(k)%node(1) , &
                    mesh%cell(k)%node(2) , &
                    mesh%cell(k)%node(3) , &
                    mesh%cell(k)%node(4) , &
                    land(k)             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
                    bathy_cell(k)
+      line_read = line_read + 1
 
       mesh%cell(i)%ind = k
 
@@ -696,15 +727,19 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    else
 
+      file_read = trim(buffer)
       open(20,file=trim(buffer),form='unformatted',status='old')
+      line_read = 1 
 
       do i = 1,mesh%nc
 
-         read(20) mesh%cell(i)%nbed , mesh%cell(i)%cell(:)
+         read(20, err=100, end=100) mesh%cell(i)%nbed , mesh%cell(i)%cell(:)
+         line_read = line_read + 1
 
       end do
 
-      read(20) mesh%ne , mesh%neb
+      read(20, err=100, end=100) mesh%ne , mesh%neb
+      line_read = line_read + 1
 
       close(20)
 
@@ -810,18 +845,22 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !  Reading Boundary Conditions Type File
    !===================================================================================================================!
 
-   call read_bc_file
+   call read_bc_file(line_read)
 
    !===================================================================================================================!
    !  INLET
    !===================================================================================================================!
 
-   read(10,*) buffer
-   read(10,*)  bc_type , nc_bc , nb_grp_in
+
+   read(10,*, err=100, end=100) buffer
+   line_read = line_read + 1
+   read(10,*, err=100, end=100)  bc_type , nc_bc , nb_grp_in
+   line_read = line_read + 1
 
    if ( nb_grp_in == 0 ) then
       do i = 1,nc_bc
-         read(10,*)  k , j , bc_number , ghost_cell_bathy
+         read(10,*, err=100, end=100)  k , j , bc_number , ghost_cell_bathy
+         line_read = line_read + 1
 
 !~          ghost_cell_bathy = 0.
 
@@ -839,7 +878,8 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
       do i = 1,nc_bc
 
-         read(10,*)  k , j , bc_number , ghost_cell_bathy, num_grp
+         read(10,*, err=100, end=100)  k , j , bc_number , ghost_cell_bathy, num_grp
+         line_read = line_read + 1
 
          ie = mesh%cell(k)%edge(j)
 
@@ -857,13 +897,16 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    !  OUTLET
    !===================================================================================================================!
 
-   read(10,*)  bc_type , nc_bc , nb_grp_out
+
+   read(10,*, err=100, end=100)  bc_type , nc_bc , nb_grp_out
+   line_read = line_read + 1
 
    if ( nb_grp_out == 0 ) then
 
       do i = 1,nc_bc
 ! bc_number correspond to the number corresponding in the bc.txt file
-         read(10,*)  k , j , bc_number , ghost_cell_bathy
+         read(10,*, err=100, end=100)  k , j , bc_number , ghost_cell_bathy
+         line_read = line_read + 1
 
          ie = mesh%cell(k)%edge(j)
 
@@ -879,7 +922,8 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
       do i = 1,nc_bc
 
-         read(10,*)  k , j , bc_number , ghost_cell_bathy , num_grp
+         read(10,*, err=100, end=100)  k , j , bc_number , ghost_cell_bathy , num_grp
+         line_read = line_read + 1
 
          ie = mesh%cell(k)%edge(j)
 
@@ -901,7 +945,11 @@ SUBROUTINE Read_Dass_Mesh( mesh )
    close(20)
 
    call Print_Screen( 'end_mesh' )
+   return
 
+   100 write(err_msg, '(3A, I4)') "ERROR in file ", trim(file_read)," at line ", line_read
+       close(10)
+       call f90wrap_abort(err_msg)
 !    write(*,*) 'Read_Dass_Mesh OK --> go out'
 END SUBROUTINE Read_Dass_Mesh
 
@@ -944,6 +992,10 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
 
    character(6)  ::  bc_type
 
+   integer(ip)  ::  line_read    ! line currently read
+   character(20)  ::  file_read  ! file currently read
+   character(512)  ::  err_msg   ! error message to be displayed should a read statement not terminate normally
+
    !===================================================================================================================!
    !  Begin Subroutine
    !===================================================================================================================!
@@ -952,7 +1004,9 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
 
    mesh%file_name = mesh_name
 
+   file_read = mesh_name
    open(10,file=mesh%file_name,status='old')
+   line_read = 1
 
    !===================================================================================================================!
    !  Reading Number of Boundary Conditions
@@ -960,38 +1014,42 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
 
    buffer = ''
 
-   do while ( trim(buffer) /= '$PhysicalNames' ) ; read(10,*) buffer ; end do
+   do while ( trim(buffer) /= '$PhysicalNames' ) ; read(10,*) buffer ; line_read = line_read + 1 ; end do
 
-   read(10,*) nc_bc
+   read(10,*, err=100, end=100) nc_bc
+   line_read = line_read + 1
 
    !===================================================================================================================!
    !  Reading Boundary Conditions Type File
    !===================================================================================================================!
 
-   call read_bc_file
+   call read_bc_file(line_read)
 
    !===================================================================================================================!
    !  Reading Nodes + eventually bathy_node (z coordinate)
    !===================================================================================================================!
 
-   do while ( trim(buffer) /= '$Nodes' ) ; read(10,*) buffer ; end do
+   do while ( trim(buffer) /= '$Nodes' ) ; read(10,*, err=100, end=100) buffer ; line_read = line_read + 1 ; end do
 
-   read(10,*) mesh%nn
+   read(10,*, err=100, end=100) mesh%nn
+   line_read = line_read + 1
 
    allocate( mesh%node ( mesh%nn ) )
    allocate( bathy_node( mesh%nn ) )
 
    do i = 1,mesh%nn
-      read(10,*)  k , mesh%node(k)%coord%x , mesh%node(k)%coord%y , bathy_node(k)
+      read(10,*, err=100, end=100)  k , mesh%node(k)%coord%x , mesh%node(k)%coord%y , bathy_node(k)
+      line_read = line_read + 1
    end do
 
    !===================================================================================================================!
    !  Reading Gmsh Elements
    !===================================================================================================================!
 
-   do while ( trim(buffer) /= '$Elements' ) ; read(10,*) buffer ; end do
+   do while ( trim(buffer) /= '$Elements' ) ; read(10,*, err=100, end=100) buffer ; line_read = line_read + 1 ; end do
 
-   read(10,*) nb_elt
+   read(10,*, err=100, end=100) nb_elt
+   line_read = line_read + 1
 
    allocate( mesh%cell ( nb_elt ) )
    allocate( mesh%cellb( nb_elt ) )
@@ -1011,14 +1069,18 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
 
       mesh%edge(i)%lim  = -1
 
-      read(10,'(a)') buffer  ;  read(buffer,*) k , typ , nb_tags
+      read(10,'(a)', err=100, end=100) buffer
+      line_read = line_read + 1
+      read(buffer,*, err=100, end=100) k , typ , nb_tags
+      line_read = line_read + 1
 
       if      ( typ == 1 ) then
 
          mesh%ne   =  mesh%ne  + 1
          mesh%neb  =  mesh%neb + 1
 
-         read(buffer,*) k , typ , nb_tags , tags(1:nb_tags) , mesh%edge(mesh%ne)%node(1:2)
+         read(buffer,*, err=100, end=100) k , typ , nb_tags , tags(1:nb_tags) , mesh%edge(mesh%ne)%node(1:2)
+         line_read = line_read + 1
 
          mesh%edge( mesh%ne )%boundary = .true.
 
@@ -1036,7 +1098,8 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
 
          mesh%cell(mesh%nc)%nbed = 3
 
-         read(buffer,*) k , typ , nb_tags , tags(1:nb_tags) , mesh%cell(mesh%nc)%node(1:3)
+         read(buffer,*, err=100, end=100) k , typ , nb_tags , tags(1:nb_tags) , mesh%cell(mesh%nc)%node(1:3)
+         line_read = line_read + 1
 
       else if ( typ == 3 ) then
 
@@ -1044,7 +1107,8 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
 
          mesh%cell(mesh%nc)%nbed = 4
 
-         read(buffer,*) k , typ , nb_tags , tags(1:nb_tags) , mesh%cell(mesh%nc)%node(1:4)
+         read(buffer,*, err=100, end=100) k , typ , nb_tags , tags(1:nb_tags) , mesh%cell(mesh%nc)%node(1:4)
+         line_read = line_read + 1
 
       else
 
@@ -1184,7 +1248,11 @@ SUBROUTINE Read_Gmsh_Mesh( mesh )
    close(10)
 
    call Print_Screen( 'end_mesh' )
+   return
 
+   100 write(err_msg, '(3A, I4)') "ERROR in file ", trim(file_read)," at line ", line_read
+       close(10)
+       call f90wrap_abort(err_msg)
 END SUBROUTINE Read_Gmsh_Mesh
 
 
@@ -1199,7 +1267,7 @@ END SUBROUTINE Read_Gmsh_Mesh
 
 !> \brief Read bc.txt file contening boundary conditions definition
 !! \details Only hydrograph and rating curve can be defined this way, ALL OTHER TYPES MUST BE DEFINED WITH M_USER_DATA or by default (for wall for example)
-SUBROUTINE read_bc_file
+SUBROUTINE read_bc_file(line_read)
 
    USE m_common
    USE m_model
@@ -1212,23 +1280,34 @@ SUBROUTINE read_bc_file
 
    integer(ip)  ::  n_hydrograph , n_ratcurve, n_internal, n_zspresc, n_hpresc! n_internal_discharg, n_internal_ratcurve
    character(20) :: temp
+   integer(ip), intent(out)  ::  line_read
+   character(20)  ::  file_read
+   character(512)  ::  err_msg
 
    !===================================================================================================================!
    !  Begin Subroutine
    !===================================================================================================================!
 
-
+   file_read = "bc.txt"
    open(20,file='bc.txt',form='formatted',status='old')
+   line_read = 1
 
-   read(20,*)
-   read(20,*)
-   read(20,*)
+   read(20,*, err=100, end=100)
+   line_read = line_read + 1
+   read(20,*, err=100, end=100)
+   line_read = line_read + 1
+   read(20,*, err=100, end=100)
+   line_read = line_read + 1
 
-   read(20,*) bc%nb
+   read(20,*, err=100, end=100) bc%nb
+   line_read = line_read + 1
 
-   read(20,*)
-   read(20,*)
-   read(20,*)
+   read(20,*, err=100, end=100)
+   line_read = line_read + 1
+   read(20,*, err=100, end=100)
+   line_read = line_read + 1
+   read(20,*, err=100, end=100)
+   line_read = line_read + 1
 
    allocate( bc%typ ( bc%nb , 3 ) )! 3 to account for new internal frontier, 3rd item in line does not matter for non-internal borders
    allocate( bc%grpf( bc%nb     ) )
@@ -1248,9 +1327,9 @@ SUBROUTINE read_bc_file
 
    do i = 1,bc%nb
 
-      read(20,'(a)') buffer
+      read(20,'(a)', err=100, end=100) buffer
 
-      read(buffer,*) k , temp
+      read(buffer,*, err=100, end=100) k , temp
 
       if ( temp(1:6)  ==  'hpresc' ) then
 		 n_hpresc = n_hpresc +1
@@ -1259,23 +1338,27 @@ SUBROUTINE read_bc_file
 
       if ( temp(1:8) == 'internal' ) then
 
-        read(buffer,*) k , bc%typ(k,1:3) !item 3 of the line is read here only, it contains the index of the corresponding internal 1D2D interface
+        read(buffer,*, err=100, end=100) k , bc%typ(k,1:3) !item 3 of the line is read here only, it contains the index of the corresponding internal 1D2D interface
         n_internal  =  n_internal + 1
         bc%grpf(k)  =  n_internal
 
      endif
 
-      if ( temp(1:3) == 'gr4' ) read(buffer,*) k , bc%typ(k,1:2)
+      if ( temp(1:3) == 'gr4' ) then
+         read(buffer,*, err=100, end=100) k , bc%typ(k,1:2)
+      end if
 
-      if ( temp(1:6) /= 'transm' ) read(buffer,*) k , bc%typ(k,1:2)
+      if ( temp(1:6) /= 'transm' ) then
+         read(buffer,*, err=100, end=100) k , bc%typ(k,1:2)
+      end if
 
-      if ( temp(1:7) /= 'neumann' ) read(buffer,*) k , bc%typ(k,1:2)
+      if ( temp(1:7) /= 'neumann' ) then
+         read(buffer,*, err=100, end=100) k , bc%typ(k,1:2)
+      end if
 
       if ( temp(1:8)  ==  'discharg' ) then
-
          n_hydrograph  =  n_hydrograph + 1
          bc%grpf(k) = n_hydrograph
-
       end if
 
 
@@ -1293,13 +1376,16 @@ SUBROUTINE read_bc_file
 
       end if
 
+      line_read = line_read + 1
 
    end do
 
 	close(20)
+   return
 
-
-
+   100 write(err_msg, '(3A, I4)') "ERROR in file ", trim(file_read)," at line ", line_read
+       close(10)
+       call f90wrap_abort(err_msg)
 END SUBROUTINE
 
 #endif
