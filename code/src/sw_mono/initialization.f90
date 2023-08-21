@@ -63,7 +63,7 @@
 !>  Initialization Subroutine specific to Shallow-Water Model
 !!
 !! \details
-SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, my_phys_desc, my_bc)
+SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my_phys_desc, my_bc)
 
    USE m_common
    USE m_mesh
@@ -96,6 +96,13 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !===================================================================================================================!
 
    character(len=lchar)  ::  filename
+
+   ! array of filenames for error identification (20 file names of 30 characters max each)
+   character(len=20), dimension(20) :: filenames
+   ! error message for read errors / eof
+   character(len=512) :: err_msg
+   ! nb of opened file, line read
+   integer(ip)  ::  file_nb, line_read
 
    integer(ip)  ::  icod, i_loc, l, spatial_index
 
@@ -136,41 +143,53 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    ! just keep parralel order com_dof
    !===================================================================================================================!
 
+     filenames(1) = "ic.bin"
      inquire( file = 'ic.bin'      , exist = file_exist(1) )
+     filenames(2) = "restart.bin"
      inquire( file = 'restart.bin' , exist = file_exist(2) )
+     filenames(3) = "dof_init.txt"
      inquire( file = 'dof_init.txt', exist = file_exist(3) )
+     filenames(4) = "zs_init.txt"
      inquire( file = 'zs_init.txt' , exist = file_exist(4) )
      
      if      ( file_exist(1) ) then
 
+        file_nb = 1
         open(10,file='ic.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
+        line_read = 1
 
-        read(10,rec=1) tc0
+        read(10,rec=1, err=100) tc0
 
         tc0 = 0._rp
 
      else if (file_exist(3)) then
-
+        file_nb = 3
         open(10,file='dof_init.txt',status='old',form='formatted')
-  		do i = 1,mesh%nc
-  			read(10,*) dof0%h(i), dof0%u(i), dof0%v(i)
-  		end do
+        line_read = 1
+        do i = 1,mesh%nc
+  			read(10,*, err=100, end=100) dof0%h(i), dof0%u(i), dof0%v(i)
+         line_read = line_read + 1
+      end do
 
 
      else if (file_exist(4)) then
 
+       file_nb = 4
        open(10,file='zs_init.txt',status='old',form='formatted')
-  		do i = 1,mesh%nc
-  			read(10,*) dof0%h(i), dof0%u(i), dof0%v(i)
+  		 line_read = 1
+       do i = 1,mesh%nc
+  			read(10,*, err=100, end=100) dof0%h(i), dof0%u(i), dof0%v(i)
 !             dof0%h(i) = max(0._rp, dof0%h(i)-bathy_cell(i))
-  		end do
+         line_read = line_read + 1
+      end do
         
      else if ( file_exist(2) ) then
 
+       file_nb = 2
        open(10,file='restart.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
-
-        read(10,rec=1) tc0
-
+       line_read = 1
+        read(10,rec=1, err=100) tc0
+        line_read = line_read + 1
         if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
 
 
@@ -183,8 +202,8 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
         do i = 1,mesh%nc
 
   		!read(10,rec=1) dof0%h(i) , dof0%u(i) , dof0%v(i)
-          read(10,rec=1+swap_index(i)) dof0%h(i) , dof0%u(i) , dof0%v(i)
-
+          read(10,rec=1+swap_index(i), err=101) dof0%h(i) , dof0%u(i) , dof0%v(i)
+          line_read = line_read + 1
         end do
 
         close(10)
@@ -207,19 +226,27 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !  Reading input data for GR4 module
    !===================================================================================================================!
 
+   filenames(5)="GR4params.txt"
    inquire( file = 'GR4params.txt' , exist = file_exist(1) )
 
    call mpi_wait_all
 
    if ( file_exist(1) ) then
 
+      file_nb = 5
       open(10,file='GR4params.txt',status='old')
+      line_read = 1
 
-      read(10,*)
-      read(10,*)
-      read(10,*)
-      read(10,*)
-      read(10,*) bc%nb_gr4in
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) bc%nb_gr4in
+      line_read = line_read + 1
 
       if (.not. allocated(bc%gr4)) allocate( bc%gr4( bc%nb_gr4in ))
 
@@ -231,12 +258,18 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
       do i=1,bc%nb_gr4in
 
-        read(10,*)
-        read(10,*) bc%gr4( i )%params(:)
-        read(10,*)
-        read(10,*) bc%gr4( i )%state(:)
-        read(10,*)
-        read(10,*) bc%gr4( i )%cell_id, bc%gr4( i )%surf
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) bc%gr4( i )%params(:)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) bc%gr4( i )%state(:)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) bc%gr4( i )%cell_id, bc%gr4( i )%surf
+        line_read = line_read + 1
 
       enddo
 
@@ -246,10 +279,14 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
        write(filename,'("GR4forcings_",1I1.1,".txt")') i
 
-      open(10,file=filename,status='old',form='formatted')
+      file_nb = 5
+      open(10,file=,status='old',form='formatted')
+      line_read = 0
 
-            read(10,*)
-            read(10,*) l
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100) l
+            line_read = line_read + 1
 
             allocate( bc%gr4( i )%t( l ))
             allocate( bc%gr4( i )%P( l ))
@@ -257,7 +294,8 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
             allocate( bc%gr4( i )%Q( l ))
 
         do j=1,l
-            read(10,*) bc%gr4( i )%t( j ), bc%gr4( i )%P( j ), bc%gr4( i )%E( j )
+            read(10,*, err=100, end=100) bc%gr4( i )%t( j ), bc%gr4( i )%P( j ), bc%gr4( i )%E( j )
+            line_read = line_read + 1
         enddo
 
       close(10)
@@ -283,33 +321,44 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !===================================================================================================================!
    !  Initialize hydrological reservoir states (1 year warmup)
    !===================================================================================================================!
+   filenames(6)="GR4_PEwarmup.txt"
    inquire( file = 'GR4_PEwarmup.txt' , exist = file_exist(1) )
 
    call mpi_wait_all
 
    if ( file_exist(1) ) then
 
+      file_nb = 6
       open(10,file='GR4_PEwarmup.txt',status='old')
+      line_read = 0
 
-      read(10,*)
-      read(10,*)
-      read(10,*)
-      read(10,*)
-      read(10,*) l
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) l
+      line_read = line_read + 1
 
       if (l .ne. bc%nb_gr4in) write(*,*) 'There are ',l,' GR4 warmup catchements and ',&
      bc%nb_gr4in, ' GR4 launch catchments'
 
       do i=1,bc%nb_gr4in
 
-        read(10,*)
-        read(10,*) l
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) l
+        line_read = line_read + 1
 
         allocate( bc%gr4( i )%P0( l ))
         allocate( bc%gr4( i )%E0( l ))
 
         do j=1,l
-         read(10,*) bc%gr4( i )%P0( j ), bc%gr4( i )%E0( j )
+         read(10,*, err=100, end=100) bc%gr4( i )%P0( j ), bc%gr4( i )%E0( j )
+         line_read = line_read + 1
         enddo
 
       enddo
@@ -328,35 +377,45 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !  Loading/Creating hydrograph File
    !===================================================================================================================!
 
+   filenames(7)="hydrograph.txt"
    inquire( file = 'hydrograph.txt' , exist = file_exist(1) )
 
    call mpi_wait_all
 
    if ( file_exist(1) ) then
 
+      file_nb = 7
       open(10,file='hydrograph.txt',status='old')
+      line_read = 1
+      read(10,*, err=100, end=100) 
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) 
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) 
 
-      read(10,*)
-      read(10,*)
-      read(10,*)
-
-      read(10,*) bc%nb_in
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) bc%nb_in
 
     allocate( bc%hyd( bc%nb_in ) )
 
       do i = 1,bc%nb_in
-        read(10,*)
-        read(10,*)
-        read(10,*)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) 
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) 
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) 
 
-        read(10,*) j
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) j
 
          allocate( bc%hyd( i )%t( j ) )
          allocate( bc%hyd( i )%q( j ) )
 
 
          do k = 1,j
-            read(10,*) bc%hyd( i ) %t( k ) , bc%hyd( i )%q( k )
+            line_read = line_read + 1
+            read(10,*, err=100, end=100) bc%hyd( i ) %t( k ) , bc%hyd( i )%q( k )
          end do
 
          if ( mesh_type == 'basic' ) then
@@ -407,36 +466,48 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !===================================================================================================================!
    !  Loading/Creating hpresc File
    !====================================================================================================
+   filenames(8)="hpresc.txt"
    inquire( file = 'hpresc.txt' , exist = file_exist(1) )
 
    call mpi_wait_all
 
    if ( file_exist(1) ) then
 
+      file_nb = 8
       open(10,file='hpresc.txt',status='old')
+      line_read = 1
 
-      read(10,*)
-      read(10,*)
-      read(10,*)
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
 
-      read(10,*) bc%nb_out
+      read(10,*, err=100, end=100) bc%nb_out
+      line_read = line_read + 1
 
     allocate( bc%hpresc( bc%nb_out ) )
 
       do i = 1,bc%nb_out
 		! 3 comment lines of the file
-        read(10,*)
-        read(10,*)
-        read(10,*)
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
 		! size of hpresc
-        read(10,*) j
+        read(10,*, err=100, end=100) j
+        line_read = line_read + 1
 
          allocate( bc%hpresc( i )%t( j ) )
          allocate( bc%hpresc( i )%h( j ) )
 
 		! read all available value
          do k = 1,j
-            read(10,*) bc%hpresc( i ) %t( k ) , bc%hpresc( i )%h( k )
+            read(10,*, err=100, end=100) bc%hpresc( i ) %t( k ) , bc%hpresc( i )%h( k )
+            line_read = line_read + 1
          end do
       end do
 		close(10)
@@ -448,36 +519,48 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !  Loading/Creating hpresc File
    !===================================================================================================================!
 
+   filenames(9)="zspresc.txt"
    inquire( file = 'zspresc.txt' , exist = file_exist(2) )
 
    call mpi_wait_all
 
    if ( file_exist(2) ) then
 
+      file_nb = 9
       open(10,file='zspresc.txt',status='old')
+      line_read = 1
 
-      read(10,*)
-      read(10,*)
-      read(10,*)
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
 
-      read(10,*) bc%nb_out
+      read(10,*, err=100, end=100) bc%nb_out
+      line_read = line_read + 1
 
     allocate( bc%zspresc( bc%nb_out ) )
 
       do i = 1,bc%nb_out
 		! 3 comment lines of the file
-        read(10,*)
-        read(10,*)
-        read(10,*)
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
 		! size of zspresc
-        read(10,*) j
+        read(10,*, err=100, end=100) j
+        line_read = line_read + 1
 
          allocate( bc%zspresc( i )%t( j ) )
          allocate( bc%zspresc( i )%z( j ) )
 
 		! read all available value
          do k = 1,j
-            read(10,*) bc%zspresc( i ) %t( k ) , bc%zspresc( i )%z( k )
+            read(10,*, err=100, end=100) bc%zspresc( i ) %t( k ) , bc%zspresc( i )%z( k )
+            line_read = line_read + 1
          end do
       end do
 		close(10)
@@ -491,42 +574,58 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
    if (bc_rain  == 1) then
 
+   filenames(10)="rain.txt"
    inquire( file = 'rain.txt' , exist = file_exist(1) )
 
    call mpi_wait_all
 
    if ( file_exist(1) ) then
 
+      file_nb = 10
       open(10,file='rain.txt',status='old')
+      line_read = 1
 
       if (.not. allocated(bc%rain_land)) allocate(bc%rain_land(mesh%nc)) !in case rain.txt is read directly
 
-      read(10,*)
-      read(10,*)
-      read(10,*)
-      read(10,*) bc%nb_rn
-      read(10,*)
-      read(10,*)
-      read(10,*)
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100) bc%nb_rn
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
+      read(10,*, err=100, end=100)
+      line_read = line_read + 1
 
       allocate(bc%rain(bc%nb_rn))
 
       do i = 1,bc%nb_rn
-         read(10,*) bc%rain(i)%x_min, bc%rain(i)%x_max, bc%rain(i)%y_min, bc%rain(i)%y_max
+         read(10,*, err=100, end=100) bc%rain(i)%x_min, bc%rain(i)%x_max, bc%rain(i)%y_min, bc%rain(i)%y_max
+         line_read = line_read + 1
       enddo
 
       do i = 1,bc%nb_rn
 
-         read(10,*)
-         read(10,*)
-         read(10,*)
-         read(10,*) j
+         read(10,*, err=100, end=100)
+         line_read = line_read + 1
+         read(10,*, err=100, end=100)
+         line_read = line_read + 1
+         read(10,*, err=100, end=100)
+         line_read = line_read + 1
+         read(10,*, err=100, end=100) j
+         line_read = line_read + 1
 
          allocate( bc%rain(i)%t(j) )
          allocate( bc%rain(i)%q(j) )
 
          do k = 1,j
-            read(10,*) bc%rain(i)%t(k) , bc%rain(i)%q(k)
+            read(10,*, err=100, end=100) bc%rain(i)%t(k) , bc%rain(i)%q(k)
+            line_read = line_read + 1
             bc%rain(i)%q(k) = bc%rain(i)%q(k) / 1000._rp / 3600._rp
          enddo
       enddo
@@ -597,18 +696,29 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
     allocate( infil%land( mesh%nc ) )
 
+    filenames(11)="land_uses_GA.txt"
     inquire( file = 'land_uses_GA.txt' , exist = file_exist(1) )
+    filenames(12)="land_uses_SCS.txt"
     inquire( file = 'land_uses_SCS.txt', exist = file_exist(2) )
     if ( file_exist(1) ) then
 
-        open(20,file='land_uses_GA.txt',status='old',form='formatted')
-        read(20,*)
-        read(20,*)
-        read(20,*)
-        read(20,*) infil%nland
-        read(20,*)
-        read(20,*)
-        read(20,*)
+        file_nb = 11
+        open(10,file='land_uses_GA.txt',status='old',form='formatted')
+        line_read = 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100) infil%nland
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
 
 
         allocate( infil%GA( infil%nland ) )
@@ -620,33 +730,47 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
 
         do i = 1,infil%nland
-            read(20,*) k , infil%GA(k)%Ks , infil%GA(k)%PsiF ,&
+            read(10,*, err=100, end=100) k , infil%GA(k)%Ks , infil%GA(k)%PsiF ,&
                             infil%GA(k)%DeltaTheta
+            line_read = line_read + 1
         end do
 
-        read(20,*)
-        read(20,*)
-        read(20,*)
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
 
         do i = 1,infil%nland
-!                     read(20,*) infil%x_min(i), infil%x_max(i), &
+!                     read(10,*, err=100, end=100) infil%x_min(i), infil%x_max(i), &
 !                                infil%y_min(i), infil%y_max(i)
-                      read(20,*) infil%coord(1,i), infil%coord(2,i), &
+                      read(10,*, err=100, end=100) infil%coord(1,i), infil%coord(2,i), &
                                  infil%coord(3,i), infil%coord(4,i)
+                      line_read = line_read + 1
         end do
 
-        close(20)
+        close(10)
 
     elseif ( file_exist(2) ) then
 
-            open(20,file='land_uses_SCS.txt',status='old',form='formatted')
-            read(20,*)
-            read(20,*)
-            read(20,*)
-            read(20,*) infil%nland
-            read(20,*)
-            read(20,*)
-            read(20,*)
+            file_nb = 12
+            open(10,file='land_uses_SCS.txt',status='old',form='formatted')
+            line_read = 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100) infil%nland
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
 
             allocate( infil%SCS( infil%nland ) )
 
@@ -659,19 +783,24 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
 
             do i = 1,infil%nland
-                read(20,*) k , infil%SCS(k)%lambdacn , infil%SCS(k)%CN
+                read(10,*, err=100, end=100) k , infil%SCS(k)%lambdacn , infil%SCS(k)%CN
+                line_read = line_read + 1
             end do
 
-        read(20,*)
-        read(20,*)
-        read(20,*)
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
+        read(10,*, err=100, end=100)
+        line_read = line_read + 1
 
         do i = 1,infil%nland
-                    read(20,*) infil%coord(1,i), infil%coord(2,i), &
+                    read(10,*, err=100, end=100) infil%coord(1,i), infil%coord(2,i), &
                             infil%coord(3,i), infil%coord(4,i)
+                    line_read = line_read + 1
         end do
 
-        close(20)
+        close(10)
         
     else
     
@@ -722,22 +851,29 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !===================================================================================================================!  
    
    if (use_xsshp == 1) then
+     filenames(13)="geometry_params.txt"
      inquire( file = 'geometry_params.txt' , exist = file_exist(1) )
      if ( file_exist(1) ) then
 
+       file_nb = 13
        open(20,file='geometry_params.txt',status='old',form='formatted')
+       line_read = 1
 
-       read(20,*)
-       read(20,*) k
-       read(20,*)
+       read(20,*, err=100, end=100)
+       line_read = line_read + 1
+       read(20,*, err=100, end=100) k
+       line_read = line_read + 1
+       read(20,*, err=100, end=100)
+       line_read = line_read + 1
 
        allocate(XSshape(k))
        allocate(slope_x(k))
        allocate(slope_y(k))
 
        do i = 1,k
-        read(20,*) XSshape(i)%xleft, XSshape(i)%xcenter, XSshape(i)%xright, XSshape(i)%s, XSshape(i)%hmax, &
+        read(20,*, err=100, end=100) XSshape(i)%xleft, XSshape(i)%xcenter, XSshape(i)%xright, XSshape(i)%s, XSshape(i)%hmax, &
         XSshape(i)%topz, slope_x(i), slope_y(i)
+        line_read = line_read + 1
        enddo
 
        close(20)
@@ -762,39 +898,47 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
    !===================================================================================================================!
    !  Loading rating curve
    !===================================================================================================================!
-
+   filenames(14)="rating_curve.txt"
    inquire( file = 'rating_curve.txt' , exist = file_exist(1) )
 
   call mpi_wait_all
 
    if ( file_exist(1) ) then
 
+      file_nb = 14
 		open(10,file='rating_curve.txt',status='old')
+      line_read = 1
+      
+		read(10,*, err=100, end=100)
+      line_read = line_read + 1
+		read(10,*, err=100, end=100)
+      line_read = line_read + 1
+		read(10,*, err=100, end=100)
+      line_read = line_read + 1
 
-		read(10,*)
-		read(10,*)
-		read(10,*)
-
-		read(10,*) bc%nb_out
+		read(10,*, err=100, end=100) bc%nb_out
+      line_read = line_read + 1
 
 		allocate( bc%rat( bc%nb_out ) )
 
 		do i = 1,bc%nb_out
 
-			read(10,*)
-			read(10,*)
-			read(10,*)
+			read(10,*, err=100, end=100)
+         line_read = line_read + 1
+			read(10,*, err=100, end=100)
+         line_read = line_read + 1
+			read(10,*, err=100, end=100)
+         line_read = line_read + 1
 
-			read(10,*) j , bc%rat( i )%z_rat_ref
-
+			read(10,*, err=100, end=100) j , bc%rat( i )%z_rat_ref
+         line_read = line_read + 1
 
 			allocate( bc%rat( i )%h( j ) )
 			allocate( bc%rat( i )%q( j ) )
 
 			do k = 1,j
-
-				read(10,*) bc%rat( i )%h( k ) , bc%rat( i )%q( k )
-
+				read(10,*, err=100, end=100) bc%rat( i )%h( k ) , bc%rat( i )%q( k )
+            line_read = line_read + 1
 			end do
 
 			if ( mesh_type == 'basic' ) then
@@ -919,6 +1063,7 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
    nb_obs = 0
 
+   filenames(15)="obs.txt"
    inquire( file = 'obs.txt' , exist = file_exist(1) )
 
    if ( file_exist(1) ) then
@@ -926,8 +1071,9 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
       !  Opening Data File concerning Stations and Sections Recording at prescribed frequency
       !================================================================================================================!
 
+      file_nb = 15
       open(10,file='obs.txt',form='formatted',status='old')
-
+      line_read = 1
       !================================================================================================================!
       !  Treating First Time Stations or Sections Data Record
       !================================================================================================================!
@@ -935,16 +1081,17 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
       buffer = '' ; icod = 1
 
       do while ( buffer(1:8) /= 'stations'          .and. &
-                buffer(1:17) /= 'stations_with_grp' .and. &
-                 buffer(1:8) /= 'sections'          .and.&
+                 buffer(1:17) /= 'stations_with_grp' .and. &
+                 buffer(1:8) /= 'sections'          .and. &
                  buffer(1:10) /= 'stations_Q'          .and. icod >= 0 )
 
 
 
-		read(10,'(A)',iostat=icod) buffer
+		read(10,'(A)',iostat=icod, err=100) buffer
+      line_read = line_read + 1
 
       end do
-      if ( icod >= 0 ) call read_obs_file
+      if ( icod >= 0 ) call read_obs_file(line_read)
 		!================================================================================================================!
 		!  Treating Second Time Stations or Sections Data Record
 		!================================================================================================================!
@@ -952,17 +1099,18 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 		buffer = '' ; icod = 1
 
       do while ( buffer(1:8) /= 'stations'          .and. &
-                buffer(1:17) /= 'stations_with_grp' .and. &
+                 buffer(1:17) /= 'stations_with_grp' .and. &
                  buffer(1:8) /= 'sections'          .and.&
                  buffer(1:10) /= 'stations_Q'          .and. icod >= 0 )
 
-		read(10,'(A)',iostat=icod) buffer
+		read(10,'(A)',iostat=icod, err=100) buffer
+      line_read = line_read + 1
 
 ! 		write(*,*) buffer
 
 		end do
 
-		if ( icod >= 0 ) call read_obs_file
+		if ( icod >= 0 ) call read_obs_file(line_read)
 		!================================================================================================================!
 		!  Treating Thrid Time Stations or Sections Data Record
 		!================================================================================================================!
@@ -974,12 +1122,13 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
                  buffer(1:8) /= 'sections'          .and.&
                  buffer(1:10) /= 'stations_Q'          .and. icod >= 0 )
 
-		 read(10,'(A)',iostat=icod) buffer
+		 read(10,'(A)',iostat=icod, err=100) buffer
+       line_read = line_read + 1
 
 ! 		write(*,*) buffer
 		end do
 
-		if ( icod >= 0 ) call read_obs_file
+		if ( icod >= 0 ) call read_obs_file(line_read)
 
 
 		!================================================================================================================!
@@ -998,15 +1147,20 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 !    ===================================================================================================================!
 !     Reading param_obs.txt
 !    ===================================================================================================================!
+   filenames(16)="param_obs.txt"
    inquire( file = 'param_obs.txt' , exist = file_exist(1) )
 
    if ( w_obs == 1 .and. file_exist(1) ) then
 
+      file_nb = 16
       open(10,file='param_obs.txt',form='formatted',status='old')
-      read(10,'(A)',iostat=icod) buffer
+      line_read = 1
+      read(10,'(A)',iostat=icod, err=100, end=100) buffer
+      line_read = line_read + 1
 
       do iobs = 1,size( station )
-         read(10,*) station( iobs )%length , station(iobs)%dt_offset, temp,temp,temp,temp
+         read(10,*, err=100, end=100) station( iobs )%length , station(iobs)%dt_offset, temp,temp,temp,temp
+         line_read = line_read + 1
       end do
       close(10)
 
@@ -1160,6 +1314,13 @@ SUBROUTINE Initial( dof0 , mesh, my_friction, my_infiltration, my_param_model, m
 
    call display_mesh_cell(mesh)
 
+   return
+
+   100 write(err_msg, '(3A, I4)') "ERROR in file ", trim(filenames(file_nb))," at line ", line_read
+       close(10)
+       call f90wrap_abort(err_msg)
+   101 write(err_msg, '(5A, I4)') "ERROR in file ", trim(filenames(1)), " or ", trim(filenames(2))," at line ", line_read
+       close(10)
 CONTAINS
 
 
@@ -1172,7 +1333,7 @@ CONTAINS
 !**********************************************************************************************************************!
 
 
-   SUBROUTINE read_obs_file
+   SUBROUTINE read_obs_file(line_read)
 
       implicit none
 
@@ -1186,17 +1347,27 @@ CONTAINS
 
       integer(ip)  ::  nb_rec , nb_pt , pt , search_cell_inc_point , etq , cell
 
+      ! read line number 
+      integer(ip), intent(out)  ::  line_read
+      integer(ip)  ::  line_station
+
       logical  ::  point_in_cell
 
       character(len=8)  ::  typ
 
+      ! Name of obs file used
+      character(len=20)  ::  obs_file  
+      obs_file = "obs.txt"
+
       !================================================================================================================!
       !  Beginning Treatment of File 'obs.txt'
       !================================================================================================================!
-
+      
       backspace 10
+      line_read = line_read - 1
 
-      read(10,*) buffer , nb_rec
+      read(10,*, err=100, end=100) buffer , nb_rec
+      line_read = line_read + 1
 
       select case( trim(buffer) )
 
@@ -1220,10 +1391,11 @@ CONTAINS
                !  Reading Stations Informations in 'obs.txt' File
                !=======================================================================================================!
 
-               read(10,*) station( iobs )%pt(1)%coord%x , &
+               read(10,*, err=100, end=100) station( iobs )%pt(1)%coord%x , &
                           station( iobs )%pt(1)%coord%y , &
                           station( iobs )%dt            , &
                           station( iobs )%weight
+               line_read = line_read + 1
 
                !=======================================================================================================!
                !  Searching Cells for Stations
@@ -1257,10 +1429,11 @@ CONTAINS
                !  Reading Statiostations_Qns Informations in 'obs.txt' File
                !=======================================================================================================!
 
-               read(10,*) stationQ( iobs )%pt(1)%coord%x , &
+               read(10,*, err=100, end=100) stationQ( iobs )%pt(1)%coord%x , &
                           stationQ( iobs )%pt(1)%coord%y , &
                           stationQ( iobs )%dt            , &
                           stationQ( iobs )%weight
+               line_read = line_read + 1
 
                !=======================================================================================================!
                !  Searching Cells for Stations
@@ -1293,8 +1466,8 @@ CONTAINS
                !  Reading Stations Informations in 'obs.txt' File
                !=======================================================================================================!
 
-               read(10,*) etq , station( nb_obs + etq )%dt , station( nb_obs + etq )%weight
-
+               read(10,*, err=100, end=100) etq , station( nb_obs + etq )%dt , station( nb_obs + etq )%weight
+               line_read = line_read + 1
 
                write(buffer,'(A,I4.4,A)') 'station_grp_' , iobs - nb_obs , '.txt'
 
@@ -1303,8 +1476,10 @@ CONTAINS
                allocate( station( iobs )%pt( nb_pt ) )
 
                open(20,file=buffer,status='old',form='formatted')
+               line_station = 1
 
-               read(20,'(A)') typ
+               read(20,'(A)', err=101, end=101) typ
+               line_station = line_station + 1
 
                do pt = 1,nb_pt
 
@@ -1313,9 +1488,9 @@ CONTAINS
                   !====================================================================================================!
 
                   if      ( trim(typ) == 'points' ) then
-                     read(20,*) station( iobs )%pt( pt )%coord%x , &
+                     read(20,*, err=101, end=101) station( iobs )%pt( pt )%coord%x , &
                                 station( iobs )%pt( pt )%coord%y
-
+                     line_station = line_station + 1
                      !=================================================================================================!
                      !  Searching Cells for Stations
                      !=================================================================================================!
@@ -1324,7 +1499,8 @@ CONTAINS
 
                   else if ( trim(typ) == 'indexes' ) then
 
-                     read(20,*) cell
+                     read(20,*, err=101, end=101) cell
+                     line_station = line_station + 1
 
                      station( iobs )%pt( pt )%cell = cell
                      station( iobs )%pt( pt )%coord  =  mesh%cell( station( iobs )%pt( pt )%cell )%grav
@@ -1379,13 +1555,13 @@ write(*,*) " line commented temporarily ! station( iobs )%pt( pt )%cell = mesh%i
                !  Reading Sections Informations in 'obs.txt' File
                !====================================================================================================!
 
-               read(10,*) pt_temp(1)%x , &
+               read(10,*, err=100, end=100) pt_temp(1)%x , &
                           pt_temp(1)%y , &
                           pt_temp(2)%x , &
                           pt_temp(2)%y , &
                           nb_pt , &
                           section( iobs )%dt
-
+               line_read = line_read + 1
                !====================================================================================================!
                !  Calculating Sections points and normal
                !====================================================================================================!
@@ -1430,6 +1606,16 @@ write(*,*) " line commented temporarily ! station( iobs )%pt( pt )%cell = mesh%i
          end select
 
          nb_obs = nb_obs + nb_rec
+      
+      return
+   
+      
+   100 write(err_msg, '(3A, I4)') "ERROR in file ", trim(obs_file)," at line ", line_read
+       close(10)
+       call f90wrap_abort(err_msg)
+   101 write(err_msg, '(3A, I4)') "ERROR in file ", trim(buffer)," at line ", line_station
+       close(20)
+       call f90wrap_abort(err_msg)
 
    END SUBROUTINE read_obs_file
 
