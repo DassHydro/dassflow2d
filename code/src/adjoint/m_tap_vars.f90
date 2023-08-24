@@ -379,12 +379,12 @@ CONTAINS
          allocate( slope_y_back (1_ip))
          allocate( slope_x_back (1_ip))
 
-         XSshape_back(1)%xleft = 0._rp
-         XSshape_back(1)%xcenter = 0._rp
-         XSshape_back(1)%xright = 0._rp
-         XSshape_back(1)%s = 0._rp
-         XSshape_back(1)%hmax = 0._rp
-         XSshape_back(1)%topz = 0._rp
+         XSshape_back(:)%xleft = 0._rp
+         XSshape_back(:)%xcenter = 0._rp
+         XSshape_back(:)%xright = 0._rp
+         XSshape_back(:)%s = 0._rp
+         XSshape_back(:)%hmax = 0._rp
+         XSshape_back(:)%topz = 0._rp
 
          manning_back(:)      =  0._rp
          manning_beta_back(:) =  0._rp

@@ -156,12 +156,6 @@ CONTAINS
 
       call write_control( dof0 , mesh )
 
-      if (size(control) < 20_ip) then
-        write(*,*) "Current control vector is ", control
-      else
-        write(*,*) "Current control vector is too large to show"
-      endif
-
 #ifndef USE_M1QN3
 #ifndef USE_LBFGSB3
       write (*,'(A)') 'Wrong MINMETHOD in Makefile (must be 1 or 2)'
@@ -249,6 +243,13 @@ CONTAINS
 !             write(*,*) "-----------------------------------------------------------------------------"
 !             write(*,*) "New loop ", "indic=",indic, "reverse =", reverse, "ite_min", ite_min, "ite_line_search", ite_line_search
 !             write(*,*) "-----------------------------------------------------------------------------"
+
+      if (size(control) < 20_ip) then
+        write(*,*) "Current control vector is ", control
+      else
+        write(*,*) "Current control vector is too large to show"
+      endif
+
          !=============================================================================================================!
          !  Case indic = 4 -> M1QN3 needs new values of the cost and its gradient to compute
          !  either the step descent (line-search) or the new iterate
@@ -319,7 +320,7 @@ CONTAINS
                do k = 1,nb_vars_in_control
 
                   control_back( i : i - 1 + dim_vars_in_control(k) ) = &
-                  control_back( i : i - 1 + dim_vars_in_control(k) ) / control_back(k)
+                  control_back( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k)
 
                   norm_grad_cost(k) = sqrt( sum( control_back( i : i - 1 + dim_vars_in_control(k) ) * &
                                                  control_back( i : i - 1 + dim_vars_in_control(k) ) ) )

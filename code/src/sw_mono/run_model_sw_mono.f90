@@ -99,7 +99,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !===================================================================================================================!
 
    if (use_xsshp == 1) then
-      if (xsshp_along_x == 1) then
+      if (xsshp_along_y == 1) then
       
         do ie = 1,mesh%nc
 
@@ -131,7 +131,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
             
         enddo
         
-     elseif (xsshp_along_y == 1) then
+     elseif (xsshp_along_x == 1) then
         
         do ie = 1,mesh%nc
 

@@ -130,12 +130,6 @@ MODULE m_model
    real(rp), dimension(:), allocatable :: slope_y !Added for Andromede, to expand
    real(rp), dimension(:), allocatable :: slope_x !Added for Andromede, to expand
 
-!    TYPE bathy_params
-!
-!     type(XSshape), dimension(:), allocatable :: XSshape !Added for Andromede, to expand
-!
-!    END TYPE bathy_params
-
    TYPE xsshp
 
     real(rp) :: xleft
@@ -666,6 +660,9 @@ MODULE m_model
 
     ! Variables in control vector ( X )
     ! derivated by adjoint model ( grad(X) )
+        integer(ip)  ::  c_shape_s
+        integer(ip)  ::  c_xcenter
+        integer(ip)  ::  c_hmax
  		integer(ip)  ::  c_manning                         !> activate inference of manning alpha parameter (if c_xxx = 1)
  		integer(ip)  ::  c_manning_beta                    !> activate inference of manning beta parameter (if c_xxx = 1)
  		integer(ip)  ::  c_bathy                           !> activate inference of bathymetry (if c_xxx = 1)
@@ -740,7 +737,7 @@ CONTAINS
       use_NSE   =  0_ip
 
       use_xsshp = 0_ip
-      xsshp_along_x = 1_ip
+      xsshp_along_x = 0_ip
       xsshp_along_y = 0_ip
 
       do_warmup = .True.

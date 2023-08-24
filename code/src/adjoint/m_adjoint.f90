@@ -694,17 +694,17 @@ CONTAINS
       nb_vars_in_control = 0
 
       ic = 1
-        ! call mpi_wait_all ! lilian --> var_2_control et control_2_var ? LEO: no need for this on my machine
+
       #ifdef USE_SW_MONO
 
          if ( c_shape_s == 1 ) then
-            call var_2_control( XSshape(:)%s    , 1   , 0 )
+            call var_2_control( XSshape(:)%s    , size(XSshape)   , 0 )
         endif
         if ( c_hmax == 1 ) then
-            call var_2_control( XSshape(:)%hmax    , 1   , 0 )
+            call var_2_control( XSshape(:)%hmax    , size(XSshape)   , 0 )
         endif
         if ( c_xcenter == 1 ) then
-            call var_2_control( XSshape(:)%xcenter    , 1   , 0 )
+            call var_2_control( XSshape(:)%xcenter    , size(XSshape)   , 0 )
          endif
 
          if ( c_manning == 1 ) call var_2_control( manning    , nland   , manning_data_glob )

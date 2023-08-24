@@ -254,7 +254,7 @@ CONTAINS
 
                 bathy_temp(:) = 0._rp
    
-                if (xsshp_along_x == 1) then
+                if (xsshp_along_y == 1) then
 
                     do ie = 1, mesh%nc
                     if (mesh%cell(ie)%grav%x <= XSshape(1)%xcenter) then
@@ -281,7 +281,7 @@ CONTAINS
                     endif
                     enddo
                 
-                elseif (xsshp_along_y == 1) then
+                elseif (xsshp_along_x == 1) then
                     
                     do ie = 1, mesh%nc
                     if (mesh%cell(ie)%grav%y <= XSshape(1)%xcenter) then

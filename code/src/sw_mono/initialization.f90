@@ -1960,6 +1960,8 @@ SUBROUTINE my_bc_2_fortran(my_bc)
         bc%rain(i)%x_max = my_bc%rain(i)%x_max
         bc%rain(i)%y_max = my_bc%rain(i)%y_max
         bc%rain(i)%tile_index = my_bc%rain(i)%tile_index
+        bc%rain(i)%cumul = my_bc%rain(i)%cumul
+        bc%rain(i)%qin = 0._rp !my_bc%rain(i)%qin
       enddo
 
       allocate(bc%rain_land(size(my_bc%rain_land)))
@@ -1967,8 +1969,7 @@ SUBROUTINE my_bc_2_fortran(my_bc)
       do i = 1,size(my_bc%rain_land)
         bc%rain_land(i) = my_bc%rain_land(i)
       enddo
-!              write(*,*) size(bc%rain(:)%tile_index)
-!              write(*,*) bc%rain(:)%tile_index
+    
 
 END SUBROUTINE my_bc_2_fortran
 
