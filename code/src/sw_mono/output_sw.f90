@@ -1568,65 +1568,65 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
     ! Physical descriptors
 
-!     if ((allocated(phys_desc%soil_land)) .or. (size(phys_desc%soil_land) .gt. 0)) then
-! 
-!         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-!         write(10,rec=rec_index+2,fmt='(A16   )') 'soil-land      '
-!         write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
-!         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-!         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-! 
-!         rec_index = rec_index + 5
-! 
-!         do i = 1,mesh%nc
-!             write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') phys_desc%soil_land(i) , char(10)
-!         end do
-! 
-!         rec_index = rec_index + mesh%nc
-! 
-!         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-!         write(10,rec=rec_index+2,fmt='(A16   )') 'clay       '
-!         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-!         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-!         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-! 
-!         rec_index = rec_index + 5
-! 
-!         do i = 1,mesh%nc
-!             write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%clay , char(10)
-!         end do
-! 
-!         rec_index = rec_index + mesh%nc
-! 
-!         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-!         write(10,rec=rec_index+2,fmt='(A16   )') 'sand         '
-!         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-!         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-!         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-! 
-!         rec_index = rec_index + 5
-! 
-!         do i = 1,mesh%nc
-!             write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%sand , char(10)
-!         end do
-! 
-!         rec_index = rec_index + mesh%nc
-! 
-!         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-!         write(10,rec=rec_index+2,fmt='(A16   )') 'silt         '
-!         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-!         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-!         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-! 
-!         rec_index = rec_index + 5
-! 
-!         do i = 1,mesh%nc
-!             write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%silt , char(10)
-!         end do
-! 
-!         rec_index = rec_index + mesh%nc
-! 
-!     endif
+    if (allocated(phys_desc%soil)) then !.or. (size(phys_desc%soil_land) .gt. 0)
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-land      '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') phys_desc%soil_land(i) , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-clay       '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%clay , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-sand         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%sand , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-silt         '
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+        rec_index = rec_index + 5
+
+        do i = 1,mesh%nc
+            write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') phys_desc%soil( phys_desc%soil_land(i) )%silt , char(10)
+        end do
+
+        rec_index = rec_index + mesh%nc
+
+    endif
 
 !     if (use_obs == 1) then
 ! 
@@ -1661,9 +1661,9 @@ SUBROUTINE v_vtk_init( mesh , filename )
 !         enddo
 !         
 !         rec_index = rec_index + mesh%nc
-
-
-!  endif
+! 
+! 
+!     endif
 
    call mpi_wait_all
 close(10)
@@ -2281,8 +2281,68 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
             end if
             call mpi_wait_all
             enddo
+            
+            do k = 0,np-1
+            if ( proc == k ) then
+                open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+            if ( proc == 0 ) write(10) 'SCALARS '//'GA-PsiF'//' double 1'//char(10)
+                if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                                do i = 1,mesh%nc
+                                    write(10) infil%GA( infil%land(i) )%PsiF
+                                enddo
+                if ( proc == np-1 ) write(10) char(10)
+                close(10)
+            end if
+            call mpi_wait_all
+            enddo
         endif
     
+    endif
+    
+    if (allocated(phys_desc%soil)) then
+    
+        do k = 0,np-1
+            if ( proc == k ) then
+                    open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+            if ( proc == 0 ) write(10) 'SCALARS '//'soil-sand'//' double 1'//char(10)
+                if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                            write(10) phys_desc%soil( phys_desc%soil_land(i) )%sand
+                        enddo
+                if ( proc == np-1 ) write(10) char(10)
+                close(10)
+            end if
+            call mpi_wait_all
+        enddo
+    
+        do k = 0,np-1
+            if ( proc == k ) then
+                    open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+            if ( proc == 0 ) write(10) 'SCALARS '//'soil-clay'//' double 1'//char(10)
+                if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                            write(10) phys_desc%soil( phys_desc%soil_land(i) )%clay
+                        enddo
+                if ( proc == np-1 ) write(10) char(10)
+                close(10)
+            end if
+            call mpi_wait_all
+        enddo
+        
+!         do k = 0,np-1
+!             if ( proc == k ) then
+!                     open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+!             if ( proc == 0 ) write(10) 'SCALARS '//'soil-silt'//' double 1'//char(10)
+!                 if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+!                         do i = 1,mesh%nc
+!                             write(10) phys_desc%soil( phys_desc%soil_land(i) )%silt
+!                         enddo
+!                 if ( proc == np-1 ) write(10) char(10)
+!                 close(10)
+!             end if
+!             call mpi_wait_all
+!         enddo
+
     endif
     
    !===================================================================================================================!

@@ -245,6 +245,8 @@ class Config(dict):
                             df2d.wrapping.m_common.set_use_zobs(input_param[k])
                      elif k == 'use_Qobs':
                             df2d.wrapping.m_common.set_use_qobs(input_param[k])
+                     elif k == 'use_UVobs':
+                            df2d.wrapping.m_common.set_use_uvobs(input_param[k])
                      elif k == 'use_NSE':
                             df2d.wrapping.m_common.set_use_nse(input_param[k])
                             
@@ -255,6 +257,9 @@ class Config(dict):
                             df2d.wrapping.m_common.set_xsshp_along_x(input_param[k])
                      elif k == 'xsshp_along_y':
                             df2d.wrapping.m_common.set_xsshp_along_y(input_param[k])
+                            
+                     elif k == 'use_ptf':
+                            df2d.wrapping.m_common.set_use_ptf(input_param[k])
 
                      #in module m_model
                      elif k == 'feedback_inflow':

@@ -166,6 +166,60 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
       endif
    endif
 
+      !===================================================================================================================!
+   !  Define parameterized bathymetry
+   !===================================================================================================================!
+
+   if (use_ptf == 1) then
+    if (bc_infil == 1) then
+    
+   !===================================================================================================================!
+   !  PTF from From Imhoff et al. 2020
+   !===================================================================================================================!
+   
+!      do i = 1,size(phys_desc%soil)
+!         infil%GA(i)%Ks = 240.19 * exp( &
+! 		 19.52348 * phys_desc%soil(i)%ThetaS - 8.96847 - 0.028212 * phys_desc%soil(i)%clay + (1.8107 * 10 ** -4) &
+! 		 * phys_desc%soil(i)%sand ** 2 - (9.4125 * 10 ** -3) * phys_desc%soil(i)%clay ** 2 - 8.395215 * phys_desc%soil(i)%ThetaS ** 2 &
+! 		 + 0.077718 * phys_desc%soil(i)%sand * phys_desc%soil(i)%ThetaS - 0.00298 * phys_desc%soil(i)%sand ** 2 * phys_desc%soil(i)%ThetaS ** 2 & 
+! 		 - 0.019492 * phys_desc%soil(i)%clay ** 2 * phys_desc%soil(i)%ThetaS ** 2 + (1.73 * 10 ** -5) * phys_desc%soil(i)%sand ** 2 &
+! 		 * phys_desc%soil(i)%clay + 0.02733 * phys_desc%soil(i)%clay ** 2 * phys_desc%soil(i)%ThetaS + 0.001434 * phys_desc%soil(i)%sand ** 2 * phys_desc%soil(i)%ThetaS &
+! 		 - (3.5 * 10 ** -6) * phys_desc%soil(i)%clay ** 2 * phys_desc%soil(i)%sand )
+! 		 
+!         infil%GA(i)%DeltaTheta = phys_desc%soil(i)%ThetaS - phys_desc%soil(i)%ThetaR
+!         
+!         infil%GA(i)%PsiF = 0._rp
+!     enddo
+
+
+   !===================================================================================================================!
+   !  PTF from From Cooper et al. 2021
+   !===================================================================================================================!
+
+      do i = 1,size(phys_desc%soil)
+
+        infil%GA(i)%DeltaTheta =  PTF( phys_desc%ptf_land(i) )%Kappa(1) &
+                                - PTF( phys_desc%ptf_land(i) )%Kappa(2) * phys_desc%soil(i)%clay &
+                                - PTF( phys_desc%ptf_land(i) )%Kappa(3) * phys_desc%soil(i)%sand !&
+!                                 - phys_desc%soil(i)%ThetaR
+                                
+        infil%GA(i)%PsiF =      0.01_rp * 10._rp ** (&
+                                  PTF( phys_desc%ptf_land(i) )%Kappa(4) &
+                                - PTF( phys_desc%ptf_land(i) )%Kappa(5) * phys_desc%soil(i)%clay &
+                                - PTF( phys_desc%ptf_land(i) )%Kappa(6) * phys_desc%soil(i)%sand )
+        
+        infil%GA(i)%Ks =          25.4_rp / 3600._rp * 10._rp ** (&
+                                - PTF( phys_desc%ptf_land(i) )%Kappa(7) &
+                                - PTF( phys_desc%ptf_land(i) )%Kappa(8) * phys_desc%soil(i)%clay &
+                                + PTF( phys_desc%ptf_land(i) )%Kappa(9) * phys_desc%soil(i)%sand ) &
+                                / 1000._rp !kg/m2 to m
+
+      enddo
+    
+    elseif (bc_infil == 2) then
+        call Stopping_Program_Sub( "PTF for SCS-CN method not defined yet" ) 
+    endif
+   endif
 
    !===================================================================================================================!
    !  ZSinit.txt

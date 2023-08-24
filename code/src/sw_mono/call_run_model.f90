@@ -686,24 +686,42 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
       mesh_total_cells = mesh%nc
       call mpi_sum_i( mesh_total_cells )
 
-      allocate(my_phys_desc%soil_land(mesh_total_cells))!mesh%nc))
-      allocate(my_phys_desc%soil(my_phys_desc%soil_nland))!my_phys_desc%soil_nland))
+      allocate(my_phys_desc%soil_land( mesh_total_cells ))!mesh%nc))
+      allocate(my_phys_desc%soil( my_phys_desc%soil_nland ))!my_phys_desc%soil_nland))
       my_phys_desc%soil(:)%clay = 0._rp
       my_phys_desc%soil(:)%silt = 0._rp
       my_phys_desc%soil(:)%sand = 0._rp
+      
+      if (use_ptf == 1) then
+      
+        allocate(my_phys_desc%ptf_land( size(my_phys_desc%soil) ))
+        allocate(my_phys_desc%ptf( my_phys_desc%ptf_nland ))
+        
+        ! Default values from Cosby et al. 1984
+        my_phys_desc%ptf(:)%kappa(1) = 0.505
+        my_phys_desc%ptf(:)%kappa(2) = 0.037
+        my_phys_desc%ptf(:)%kappa(3) = 0.142
+        my_phys_desc%ptf(:)%kappa(4) = 2.17
+        my_phys_desc%ptf(:)%kappa(5) = 0.63
+        my_phys_desc%ptf(:)%kappa(6) = 1.58
+        my_phys_desc%ptf(:)%kappa(7) = 0.6
+        my_phys_desc%ptf(:)%kappa(8) = 0.64
+        my_phys_desc%ptf(:)%kappa(9) = 1.26
 
-      allocate(my_phys_desc%surf_land(mesh_total_cells))!mesh%nc))
-      allocate(my_phys_desc%surf(my_phys_desc%surf_nland))!my_phys_desc%surf_nland))
-      my_phys_desc%surf(:)%imperm = 0._rp
-      my_phys_desc%surf(:)%Dmax = 0._rp
+      endif
 
-      allocate(my_phys_desc%struct_land(mesh_total_cells))!mesh%nc))
-      allocate(my_phys_desc%structures(my_phys_desc%struct_nland))!my_phys_desc%struct_nland))
-      my_phys_desc%structures(:)%C1 = 0._rp
-      my_phys_desc%structures(:)%C2 = 0._rp
-      my_phys_desc%structures(:)%C3 = 0._rp
-      my_phys_desc%structures(:)%true_x = 0._rp
-      my_phys_desc%structures(:)%true_y = 0._rp
+!       allocate(my_phys_desc%surf_land(mesh_total_cells))!mesh%nc))
+!       allocate(my_phys_desc%surf(my_phys_desc%surf_nland))!my_phys_desc%surf_nland))
+!       my_phys_desc%surf(:)%imperm = 0._rp
+!       my_phys_desc%surf(:)%Dmax = 0._rp
+! 
+!       allocate(my_phys_desc%struct_land(mesh_total_cells))!mesh%nc))
+!       allocate(my_phys_desc%structures(my_phys_desc%struct_nland))!my_phys_desc%struct_nland))
+!       my_phys_desc%structures(:)%C1 = 0._rp
+!       my_phys_desc%structures(:)%C2 = 0._rp
+!       my_phys_desc%structures(:)%C3 = 0._rp
+!       my_phys_desc%structures(:)%true_x = 0._rp
+!       my_phys_desc%structures(:)%true_y = 0._rp
 
   END SUBROUTINE phys_desc_initialise
 

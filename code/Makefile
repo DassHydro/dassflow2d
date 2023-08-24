@@ -443,7 +443,7 @@ ifeq ($(HYDRO),1)
 
 endif
 
-   TAP_INVARS=dof0%h dof0%u dof0%v manning manning_beta bathy_cell bc%hyd%t bc%hyd%q bc%rat%h bc%rat%q bc%rain%t bc%rain%q infil%GA%Ks infil%GA%PsiF infil%GA%DeltaTheta infil%SCS%lambdacn infil%SCS%CN xsshape%s xsshape%xcenter xsshape%hmax $(HYDROVAR)
+   TAP_INVARS=dof0%h dof0%u dof0%v manning manning_beta bathy_cell bc%hyd%t bc%hyd%q bc%rat%h bc%rat%q bc%rain%t bc%rain%q infil%GA%Ks infil%GA%PsiF infil%GA%DeltaTheta infil%SCS%lambdacn infil%SCS%CN xsshape%s xsshape%xcenter xsshape%hmax PTF $(HYDROVAR)
    TAP_OUTVARS=dof%h dof%u dof%v innovation%diff innovW%diff innovQ%diff innovUV%diff cost
 
 ifeq ($(MODEL),0)

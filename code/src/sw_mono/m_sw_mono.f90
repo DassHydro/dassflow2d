@@ -372,16 +372,23 @@ MODULE m_model
    !  Input data and physical descriptors type
    !===================================================================================================================!
 
+
    TYPE soil_data
 
     real(rp)  ::  clay !>  Soil percentage of clay at each cell
     real(rp)  ::  silt !>  Soil percentage of silt at each cell
     real(rp)  ::  sand !>  Soil percentage of sand at each cell
-
-!     integer(ip) :: soil_group !>  Group of clay/silt/sand repartition derived from topographic maps pre-processed in Python
+    
+    real(rp)  ::  ThetaS
+    real(rp)  ::  ThetaR
 
    END TYPE soil_data
 
+   TYPE ptf_data
+
+    real(rp), dimension(9) :: Kappa !>  Coefficients for pedotransfer function
+
+   END TYPE ptf_data
 
    TYPE surface_data
 
@@ -417,6 +424,10 @@ MODULE m_model
     type(soil_data), dimension(:), allocatable  ::  soil      !>  Subsurface soil data
     integer(ip)  ::  soil_nland            !> Number of distinct lands associated to soil
     integer(ip), dimension(:), allocatable  ::  soil_land            !> Cells land number associated to soil
+    
+    type(ptf_data), dimension(:), allocatable  ::  ptf
+    integer(ip)  ::  ptf_nland
+    integer(ip), dimension(:), allocatable  ::  ptf_land
 
     type(surface_data), dimension(:), allocatable  ::  surf   !>  Surface data
     integer(ip)  ::  surf_nland            !> Number of distinct lands associated to surfaces
@@ -429,7 +440,7 @@ MODULE m_model
    END TYPE input_data
 
    type(input_data), target ::  phys_desc
-
+   type(ptf_data), dimension(:), allocatable  ::  PTF
 
    !===================================================================================================================!
    !  Input variables specific to model (in addition to m_common)
@@ -459,6 +470,7 @@ MODULE m_model
    integer(ip)  ::  c_DeltaTheta                     ! GA Infiltration parameter
    integer(ip)  ::  c_lambda                         ! SCS-CN Infiltration parameter
    integer(ip)  ::  c_CN                             ! SCS-CN Infiltration parameter
+   integer(ip)  ::  c_ptf                            ! Pedotransfer coefficients 
     ! Each variable eps in perturbation control vector
     ! used to test validity of the adjoint model
    real(rp)     ::  eps_manning                       !
@@ -472,8 +484,9 @@ MODULE m_model
    real(rp)     ::  eps_Ks                           !
    real(rp)     ::  eps_PsiF                         !
    real(rp)     ::  eps_DeltaTheta                   !
-   real(rp)     ::  eps_lambda                       !
+   real(rp)     ::  eps_lambdacn                       !
    real(rp)     ::  eps_CN                           !
+   real(rp)     ::  eps_ptf                           !
 
    real(rp)     ::  regul_manning                     !
 !   real(rp)     ::  regul_manning_beta                     ! TO ADD
@@ -536,6 +549,8 @@ MODULE m_model
       xsshp_along_x,&
       xsshp_along_y,&
 
+      use_ptf,&
+      
       spatial_scheme, &
       temp_scheme, &
 
@@ -568,6 +583,7 @@ MODULE m_model
       c_DeltaTheta, &
       c_lambda, &
       c_CN, &
+      c_ptf,&
 
       eps_min, &
       eps_manning, &
@@ -580,8 +596,9 @@ MODULE m_model
       eps_Ks, &
       eps_PsiF, &
       eps_DeltaTheta, &
-      eps_lambda, &
+      eps_lambdacn, &
       eps_CN, &
+      eps_ptf, &
 
       regul_manning, &
       regul_bathy, &
@@ -644,6 +661,8 @@ MODULE m_model
         integer(ip)  ::  use_xsshp                                  !< Use channel shape parameter "geometry_params.txt" file to parameterize cross-section and slope
         integer(ip)  ::  xsshp_along_x                              !< Toogle whether channel is defined along x-axis
         integer(ip)  ::  xsshp_along_y                              !< Toogle whether channel is defined along y-axis
+        
+        integer(ip)  ::  use_ptf                                    !< Toogle whether a pedotransfer function is used to calculate infil parameters from phys_desc parameters
 
 		character(len=lchar)  ::  spatial_scheme                    !> Name of Spatial  Discretization Scheme ('first_b1' only at the moment)
  		character(len=lchar)  ::  temp_scheme                       !> Name of Temporal Discretization Scheme ('euler' or 'imex' at the moment )
@@ -676,6 +695,7 @@ MODULE m_model
  		integer(ip)  ::  c_DeltaTheta                     ! GA Infiltration parameter
  		integer(ip)  ::  c_lambda                         ! SCS-CN Infiltration parameter
  		integer(ip)  ::  c_CN                             ! SCS-CN Infiltration parameter
+ 		integer(ip)  ::  c_ptf                            ! Pedotransfer coefficients 
 
      ! Each variable eps in perturbation control vector
      ! used to test validity of the adjoint model
@@ -689,8 +709,9 @@ MODULE m_model
  		real(rp)     ::  eps_Ks                           !
  		real(rp)     ::  eps_PsiF                         !
  		real(rp)     ::  eps_DeltaTheta                   !
- 		real(rp)     ::  eps_lambda                       !
+ 		real(rp)     ::  eps_lambdacn                       !
  		real(rp)     ::  eps_CN                           !
+ 		real(rp)     ::  eps_ptf                           !
      ! regularisation coeff ??? (weight given to each control variable?)
  		real(rp)     ::  regul_manning                     !
  		real(rp)     ::  regul_bathy                       !
@@ -739,6 +760,8 @@ CONTAINS
       use_xsshp = 0_ip
       xsshp_along_x = 0_ip
       xsshp_along_y = 0_ip
+      
+      use_ptf = 0_ip
 
       do_warmup = .True.
 
@@ -770,6 +793,7 @@ CONTAINS
       c_DeltaTheta  =  0_ip
       c_lambda      =  0_ip
       c_CN          =  0_ip
+      c_ptf         =  0_ip
 
       eps_manning     =  0.2_rp
       eps_bathy       =  0.01_rp
@@ -781,8 +805,9 @@ CONTAINS
       eps_Ks            =  0.01_rp
       eps_PsiF          =  0.01_rp
       eps_DeltaTheta    =  0.01_rp
-      eps_lambda        =  0.01_rp
+      eps_lambdacn        =  0.01_rp
       eps_CN            =  0.01_rp
+      eps_ptf            =  0.01_rp
 
       regul_manning     =  0._rp
       regul_bathy       =  0._rp
@@ -941,12 +966,14 @@ CONTAINS
       if ( allocated( infil%coord ) ) 		deallocate( infil%coord )
       if ( allocated( infil%GA   ) ) 		deallocate( infil%GA   )
       if ( allocated( infil%SCS  ) ) 		deallocate( infil%SCS  )
-      if ( allocated( phys_desc%soil_land ) ) 		deallocate( phys_desc%soil_land )
-      if ( allocated( phys_desc%soil ) ) 		deallocate( phys_desc%soil )
-      if ( allocated( phys_desc%surf_land ) ) 		deallocate( phys_desc%surf_land )
-      if ( allocated( phys_desc%surf ) ) 		deallocate( phys_desc%surf )
-      if ( allocated( phys_desc%struct_land ) ) 		deallocate( phys_desc%struct_land )
-      if ( allocated( phys_desc%structures ) ) 		deallocate( phys_desc%structures )
+      if ( allocated( phys_desc%soil_land ) ) 		 deallocate( phys_desc%soil_land )
+      if ( allocated( phys_desc%soil ) ) 		     deallocate( phys_desc%soil )
+      if ( allocated( phys_desc%ptf_land ) ) 		 deallocate( phys_desc%ptf_land )
+      if ( allocated( phys_desc%ptf ) ) 		     deallocate( phys_desc%ptf )
+!       if ( allocated( phys_desc%surf_land ) ) 		 deallocate( phys_desc%surf_land )
+!       if ( allocated( phys_desc%surf ) ) 		     deallocate( phys_desc%surf )
+!       if ( allocated( phys_desc%struct_land ) ) 	 deallocate( phys_desc%struct_land )
+!       if ( allocated( phys_desc%structures ) ) 		 deallocate( phys_desc%structures )
 
       !------------------------------------------------!
       ! millascenious forgoten variables to deallocate

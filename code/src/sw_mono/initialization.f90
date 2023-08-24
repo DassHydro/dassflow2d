@@ -1915,8 +1915,9 @@ implicit none
 !
      allocate( phys_desc%soil( size(my_phys_desc%soil) ) )
      allocate( phys_desc%soil_land( size(my_phys_desc%soil_land) ) )
-     allocate( phys_desc%surf( size(my_phys_desc%surf) ) )
-     allocate( phys_desc%structures( size(my_phys_desc%structures) ) )
+
+!      allocate( phys_desc%surf( size(my_phys_desc%surf) ) )
+!      allocate( phys_desc%structures( size(my_phys_desc%structures) ) )
 
 
       do i = 1,size(my_phys_desc%soil)
@@ -1926,6 +1927,20 @@ implicit none
       enddo
 
       phys_desc%soil_land(:) = my_phys_desc%soil_land(:)
+      
+      if (use_ptf == 1) then
+      
+        allocate( PTF( size(my_phys_desc%ptf) ) )
+        allocate( phys_desc%ptf_land( size(my_phys_desc%ptf_land) ) )
+        
+        do i = 1,size(my_phys_desc%ptf)
+          PTF(i)%Kappa(:) = my_phys_desc%ptf(i)%Kappa(:)
+        enddo
+        
+        phys_desc%ptf_land(:) = my_phys_desc%ptf_land(:)
+      
+      endif
+      
 !       do i = 1,size(my_phys_desc%surf)
 !       write(*,*) i
 !           phys_desc%surf(i)%imperm = my_phys_desc%surf(i)%imperm
