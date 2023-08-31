@@ -769,7 +769,7 @@ CONTAINS
       temp_scheme     =  'euler'
 
       max_nt_for_direct   =  100000000_ip
-      max_nt_for_adjoint  =  100000000_ip
+      max_nt_for_adjoint  =  2500_ip
 
       g         =  9.81_rp
       heps      =  0.00000001
