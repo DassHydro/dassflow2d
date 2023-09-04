@@ -809,10 +809,10 @@ cleanall: clean cleanlib cleantap
 
 rundirect: cleanres
 ifeq ($(MPI),1)
-	cp ./src/wrappers/main_direct_parallel.py $(CASEDIR)
-	#cd $(CASEDIR) ; python3 main.py direct; rm main.py
+	cp ./src/wrappers/main.py $(CASEDIR)
+	cd $(CASEDIR) ; python3 main.py direct; rm main.py
 	#cd $(CASEDIR) ; mpirun -np $(NB_PROC) python3 main.py direct; rm main.py
-	cd $(CASEDIR) ; mpirun -np $(NB_PROC) python3 main_direct_parallel.py
+	#cd $(CASEDIR) ; mpirun -np $(NB_PROC) python3 main_direct_parallel.py
 else
 	cp ./src/wrappers/main.py $(CASEDIR)
 	cd $(CASEDIR) ; python3 main.py direct; rm main.py

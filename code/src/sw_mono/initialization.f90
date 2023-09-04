@@ -111,7 +111,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
 !     call my_bathy_2_fortran() !(my_param_model)
 
-     call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
+     if (allocated(my_friction%manning))call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
 
      if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 

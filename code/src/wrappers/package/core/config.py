@@ -245,6 +245,8 @@ class Config(dict):
                             df2d.wrapping.m_common.set_use_zobs(input_param[k])
                      elif k == 'use_Qobs':
                             df2d.wrapping.m_common.set_use_qobs(input_param[k])
+                     elif k == 'use_UVobs':
+                            df2d.wrapping.m_common.set_use_uvobs(input_param[k])
                      elif k == 'use_NSE':
                             df2d.wrapping.m_common.set_use_nse(input_param[k])
                             
@@ -255,7 +257,10 @@ class Config(dict):
                             df2d.wrapping.m_common.set_xsshp_along_x(input_param[k])
                      elif k == 'xsshp_along_y':
                             df2d.wrapping.m_common.set_xsshp_along_y(input_param[k])
-
+                            
+                     elif k == 'use_ptf':
+                            df2d.wrapping.m_common.set_use_ptf(input_param[k])
+                            
                      #in module m_model
                      elif k == 'feedback_inflow':
                             df2d.wrapping.m_model.set_feedback_inflow(input_param[k])
@@ -274,9 +279,9 @@ class Config(dict):
                      elif k == 'c_hydrograph':
                             df2d.wrapping.m_model.set_c_hydrograph(input_param[k])
                      elif k == 'c_rain':
-                            df2d.wrapping.m_model.set_c_rain()
+                            df2d.wrapping.m_model.set_c_rain(input_param[k])
                      elif k == 'c_ic':
-                            df2d.wrapping.m_model.set_c_ic()    
+                            df2d.wrapping.m_model.set_c_ic(input_param[k])    
                      elif k == 'c_shape_s':
                             df2d.wrapping.m_model.set_c_shape_s(input_param[k])
                      elif k == 'c_hmax':
@@ -301,6 +306,9 @@ class Config(dict):
                             df2d.wrapping.m_model.set_c_psif(input_param[k])
                      elif k == 'c_DeltaTheta':
                             df2d.wrapping.m_model.set_c_deltatheta(input_param[k])
+                            
+                     elif k == 'c_ptf':
+                            df2d.wrapping.m_model.set_c_ptf(input_param[k])
 
               print(f"values {[x for x in input_param.keys()]} set")
               self.get(input_param)
