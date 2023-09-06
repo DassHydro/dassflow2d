@@ -383,8 +383,8 @@ CONTAINS
          allocate( manning_back   ( size( manning    ) ) )
          allocate( manning_beta_back   ( size( manning_beta    ) ) )
          allocate( bathy_cell_back( size( bathy_cell ) ) )
-         allocate( slope_y_back (1_ip))
-         allocate( slope_x_back (1_ip))
+         allocate( slope_y_back (size(slope_y)))
+         allocate( slope_x_back (size(slope_x)))
 
          XSshape_back(:)%xleft = 0._rp
          XSshape_back(:)%xcenter = 0._rp

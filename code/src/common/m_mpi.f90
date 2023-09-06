@@ -1280,6 +1280,8 @@ write(*,*) "mpi in fortran:np, proc", np, proc
          val  =  val * val
 
       #endif
+      
+      call mpi_wait_all
 
    END SUBROUTINE mpi_sum_r
 
