@@ -279,9 +279,9 @@ class Config(dict):
                      elif k == 'c_hydrograph':
                             df2d.wrapping.m_model.set_c_hydrograph(input_param[k])
                      elif k == 'c_rain':
-                            df2d.wrapping.m_model.set_c_rain()
+                            df2d.wrapping.m_model.set_c_rain(input_param[k])
                      elif k == 'c_ic':
-                            df2d.wrapping.m_model.set_c_ic()    
+                            df2d.wrapping.m_model.set_c_ic(input_param[k])    
                      elif k == 'c_shape_s':
                             df2d.wrapping.m_model.set_c_shape_s(input_param[k])
                      elif k == 'c_hmax':
@@ -306,6 +306,9 @@ class Config(dict):
                             df2d.wrapping.m_model.set_c_psif(input_param[k])
                      elif k == 'c_DeltaTheta':
                             df2d.wrapping.m_model.set_c_deltatheta(input_param[k])
+                            
+                     elif k == 'c_ptf':
+                            df2d.wrapping.m_model.set_c_ptf(input_param[k])
 
               print(f"values {[x for x in input_param.keys()]} set")
               self.get(input_param)

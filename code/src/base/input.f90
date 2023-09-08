@@ -655,31 +655,32 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
   read(10,*, err=100, end=100)
     line_read = line_read + 1
-!  if (allocated(manning)) then
-! 
-!    do i = 1,mesh%nc
-! 
-!       read(10,*, err=100, end=100)   k , &
-!                    mesh%cell(k)%node(1) , &
-!                    mesh%cell(k)%node(2) , &
-!                    mesh%cell(k)%node(3) , &
-!                    mesh%cell(k)%node(4) , &
-!                    land(k)             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
-!                    bathy_cell(k)
-!       line_read = line_read + 1
-! 
-!       mesh%cell(i)%ind = k
-! 
-!       if ( mesh%cell(k)%node(4) == 0 .or. &
-!            mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
-! 
-!    end do
-!    
-!  else
+    
+ if (allocated(manning)) then
+
+   do i = 1,mesh%nc
+
+      read(10,*, err=100, end=100)   k , &
+                   mesh%cell(k)%node(1) , &
+                   mesh%cell(k)%node(2) , &
+                   mesh%cell(k)%node(3) , &
+                   mesh%cell(k)%node(4) , &
+                   land(k)             , & ! land(k) is defined in                                          src/sw_mono/initialization.f90/my_friction_2_fortran(my_friction)
+                   bathy_cell(k)
+      line_read = line_read + 1
+
+      mesh%cell(i)%ind = k
+
+      if ( mesh%cell(k)%node(4) == 0 .or. &
+           mesh%cell(k)%node(4) == mesh%cell(k)%node(3) )  mesh%cell(k)%node(4)  =  mesh%cell(k)%node(1)
+
+   end do
+   
+ else
  
     do i = 1,mesh%nc
 
-      read(10,*)   k , &
+      read(10,*, err=100, end=100)   k , &
                    mesh%cell(k)%node(1) , &
                    mesh%cell(k)%node(2) , &
                    mesh%cell(k)%node(3) , &
@@ -694,7 +695,7 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    end do
    
-!  endif
+ endif
    !===================================================================================================================!
    !  Calculating Cells connectivity + Edges count
    !===================================================================================================================!

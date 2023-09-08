@@ -91,7 +91,7 @@ MINMETHOD	= 1
 SOLVER		= 0
 
 #Parallel computing: 	'1' to use
-MPI		= 1
+MPI		= 0
 #If MPI=1, number of processors to use
 NB_PROC	= 2
 

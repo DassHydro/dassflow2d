@@ -6,12 +6,20 @@ import numpy as np
 import sys
 import os
 
+
+run_type ="direct" # if runtype = rundirect runmin, classic treatment, if runtype = runminpython
+
 df2d.wrapping.m_mpi.init_mpi()
+rank = df2d.wrapping.m_mpi.get_proc() # get the rank and number of processors
+nproc = df2d.wrapping.m_mpi.get_np()
+mpi = [rank, nproc]
+print("mpi=", mpi)
 
 # store main path
 dassflow_dir="/home/leo/DISTANT/dassflow2d"
 code_dir =  f"{dassflow_dir}/code"
 bin_dir = f"{code_dir}/bin_A"
+
 
 ##########
 # Initialise bin
