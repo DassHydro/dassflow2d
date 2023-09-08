@@ -1098,46 +1098,42 @@ SUBROUTINE v_vtk( dof , mesh , filename )
    end do
 
    rec_index = rec_index + mesh%nc
-
+   
    !===================================================================================================================!
-   !  Writing VTK file rain cell data
+   !   Writing VTK file u cell data
    !===================================================================================================================!
-   if (bc_rain == 1) then
 
-    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-    write(10,rec=rec_index+2,fmt='(A16   )') 'rain_current               '
-    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'u               '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
-    rec_index = rec_index + 5
+   rec_index = rec_index + 5
 
-    do i = 1,mesh%nc
-        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') bc%rain( bc%rain_land(i) )%qin , char(10)
-    end do
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%u(i) , char(10)
+   end do
 
-    rec_index = rec_index + mesh%nc
-   endif
-
+   rec_index = rec_index + mesh%nc
+   
    !===================================================================================================================!
-   !  Writing VTK file h_infil cell data
+   !   Writing VTK file u cell data
    !===================================================================================================================!
-   if (bc_infil/=0) then
 
-    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-    write(10,rec=rec_index+2,fmt='(A16   )') 'hinfil               '
-    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'v               '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
-    rec_index = rec_index + 5
+   rec_index = rec_index + 5
 
-    do i = 1,mesh%nc
-        write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%infil(i) , char(10)
-    end do
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%v(i) , char(10)
+   end do
 
-    rec_index = rec_index + mesh%nc
-   endif
+   rec_index = rec_index + mesh%nc
 
    !===================================================================================================================!
    !  Writing VTK file zs cell data
@@ -1197,61 +1193,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
     rec_index = rec_index + mesh%nc
    endif
 
-   !===================================================================================================================!
-   !   Writing VTK file u cell data
-   !===================================================================================================================!
-
-   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-   write(10,rec=rec_index+2,fmt='(A16   )') 'u               '
-   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-
-   rec_index = rec_index + 5
-
-   do i = 1,mesh%nc
-      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%u(i) , char(10)
-   end do
-
-   rec_index = rec_index + mesh%nc
-
-   !===================================================================================================================!
-   !   Writing VTK file v cell data
-   !===================================================================================================================!
-
-   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-   write(10,rec=rec_index+2,fmt='(A16   )') 'v               '
-   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-
-   rec_index = rec_index + 5
-
-   do i = 1,mesh%nc
-      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%v(i) , char(10)
-   end do
-
-   rec_index = rec_index + mesh%nc
-
-   !===================================================================================================================!
-   !   Writing VTK file u cell data
-   !===================================================================================================================!
-
-   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-   write(10,rec=rec_index+2,fmt='(A16   )') 'u               '
-   write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-
-   rec_index = rec_index + 5
-
-   do i = 1,mesh%nc
-      write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') dof%u(i) , char(10)
-   end do
-
-   rec_index = rec_index + mesh%nc
-
-   if (use_UVobs == 1 .and. use_obs == 1) then
+   if ((use_UVobs .eq. 1) .and. (use_obs .eq. 1)) then
 
    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
    write(10,rec=rec_index+2,fmt='(A16   )') 'innovUV               '
@@ -1276,7 +1218,8 @@ SUBROUTINE v_vtk( dof , mesh , filename )
                         write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
                         exit
                     endif
-
+        else
+          write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') -99 , char(10)
         endif
     enddo
     enddo
@@ -1463,12 +1406,27 @@ SUBROUTINE v_vtk_init( mesh , filename )
    end do
 
    rec_index = rec_index + mesh%nc
+   
    !===================================================================================================================!
    !   Writing VTK file Manning cell data
    !===================================================================================================================!
 
    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-   write(10,rec=rec_index+2,fmt='(A16   )') 'Manning         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'manning_land         '
+   write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
+   write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+   write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+   rec_index = rec_index + 5
+
+   do i = 1,mesh%nc
+      write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') land(i) , char(10)
+   end do
+
+   rec_index = rec_index + mesh%nc
+
+   write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+   write(10,rec=rec_index+2,fmt='(A16   )') 'manning         '
    write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
    write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
    write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
@@ -1481,9 +1439,6 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
    rec_index = rec_index + mesh%nc
 
-   call mpi_wait_all
-
-
    !===================================================================================================================!
    !   Writing VTK file infiltration params cell data
    !===================================================================================================================!
@@ -1492,7 +1447,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
         write(10,rec=rec_index+2,fmt='(A16   )') 'rain-land      '
-        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
@@ -1510,7 +1465,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
         write(10,rec=rec_index+2,fmt='(A16   )') 'GA-land      '
-        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
@@ -1568,7 +1523,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
         write(10,rec=rec_index+2,fmt='(A16   )') 'SCS-land      '
-        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
@@ -1613,11 +1568,11 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
     ! Physical descriptors
 
-    if ((allocated(phys_desc%soil_land)) .or. (size(phys_desc%soil_land) .gt. 0)) then
+    if (allocated(phys_desc%soil)) then !.or. (size(phys_desc%soil_land) .gt. 0)
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
         write(10,rec=rec_index+2,fmt='(A16   )') 'soil-land      '
-        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+        write(10,rec=rec_index+3,fmt='(A15,A1)') 'integer 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
 
@@ -1630,7 +1585,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
         rec_index = rec_index + mesh%nc
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-        write(10,rec=rec_index+2,fmt='(A16   )') 'clay       '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-clay       '
         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
@@ -1644,7 +1599,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
         rec_index = rec_index + mesh%nc
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-        write(10,rec=rec_index+2,fmt='(A16   )') 'sand         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-sand         '
         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
@@ -1658,7 +1613,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
         rec_index = rec_index + mesh%nc
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-        write(10,rec=rec_index+2,fmt='(A16   )') 'silt         '
+        write(10,rec=rec_index+2,fmt='(A16   )') 'soil-silt         '
         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
@@ -1673,42 +1628,42 @@ SUBROUTINE v_vtk_init( mesh , filename )
 
     endif
 
-    if (use_obs == 1) then
-
-        write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-        write(10,rec=rec_index+2,fmt='(A16   )') 'obs_location         '
-        write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-        write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-        write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-
-        rec_index = rec_index + 5
-
-        do i = 1,mesh%nc
-
-          do iobs = 1, size( station )
-
-          !   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
-          !   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
-              j = station( iobs )%pt( 1 )%cell
-
-                      if (i == j) then
-                          write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') iobs , char(10)
-          !                 write(*,*) "OBS POINT AT CELL ", i, j, iobs
-                          exit
-                      elseif (iobs == size(station)) then
-                          write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
-          !                 write(*,*) "NO OBS POINT AT CELL ", i, j, iobs
-                          exit
-                      endif
-
-          !   endif
-          enddo
-        enddo
-        
-        rec_index = rec_index + mesh%nc
-
-
- endif
+!     if (use_obs == 1) then
+! 
+!         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+!         write(10,rec=rec_index+2,fmt='(A16   )') 'obs_location         '
+!         write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+!         write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+!         write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+! 
+!         rec_index = rec_index + 5
+! 
+!         do i = 1,mesh%nc
+! 
+!           do iobs = 1, size( station )
+! 
+!           !   if ( innovation( iobs )%ind_t > innovation( iobs )%nb_dt ) cycle
+!           !   if ( tc >= station( iobs )%t( innovation( iobs )%ind_t ) ) then
+!               j = station( iobs )%pt( 1 )%cell
+! 
+!                       if (i == j) then
+!                           write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') iobs , char(10)
+!           !                 write(*,*) "OBS POINT AT CELL ", i, j, iobs
+!                           exit
+!                       elseif (iobs == size(station)) then
+!                           write(10,rec=rec_index+swap_index(i),fmt='(I4.4,A1)') 0 , char(10)
+!           !                 write(*,*) "NO OBS POINT AT CELL ", i, j, iobs
+!                           exit
+!                       endif
+! 
+!           !   endif
+!           enddo
+!         enddo
+!         
+!         rec_index = rec_index + mesh%nc
+! 
+! 
+!     endif
 
    call mpi_wait_all
 close(10)
@@ -2326,8 +2281,68 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
             end if
             call mpi_wait_all
             enddo
+            
+            do k = 0,np-1
+            if ( proc == k ) then
+                open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+            if ( proc == 0 ) write(10) 'SCALARS '//'GA-PsiF'//' double 1'//char(10)
+                if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                                do i = 1,mesh%nc
+                                    write(10) infil%GA( infil%land(i) )%PsiF
+                                enddo
+                if ( proc == np-1 ) write(10) char(10)
+                close(10)
+            end if
+            call mpi_wait_all
+            enddo
         endif
     
+    endif
+    
+    if (allocated(phys_desc%soil)) then
+    
+        do k = 0,np-1
+            if ( proc == k ) then
+                    open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+            if ( proc == 0 ) write(10) 'SCALARS '//'soil-sand'//' double 1'//char(10)
+                if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                            write(10) phys_desc%soil( phys_desc%soil_land(i) )%sand
+                        enddo
+                if ( proc == np-1 ) write(10) char(10)
+                close(10)
+            end if
+            call mpi_wait_all
+        enddo
+    
+        do k = 0,np-1
+            if ( proc == k ) then
+                    open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+            if ( proc == 0 ) write(10) 'SCALARS '//'soil-clay'//' double 1'//char(10)
+                if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                            write(10) phys_desc%soil( phys_desc%soil_land(i) )%clay
+                        enddo
+                if ( proc == np-1 ) write(10) char(10)
+                close(10)
+            end if
+            call mpi_wait_all
+        enddo
+        
+!         do k = 0,np-1
+!             if ( proc == k ) then
+!                     open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+!             if ( proc == 0 ) write(10) 'SCALARS '//'soil-silt'//' double 1'//char(10)
+!                 if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+!                         do i = 1,mesh%nc
+!                             write(10) phys_desc%soil( phys_desc%soil_land(i) )%silt
+!                         enddo
+!                 if ( proc == np-1 ) write(10) char(10)
+!                 close(10)
+!             end if
+!             call mpi_wait_all
+!         enddo
+
     endif
     
    !===================================================================================================================!

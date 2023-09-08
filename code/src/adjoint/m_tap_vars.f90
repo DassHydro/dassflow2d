@@ -75,6 +75,9 @@ MODULE m_tap_vars
    type(infiltration_data), target  ::  infil_diff
    type(infiltration_data), target  ::  infil_back
 
+   type(ptf_data), dimension(:), allocatable, target  ::  ptf_diff
+   type(ptf_data), dimension(:), allocatable, target  ::  ptf_back
+   
    type(innovation_obs), dimension(:), allocatable, target  ::  innovation_diff
    type(innovation_obs), dimension(:), allocatable, target  ::  innovation_back
    type(innovation_obs), dimension(:), allocatable, target  ::  innovW_diff
@@ -340,7 +343,11 @@ CONTAINS
       infil_back%GA(:)%DeltaTheta   =  0._rp
       infil_back%SCS(:)%lambdacn      =  0._rp
       infil_back%SCS(:)%CN          =  0._rp
-
+      
+      allocate( ptf_back( size( PTF ) ) )
+      do i = 1, size( PTF )
+        ptf_back(i)%kappa(:) = 0._rp
+      enddo
 
       allocate( innovation_back ( size( innovation ) ) )
       allocate( innovW_back     ( size( innovW ) ) )
@@ -376,15 +383,15 @@ CONTAINS
          allocate( manning_back   ( size( manning    ) ) )
          allocate( manning_beta_back   ( size( manning_beta    ) ) )
          allocate( bathy_cell_back( size( bathy_cell ) ) )
-         allocate( slope_y_back (1_ip))
-         allocate( slope_x_back (1_ip))
+         allocate( slope_y_back (size(slope_y)))
+         allocate( slope_x_back (size(slope_x)))
 
-         XSshape_back(1)%xleft = 0._rp
-         XSshape_back(1)%xcenter = 0._rp
-         XSshape_back(1)%xright = 0._rp
-         XSshape_back(1)%s = 0._rp
-         XSshape_back(1)%hmax = 0._rp
-         XSshape_back(1)%topz = 0._rp
+         XSshape_back(:)%xleft = 0._rp
+         XSshape_back(:)%xcenter = 0._rp
+         XSshape_back(:)%xright = 0._rp
+         XSshape_back(:)%s = 0._rp
+         XSshape_back(:)%hmax = 0._rp
+         XSshape_back(:)%topz = 0._rp
 
          manning_back(:)      =  0._rp
          manning_beta_back(:) =  0._rp
@@ -417,6 +424,7 @@ SUBROUTINE dealloc_back_vars()
       if(allocated( bc_back%rain)) deallocate( bc_back%rain)
       if(allocated(infil_back%GA )) deallocate(infil_back%GA )
       if(allocated(infil_back%SCS  )) deallocate(infil_back%SCS)
+      if(allocated(ptf_back )) deallocate(ptf_back )
 
       if(allocated(innovation_back)) deallocate(innovation_back)
       if(allocated(innovUV_back)) deallocate(innovUV_back)

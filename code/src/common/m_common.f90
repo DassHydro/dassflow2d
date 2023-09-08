@@ -141,6 +141,8 @@ MODULE m_common
    integer(ip)  ::  use_xsshp                                  !< Use channel shape parameter "geometry_params.txt" file to parameterize cross-section and slope
    integer(ip)  ::  xsshp_along_x                              !< Toogle whether channel is defined along x-axis
    integer(ip)  ::  xsshp_along_y                              !< Toogle whether channel is defined along y-axis
+   
+   integer(ip)  ::  use_ptf                                    !< Toogle whether a pedotransfer function is used to calculate infil parameters from phys_desc parameters
 
    character(len=lchar)  ::  spatial_scheme                   !< Name of Spatial  Discretization Scheme ('muscl' only)
    character(len=lchar)  ::  temp_scheme                      !< Name of Temporal Discretization Scheme ('imex' or 'euler')

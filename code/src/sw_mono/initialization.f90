@@ -104,7 +104,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    ! nb of opened file, line read
    integer(ip)  ::  file_nb, line_read
 
-   integer(ip)  ::  icod, i_loc, l, spatial_index
+   integer(ip)  ::  icod, i_loc, l, spatial_index, num_bc
 
    integer(ip), dimension(:), allocatable  ::  index_bathy_min
    real(rp), dimension(:), allocatable  ::  bathy_min , bathy_min_glob, temp
@@ -117,8 +117,19 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
      if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
 
-     if (allocated(my_bc%rain)) call my_bc_2_fortran(my_bc)
+     if (allocated(my_bc%rain)) then
+         call my_bc_2_fortran(my_bc)
+     elseif (.not. allocated(bc%rain)) then 
+        allocate( bc%rain(1) )
+        allocate( bc%rain(1)%q(1) )
+        allocate( bc%rain(1)%t(1) )
 
+        bc%rain(1)%q = 0._rp
+        bc%rain(1)%t = 0._rp
+        bc%rain(1)%cumul = 0._rp
+        bc%rain(1)%qin = 0._rp
+     endif
+     
 #ifdef USE_MPI
 
    call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
@@ -133,9 +144,20 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
          call swap_vec_i  ( infil%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( infil%land ,                 mesh%nc   )
    endif
+   
+   if (allocated(phys_desc%soil_land)) then
+         call swap_vec_i  ( phys_desc%soil_land , swap_index( 1 : mesh%nc ) )
+         call reallocate_i( phys_desc%soil_land ,                 mesh%nc   )
+         
+         if (use_ptf == 1) then
+            call swap_vec_i  ( phys_desc%ptf_land , swap_index( 1 : mesh%nc ) )
+            call reallocate_i( phys_desc%ptf_land ,                 mesh%nc   )
+         endif
+
+   endif
 
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
-
+   
 #endif
 
    !===================================================================================================================!
@@ -179,7 +201,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
   		 line_read = 1
        do i = 1,mesh%nc
   			read(10,*, err=100, end=100) dof0%h(i), dof0%u(i), dof0%v(i)
-!             dof0%h(i) = max(0._rp, dof0%h(i)-bathy_cell(i))
          line_read = line_read + 1
       end do
         
@@ -192,23 +213,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
         line_read = line_read + 1
         if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
 
-
-
      end if
-
-
-     if ( file_exist(1) .or. file_exist(2) ) then
-
-        do i = 1,mesh%nc
-
-  		!read(10,rec=1) dof0%h(i) , dof0%u(i) , dof0%v(i)
-          read(10,rec=1+swap_index(i), err=101) dof0%h(i) , dof0%u(i) , dof0%v(i)
-          line_read = line_read + 1
-        end do
-
-        close(10)
-
-     endif
 
    call com_dof( dof0 , mesh )
 
@@ -670,17 +675,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 !          call Stopping_Program_Sub( 'File rain.txt not provided ...')
     endif
 
-!    else
-! 
-!      allocate( bc%rain(1) )
-!      allocate( bc%rain(1)%q(1) )
-!      allocate( bc%rain(1)%t(1) )
-! 
-!      bc%rain(1)%q = 0._rp
-!      bc%rain(1)%t = 0._rp
-!      bc%rain(1)%cumul = 0._rp
-!      bc%rain(1)%qin = 0._rp
-
    end if
 
 
@@ -879,7 +873,10 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
        close(20)
      
      else
-    
+     
+       allocate(XSshape(1))
+       allocate(slope_x(1))
+       allocate(slope_y(1))
         write(*,*) "WARNING: you used the option for parameterized bathymetry (use_xsshp == 1), but you did not provide the parameter file (geometry_params.txt)"
         
      endif
@@ -1915,8 +1912,9 @@ implicit none
 !
      allocate( phys_desc%soil( size(my_phys_desc%soil) ) )
      allocate( phys_desc%soil_land( size(my_phys_desc%soil_land) ) )
-     allocate( phys_desc%surf( size(my_phys_desc%surf) ) )
-     allocate( phys_desc%structures( size(my_phys_desc%structures) ) )
+
+!      allocate( phys_desc%surf( size(my_phys_desc%surf) ) )
+!      allocate( phys_desc%structures( size(my_phys_desc%structures) ) )
 
 
       do i = 1,size(my_phys_desc%soil)
@@ -1926,6 +1924,21 @@ implicit none
       enddo
 
       phys_desc%soil_land(:) = my_phys_desc%soil_land(:)
+      
+      if (use_ptf == 1) then
+      
+        allocate( PTF( size(my_phys_desc%ptf) ) )
+        allocate( phys_desc%ptf_land( size(my_phys_desc%ptf_land) ) )
+        
+        do i = 1,size(my_phys_desc%ptf)
+          PTF(i)%Kappa(:) = my_phys_desc%ptf(i)%Kappa(:)
+        enddo
+        
+        phys_desc%ptf_nland = my_phys_desc%ptf_nland
+        phys_desc%ptf_land(:) = my_phys_desc%ptf_land(:)
+      
+      endif
+      
 !       do i = 1,size(my_phys_desc%surf)
 !       write(*,*) i
 !           phys_desc%surf(i)%imperm = my_phys_desc%surf(i)%imperm
@@ -1960,6 +1973,8 @@ SUBROUTINE my_bc_2_fortran(my_bc)
         bc%rain(i)%x_max = my_bc%rain(i)%x_max
         bc%rain(i)%y_max = my_bc%rain(i)%y_max
         bc%rain(i)%tile_index = my_bc%rain(i)%tile_index
+        bc%rain(i)%cumul = my_bc%rain(i)%cumul
+        bc%rain(i)%qin = 0._rp !my_bc%rain(i)%qin
       enddo
 
       allocate(bc%rain_land(size(my_bc%rain_land)))
@@ -1967,8 +1982,7 @@ SUBROUTINE my_bc_2_fortran(my_bc)
       do i = 1,size(my_bc%rain_land)
         bc%rain_land(i) = my_bc%rain_land(i)
       enddo
-!              write(*,*) size(bc%rain(:)%tile_index)
-!              write(*,*) bc%rain(:)%tile_index
+    
 
 END SUBROUTINE my_bc_2_fortran
 

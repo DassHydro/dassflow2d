@@ -260,7 +260,7 @@ class Config(dict):
                             
                      elif k == 'use_ptf':
                             df2d.wrapping.m_common.set_use_ptf(input_param[k])
-                            
+
                      #in module m_model
                      elif k == 'feedback_inflow':
                             df2d.wrapping.m_model.set_feedback_inflow(input_param[k])

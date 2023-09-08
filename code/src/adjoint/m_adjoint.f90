@@ -347,6 +347,10 @@ CONTAINS
          infil_back%SCS(:)%lambdacn       = 0._rp
          infil_back%SCS(:)%CN           = 0._rp
 
+         do i = 1, size( PTF )
+            ptf_back(i)%kappa(:) = 0._rp
+         enddo
+         
          bathy_cell_back(:) = 0._rp
 
          XSshape_back(1)%xleft = 0._rp
@@ -694,17 +698,17 @@ CONTAINS
       nb_vars_in_control = 0
 
       ic = 1
-        ! call mpi_wait_all ! lilian --> var_2_control et control_2_var ? LEO: no need for this on my machine
+
       #ifdef USE_SW_MONO
 
          if ( c_shape_s == 1 ) then
-            call var_2_control( XSshape(:)%s    , 1   , 0 )
+            call var_2_control( XSshape(:)%s    , size(XSshape)   , 0 )
         endif
         if ( c_hmax == 1 ) then
-            call var_2_control( XSshape(:)%hmax    , 1   , 0 )
+            call var_2_control( XSshape(:)%hmax    , size(XSshape)   , 0 )
         endif
         if ( c_xcenter == 1 ) then
-            call var_2_control( XSshape(:)%xcenter    , 1   , 0 )
+            call var_2_control( XSshape(:)%xcenter    , size(XSshape)   , 0 )
          endif
 
          if ( c_manning == 1 ) call var_2_control( manning    , nland   , manning_data_glob )
@@ -761,6 +765,12 @@ CONTAINS
          if ( c_DeltaTheta == 1 ) call var_2_control( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda == 1     ) call var_2_control( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN == 1         ) call var_2_control( infil%SCS(:)%CN, infil%nland , 0 )
+         
+         if (c_ptf         == 1 ) then
+            do i = 1, phys_desc%ptf_nland
+                call var_2_control( PTF(i)%kappa    , 9    , 0                 )
+            enddo
+         endif
 
 
          if ( c_hydrograph == 1 ) then
@@ -931,9 +941,15 @@ CONTAINS
          if ( c_Ks == 1 ) call var_2_control_diff( eps_Ks * infil%GA(:)%Ks , infil%nland , 0 )
          if ( c_PsiF == 1 ) call var_2_control_diff( eps_PsiF * infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta == 1 ) call var_2_control_diff( eps_DeltaTheta * infil%GA(:)%DeltaTheta, infil%nland , 0 )
-         if ( c_lambda == 1 ) call var_2_control_diff( infil%SCS(:)%lambdacn , infil%nland , 0 )
-         if ( c_CN == 1 ) call var_2_control_diff(infil%SCS(:)%CN, infil%nland , 0 )
+         if ( c_lambda == 1 ) call var_2_control_diff( eps_lambdacn * infil%SCS(:)%lambdacn , infil%nland , 0 )
+         if ( c_CN == 1 ) call var_2_control_diff(eps_cn * infil%SCS(:)%CN, infil%nland , 0 )
 
+         if (c_ptf         == 1 ) then
+            do i = 1, phys_desc%ptf_nland
+                call var_2_control_diff( eps_ptf * PTF(i)%kappa    , 9    , 0                 )
+            enddo
+         endif
+         
          if ( c_hydrograph == 1 ) then
             do k = 1,bc%nb_in
                call var_2_control_diff( eps_hydrograph * bc%hyd( k )%q(:) , size( bc%hyd( k )%q(:) ) , 1 )
@@ -1142,7 +1158,13 @@ CONTAINS
          if ( c_DeltaTheta      == 1 ) call var_2_control_back( infil_back%GA%DeltaTheta   , infil%nland , 0      )
          if ( c_lambda          == 1 ) call var_2_control_back( infil_back%SCS%lambdacn, infil%nland    , 0                 )
          if ( c_CN              == 1 ) call var_2_control_back( infil_back%SCS%CN    , infil%nland    , 0                 )
-
+         
+         if (c_ptf              == 1 ) then
+            do i = 1, phys_desc%ptf_nland
+                call var_2_control_back( ptf_back(i)%kappa    , 9    , 0                 )
+            enddo
+         endif
+         
          if ( c_hydrograph == 1 ) then
             do k = 1,bc%nb_in
                call var_2_control_back( bc_back%hyd( k )%q(:) , size( bc_back%hyd( k )%q(:) ) , 1 )
@@ -1497,6 +1519,12 @@ x4_ubound = 1_rp
          if ( c_DeltaTheta  == 1 ) call control_2_var( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda      == 1 ) call control_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN          == 1 ) call control_2_var( infil%SCS(:)%CN, infil%nland , 0 )
+         
+         if (c_ptf         == 1 ) then
+            do i = 1, phys_desc%ptf_nland
+                call control_2_var( PTF(i)%kappa    , 9    , 0                 )
+            enddo
+         endif
 
          if ( c_hydrograph == 1 ) then
             do k = 1,bc%nb_in
@@ -1686,6 +1714,12 @@ x4_ubound = 1_rp
          if ( c_DeltaTheta  == 1 ) call control_diff_2_var( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda      == 1 ) call control_diff_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN          == 1 ) call control_diff_2_var(infil%SCS(:)%CN, infil%nland , 0 )
+         
+         if (c_ptf         == 1 ) then
+            do i = 1, phys_desc%ptf_nland
+                call control_diff_2_var( phys_desc%ptf(i)%kappa    , 9    , 0                 )
+            enddo
+         endif
 
          if ( c_hydrograph == 1 ) then
             do k = 1,bc%nb_in
@@ -1828,6 +1862,12 @@ x4_ubound = 1_rp
          if ( c_DeltaTheta  == 1 ) call control_perturb_2_var(infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda      == 1 ) call control_perturb_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN          == 1 ) call control_perturb_2_var(infil%SCS(:)%CN, infil%nland , 0 )
+         
+         if (c_ptf         == 1 ) then
+            do i = 1, phys_desc%ptf_nland
+                call control_perturb_2_var( PTF(i)%kappa    , 9    , 0                 )
+            enddo
+         endif
 
 #ifdef USE_HYDRO
          if ( c_gr4params == 1 ) then

@@ -130,7 +130,7 @@ CONTAINS
       #if defined USE_MPI
 
 !~ 		MPI_COMM_WORLD = comm
-         call MPI_INIT     (                         code ) ! define the integer code
+!          call MPI_INIT     (                         code ) ! define the integer code
          call MPI_COMM_SIZE( MPI_COMM_WORLD , np   , code )   ! np   ->  number of processes
          call MPI_COMM_RANK( MPI_COMM_WORLD , proc , code )   ! proc ->  process number from 0 to np-1
 write(*,*) "mpi in fortran:np, proc", np, proc
@@ -1280,6 +1280,8 @@ write(*,*) "mpi in fortran:np, proc", np, proc
          val  =  val * val
 
       #endif
+      
+      call mpi_wait_all
 
    END SUBROUTINE mpi_sum_r
 
