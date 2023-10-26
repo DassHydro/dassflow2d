@@ -346,8 +346,13 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
          endif
 
-		 dof%h( i ) = h_infil  !Replace the local variable h_infil
-         dof%infil( i ) = Fn1
+
+         if (dof%infil(i) < infil%h_infil_max( infil%land(i)) ) then!1.2_rp) then !TEST MAX INFIL
+
+            dof%h( i ) = h_infil  !Replace the local variable h_infil
+            dof%infil( i ) = Fn1
+
+         endif
 
         endif
 

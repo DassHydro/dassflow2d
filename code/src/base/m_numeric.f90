@@ -303,7 +303,7 @@ END SUBROUTINE dealloc_m_numeric
       !  Filling Weights to perform MUSCL Scheme arising from Least Square Problem
       !================================================================================================================!
 
-      ! if ( spatial_scheme(1:5) == 'muscl' ) then  ! ALWAYS DO THIS
+      if ( spatial_scheme(1:5) == 'muscl' ) then  ! ALWAYS DO THIS
 
          allocate( muscl( mesh%nc ) )
 
@@ -359,7 +359,7 @@ END SUBROUTINE dealloc_m_numeric
 
          end do
 
-    !  end if       ! end if ( spatial_scheme(1:5) == 'muscl' ) then  ! ALWAYS DO THIS
+     end if       ! end if ( spatial_scheme(1:5) == 'muscl' ) then  ! ALWAYS DO THIS
 
       !================================================================================================================!
       !  Filling Matrice for MUSCL Scheme Least Square Problem

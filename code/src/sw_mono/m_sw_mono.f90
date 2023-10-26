@@ -176,6 +176,8 @@ MODULE m_model
 
     real(rp), dimension(:,:), allocatable :: coord
 
+    real(rp), dimension(:), allocatable :: h_infil_max
+
    END TYPE
 
    type( infiltration_data ), target :: infil

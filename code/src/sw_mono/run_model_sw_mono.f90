@@ -229,9 +229,9 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
     if ( file_exist(1) ) then
         do i = 1, mesh%nc
-            dof0%h(i) = max(0._rp, dof0%h(i) - bathy_cell(i) &
-                    + slope_y(1) * mesh%cell(i)%grav%y &
-                    + slope_x(1) * mesh%cell(i)%grav%x)
+            dof0%h(i) = max(0._rp, dof0%h(i) - bathy_cell(i)) !&
+!                     + slope_y(1) * mesh%cell(i)%grav%y &
+!                     + slope_x(1) * mesh%cell(i)%grav%x)
         enddo
     endif
 

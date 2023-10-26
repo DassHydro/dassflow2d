@@ -379,7 +379,9 @@ CONTAINS
 	!<======================================================================================================================!
 	!<  time loop
 	!<======================================================================================================================!
+
 	select case( trim(arg_value) )
+
 		case('direct')
 			call Time_Init(1_ip)
 
@@ -623,6 +625,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
         allocate( my_infiltration%land( mesh_total_cells ) )
         #allocate( my_infiltration%coord( 4, my_infiltration%nland )   )
+        allocate( my_infiltration%h_infil_max( my_infiltration%nland ) )
         allocate( my_infiltration%GA( my_infiltration%nland ) )
         allocate( my_infiltration%SCS( 1 ) )
 
@@ -630,6 +633,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
         allocate( my_infiltration%land( mesh_total_cells ) )
         allocate( my_infiltration%coord( 4, my_infiltration%nland )   )
+        allocate( my_infiltration%h_infil_max( my_infiltration%nland ) )
         allocate( my_infiltration%SCS( my_infiltration%nland ) )
         allocate( my_infiltration%GA( 1 ) )
 
@@ -651,6 +655,8 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
     endif
 
+
+
 !     do i = 1, mesh%nc
 !       do j  = 1,my_infiltration%nland
 !         if (mesh%cell(i)%grav%x < my_infiltration%coord(1,j) .and. mesh%cell(i)%grav%x > my_infiltration%coord(2,j) .and.  mesh%cell(i)%grav%y < my_infiltration%coord(3,j) .and. mesh%cell(i)%grav%y > my_infiltration%coord(4,j)) then
@@ -667,6 +673,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
       type(infiltration_data), intent(inout)  ::  my_infiltration
 
       if (allocated(my_infiltration%land)) deallocate(my_infiltration%land)
+      if (allocated(my_infiltration%h_infil_max)) deallocate(my_infiltration%h_infil_max)
       if (allocated(my_infiltration%GA))   deallocate(my_infiltration%GA)
       if (allocated(my_infiltration%SCS))  deallocate(my_infiltration%SCS)
       if (allocated(my_infiltration%coord)) deallocate(my_infiltration%coord)

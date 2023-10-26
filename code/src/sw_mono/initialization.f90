@@ -677,9 +677,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
    end if
 
-
-
-
 !    ===================================================================================================================!
 !     Reading infiltration parameters and localization
 !    ===================================================================================================================!
@@ -694,6 +691,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
     inquire( file = 'land_uses_GA.txt' , exist = file_exist(1) )
     filenames(12)="land_uses_SCS.txt"
     inquire( file = 'land_uses_SCS.txt', exist = file_exist(2) )
+
     if ( file_exist(1) ) then
 
         file_nb = 11
@@ -714,7 +712,8 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
         read(10,*, err=100, end=100)
         line_read = line_read + 1
 
-
+        allocate( infil%h_infil_max( infil%nland ) )
+        infil%h_infil_max( : ) = 999._rp
         allocate( infil%GA( infil%nland ) )
         allocate( infil%SCS( 1 ) )
         infil%SCS( 1 )%lambdacn = 0._rp
@@ -766,9 +765,11 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
             read(10,*, err=100, end=100)
             line_read = line_read + 1
 
+            allocate( infil%h_infil_max( infil%nland ) )
+            infil%h_infil_max( : ) = 999._rp
             allocate( infil%SCS( infil%nland ) )
-
             allocate( infil%GA( 1 ) )
+
             infil%GA( 1 )%Ks = 0._rp
             infil%GA( 1 )%DeltaTheta = 0._rp
             infil%GA( 1 )%PsiF = 0._rp
@@ -1776,7 +1777,7 @@ implicit none
    if( infil%nland  > 0) then
 
       allocate( infil%land( size( my_infiltration%land ) ) )
-
+      allocate( infil%h_infil_max( size( my_infiltration%land ) ) )
 
       if (bc_infil == 1) then
 
@@ -1809,7 +1810,11 @@ implicit none
 
       do i = 1, size(my_infiltration%land )
           infil%land( i )  =  my_infiltration%land( i )
-!           write(*,*) proc, mesh%nc, i, infil%land( i ), my_infiltration%land( i )
+          infil%h_infil_max( i )  =  my_infiltration%h_infil_max( i )
+      end do
+
+      do i = 1, size(my_infiltration%h_infil_max )
+          infil%h_infil_max( i )  =  my_infiltration%h_infil_max( i )
       end do
 
       !define values for each patch
