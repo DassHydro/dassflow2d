@@ -15,12 +15,12 @@ import dassflow2d as df2d
 import numpy as np
 import os
 import importlib
-
+from mpi4py import MPI
 #=======================================================#
 # copy case file
 #=======================================================#
 
-dassflow_dir = "/home/pagarambois/Documents/Distant/dasshydro"
+dassflow_dir = "/home/pagarambois/Documents/dassflow2d"
 # or absolute path : dassflow_dir = "/home/pagarambois/Documents/Distant/dassflow2d-wrap/"
 
 print(f"Printing case files \n from {dassflow_dir}/cases/tuto_case/0_lake-at-rest/bin_A/* \n  to  {dassflow_dir}/code/bin_A ")
@@ -36,13 +36,16 @@ os.system("make cleanres cleanmin")
 #=======================================================#
 # initialise + run +save results
 #=======================================================#
-
+df2d.wrapping.read_input(f" {dassflow_dir}/code/bin_A/input.txt")
 my_model = df2d.dassflowmodel(bin_dir =  f"{dassflow_dir}/code/bin_A", hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5" , run_type = "direct", clean = True) # initialise fortran/python instance
 # initialise all fortran kernel values and source them into dassflowmodel object
-my_model.init_all()
-
-my_model.kernel.dof.h[:] = my_model.kernel.dof0.h[:]=1
+#my_model.init_all()
+my_model.init_mesh()
+my_model.kernel.dof  = df2d.wrapping.m_model.unk(my_model.kernel.mesh)
+my_model.kernel.dof0 = my_model.kernel.dof
+my_model.kernel.dof0.h[:] = 1
 # run fortran kernel
+my_model.init_fortran()
 my_model.run()
 
 my_model.save_all() # save simulation results in hdf5 files
