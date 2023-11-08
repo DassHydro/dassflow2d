@@ -380,7 +380,7 @@ MODULE m_model
     real(rp)  ::  clay !>  Soil percentage of clay at each cell
     real(rp)  ::  silt !>  Soil percentage of silt at each cell
     real(rp)  ::  sand !>  Soil percentage of sand at each cell
-    
+
     real(rp)  ::  ThetaS
     real(rp)  ::  ThetaR
 
@@ -426,7 +426,7 @@ MODULE m_model
     type(soil_data), dimension(:), allocatable  ::  soil      !>  Subsurface soil data
     integer(ip)  ::  soil_nland            !> Number of distinct lands associated to soil
     integer(ip), dimension(:), allocatable  ::  soil_land            !> Cells land number associated to soil
-    
+
     type(ptf_data), dimension(:), allocatable  ::  ptf
     integer(ip)  ::  ptf_nland
     integer(ip), dimension(:), allocatable  ::  ptf_land
@@ -467,12 +467,13 @@ MODULE m_model
    integer(ip)  ::  c_ratcurve                        !> activate inference of rating curve
    integer(ip)  ::  c_gr4params                       !> activate inference of all 4 gr4 parameters
    integer(ip)  ::  c_rain                            !> activate inference of rain
+   integer(ip)  ::  c_infil_max
    integer(ip)  ::  c_Ks                             ! GA Infiltration parameter
    integer(ip)  ::  c_PsiF                           ! GA Infiltration parameter
    integer(ip)  ::  c_DeltaTheta                     ! GA Infiltration parameter
    integer(ip)  ::  c_lambda                         ! SCS-CN Infiltration parameter
    integer(ip)  ::  c_CN                             ! SCS-CN Infiltration parameter
-   integer(ip)  ::  c_ptf                            ! Pedotransfer coefficients 
+   integer(ip)  ::  c_ptf                            ! Pedotransfer coefficients
     ! Each variable eps in perturbation control vector
     ! used to test validity of the adjoint model
    real(rp)     ::  eps_manning                       !
@@ -552,7 +553,7 @@ MODULE m_model
       xsshp_along_y,&
 
       use_ptf,&
-      
+
       spatial_scheme, &
       temp_scheme, &
 
@@ -580,6 +581,7 @@ MODULE m_model
       c_ratcurve, &
       c_gr4params, &
       c_rain, &
+      c_infil_max, &
       c_Ks, &
       c_PsiF, &
       c_DeltaTheta, &
@@ -663,7 +665,7 @@ MODULE m_model
         integer(ip)  ::  use_xsshp                                  !< Use channel shape parameter "geometry_params.txt" file to parameterize cross-section and slope
         integer(ip)  ::  xsshp_along_x                              !< Toogle whether channel is defined along x-axis
         integer(ip)  ::  xsshp_along_y                              !< Toogle whether channel is defined along y-axis
-        
+
         integer(ip)  ::  use_ptf                                    !< Toogle whether a pedotransfer function is used to calculate infil parameters from phys_desc parameters
 
 		character(len=lchar)  ::  spatial_scheme                    !> Name of Spatial  Discretization Scheme ('first_b1' only at the moment)
@@ -692,12 +694,13 @@ MODULE m_model
  		integer(ip)  ::  c_ratcurve                        !> activate inference of rating curve (if c_xxx = 1)
  		integer(ip)  ::  c_rain                            !> activate inference of rain r (if c_xxx = 1)
  		integer(ip)  ::  c_gr4params                       !> activate inference of all 4 gr4 parameters
+ 		integer(ip)  ::  c_infil_max
  		integer(ip)  ::  c_Ks                             ! GA Infiltration parameter
  		integer(ip)  ::  c_PsiF                           ! GA Infiltration parameter
  		integer(ip)  ::  c_DeltaTheta                     ! GA Infiltration parameter
  		integer(ip)  ::  c_lambda                         ! SCS-CN Infiltration parameter
  		integer(ip)  ::  c_CN                             ! SCS-CN Infiltration parameter
- 		integer(ip)  ::  c_ptf                            ! Pedotransfer coefficients 
+ 		integer(ip)  ::  c_ptf                            ! Pedotransfer coefficients
 
      ! Each variable eps in perturbation control vector
      ! used to test validity of the adjoint model
@@ -762,7 +765,7 @@ CONTAINS
       use_xsshp = 0_ip
       xsshp_along_x = 0_ip
       xsshp_along_y = 0_ip
-      
+
       use_ptf = 0_ip
 
       do_warmup = .True.
@@ -774,7 +777,7 @@ CONTAINS
       max_nt_for_adjoint  =  2500_ip
 
       g         =  9.81_rp
-      heps      =  0.00000001
+      heps      =  0.00000001_rp
       friction  =  1_ip
 
       c_shape_s = 0_ip
@@ -790,6 +793,7 @@ CONTAINS
       c_ratcurve    =  0_ip
       c_gr4params   =  0_ip
       c_rain        =  0_ip
+      c_infil_max   =  0_ip
       c_Ks          =  0_ip
       c_PsiF        =  0_ip
       c_DeltaTheta  =  0_ip
@@ -968,10 +972,12 @@ CONTAINS
       if ( allocated( infil%coord ) ) 		deallocate( infil%coord )
       if ( allocated( infil%GA   ) ) 		deallocate( infil%GA   )
       if ( allocated( infil%SCS  ) ) 		deallocate( infil%SCS  )
+      if ( allocated( infil%h_infil_max ) ) 		deallocate( infil%h_infil_max )
       if ( allocated( phys_desc%soil_land ) ) 		 deallocate( phys_desc%soil_land )
       if ( allocated( phys_desc%soil ) ) 		     deallocate( phys_desc%soil )
       if ( allocated( phys_desc%ptf_land ) ) 		 deallocate( phys_desc%ptf_land )
       if ( allocated( phys_desc%ptf ) ) 		     deallocate( phys_desc%ptf )
+      if ( allocated( PTF ) ) 		     deallocate( PTF )
 !       if ( allocated( phys_desc%surf_land ) ) 		 deallocate( phys_desc%surf_land )
 !       if ( allocated( phys_desc%surf ) ) 		     deallocate( phys_desc%surf )
 !       if ( allocated( phys_desc%struct_land ) ) 	 deallocate( phys_desc%struct_land )
