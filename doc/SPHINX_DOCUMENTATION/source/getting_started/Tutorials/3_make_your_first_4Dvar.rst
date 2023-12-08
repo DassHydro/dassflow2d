@@ -93,20 +93,24 @@ The presented case correspond to the Mac Donald's type 1D  solution (see shallow
     #=======================================================#
 
     # initialise fortran instance, and python corrponding data
-    df2d.wrapping.read_input(f"{bin_dir}/input.txt")
+    
     df2d.wrapping.m_mpi.init_mpi()
-    direct_model = df2d.dassflowmodel(bin_dir = bin_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5", run_type = "direct", clean = True)
-    # then intialise meshing
 
+    df2d.wrapping.read_input(f"{bin_dir}/input.txt")
+    direct_model = df2d.dassflowmodel(bin_dir = bin_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5", run_type = "direct", clean = True)
+
+    # then intialise meshing
     direct_model.config.get()
+    direct_model.config.set({"w_obs":"1", "use_Zobs":"1"})
 
     direct_model.init_all()
+
     # define initial conditions
     direct_model.kernel.dof0.h[:] = 1
     direct_model.kernel.dof0.u[:] = 0
     direct_model.kernel.dof0.v[:] = 0
     direct_model.kernel.dof = direct_model.kernel.dof0
-    direct_model.config.set({"w_obs":"1", "use_Zobs":"1"})
+    
     direct_model.run()
 
     direct_model.save_all() # save simulation results in hdf5 files
@@ -164,18 +168,27 @@ The presented case correspond to the Mac Donald's type 1D  solution (see shallow
     #=======================================================#
     # Inference
     #=======================================================#
+
     df2d.wrapping.m_mpi.init_mpi()
+
     df2d.wrapping.read_input(f"{bin_dir}/input.txt")
     my_model = df2d.dassflowmodel(bin_dir = bin_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5", run_type = "min")
+
     my_model.config.get()
-    my_model.config.set({"use_obs":"1", "use_Zobs":"1"})
+    my_model.config.set({"w_obs":"0","use_obs":"1", "use_Zobs":"1"})
+
     # then intialise meshing
     my_model.init_all()
+    print("after init_all")
+
     # define initial conditions
     my_model.kernel.dof0.h[:] = 1
     my_model.kernel.dof0.u[:] = 0
     my_model.kernel.dof0.v[:] = 0
     my_model.kernel.dof = my_model.kernel.dof0
+
+    print(my_model.kernel.dof.h[:])
+
     my_model.run() # only inference is performed
 
 
