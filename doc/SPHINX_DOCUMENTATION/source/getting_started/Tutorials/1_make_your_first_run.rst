@@ -20,7 +20,7 @@ used in DassFlow. The equilibrium challenged here is the equilibrium between flu
 The perturbed topography looks like:
 
 .. image:: ./images/bathy_0.png
-	 :width: 600
+      :width: 600
 
 ----------------------------------------------
 Run "lake at rest" case with command lines
@@ -34,17 +34,18 @@ Prepare the simulation files corresponding to "lake at rest" case with:
 
 .. hint::
 
-	File copy and compilation has just been performed in :ref:`getting_started` introduction, during :ref:`Installation` process. Thus, you don't need to compile the code again.
+     File copy and compilation has just been performed in :ref:`getting_started` introduction, during :ref:`Installation` process. Thus, you don't need to compile the code again.
 
 Open a terminal in (`/dassflow2d-wrap/code`) and run the following commands:
 
 .. code-block:: bash
 
+
     # delete all files in your simulation directory before starting
     rm -r ./bin_A/*
     # Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.
     cp -r ../cases/tuto_case/1_lake-at-rest/bin_A/* ./bin_A
-
+    
 
 Note that this test case "lake at rest" can be viewed as a stability test case where the well-balancedness of the numerical scheme (see. `Math_num_doc`) is tested in terms of equilibrium preservation. It is a simple test case for which, all the boundaries are set as walls and no inflow or outflow occurs.
 
@@ -54,9 +55,9 @@ Launch your first run using make
 
 Write the following command in your terminal:
 
-.. code-block:: bash
+.. .. code-block:: bash
 
-	make rundirect
+..     make rundirect
 
 This executes some commands coded in the Makefile and printed in the terminal at the beginning of the execution:
 
@@ -113,6 +114,8 @@ Run "lake at rest" case with Python
      
      os.chdir('../../')
      dassflow_dir = os.getcwd() # DassFlow directory (you can also impose your absolute path)
+     
+     #dassflow_dir="/home/pagarambois/Documents/Distant/dassflow2d"
      os.chdir(dassflow_dir)
      print("DassFlow directory is: ", dassflow_dir)
      
@@ -129,7 +132,7 @@ Run "lake at rest" case with Python
      # Copy case data to runing directory
      os.system(f"cp -r {case_data_dir}* {run_dir}") # Copy of case files from existing case to bin_A
      
-     # Move to 
+     # Move to code directory and clean bin directory
      os.chdir( f"{dassflow_dir}/code/")
      os.system("make cleanres cleanmin") # Clean forward run and minimization results 
      
@@ -137,24 +140,36 @@ Run "lake at rest" case with Python
 .. jupyter-execute::
 
      #=======================================================#
-     # initialization 
+     # Initialisation
      #=======================================================#
-     
+
+     # input file reading (simulation settings)
+     df2d.wrapping.read_input(f"{run_dir}/input.txt")
+
      # Creation of dassflowmodel object using case data: 
-     my_model = df2d.dassflowmodel(bin_dir =  f"{dassflow_dir}/code/bin_A", hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5" , run_type = "direct", clean = True)
+     df2d.wrapping.m_mpi.init_mpi() #set the number of processes to 1
+     my_model = df2d.dassflowmodel(bin_dir =  run_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5" , run_type = "direct", clean = True, custom_config = None)
+
+     my_model.config.get()
+
      # Initializion of the Fortran kernel (dassflow Python library is obtained by wrapping Fortran source code)
      #initialise all fortran kernel values and source them into dassflowmodel object
+
      my_model.init_all()
-     my_model.kernel.dof.h[:] = my_model.kernel.dof0.h[:]=1
-     
+
+     my_model.kernel.dof0.h[:] = 1
+     my_model.kernel.dof.h[:] = 1
+
+
      
 .. jupyter-execute::
 
      #=======================================================#
-     # Run Fortran kernel
+     # Run Fortran kernel and save results
      #=======================================================#
      
      my_model.run()
+     my_model.save_all()
 
 The numerical resolution is performed with variable time steps (depending on the CFL condition) and outputs are written at each writting timestep (imposed by the "dtw" parameter).
      
@@ -170,12 +185,11 @@ First, you can have a look at the bathymetry, friction and initial conditions (o
      
      # Plot of the 2D bathymetry (input parameter of the 2D shallow water model) with package plot function
      
-     plotter = my_model.outputs.result.plot_field(my_mesh = my_model.meshing.mesh_pyvista,
-                                                  what = "bathy", 
-                                                  title_plot = "Bathymetry elevation",
-                                                  notebook = True )# for a local run remove notebook option or set notebook=False 
+     #plotter = my_model.plot_var(my_model.meshing.mesh_pyvista,
+     #                                             what = "bathy", 
+     #                                             title_plot = "Bathymetry elevation")# for a local run remove notebook option or set notebook=False 
                                         
-     plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
+     #plotter.show(jupyter_backend='trame') # remove jupyter_backend if needed
      
      
 .. jupyter-execute::
@@ -300,6 +314,11 @@ You can get information on the configuration of dassflowmodel object with:
    print("The numerical scheme that has been used to solve the 2D shallow water equations is:")
    print("Temporal scheme is: ", my_model.config["temp_scheme"])
    print("Spatial scheme is: ", my_model.config["spatial_scheme"])
+   
+.. jupyter-execute::
+   
+   #clean model 
+   df2d.wrapping.call_model.clean_model(my_model.kernel)
 
 
 .. hint::
@@ -311,7 +330,7 @@ You can get information on the configuration of dassflowmodel object with:
 
 .. warning::
 
-  	Note that the location of the dassflow directory has to be defined by setting appropriate value to **dassflow_dir**  at the begining of the above script. A relative path has been used here but you can also impose your own absolute path to run a script in terminal or from Python IDE from other directories.
+       Note that the location of the dassflow directory has to be defined by setting appropriate value to **dassflow_dir**  at the begining of the above script. A relative path has been used here but you can also impose your own absolute path to run a script in terminal or from Python IDE from other directories.
 
 .. note::
    

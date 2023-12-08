@@ -3,4 +3,4 @@
 
 .. currentmodule:: dassflow2d.core.output
 
-.. automethod:: Output.save_res
+.. automethod:: Output.save

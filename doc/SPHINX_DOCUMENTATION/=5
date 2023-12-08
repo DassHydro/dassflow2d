@@ -1,0 +1,35 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: Sphinx in /home/pagarambois/.local/lib/python3.10/site-packages (4.5.0)
+Collecting Sphinx
+  Using cached sphinx-7.2.6-py3-none-any.whl (3.2 MB)
+Requirement already satisfied: sphinxcontrib-devhelp in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (1.0.2)
+Collecting docutils<0.21,>=0.18.1
+  Using cached docutils-0.20.1-py3-none-any.whl (572 kB)
+Requirement already satisfied: alabaster<0.8,>=0.7 in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (0.7.13)
+Requirement already satisfied: sphinxcontrib-qthelp in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (1.0.3)
+Requirement already satisfied: snowballstemmer>=2.0 in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (2.2.0)
+Requirement already satisfied: packaging>=21.0 in /usr/lib/python3/dist-packages (from Sphinx) (21.3)
+Collecting sphinxcontrib-serializinghtml>=1.1.9
+  Using cached sphinxcontrib_serializinghtml-1.1.9-py3-none-any.whl (92 kB)
+Requirement already satisfied: sphinxcontrib-jsmath in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (1.0.1)
+Requirement already satisfied: Jinja2>=3.0 in /usr/lib/python3/dist-packages (from Sphinx) (3.0.3)
+Requirement already satisfied: babel>=2.9 in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (2.13.0)
+Requirement already satisfied: imagesize>=1.3 in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (1.4.1)
+Requirement already satisfied: Pygments>=2.14 in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (2.16.1)
+Requirement already satisfied: requests>=2.25.0 in /usr/lib/python3/dist-packages (from Sphinx) (2.25.1)
+Requirement already satisfied: sphinxcontrib-applehelp in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (1.0.4)
+Requirement already satisfied: sphinxcontrib-htmlhelp>=2.0.0 in /home/pagarambois/.local/lib/python3.10/site-packages (from Sphinx) (2.0.1)
+Installing collected packages: docutils, sphinxcontrib-serializinghtml, Sphinx
+  Attempting uninstall: docutils
+    Found existing installation: docutils 0.17.1
+    Uninstalling docutils-0.17.1:
+      Successfully uninstalled docutils-0.17.1
+  Attempting uninstall: sphinxcontrib-serializinghtml
+    Found existing installation: sphinxcontrib-serializinghtml 1.1.5
+    Uninstalling sphinxcontrib-serializinghtml-1.1.5:
+      Successfully uninstalled sphinxcontrib-serializinghtml-1.1.5
+  Attempting uninstall: Sphinx
+    Found existing installation: Sphinx 4.5.0
+    Uninstalling Sphinx-4.5.0:
+      Successfully uninstalled Sphinx-4.5.0
+Successfully installed Sphinx-7.2.6 docutils-0.20.1 sphinxcontrib-serializinghtml-1.1.9

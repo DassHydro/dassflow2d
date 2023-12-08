@@ -200,8 +200,6 @@ What you will get from this documentation ?
 - Output files information  :ref:`output_data_guide`
 - How to pass information from Python to Fortran or from Fortran to python : presented via getters and setter thoughout :ref:`user_guide`
 
-
-.. What to fill ? question de lilian ?
 **Information on code architecture and philosophy:**
 - Fortran architecture
 - Wrapping architecture

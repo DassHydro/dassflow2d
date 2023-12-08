@@ -97,9 +97,15 @@
       get_tinym
       get_ts
       get_two
+      get_use_huvobs
+      get_use_nse
       get_use_obs
+      get_use_ptf
       get_use_qobs
       get_use_qobs_gr4
+      get_use_uvobs
+      get_use_xsshp
+      get_use_zobs
       get_verbose
       get_w_bin
       get_w_exact
@@ -108,6 +114,8 @@
       get_w_obs
       get_w_tecplot
       get_w_vtk
+      get_xsshp_along_x
+      get_xsshp_along_y
       get_zero
       get_zerom
       i4col_compare
@@ -177,9 +185,15 @@
       set_temp_scheme
       set_tinym
       set_ts
+      set_use_huvobs
+      set_use_nse
       set_use_obs
+      set_use_ptf
       set_use_qobs
       set_use_qobs_gr4
+      set_use_uvobs
+      set_use_xsshp
+      set_use_zobs
       set_verbose
       set_w_bin
       set_w_exact
@@ -188,6 +202,8 @@
       set_w_obs
       set_w_tecplot
       set_w_vtk
+      set_xsshp_along_x
+      set_xsshp_along_y
       set_zerom
       sort_heap_external
       swap_i
@@ -205,7 +221,6 @@
 
    .. autosummary::
    
-      station_obsQ
       weights
    
    

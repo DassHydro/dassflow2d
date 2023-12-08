@@ -75,17 +75,16 @@ exclude_patterns = []
 #
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
- #"gitlab_url": "https://gitlab.irstea.fr/lilian.villenave/dassflow2d-wrap/-/tree/dev_lilian/code/wrappers_true",
   "collapse_navigation": False,
   "use_edit_page_button": True,
 }
 html_context = {
     "display_gitlab":True,
-    "gitlab_url": "https://gitlab.irstea.fr/", # or your self-hosted GitLab
-    "gitlab_host":"https://gitlab.irstea.fr/",
-    "gitlab_user": "lilian.villenave",
-    "gitlab_repo": "dassflow2d-wrap",
-    "gitlab_version": "documentation",
+    "github_url": "https://github.com/DassHydro/dassflow2d", # or your self-hosted GitLab
+    "github_host":"https://github.com/DassHydro/dassflow2d",
+    "github_user": "pag13",
+    "github_repo": "dassflow2d",
+    "github_version": "documentation",
     "doc_path": "/doc/SPHINX_DOCUMENTATION/source/",
 }
 

@@ -23,11 +23,14 @@
       get_array_land
       get_array_manning
       get_array_manning_beta
+      get_array_slope_x
+      get_array_slope_y
       get_bc
       get_c_bathy
       get_c_cn
       get_c_deltatheta
       get_c_gr4params
+      get_c_hmax
       get_c_hydrograph
       get_c_ic
       get_c_ks
@@ -35,8 +38,13 @@
       get_c_manning
       get_c_manning_beta
       get_c_psif
+      get_c_ptf
       get_c_rain
       get_c_ratcurve
+      get_c_shape_s
+      get_c_slope_x
+      get_c_slope_y
+      get_c_xcenter
       get_coef_feedback
       get_eps_bathy
       get_eps_cn
@@ -45,9 +53,10 @@
       get_eps_hydrograph
       get_eps_ic
       get_eps_ks
-      get_eps_lambda
+      get_eps_lambdacn
       get_eps_manning
       get_eps_psif
+      get_eps_ptf
       get_eps_rain
       get_eps_ratcurve
       get_feedback_inflow
@@ -58,7 +67,10 @@
       get_manning_data_glob
       get_mass_cut
       get_nland
+      get_phys_desc
       get_regul_bathy
+      get_regul_bathy_grad
+      get_regul_bathy_shape
       get_regul_gr4params
       get_regul_hydrograph
       get_regul_ic
@@ -70,11 +82,14 @@
       set_array_land
       set_array_manning
       set_array_manning_beta
+      set_array_slope_x
+      set_array_slope_y
       set_bc
       set_c_bathy
       set_c_cn
       set_c_deltatheta
       set_c_gr4params
+      set_c_hmax
       set_c_hydrograph
       set_c_ic
       set_c_ks
@@ -82,8 +97,13 @@
       set_c_manning
       set_c_manning_beta
       set_c_psif
+      set_c_ptf
       set_c_rain
       set_c_ratcurve
+      set_c_shape_s
+      set_c_slope_x
+      set_c_slope_y
+      set_c_xcenter
       set_coef_feedback
       set_eps_bathy
       set_eps_cn
@@ -92,9 +112,10 @@
       set_eps_hydrograph
       set_eps_ic
       set_eps_ks
-      set_eps_lambda
+      set_eps_lambdacn
       set_eps_manning
       set_eps_psif
+      set_eps_ptf
       set_eps_rain
       set_eps_ratcurve
       set_feedback_inflow
@@ -105,13 +126,17 @@
       set_manning_data_glob
       set_mass_cut
       set_nland
+      set_phys_desc
       set_regul_bathy
+      set_regul_bathy_grad
+      set_regul_bathy_shape
       set_regul_gr4params
       set_regul_hydrograph
       set_regul_ic
       set_regul_manning
       set_regul_ratcurve
       set_sw_nb
+      spatial_index_fromxy
    
    
 
@@ -131,15 +156,18 @@
       infiltration_data
       input_data
       param_model
+      ptf_data
       rain
       ratcurve
       scs_cn
       section_obs
       soil_data
       station_obs
+      station_obsQ
       structure_data
       surface_data
       unk
+      xsshp
       zspresc
    
    

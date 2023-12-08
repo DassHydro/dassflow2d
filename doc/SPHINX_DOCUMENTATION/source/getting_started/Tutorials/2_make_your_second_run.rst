@@ -63,12 +63,21 @@ This tutorial details how to perform a direct/forward run with `dassflow2d` on a
      # initialization
      #=======================================================#
      
+     # input file reading (simulation settings)
+     df2d.wrapping.read_input(f"{run_dir}/input.txt")
+     
      # Creation of dassflowmodel object using case data: 
+     df2d.wrapping.m_mpi.init_mpi() #set the number of processes to 1
      my_model = df2d.dassflowmodel(bin_dir =  f"{dassflow_dir}/code/bin_A", hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5" , run_type = "direct", clean = True)
+     
+     my_model.config.get()
+     
      # Initializion of the Fortran kernel (dassflow Python library is obtained by wrapping Fortran source code)
+     
      #initialise all fortran kernel values and source them into dassflowmodel object
+     
      my_model.init_all()
-     my_model.kernel.dof.h[:] = my_model.kernel.dof0.h[:]=1
+     my_model.kernel.dof.h[:] = my_model.kernel.dof0.h[:] = 1
      
 First let us have a look to the case mesh and boundary conditions (BCs)
      
@@ -84,7 +93,7 @@ First let us have a look to the case mesh and boundary conditions (BCs)
 .. jupyter-execute::
 
      #=======================================================#
-     # Run Fortran kernel
+     # Run Fortran kernel 2
      #=======================================================#
      
      my_model.run()

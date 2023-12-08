@@ -6,7 +6,7 @@ Inference run
 
 This tutorial details how to perform an inverse run with `dassflow2d`. The full process is detailed for building and performing a twin experiment.  i.e. generating observations with a forward run given a true control vector, then using those observations to retrieve with the inverse VDA algorithm this true control vector starting from an a priori background value.
 Here the control vector consists in one unknown discrete parameter among inflow hydrograph or channel friction or bathymetry, and it is retrieved from water level observations in the channel.
- **TODO ref to eqs & inv algo **
+**TODO ref to eqs & inv algo **
 
 The presented case correspond to the Mac Donald's type 1D  solution (see shallow water analytical solutions in SWASHES cases https://hal.archives-ouvertes.fr/hal-00628246/file/SW_analytic-complements.pdf).
 
@@ -93,24 +93,29 @@ The presented case correspond to the Mac Donald's type 1D  solution (see shallow
     #=======================================================#
 
     # initialise fortran instance, and python corrponding data
+    df2d.wrapping.read_input(f"{bin_dir}/input.txt")
+    df2d.wrapping.m_mpi.init_mpi()
     direct_model = df2d.dassflowmodel(bin_dir = bin_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5", run_type = "direct", clean = True)
     # then intialise meshing
+
+    direct_model.config.get()
+
     direct_model.init_all()
     # define initial conditions
     direct_model.kernel.dof0.h[:] = 1
     direct_model.kernel.dof0.u[:] = 0
     direct_model.kernel.dof0.v[:] = 0
     direct_model.kernel.dof = direct_model.kernel.dof0
-
+    direct_model.config.set({"w_obs":"1", "use_Zobs":"1"})
     direct_model.run()
-    
+
     direct_model.save_all() # save simulation results in hdf5 files
 
     cp_hdf5_file(source = "simu.hdf5", target = "true.hdf5") #save hdf5 (results) files out of /res directory
     cp_dir('./res/obs', '.') # copy observation files
-    
+ 
     df2d.wrapping.call_model.clean_model(direct_model.kernel)         # deallocate correctly (necessary action)
-    
+
     #----------- some plots to add
     
     ###########################################################
@@ -124,10 +129,10 @@ The presented case correspond to the Mac Donald's type 1D  solution (see shallow
     #----------------------#
 
     os.chdir( f"{dassflow_dir}/code/")
-    os.system(f"make cleanres cleanmin ")
+    #os.system(f"make cleanres cleanmin ")
 
     os.chdir(bin_dir)
-    os.system(f"rm restart.bin ")
+    #os.system(f"rm restart.bin ")
     
     # /!\ warning :: bathymetry not inferable ? --> lilian = optim not find optimum
     #print("CHOOSE INFERENCE TYPE (1 hydrograph, 2 land_use, 3 = bathy)")
@@ -159,17 +164,19 @@ The presented case correspond to the Mac Donald's type 1D  solution (see shallow
     #=======================================================#
     # Inference
     #=======================================================#
-
-..     my_model = df2d.dassflowmodel(bin_dir = bin_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5", run_type = "min")
-.. 
-..     # then intialise meshing
-..     my_model.init_all()
-..     # define initial conditions
-..     my_model.kernel.dof0.h[:] = 1
-..     my_model.kernel.dof0.u[:] = 0
-..     my_model.kernel.dof0.v[:] = 0
-..     my_model.kernel.dof = my_model.kernel.dof0
-..     my_model.run() # only inference is performed
+    df2d.wrapping.m_mpi.init_mpi()
+    df2d.wrapping.read_input(f"{bin_dir}/input.txt")
+    my_model = df2d.dassflowmodel(bin_dir = bin_dir, hdf5_path = f"{dassflow_dir}/code/bin_A/res/simu.hdf5", run_type = "min")
+    my_model.config.get()
+    my_model.config.set({"use_obs":"1", "use_Zobs":"1"})
+    # then intialise meshing
+    my_model.init_all()
+    # define initial conditions
+    my_model.kernel.dof0.h[:] = 1
+    my_model.kernel.dof0.u[:] = 0
+    my_model.kernel.dof0.v[:] = 0
+    my_model.kernel.dof = my_model.kernel.dof0
+    my_model.run() # only inference is performed
 
 
 

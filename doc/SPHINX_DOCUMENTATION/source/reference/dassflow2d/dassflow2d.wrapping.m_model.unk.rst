@@ -13,6 +13,7 @@
    .. autosummary::
       :toctree:
       
+      unk.copy
       unk.from_handle
       unk.init_array_grad_h
       unk.init_array_grad_u

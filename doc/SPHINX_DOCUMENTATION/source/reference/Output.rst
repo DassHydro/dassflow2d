@@ -22,5 +22,5 @@ The following methods can be applied on objects of class ``Output``
   .. autosummary::
      :toctree: dassflow2d.core.output/
 
-     Output.get_res
-     Output.save_res
+     Output.source
+     Output.save

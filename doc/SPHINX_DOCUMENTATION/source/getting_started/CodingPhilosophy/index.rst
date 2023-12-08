@@ -37,10 +37,12 @@ dof0%h ,
 dof0%u ,
 dof0%v
 
+
 - Current hydraulic states
 dof%h ,
 dof%u ,
 dof%v
+
 
 - Model parameters
 manning ,
