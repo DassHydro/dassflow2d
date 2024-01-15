@@ -140,6 +140,13 @@ MODULE m_adjoint
     real(rp)     ::  DeltaTheta_lbound
     real(rp)     ::  DeltaTheta_ubound
 
+     real(rp)    ::  Kappa7_lbound
+    real(rp)     ::  Kappa7_ubound
+    real(rp)     ::  Kappa8_lbound
+    real(rp)     ::  Kappa8_ubound
+    real(rp)     ::  Kappa9_lbound
+    real(rp)     ::  Kappa9_ubound
+
     integer(ip)  ::  n_bathyb
     integer(ip)  ::  n_manningb
 
@@ -150,6 +157,7 @@ MODULE m_adjoint
         real(rp), dimension(:), allocatable ::  bathy_lbounds
         real(rp), dimension(:), allocatable ::  bathy_ubounds
         real(rp), dimension(1) ::  global_bathy_lbounds, global_bathy_ubounds
+        real(rp), dimension(:,3), allocatable ::  global_bathy_lbounds, global_bathy_ubounds
 
     END TYPE spatial_bounds
 
@@ -770,7 +778,7 @@ CONTAINS
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call var_2_control( PTF(i)%kappa    , 9    , 0                 )
+                call var_2_control( PTF(i)%kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -948,7 +956,7 @@ CONTAINS
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call var_2_control_diff( eps_ptf * PTF(i)%kappa    , 9    , 0                 )
+                call var_2_control_diff( eps_ptf * PTF(i)%kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -1164,7 +1172,7 @@ CONTAINS
 
          if (c_ptf              == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call var_2_control_back( ptf_back(i)%kappa    , 9    , 0                 )
+                call var_2_control_back( ptf_back(i)%kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -1294,15 +1302,105 @@ x3_ubound = 1_rp
 x4_lbound = 0_rp
 x4_ubound = 1_rp
 
+Kappa7_lbound = 0._rp
+Kappa7_ubound = 10._rp
+Kappa8_lbound = 0._rp
+Kappa8_ubound = 10._rp
+Kappa9_lbound = 0._rp
+Kappa9_ubound = 10._rp
 
-      if ( c_gr4params == 1 ) then
-        do k = 1,size(bc%gr4)
-         call var_2_control_scal_bounds( x1_lbound, x1_ubound, 1 )
-         call var_2_control_scal_bounds( x2_lbound, x2_ubound, 1 )
-         call var_2_control_scal_bounds( x3_lbound, x3_ubound, 1 )
-         call var_2_control_scal_bounds( x4_lbound, x4_ubound, 1 )
+Ks_lbound = 1/10000000
+Ks_ubound = 1/100000
+
+
+!       if ( c_shape_s == 1 ) then
+!          call var_2_control_bounds( shape_s_lbound, shape_s_ubound, size(XSshape), 1 )
+!       endif
+!       if ( c_hmax == 1 ) then
+!          call var_2_control_bounds( hmax_lbound, hmax_ubound, size(XSshape), 1 )
+!       endif
+!       if ( c_xcenter == 1 ) then
+!          call var_2_control_bounds( xcenter_lbound, xcenter_ubound, size(XSshape), 1 )
+!       endif
+
+!       if ( c_manning == 1 ) then
+!          call var_2_control_bounds( manning_lbound, manning_ubound, nland, 1 )
+!       endif
+!       if ( c_manning_beta == 1 ) then
+!          call var_2_control_bounds( manning_beta_lbound, manning_beta_ubound, nland, 1 )
+!       endif
+!       if ( c_bathy == 1 ) then
+!          call var_2_control_bounds( bathy_cell_lbound, bathy_cell_ubound,  mesh%nc, 1 )
+!       endif
+
+!       if ( c_slope_y == 1 ) then
+!          call var_2_control_bounds( slope_y_lbound, slope_y_ubound, size(slope_y), 1 )
+!       endif
+!       if ( c_slope_x == 1 ) then
+!          call var_2_control_bounds( slope_x_lbound, slope_x_ubound, size(slope_x), 1 )
+!       endif
+! !
+
+!       if ( c_infil_max == 1 ) then
+!          call var_2_control_bounds( infil_max_lbound, infil_max_ubound, infil%nland, 1 )
+!       endif
+
+      if ( c_Ks == 1 ) then
+         call var_2_control_bounds( Ks_lbound, Ks_ubound, infil%nland, 1 )
+      endif
+!       if ( c_PsiF == 1 ) then
+!          call var_2_control_bounds( PsiF_lbound, PsiF_ubound, infil%nland, 1 )
+!       endif
+!       if ( c_DeltaTheta == 1 ) then
+!          call var_2_control_bounds( DeltaTheta_lbound, DeltaTheta_ubound, infil%nland, 1 )
+!       endif
+!       if ( c_lambda == 1 ) then
+!          call var_2_control_bounds( lambda_lbound, lambda_ubound, infil%nland, 1 )
+!       endif
+!       if ( c_CN == 1 ) then
+!          call var_2_control_bounds( CN_lbound, CN_ubound, infil%nland, 1 )
+!       endif
+
+      if ( c_PTF == 1 ) then
+        do k = 1, phys_desc%ptf_nland
+         call var_2_control_scal_bounds( Kappa7_lbound, Kappa7_ubound, 1 )
+         call var_2_control_scal_bounds( Kappa8_lbound, Kappa8_ubound, 1 )
+         call var_2_control_scal_bounds( Kappa9_lbound, Kappa9_ubound, 1 )
         enddo
       endif
+
+!
+!
+!          if ( c_hydrograph == 1 ) then
+!             do k = 1,bc%nb_in
+!                call var_2_control_bounds( hydrograph_lbound, hydrograph_ubound , size( bc%hyd( k )%q(:) ) , 1 )
+!             end do
+!          end if
+!
+!          if      ( c_ratcurve == 1 ) then
+!             do k = 1,bc%nb_out
+!                call var_2_control_bounds( ratcurve_lbound, ratcurve_ubound , size( bc%rat( k )%q(:) ) , 1 )
+!             end do
+!          end if
+!
+!          if ( c_rain == 1 ) then
+!             do k = 1,bc%nb_rn
+!                call var_2_control_bounds( rain_lbound, rain_ubound , size( bc%rain( k )%q(:) ) , 1 )
+!             end do
+!          end if
+
+
+!       if ( c_gr4params == 1 ) then
+!         do k = 1,size(bc%gr4)
+!          call var_2_control_scal_bounds( x1_lbound, x1_ubound, 1 )
+!          call var_2_control_scal_bounds( x2_lbound, x2_ubound, 1 )
+!          call var_2_control_scal_bounds( x3_lbound, x3_ubound, 1 )
+!          call var_2_control_scal_bounds( x4_lbound, x4_ubound, 1 )
+!         enddo
+!       endif
+
+
+
 
 #endif
 
@@ -1526,7 +1624,7 @@ x4_ubound = 1_rp
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call control_2_var( PTF(i)%kappa    , 9    , 0                 )
+                call control_2_var( PTF(i)%kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -1722,7 +1820,7 @@ x4_ubound = 1_rp
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call control_diff_2_var( PTF(i)%kappa    , 9    , 0                 )
+                call control_diff_2_var( PTF(i)%kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -1871,7 +1969,7 @@ x4_ubound = 1_rp
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call control_perturb_2_var( PTF(i)%kappa    , 9    , 0                 )
+                call control_perturb_2_var( PTF(i)%kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 

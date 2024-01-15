@@ -198,15 +198,15 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
       do i = 1,size(phys_desc%soil)
 
-        infil%GA(i)%DeltaTheta =  PTF( phys_desc%ptf_land(i) )%Kappa(1) &
-                                - PTF( phys_desc%ptf_land(i) )%Kappa(2) * phys_desc%soil(i)%clay &
-                                - PTF( phys_desc%ptf_land(i) )%Kappa(3) * phys_desc%soil(i)%sand !&
-!                                 - phys_desc%soil(i)%ThetaR
-                                
-        infil%GA(i)%PsiF =      0.01_rp * 10._rp ** (&
-                                  PTF( phys_desc%ptf_land(i) )%Kappa(4) &
-                                - PTF( phys_desc%ptf_land(i) )%Kappa(5) * phys_desc%soil(i)%clay &
-                                - PTF( phys_desc%ptf_land(i) )%Kappa(6) * phys_desc%soil(i)%sand )
+!         infil%GA(i)%DeltaTheta =  PTF( phys_desc%ptf_land(i) )%Kappa(1) &
+!                                 - PTF( phys_desc%ptf_land(i) )%Kappa(2) * phys_desc%soil(i)%clay &
+!                                 - PTF( phys_desc%ptf_land(i) )%Kappa(3) * phys_desc%soil(i)%sand !&
+! !                                 - phys_desc%soil(i)%ThetaR
+!
+!         infil%GA(i)%PsiF =      0.01_rp * 10._rp ** (&
+!                                   PTF( phys_desc%ptf_land(i) )%Kappa(4) &
+!                                 - PTF( phys_desc%ptf_land(i) )%Kappa(5) * phys_desc%soil(i)%clay &
+!                                 - PTF( phys_desc%ptf_land(i) )%Kappa(6) * phys_desc%soil(i)%sand )
         
         infil%GA(i)%Ks =          25.4_rp / 3600._rp * 10._rp ** (&
                                 - PTF( phys_desc%ptf_land(i) )%Kappa(7) &
