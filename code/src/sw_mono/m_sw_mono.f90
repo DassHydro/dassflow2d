@@ -542,6 +542,7 @@ MODULE m_model
 
       use_obs,&
       use_Zobs,&
+      use_hobs
       use_UVobs,&
       use_HUVobs,&
       use_Qobs,&
@@ -656,6 +657,7 @@ MODULE m_model
  		integer(ip)  ::  w_obs                                     !< Gen Observation Output File
         integer(ip)  ::  use_obs                                   !< Use Observations in cost function definition
         integer(ip)  ::  use_Zobs                                  !< Write Water Surface elevation observations  and use them in cost function definition
+        integer(ip)  ::  use_hobs                              !< To be used in conjunction with use_Zobs=1, Compare heights insted of elevations in calc_innovation
         integer(ip)  ::  use_UVobs                                 !< Write Flow velocity observations  and use them in cost function definition
         integer(ip)  ::  use_HUVobs                                !< UNUSED Write At-a-cell-flow observations  and use them in cost function definition
         integer(ip)  ::  use_Qobs                                  !< Use Boundary flow observations in cost function definition
@@ -756,6 +758,7 @@ CONTAINS
 
       use_obs   =  0_ip
       use_Zobs  =  0_ip
+      use_hobs  =  0_ip
       use_UVobs =  0_ip
       use_HUVobs =  0_ip
       use_Qobs   =  0_ip

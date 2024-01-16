@@ -109,14 +109,21 @@ SUBROUTINE calc_innovation( dof,mesh )
                     !*****************************
                     ! H = 1/swet \int_swet Hdx
                     !*****************************
-                    if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average
+                    if (use_hobs == 1) then
 
-                    h_mean  = h_mean  + ( dof%h( cell ) + bathy_cell( cell ) ) * mesh%cell(cell)%surf
-                    s_total = s_total + mesh%cell(cell)%surf
+                        h_mean  = h_mean  + dof%h( cell ) * mesh%cell(cell)%surf
+                        s_total = s_total + mesh%cell(cell)%surf
 
-                    endif
+                    elseif (use_Zobs == 1)
 
+                        if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average
 
+                           h_mean  = h_mean  + ( dof%h( cell ) + bathy_cell( cell ) ) * mesh%cell(cell)%surf
+                           s_total = s_total + mesh%cell(cell)%surf
+
+                        endif
+
+                   endif
                     !*****************************
                     ! H = 1/sobs \int_sobs Hdx
                     !*****************************

@@ -243,6 +243,8 @@ class Config(dict):
                             df2d.wrapping.m_common.set_bc_rain(input_param[k])
                      elif k == 'use_Zobs':
                             df2d.wrapping.m_common.set_use_zobs(input_param[k])
+                     elif k == 'use_hobs':
+                            df2d.wrapping.m_common.set_use_hobs(input_param[k])
                      elif k == 'use_Qobs':
                             df2d.wrapping.m_common.set_use_qobs(input_param[k])
                      elif k == 'use_UVobs':
