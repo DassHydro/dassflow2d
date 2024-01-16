@@ -150,18 +150,18 @@ MODULE m_adjoint
     integer(ip)  ::  n_bathyb
     integer(ip)  ::  n_manningb
 
-    TYPE spatial_bounds
+!     TYPE spatial_bounds
+!
+!         real(rp), dimension(:), allocatable ::  manning_lbounds, manning_beta_lbounds
+!         real(rp), dimension(:), allocatable ::  manning_ubounds, manning_beta_ubounds
+!         real(rp), dimension(:), allocatable ::  bathy_lbounds
+!         real(rp), dimension(:), allocatable ::  bathy_ubounds
+!         real(rp), dimension(1) ::  global_bathy_lbounds, global_bathy_ubounds
+        !real(rp), dimension(:,3), allocatable ::  kappa_lbounds, kappa_ubounds
 
-        real(rp), dimension(:), allocatable ::  manning_lbounds, manning_beta_lbounds
-        real(rp), dimension(:), allocatable ::  manning_ubounds, manning_beta_ubounds
-        real(rp), dimension(:), allocatable ::  bathy_lbounds
-        real(rp), dimension(:), allocatable ::  bathy_ubounds
-        real(rp), dimension(1) ::  global_bathy_lbounds, global_bathy_ubounds
-        real(rp), dimension(:,3), allocatable ::  global_bathy_lbounds, global_bathy_ubounds
+!     END TYPE spatial_bounds
 
-    END TYPE spatial_bounds
-
-    type( spatial_bounds ) ::  spatial_b
+!     type( spatial_bounds ) ::  spatial_b
 #endif
 
 CONTAINS

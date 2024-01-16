@@ -542,7 +542,7 @@ MODULE m_model
 
       use_obs,&
       use_Zobs,&
-      use_hobs
+      use_hobs,&
       use_UVobs,&
       use_HUVobs,&
       use_Qobs,&

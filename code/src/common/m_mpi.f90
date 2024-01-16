@@ -70,11 +70,13 @@ MODULE m_mpi
    USE m_linear_algebra
    USE m_mesh
 
-   !implicit none
+   use mpi
+
+   implicit none
 
    #if defined USE_MPI
 	  !include 'mpif.h'
-	  use mpi
+	  !
       include 'scotchf.h'
 
    #endif

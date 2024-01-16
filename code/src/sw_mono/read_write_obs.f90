@@ -114,7 +114,7 @@ SUBROUTINE calc_innovation( dof,mesh )
                         h_mean  = h_mean  + dof%h( cell ) * mesh%cell(cell)%surf
                         s_total = s_total + mesh%cell(cell)%surf
 
-                    elseif (use_Zobs == 1)
+                    elseif (use_Zobs == 1) then
 
                         if ( dof%h( cell ) > 0 ) then  !test on water presence determining if cell is used for calculating h_average
 
@@ -123,7 +123,7 @@ SUBROUTINE calc_innovation( dof,mesh )
 
                         endif
 
-                   endif
+                     endif
                     !*****************************
                     ! H = 1/sobs \int_sobs Hdx
                     !*****************************
