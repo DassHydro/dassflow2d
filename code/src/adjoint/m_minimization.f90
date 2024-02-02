@@ -151,7 +151,7 @@ CONTAINS
       !================================================================================================================!
 
       call system('mkdir -p min')
-      call dealloc_back_vars()
+      call dealloc_back_vars(dof0_back, dof_back)
       call alloc_back_vars(dof0_back, dof_back, mesh ) ! allocate _back variables (both dof0_back and other control vector components, to be call only on time
 
       call write_control( dof0 , mesh )
@@ -244,11 +244,13 @@ CONTAINS
 !             write(*,*) "New loop ", "indic=",indic, "reverse =", reverse, "ite_min", ite_min, "ite_line_search", ite_line_search
 !             write(*,*) "-----------------------------------------------------------------------------"
 
-      if (size(control) < 20_ip) then
+      if (size(control) < 30_ip) then
         write(*,*) "Current control vector is ", control
       else
-        write(*,*) "Current control vector is too large to show"
+        write(*,*) proc, "Current control vector is too large to show"
       endif
+
+      write(*,*) proc, "cost", cost
 
          !=============================================================================================================!
          !  Case indic = 4 -> M1QN3 needs new values of the cost and its gradient to compute
@@ -316,7 +318,8 @@ CONTAINS
                cost = cost / cost_ini
 
                i = 1
-
+write(*,*) proc, "norm_grad_cost_ini", norm_grad_cost_ini
+write(*,*) proc, "control_back", control_back
                do k = 1,nb_vars_in_control
 
                   control_back( i : i - 1 + dim_vars_in_control(k) ) = &
@@ -328,10 +331,19 @@ CONTAINS
                   i = i + dim_vars_in_control(k)
 
                end do
-
+write(*,*) proc, "cost", cost
+write(*,*) proc, "control_back", control_back
                norm_gradJ  =  sqrt( sum( control_back(:) * control_back(:) ) )
                write(6,'("ite ",I3," , J =",ES13.6," , |grad J| =",ES13.6, " , time =",ES13.6)') &
                ite_min , cost , norm_gradJ , time(1)
+
+
+            open(1234,file="min/control_back_current",form='formatted')
+            do i=1, size(control)
+               write(1234,*) control_back(i)
+            enddo
+            close(1234)
+
 
 
             end if
@@ -513,6 +525,7 @@ CONTAINS
       !================================================================================================================!
       !  Compute bounds
       !================================================================================================================!
+      write(*,*) "Calling write_control_bounds( dof0 , mesh )"
       call write_control_bounds( dof0 , mesh )
       do k = 1, size(control)
          if (control_ubound(k) - control_lbound(k) < 1e-9) then
@@ -542,6 +555,9 @@ CONTAINS
       !================================================================================================================!
       task       = 'START'
       normalize_gradJ_and_J = .True. !Modif Leo
+      
+      write(*,*) "Before call setulb1, control_ubound, control_lbound",control_ubound,control_lbound
+      
       call setulb ( n, &
                     m, &
                     control, &            ! x
@@ -643,20 +659,20 @@ CONTAINS
             call output_control( dof0 , mesh )
          end if
 
-
-         if ( normalize_gradJ_and_J ) then
-            i = 1
-            do k = 1,nb_vars_in_control
-                control( i : i - 1 + dim_vars_in_control(k) ) = &
-                control( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
-                control_lbound( i : i - 1 + dim_vars_in_control(k) ) = &
-                control_lbound( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
-                control_ubound( i : i - 1 + dim_vars_in_control(k) ) = &
-                control_ubound( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
-                i = i + dim_vars_in_control(k)
-            end do
-         end if
-
+	
+         !if ( normalize_gradJ_and_J ) then
+         !   i = 1
+         !   do k = 1,nb_vars_in_control
+          !      control( i : i - 1 + dim_vars_in_control(k) ) = &
+         !       control( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
+          !      control_lbound( i : i - 1 + dim_vars_in_control(k) ) = &
+          !      control_lbound( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
+          !      control_ubound( i : i - 1 + dim_vars_in_control(k) ) = &
+         !       control_ubound( i : i - 1 + dim_vars_in_control(k) ) * norm_grad_cost_ini(k) / cost_ini
+          !      i = i + dim_vars_in_control(k)
+         !   end do
+        ! end if
+	
          !=============================================================================================================!
          !  Normalization of the cost, its gradient and the control vector
          !=============================================================================================================!
@@ -695,6 +711,7 @@ CONTAINS
          !=============================================================================================================!
          !  Call of LBFGSB
          !=============================================================================================================!
+         write(*,*) "Before call setulb2, control_ubound, control_lbound",control_ubound,control_lbound
          call setulb ( n, &
                        m, &
                        control, &            ! x
@@ -720,22 +737,22 @@ CONTAINS
          !  Back normalization of the control vector in order to output it
          !=============================================================================================================!
 
-         if ( normalize_gradJ_and_J ) then
-            i = 1
+         !if ( normalize_gradJ_and_J ) then
+         !   i = 1
+!
+         !   do k = 1,nb_vars_in_control
 
-            do k = 1,nb_vars_in_control
+         !       control( i : i - 1 + dim_vars_in_control(k) ) = &
+        !        control( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k) * cost_ini
+         !       control_lbound( i : i - 1 + dim_vars_in_control(k) ) = &
+         !       control_lbound( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k) * cost_ini
+         !       control_ubound( i : i - 1 + dim_vars_in_control(k) ) = &
+         !       control_ubound( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k) * cost_ini
 
-                control( i : i - 1 + dim_vars_in_control(k) ) = &
-                control( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k) * cost_ini
-                control_lbound( i : i - 1 + dim_vars_in_control(k) ) = &
-                control_lbound( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k) * cost_ini
-                control_ubound( i : i - 1 + dim_vars_in_control(k) ) = &
-                control_ubound( i : i - 1 + dim_vars_in_control(k) ) / norm_grad_cost_ini(k) * cost_ini
+          !      i = i + dim_vars_in_control(k)
 
-                i = i + dim_vars_in_control(k)
-
-            end do
-         end if
+         !   end do
+        ! end if
 
          !=============================================================================================================!
          !  Case task = NEW_X -> LBFGSB-3.0 has finished an iterate

@@ -145,7 +145,7 @@ SUBROUTINE calc_innovation( dof,mesh )
                 innovation ( iobs )%diff( searched_time )    = (h_mean - station( iobs )%h( searched_time ))
                 innovation ( iobs )%ind_t  =  innovation ( iobs )%ind_t + 1
 
-
+write(*,*) proc, tc, innovation ( iobs )%diff( searched_time ), h_mean,station( iobs )%h( searched_time ) !NOADJ
             endif
 
         enddo
@@ -246,13 +246,14 @@ SUBROUTINE calc_innovQ( dof,mesh )
    !  Local Variables
    !===================================================================================================================!
 
-   integer(ip)  ::  cell , searched_time , pt,N_average
+   integer(ip)  ::  searched_time
 
-   real(rp)  ::  w_total!,w_mean
+   real(rp)  ::  mass_flux
 
    !===================================================================================================================!
    !  Begin
    !===================================================================================================================!
+
 
    do iobs = 1,SIZE(stationQ) !station number is also BCout number, tested for 1 BCout
 
@@ -262,12 +263,15 @@ SUBROUTINE calc_innovQ( dof,mesh )
 
       if ( tc >= stationQ( iobs )%t( searched_time ) ) then
 
-         innovQ ( iobs )%diff( searched_time )    = bc%sum_mass_flux( 3 ) - stationQ( iobs )%Q( searched_time )
+         innovQ ( iobs )%diff( searched_time )    = bc%sum_mass_flux( 1 ) - stationQ( iobs )%Q( searched_time )
          innovQ ( iobs )%ind_t  =  innovQ ( iobs )%ind_t + 1
 
+write(*,*) proc, tc, innovQ ( iobs )%diff( searched_time ), bc%sum_mass_flux( stationQ( iobs )%ind_bc ), stationQ( iobs )%Q( searched_time )!NOADJ
+!          endif
       end if
 
    end do
+
    
 END SUBROUTINE calc_innovQ
 

@@ -135,15 +135,20 @@ CONTAINS
 	type(Model), intent(inout) :: mdl
 
 	! deallocate wrapped (interfaced variables)
+! 	write(*,*) proc, "unk_finalise(mdl%dof0)"
 	call unk_finalise(mdl%dof0)
+! 	write(*,*) proc, "unk_finalise(mdl%dof)"
 	call unk_finalise(mdl%dof)
+! 	write(*,*) proc, "msh_finalise(mdl%mesh)"
 	call msh_finalise(mdl%mesh)
-
+!     write(*,*) proc, "infiltration_finalise"
     call infiltration_finalise(mdl%my_infiltration)
+!     write(*,*) proc, "phys_desc_finalise"
     call phys_desc_finalise(mdl%my_phys_desc)
+!     write(*,*) proc, "bc_finalise"
     call bc_finalise(mdl%my_bc)
 	! deallocate fortran
-
+!   write(*,*) proc, "dealloc_model"
    call dealloc_model()
 
    call dealloc_m_numeric()
@@ -423,6 +428,8 @@ CONTAINS
 			call f90wrap_abort('unknown case')
 	end select
 
+! 	write(*,*) proc, "end subroutine run"
+
    end subroutine run
 
     !> \brief
@@ -652,6 +659,8 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
       my_infiltration%GA( : )%deltatheta = -1._rp
       my_infiltration%SCS( : )%lambdacn = -1._rp
       my_infiltration%SCS( : )%CN = -1._rp
+      my_infiltration%h_infil_max( : ) = 9999999._rp
+
 
     endif
 

@@ -275,7 +275,7 @@ CONTAINS
       if ( allocated( mesh%edge  ) ) deallocate( mesh%edge  )
       if ( allocated( mesh%edgeb ) ) deallocate( mesh%edgeb )
       if ( allocated( mesh%node  ) ) deallocate( mesh%node  )
-      if ( allocated( mesh%nodeb ) ) deallocate( mesh%nodeb )
+!       if ( allocated( mesh%nodeb ) ) deallocate( mesh%nodeb )
 
    END SUBROUTINE dealloc_mesh
 
@@ -783,7 +783,7 @@ write(*,*)"OUT calc_cells_connectivity"
       if ( allocated( mesh%edge  ) ) deallocate( mesh%edge  )
       if ( allocated( mesh%edgeb ) ) deallocate( mesh%edgeb )
       if ( allocated( mesh%node  ) ) deallocate( mesh%node  )
-      if ( allocated( mesh%nodeb ) ) deallocate( mesh%nodeb )
+!       if ( allocated( mesh%nodeb ) ) deallocate( mesh%nodeb )
 
    END SUBROUTINE msh_finalise
 

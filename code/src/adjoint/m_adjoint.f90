@@ -140,12 +140,14 @@ MODULE m_adjoint
     real(rp)     ::  DeltaTheta_lbound
     real(rp)     ::  DeltaTheta_ubound
 
-     real(rp)    ::  Kappa7_lbound
-    real(rp)     ::  Kappa7_ubound
+    real(rp)     ::  Kappa7_lbound                      !< Lower bound for pedotransfer coefficient for Ks
+    real(rp)     ::  Kappa7_ubound                      !< Upper bound for pedotransfer coefficient for Ks
     real(rp)     ::  Kappa8_lbound
     real(rp)     ::  Kappa8_ubound
     real(rp)     ::  Kappa9_lbound
     real(rp)     ::  Kappa9_ubound
+
+
 
     integer(ip)  ::  n_bathyb
     integer(ip)  ::  n_manningb
@@ -376,6 +378,11 @@ CONTAINS
          slope_y_back = 0._rp
          slope_x_back = 0._rp
 
+         !bc_back%sum_mass_flux( : )   =  0._rp
+
+write(*,*) proc, "control", control
+write(*,*) proc, "control_back", control_back
+
          call run_model_back( mesh , dof0 , dof0_back , dof , dof_back , cost , cost_back )
 
       #endif
@@ -387,6 +394,10 @@ CONTAINS
       !================================================================================================================!
 
       call write_control_back( dof0_back , mesh )
+write(*,*) proc, "control", control
+write(*,*) proc, "control_back", control_back
+write(*,*) proc, "bc_back%sum_mass_flux( : )", bc_back%sum_mass_flux( : )
+write(*,*) proc, "bc%sum_mass_flux( : )", bc%sum_mass_flux( : )
 
    END SUBROUTINE adjoint_model
 
@@ -415,7 +426,7 @@ CONTAINS
       !================================================================================================================!
       !  Initialization
       !================================================================================================================!
-        !call dealloc_back_vars()   ! might become usefull to call it for python, hope to user
+        call dealloc_back_vars(dof0_back, dof_back)   ! might become usefull to call it for python, hope to user
 		call alloc_back_vars(dof0_back, dof_back, mesh )
 
       call write_control( dof0 , mesh )
@@ -768,9 +779,8 @@ CONTAINS
          endif
 #endif
 
-
-         if ( c_infil_max == 1         ) call var_2_control( infil%h_infil_max(:) , infil%nland , 0 )
-         if ( c_Ks == 1         ) call var_2_control( infil%GA(:)%Ks , infil%nland , 0 )
+         if ( c_infil_max == 1         ) call var_2_control( infil%h_infil_max(:) , infil%nland , 1 )
+         if ( c_Ks == 1         ) call var_2_control( infil%GA(:)%Ks , infil%nland , 1 )
          if ( c_PsiF == 1       ) call var_2_control( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta == 1 ) call var_2_control( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda == 1     ) call var_2_control( infil%SCS(:)%lambdacn , infil%nland , 0 )
@@ -947,8 +957,8 @@ CONTAINS
          endif
 #endif
 
-         if ( c_infil_max == 1 ) call var_2_control_diff( eps_Ks * infil%h_infil_max(:) , infil%nland , 0 )
-         if ( c_Ks == 1 ) call var_2_control_diff( eps_Ks * infil%GA(:)%Ks , infil%nland , 0 )
+         if ( c_infil_max == 1 ) call var_2_control_diff( eps_Ks * infil%h_infil_max(:) , infil%nland , 1 )
+         if ( c_Ks == 1 ) call var_2_control_diff( eps_Ks * infil%GA(:)%Ks , infil%nland , 1 )
          if ( c_PsiF == 1 ) call var_2_control_diff( eps_PsiF * infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta == 1 ) call var_2_control_diff( eps_DeltaTheta * infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda == 1 ) call var_2_control_diff( eps_lambdacn * infil%SCS(:)%lambdacn , infil%nland , 0 )
@@ -1163,8 +1173,8 @@ CONTAINS
          endif
 #endif
 
-         if ( c_infil_max == 1 ) call var_2_control_back( infil_back%h_infil_max(:) , infil%nland , 0 )
-         if ( c_Ks              == 1 ) call var_2_control_back( infil_back%GA%Ks   , infil%nland      , manning_data_glob )
+         if ( c_infil_max == 1 ) call var_2_control_back( infil_back%h_infil_max(:) , infil%nland , 1 )
+         if ( c_Ks              == 1 ) call var_2_control_back( infil_back%GA%Ks   , infil%nland      , 1 )
          if ( c_PsiF            == 1 ) call var_2_control_back( infil_back%GA%PsiF , infil%nland      , 0                 )
          if ( c_DeltaTheta      == 1 ) call var_2_control_back( infil_back%GA%DeltaTheta   , infil%nland , 0      )
          if ( c_lambda          == 1 ) call var_2_control_back( infil_back%SCS%lambdacn, infil%nland    , 0                 )
@@ -1302,16 +1312,16 @@ x3_ubound = 1_rp
 x4_lbound = 0_rp
 x4_ubound = 1_rp
 
-Kappa7_lbound = 0._rp
-Kappa7_ubound = 10._rp
-Kappa8_lbound = 0._rp
-Kappa8_ubound = 10._rp
-Kappa9_lbound = 0._rp
-Kappa9_ubound = 10._rp
 
-Ks_lbound = 1/10000000
-Ks_ubound = 1/100000
+Kappa7_lbound = 0.1_rp
+Kappa7_ubound = 50_rp       
+Kappa8_lbound = 0.1_rp
+Kappa8_ubound = 50_rp
+Kappa9_lbound = 0.1_rp
+Kappa9_ubound = 50_rp
 
+Ks_lbound = 0.0000001_rp
+Ks_ubound = 0.00001_rp
 
 !       if ( c_shape_s == 1 ) then
 !          call var_2_control_bounds( shape_s_lbound, shape_s_ubound, size(XSshape), 1 )
@@ -1615,8 +1625,8 @@ Ks_ubound = 1/100000
          end if
 #endif
 
-         if ( c_infil_max == 1 ) call control_2_var( infil%h_infil_max(:) , infil%nland , 0 )
-         if ( c_Ks          == 1 ) call control_2_var( infil%GA(:)%Ks , infil%nland , 0 )
+         if ( c_infil_max == 1 ) call control_2_var( infil%h_infil_max(:) , infil%nland , 1 )
+         if ( c_Ks          == 1 ) call control_2_var( infil%GA(:)%Ks , infil%nland , 1 )
          if ( c_PsiF        == 1 ) call control_2_var( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta  == 1 ) call control_2_var( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda      == 1 ) call control_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
@@ -1811,8 +1821,8 @@ Ks_ubound = 1/100000
          end if
 #endif
 
-         if ( c_infil_max == 1 ) call control_diff_2_var( infil%h_infil_max(:) , infil%nland , 0 )
-         if ( c_Ks          == 1 ) call control_diff_2_var( infil%GA(:)%Ks , infil%nland , 0 )
+         if ( c_infil_max == 1 ) call control_diff_2_var( infil%h_infil_max(:) , infil%nland , 1 )
+         if ( c_Ks          == 1 ) call control_diff_2_var( infil%GA(:)%Ks , infil%nland , 1 )
          if ( c_PsiF        == 1 ) call control_diff_2_var( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta  == 1 ) call control_diff_2_var( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda      == 1 ) call control_diff_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
@@ -1820,7 +1830,7 @@ Ks_ubound = 1/100000
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call control_diff_2_var( PTF(i)%kappa(7:9)    , 3    , 0                 )
+                call control_diff_2_var( PTF(i)%Kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -1960,8 +1970,8 @@ Ks_ubound = 1/100000
          if ( c_ic      == 1 ) call control_perturb_2_var( dof0%u     , mesh%nc , 0                 )
          if ( c_ic      == 1 ) call control_perturb_2_var( dof0%v     , mesh%nc , 0                 )
 
-         if ( c_infil_max == 1 ) call control_perturb_2_var( infil%h_infil_max(:) , infil%nland , 0 )
-         if ( c_Ks          == 1 ) call control_perturb_2_var( infil%GA(:)%Ks , infil%nland , 0 )
+         if ( c_infil_max == 1 ) call control_perturb_2_var( infil%h_infil_max(:) , infil%nland , 1 )
+         if ( c_Ks          == 1 ) call control_perturb_2_var( infil%GA(:)%Ks , infil%nland , 1 )
          if ( c_PsiF        == 1 ) call control_perturb_2_var( infil%GA(:)%PsiF , infil%nland , 0 )
          if ( c_DeltaTheta  == 1 ) call control_perturb_2_var(infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda      == 1 ) call control_perturb_2_var( infil%SCS(:)%lambdacn , infil%nland , 0 )
@@ -1969,7 +1979,7 @@ Ks_ubound = 1/100000
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
-                call control_perturb_2_var( PTF(i)%kappa(7:9)    , 3    , 0                 )
+                call control_perturb_2_var( PTF(i)%Kappa(7:9)    , 3    , 0                 )
             enddo
          endif
 
@@ -2229,7 +2239,7 @@ Ks_ubound = 1/100000
                write(10,*) i , infil%h_infil_max(i)
 
             enddo
-
+	    close(10)
          endif
 
          if ( proc == 0 .and. c_Ks == 1 ) then
@@ -2243,7 +2253,7 @@ Ks_ubound = 1/100000
                write(10,*) i , infil%GA(i)%Ks
 
             enddo
-
+	    close(10)
          endif
 
          if ( proc == 0 .and. c_PsiF == 1 ) then
@@ -2257,7 +2267,7 @@ Ks_ubound = 1/100000
                write(10,*) i , infil%GA(i)%PsiF
 
             enddo
-
+	    close(10)
          endif
 
          if ( proc == 0 .and. c_DeltaTheta == 1  ) then
@@ -2271,7 +2281,7 @@ Ks_ubound = 1/100000
                write(10,*) i , infil%GA(i)%DeltaTheta
 
             enddo
-
+	    close(10)
          endif
 
          if ( proc == 0 .and. c_lambda == 1  ) then
@@ -2285,7 +2295,7 @@ Ks_ubound = 1/100000
                write(10,*) i , infil%SCS(i)%lambdacn
 
             enddo
-
+	    close(10)
          endif
 
          if ( proc == 0 .and. c_CN == 1  ) then
@@ -2299,8 +2309,24 @@ Ks_ubound = 1/100000
                write(10,*) i , infil%SCS(i)%CN
 
             enddo
-
+	    close(10)
          endif
+         
+         
+         if ( proc == 0 .and. c_ptf == 1 ) then
+
+            write(file_name,'(A,I3.3)') 'min/PTF.' , ite_min
+
+            open(10,file=file_name,status='replace',form='formatted')
+
+            do i=1,phys_desc%ptf_nland
+
+               write(10,*) i , PTF(i)%Kappa(:)
+
+            enddo
+	    close(10)
+         endif
+         
 
          if ( proc == 0 .and. ((c_shape_s == 1) .or. (c_hmax == 1) .or. (c_xcenter == 1))) then
 

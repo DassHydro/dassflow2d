@@ -381,7 +381,7 @@ SUBROUTINE set_bc( dof , mesh )
 !======================================================================================================================!
 
    type( msh ), intent(in)  ::  mesh
-   type( unk ), intent(inout)  ::  dof
+   type( unk ), intent(in)  ::  dof
 
 !======================================================================================================================!
 !  Local Variables
@@ -436,12 +436,6 @@ SUBROUTINE set_bc( dof , mesh )
                ie  =  mesh%edgeb(ib)%ind
 
                i  =  mesh%edge(ie)%cell(1)
-
-               if ( dof%h(i) .le. heps) dof%h(i) = 0.0001 !To review before merge
-               ! This fix necessary for initially dry boundary cells, like the setup of the Abidjan case
-               ! Without this fix, water cannot be injected on a wet cell
-               ! With this fix, water will always be injected in BC cells even if they are fully above current water level
-               ! Proposal : add a wet_bc option to enforce this fix
 
                if ( dof%h(i) > heps ) sum_pow_h  =  sum_pow_h  +  dof%h(i)**d5p3 * mesh%edge(ie)%length
 

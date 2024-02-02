@@ -542,7 +542,6 @@ MODULE m_model
 
       use_obs,&
       use_Zobs,&
-      use_hobs,&
       use_UVobs,&
       use_HUVobs,&
       use_Qobs,&
@@ -657,7 +656,6 @@ MODULE m_model
  		integer(ip)  ::  w_obs                                     !< Gen Observation Output File
         integer(ip)  ::  use_obs                                   !< Use Observations in cost function definition
         integer(ip)  ::  use_Zobs                                  !< Write Water Surface elevation observations  and use them in cost function definition
-        integer(ip)  ::  use_hobs                              !< To be used in conjunction with use_Zobs=1, Compare heights insted of elevations in calc_innovation
         integer(ip)  ::  use_UVobs                                 !< Write Flow velocity observations  and use them in cost function definition
         integer(ip)  ::  use_HUVobs                                !< UNUSED Write At-a-cell-flow observations  and use them in cost function definition
         integer(ip)  ::  use_Qobs                                  !< Use Boundary flow observations in cost function definition
@@ -758,7 +756,6 @@ CONTAINS
 
       use_obs   =  0_ip
       use_Zobs  =  0_ip
-      use_hobs  =  0_ip
       use_UVobs =  0_ip
       use_HUVobs =  0_ip
       use_Qobs   =  0_ip
@@ -889,7 +886,7 @@ CONTAINS
       allocate(dof%u(mesh%nc + mesh%ncb))
       allocate(dof%v(mesh%nc + mesh%ncb))
 
-      allocate(dof%infil(mesh%nc))
+      allocate(dof%infil(mesh%nc + mesh%ncb))
 
  !     allocate(dof%entropy(mesh%nc )) ! entropy for low froude scheme
 
@@ -1233,7 +1230,7 @@ CONTAINS
       allocate(dof%u( mesh%nc + mesh%ncb))
       allocate(dof%v(mesh%nc + mesh%ncb))
 
-      allocate(dof%infil(mesh%nc))
+      allocate(dof%infil(mesh%nc + mesh%ncb))
 !      allocate(dof%entropy(mesh%nc )) ! entropy for low froude scheme
 
       allocate(dof%grad_h(mesh%nc + mesh%ncb))
@@ -1269,15 +1266,25 @@ CONTAINS
 	SUBROUTINE unk_finalise(dof)
       implicit none
       type(unk), intent(inout)  ::  dof
+      call mpi_wait_all
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%h)", allocated(dof%h), size(dof%h)
       if (allocated(dof%h)) deallocate(dof%h)
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%u)", allocated(dof%u), size(dof%u)
       if (allocated(dof%u)) deallocate(dof%u)
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%v)", allocated(dof%v), size(dof%v)
       if (allocated(dof%v)) deallocate(dof%v)
-
+      call mpi_wait_all
+! write(*,*) proc, "(allocated(dof%h)) deallocate(dof%infil)", allocated(dof%infil), size(dof%infil)
       if (allocated(dof%infil)) deallocate(dof%infil)
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%grad_h)", allocated(dof%grad_h), size(dof%grad_h)
 !      if (allocated(dof%entropy)) deallocate(dof%entropy)   ! entropy for low froude scheme
       if (allocated(dof%grad_h)) deallocate(dof%grad_h)
+      call mpi_wait_all
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%grad_u)", allocated(dof%grad_u), size(dof%grad_u)
       if (allocated(dof%grad_u)) deallocate(dof%grad_u)
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%grad_v)", allocated(dof%grad_v), size(dof%grad_v)
       if (allocated(dof%grad_v)) deallocate(dof%grad_v)
+!       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%grad_z)", allocated(dof%grad_z), size(dof%grad_z)
       if (allocated(dof%grad_z)) deallocate(dof%grad_z)
  !     if (allocated(dof%grad_entropy)) deallocate(dof%grad_entropy)   ! entropy for low froude scheme
    END SUBROUTINE

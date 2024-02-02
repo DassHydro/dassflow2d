@@ -213,8 +213,10 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          !    - Calculation of nflux sum for each inflow
          !=============================================================================================================!
 
-         if ( mesh%edge(ie)%boundary ) call boundary_post( nflux(1) , iR , mesh )
-
+         if ( mesh%edge(ie)%boundary ) then
+         call boundary_post( nflux(1) , iR , mesh )
+!          write(*,*) proc, tc, "bc%sum_mass_flux", bc%sum_mass_flux, nflux(1) , iR
+endif
          !=============================================================================================================!
          !  Flux rotation and summation (as antisymmetric part to save time computation)
          !=============================================================================================================!
@@ -268,6 +270,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
       end if
 
    end do
+
+
 
    !===================================================================================================================!
    !  Cumulative rain Calculation
@@ -329,6 +333,14 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
      if ( bc_infil == 1 ) then !If Green-Ampt infiltration is selected
 
         if (infil%land(i) .ne. 0) then !If the current cell does have an infiltration value attributed
+
+
+        !!!FOR INVERSE MODEL, MOVE LATER
+!         infil%GA( infil%land( i ) )%Ks = abs(infil%GA( infil%land( i ) )%Ks)
+!         infil%GA( infil%land( i ) )%DeltaTheta = abs(infil%GA( infil%land( i ) )%DeltaTheta)
+!         infil%GA( infil%land( i ) )%PsiF = abs(infil%GA( infil%land( i ) )%PsiF)
+!         infil%h_infil_max( infil%land(i)) ) = abs(infil%h_infil_max( infil%land(i)) )
+        !!!
 
          aFn1 = dof%infil(i) + dt * infil%GA( infil%land( i ) )%Ks * ( 1._rp - infil%GA( infil%land( i ) )%DeltaTheta )
 
@@ -410,5 +422,11 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    call com_dof( dof , mesh )
 
    call com_var_r( bathy_cell , mesh )                   ! Required MPI Communication due to inverse variable dependency
+
+!    do i = 1, size(bc%sum_mass_flux)
+! !     write(*,*) proc, tc, "BEFORE MPI SUM bc%sum_mass_flux", bc%sum_mass_flux
+!    call mpi_sum_r ( bc%sum_mass_flux(i) )
+! !    write(*,*) proc, tc, "AFTER MPI SUM bc%sum_mass_flux", bc%sum_mass_flux
+!    enddo
 
 END SUBROUTINE euler_time_step_first_b1

@@ -7,7 +7,7 @@ class Config(dict):
 
        all key correspond to a getter and a setter in fortran kernel
 
-       To see all possible key 
+       To see all possible key
 
 
        Parameters
@@ -16,7 +16,7 @@ class Config(dict):
               **todo ref sphinx vers input.txt**
 
        """
-    
+
        def __init__(self) :
               """
               set default values for dictionary
@@ -62,8 +62,8 @@ class Config(dict):
                                                  "restart_min":0,
                                                  "eps_min":0}
 
-              
-              
+
+
        # get fortran kernel values
        def get(self, input_param = None):
               """
@@ -103,7 +103,7 @@ class Config(dict):
                                                  "c_ic":0,
                                                  "restart_min":0,
                                                  "eps_min":0}
-              for k in res: 
+              for k in res:
                      # in module m_common
                      if k == 'mesh_name':
                             res[k] = df2d.wrapping.m_common.get_mesh_name().decode('utf-8')
@@ -178,16 +178,16 @@ class Config(dict):
               """
               update values in fortran kernel based on provided input
               ---------------
-              param: 
+              param:
               ---------------
               self : dictionary of class Config
 
               ---------------
-              return: 
+              return:
               ---------------
               set the values in fortran kernel
 
-              fortran kernel values must be initialise 
+              fortran kernel values must be initialise
               """
               if  custom_config is None:
                      input_param = self
@@ -243,15 +243,13 @@ class Config(dict):
                             df2d.wrapping.m_common.set_bc_rain(input_param[k])
                      elif k == 'use_Zobs':
                             df2d.wrapping.m_common.set_use_zobs(input_param[k])
-                     elif k == 'use_hobs':
-                            df2d.wrapping.m_common.set_use_hobs(input_param[k])
                      elif k == 'use_Qobs':
                             df2d.wrapping.m_common.set_use_qobs(input_param[k])
                      elif k == 'use_UVobs':
                             df2d.wrapping.m_common.set_use_uvobs(input_param[k])
                      elif k == 'use_NSE':
                             df2d.wrapping.m_common.set_use_nse(input_param[k])
-                            
+
                      #in m_common linked to XSparams
                      elif k == 'use_xsshp':
                             df2d.wrapping.m_common.set_use_xsshp(input_param[k])
@@ -259,7 +257,7 @@ class Config(dict):
                             df2d.wrapping.m_common.set_xsshp_along_x(input_param[k])
                      elif k == 'xsshp_along_y':
                             df2d.wrapping.m_common.set_xsshp_along_y(input_param[k])
-                            
+
                      elif k == 'use_ptf':
                             df2d.wrapping.m_common.set_use_ptf(input_param[k])
 
@@ -283,7 +281,7 @@ class Config(dict):
                      elif k == 'c_rain':
                             df2d.wrapping.m_model.set_c_rain(input_param[k])
                      elif k == 'c_ic':
-                            df2d.wrapping.m_model.set_c_ic(input_param[k])    
+                            df2d.wrapping.m_model.set_c_ic(input_param[k])
                      elif k == 'c_shape_s':
                             df2d.wrapping.m_model.set_c_shape_s(input_param[k])
                      elif k == 'c_hmax':
@@ -302,47 +300,49 @@ class Config(dict):
                             df2d.wrapping.m_model.set_regul_bathy_shape(input_param[k])
 
                             #in m_model linked to infiltration
+                     elif k == 'c_infil_max':
+                            df2d.wrapping.m_model.set_c_infil_max(input_param[k])
                      elif k == 'c_Ks':
                             df2d.wrapping.m_model.set_c_ks(input_param[k])
                      elif k == 'c_PsiF':
                             df2d.wrapping.m_model.set_c_psif(input_param[k])
                      elif k == 'c_DeltaTheta':
                             df2d.wrapping.m_model.set_c_deltatheta(input_param[k])
-                            
+
                      elif k == 'c_ptf':
                             df2d.wrapping.m_model.set_c_ptf(input_param[k])
 
               print(f"values {[x for x in input_param.keys()]} set")
               self.get(input_param)
               return()
-              
+
        def save(self, hdf5_path, source_kernel = False ):
               """
               save in hdf5 file specified
-              
+
               saves as an attribute at the root of the hdf5 file.
-              
+
               all key correspond to a getter and a setter in fortran kernel
-              
+
               To see all possible key: ``self.keys()``
 
 
               Parameters
               ----------
-              
+
               hdf5_path: str, path to the hdf5 file to save configuration data
-              
+
               source_kernel: boolean, if true update config from fortrna kernel value before save
 
               """
               if source_kernel:
                      self.get()
-              
-              f = h5py.File(hdf5_path, "r+")        
+
+              f = h5py.File(hdf5_path, "r+")
               for key,values in self.items() :
                      f.attrs[key]=values
               f.close()
-              
+
        def soure_hdf5(self, hdf5_path ):
               """
               Fill dictionary from  hdf5 filevalues
@@ -350,7 +350,7 @@ class Config(dict):
               ----------
               hdf5_path: str, path to the hdf5 file to load configuration data
               """
-              
+
               self ={ "mesh_name":'channel.geo',
                                                  "ts":0,
                                                  "dta":0,
@@ -383,7 +383,7 @@ class Config(dict):
                                                  "restart_min":0,
                                                  "eps_min":0}
               f = h5py.File(hdf5_path, "r")
-              
+
               for key in self.keys() :
                      self[key] = f.attrs[key]
               f.close()

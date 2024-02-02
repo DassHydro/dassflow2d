@@ -69,8 +69,9 @@ MODULE m_mpi
    USE m_common
    USE m_linear_algebra
    USE m_mesh
-
+#if defined USE_MPI
    use mpi
+#endif
 
    implicit none
 
@@ -600,12 +601,12 @@ write(*,*) "mpi in fortran:np, proc", np, proc
       !================================================================================================================!
       !  Creation of a temporary mesh to swap indexes
       !================================================================================================================!
-
+! write(*,*) mesh%nn, mesh%ne, mesh%nc, mesh%nnb, mesh%neb, mesh%ncb
       allocate( mesh_tmp%node ( mesh%nn  ) )
       allocate( mesh_tmp%edge ( mesh%ne  ) )
       allocate( mesh_tmp%cell ( mesh%nc  ) )
 
-      allocate( mesh_tmp%nodeb( mesh%nnb ) )
+!       allocate( mesh_tmp%nodeb( mesh%nnb ) )
       allocate( mesh_tmp%edgeb( mesh%neb ) )
       allocate( mesh_tmp%cellb( mesh%ncb ) )
 

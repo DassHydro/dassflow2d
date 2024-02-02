@@ -168,7 +168,7 @@ CONTAINS
                 enddo
 
             endif
-
+!write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
 
             if ( use_UVobs == 1 ) then
 
@@ -181,7 +181,7 @@ CONTAINS
                 enddo
 
             endif
-
+!write(*,*) "cost from use_UVobs", cost_part(1)!NOADJ
             !!!!!!!!!!!!!
             ! InnovW
             !!!!!!!!!!!!!
@@ -197,7 +197,7 @@ CONTAINS
             !end do
 
             if (( use_Qobs == 1 ) .or. ( use_Qobs_gr4 == 1 )) then
-
+!write(*,*) 'use_Qobs in calc_cost_function'!NOADJ
                 if ( use_NSE == 0 ) then
 
 
@@ -205,11 +205,12 @@ CONTAINS
                   do iobs = 1,size( stationQ )
 
                     do idiff = 1,size( innovQ( iobs )%diff )
+                    !write(*,*) proc, idiff, stationQ( iobs )%weight, innovQ ( iobs )%diff( idiff )**2!NOADJ
                         cost_part(1)  =  cost_part(1)   +   stationQ( iobs )%weight * innovQ ( iobs )%diff( idiff )**2
                     end do
 
                   end do
-
+!write(*,*) "cost from use_Qobs", cost_part(1)!NOADJ
                 else
 
 
@@ -229,12 +230,12 @@ CONTAINS
                     cost_part(1)  =  cost_part(1)   +  cost_part(2) / cost_part(3)
 
                   enddo
-
+!write(*,*) "cost from use_Qobs+NSE", cost_part(1)!NOADJ
                 endif
 
             endif
 
-          call mpi_sum_r( cost_part(1) )
+!           call mpi_sum_r( cost_part(1) )
 
 
 !~             !==========================================================================================================!
@@ -389,7 +390,7 @@ CONTAINS
                   endif
                 end do
 
-                call mpi_sum_r( cost_part(2) )
+!                 call mpi_sum_r( cost_part(2) )
 
               endif
             endif

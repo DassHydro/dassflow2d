@@ -90,7 +90,7 @@ SUBROUTINE boundary_post( mass_flux , index_ghost , mesh )
    ib = mesh%edge(ie)%lim
 
    group = mesh%edgeb(ib)%group
-    
+
    if ( mesh%edgeb(ib)%typlim(1:8) == 'discharg' .or. &
         mesh%edgeb(ib)%typlim(1:3) == 'gr4' ) then !.or. &
 !    mesh%edgeb(ib)%typlim(1:17) == 'internal_discharg') then !2nd item = TODO, 3rd item DEPRECATED
@@ -113,9 +113,11 @@ SUBROUTINE boundary_post( mass_flux , index_ghost , mesh )
         mesh%edgeb(ib)%typlim(1:7) == 'zspresc'  .or. &
         mesh%edgeb(ib)%typlim(1:6) == 'hpresc' ) then
         !         mesh%edgeb(ib)%typlim(1:17)== 'internal_ratcurve'  .or. & !DEPRECATED
-
+! write(*,*) proc, ib, group, mesh%edgeb(ib)%typlim !NOADJ
       bc%sum_mass_flux( group )  =  bc%sum_mass_flux( group )  +  mass_flux * mesh%edge(ie)%length
-
+! write(*,*) proc, tc, "bc%sum_mass_flux( group )", bc%sum_mass_flux( group )!NOADJ
+! call mpi_sum_r ( bc%sum_mass_flux( group ) )
+! write(*,*) "then", proc, tc, "bc%sum_mass_flux( group )", bc%sum_mass_flux( group )!NOADJ
    end if
    
    if ( mesh%edgeb(ib)%typlim(1:11) == 'internal_2D') then

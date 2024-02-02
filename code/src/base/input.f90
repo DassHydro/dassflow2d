@@ -245,7 +245,7 @@ SUBROUTINE Create_Cartesian_Mesh( mesh )
    allocate( mesh%edge( mesh%ne ) )
    allocate( mesh%cell( mesh%nc ) )
 
-   allocate( mesh%nodeb( mesh%nnb ) )
+!    allocate( mesh%nodeb( mesh%nnb ) )
    allocate( mesh%edgeb( mesh%neb ) )
    allocate( mesh%cellb( mesh%ncb ) )
 
@@ -275,7 +275,7 @@ SUBROUTINE Create_Cartesian_Mesh( mesh )
 
             mesh%node(k)%lim  =  kb
 
-            mesh%nodeb(kb)%ind  =  k
+!             mesh%nodeb(kb)%ind  =  k
 
          else
 

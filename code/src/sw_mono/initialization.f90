@@ -149,10 +149,10 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
          call swap_vec_i  ( phys_desc%soil_land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( phys_desc%soil_land ,                 mesh%nc   )
          
-         if (use_ptf == 1) then
-            call swap_vec_i  ( phys_desc%ptf_land , swap_index( 1 : mesh%nc ) )
-            call reallocate_i( phys_desc%ptf_land ,                 mesh%nc   )
-         endif
+!          if (use_ptf == 1) then
+!             call swap_vec_i  ( phys_desc%ptf_land , swap_index( 1 : mesh%nc ) )
+!             call reallocate_i( phys_desc%ptf_land ,                 mesh%nc   )
+!          endif
 
    endif
 
@@ -392,11 +392,11 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
       file_nb = 7
       open(10,file='hydrograph.txt',status='old')
       line_read = 1
-      read(10,*, err=100, end=100) 
+      read(10,*, err=100, end=100)
       line_read = line_read + 1
-      read(10,*, err=100, end=100) 
+      read(10,*, err=100, end=100)
       line_read = line_read + 1
-      read(10,*, err=100, end=100) 
+      read(10,*, err=100, end=100)
 
       line_read = line_read + 1
       read(10,*, err=100, end=100) bc%nb_in
@@ -405,11 +405,11 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
       do i = 1,bc%nb_in
         line_read = line_read + 1
-        read(10,*, err=100, end=100) 
+        read(10,*, err=100, end=100)
         line_read = line_read + 1
-        read(10,*, err=100, end=100) 
+        read(10,*, err=100, end=100)
         line_read = line_read + 1
-        read(10,*, err=100, end=100) 
+        read(10,*, err=100, end=100)
 
         line_read = line_read + 1
         read(10,*, err=100, end=100) j
@@ -681,7 +681,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 !     Reading infiltration parameters and localization
 !    ===================================================================================================================!
 
-   infil%nland = 0
+!    infil%nland = 0
 
    if (( mesh_type == 'dassflow' ) .and. ( .not. allocated(infil%land) )) then ! This is skipped if infiltration_initilise was called through python earlier
 
@@ -713,7 +713,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
         line_read = line_read + 1
 
         allocate( infil%h_infil_max( infil%nland ) )
-        infil%h_infil_max( : ) = 999._rp
+        infil%h_infil_max( : ) = 9999999._rp
         allocate( infil%GA( infil%nland ) )
         allocate( infil%SCS( 1 ) )
         infil%SCS( 1 )%lambdacn = 0._rp
@@ -766,7 +766,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
             line_read = line_read + 1
 
             allocate( infil%h_infil_max( infil%nland ) )
-            infil%h_infil_max( : ) = 999._rp
+            infil%h_infil_max( : ) = 9999999._rp
             allocate( infil%SCS( infil%nland ) )
             allocate( infil%GA( 1 ) )
 
@@ -796,9 +796,9 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
         end do
 
         close(10)
-        
+
     else
-    
+
         write(*,*) "WARNING: Infiltration was not initialized from land_uses_XX.txt. You need to initialize it through init_infiltration."
 
     endif
@@ -808,7 +808,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
     !===================================================================================================================!
 
     if ( file_exist(1) .or. file_exist(2)) then
-    
+
        do i=1,mesh%nc
            do k=1,infil%nland
 
@@ -844,7 +844,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    !===================================================================================================================!
    !  Read geometry parameters if needed
    !===================================================================================================================!  
-   
+
    if (use_xsshp == 1) then
      filenames(13)="geometry_params.txt"
      inquire( file = 'geometry_params.txt' , exist = file_exist(1) )
@@ -872,16 +872,16 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
        enddo
 
        close(20)
-     
+
      else
-     
+
        allocate(XSshape(1))
        allocate(slope_x(1))
        allocate(slope_y(1))
         write(*,*) "WARNING: you used the option for parameterized bathymetry (use_xsshp == 1), but you did not provide the parameter file (geometry_params.txt)"
-        
+
      endif
-     
+
    else
 
     allocate(XSshape(1))
@@ -906,7 +906,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
       file_nb = 14
 		open(10,file='rating_curve.txt',status='old')
       line_read = 1
-      
+
 		read(10,*, err=100, end=100)
       line_read = line_read + 1
 		read(10,*, err=100, end=100)

@@ -84,8 +84,8 @@ MODULE m_tap_vars
    type(innovation_obs), dimension(:), allocatable, target  ::  innovW_back
    type(innovation_obs), dimension(:), allocatable, target  ::  innovUV_diff
    type(innovation_obs), dimension(:), allocatable, target  ::  innovUV_back
-   type(innovation_obs ), dimension(:), allocatable  ::  innovQ_diff
-   type(innovation_obs ), dimension(:), allocatable  ::  innovQ_back
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovQ_diff
+   type(innovation_obs), dimension(:), allocatable, target  ::  innovQ_back
 
 
 #ifdef USE_HYDRO
@@ -227,6 +227,8 @@ CONTAINS
 
          allocate( bc_diff%sum_mass_flux( bc%nb ) )
 
+         bc_diff%sum_mass_flux( : ) = 0._rp
+
       #endif
 
    END SUBROUTINE alloc_diff_vars
@@ -337,12 +339,15 @@ CONTAINS
 
       allocate( infil_back%GA ( size( infil%GA ) ) )
       allocate( infil_back%SCS( size( infil%SCS ) ) )
+      allocate( infil_back%h_infil_max ( size( infil%h_infil_max ) ) )
 
       infil_back%GA(:)%Ks           =  0._rp
       infil_back%GA(:)%PsiF         =  0._rp
       infil_back%GA(:)%DeltaTheta   =  0._rp
       infil_back%SCS(:)%lambdacn      =  0._rp
       infil_back%SCS(:)%CN          =  0._rp
+
+      infil_back%h_infil_max(:) = 0._rp
       
       allocate( ptf_back( size( PTF ) ) )
       do i = 1, size( PTF )
@@ -401,15 +406,17 @@ CONTAINS
 
          allocate( bc_back%sum_mass_flux( bc%nb ) )
 
+         bc_back%sum_mass_flux( : )   =  0._rp
+
       #endif
 
    END SUBROUTINE alloc_back_vars
 
 
-SUBROUTINE dealloc_back_vars()
-      !type(unk) , intent(inout) :: dof0_back, dof_back
-      !if(allocated(dof0_back )) deallocate(dof0_back)
-      !if(allocated(dof_back )) deallocate(dof_back)
+SUBROUTINE dealloc_back_vars(dof0_back, dof_back)
+      type(unk) , intent(inout) :: dof0_back, dof_back
+      call dealloc_dof(dof0_back)
+      call dealloc_dof(dof_back)
 
       if(allocated(bc_back%inflow )) deallocate(bc_back%inflow )
       if(allocated(bc_back%outflow )) deallocate(bc_back%outflow )
@@ -421,9 +428,10 @@ SUBROUTINE dealloc_back_vars()
       #ifdef USE_HYDRO
       if(allocated(bc_back%gr4 )) deallocate(bc_back%gr4 )
       #endif USE_HYDRO
-      if(allocated( bc_back%rain)) deallocate( bc_back%rain)
+      if(allocated(bc_back%rain)) deallocate( bc_back%rain)
       if(allocated(infil_back%GA )) deallocate(infil_back%GA )
       if(allocated(infil_back%SCS  )) deallocate(infil_back%SCS)
+      if(allocated(infil_back%h_infil_max )) deallocate(infil_back%h_infil_max )
       if(allocated(ptf_back )) deallocate(ptf_back )
 
       if(allocated(innovation_back)) deallocate(innovation_back)
