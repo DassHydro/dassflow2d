@@ -419,7 +419,7 @@ SUBROUTINE set_bc( dof , mesh )
                                  bc%hyd( bc%grpf( num_bc ) )%q , tc )
 
           else
-          write(*,*) "Using single value hydrograph: Q=",bc%hyd( bc%grpf( num_bc ) )%q(1)
+          !write(*,*) "Using single value hydrograph: Q=",bc%hyd( bc%grpf( num_bc ) )%q(1)
             qin = bc%hyd( bc%grpf( num_bc ) )%q(1)
 
           endif
