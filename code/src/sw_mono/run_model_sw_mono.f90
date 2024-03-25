@@ -92,6 +92,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
    integer(ip)  ::  sub_nt, iR, iL
     real(rp) :: bathy_temp
+    real(rp) :: Ks_ubound, Ks_lbound, z, lambda, shift
 
 
    !===================================================================================================================!
@@ -214,6 +215,25 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
                                 + PTF( phys_desc%ptf_land(i) )%Kappa(9) * phys_desc%soil(i)%sand ) &
                                 / 1000._rp !kg/m2 to m
 
+
+      ! Sigmoid parameterization
+
+!       Ks_ubound = 1._rp / 100000_rp
+!       Ks_lbound = 1._rp / 10000000_rp
+!       Ks_ubound = 4.5_rp  / 1000000_rp
+!       Ks_lbound = -0.5_rp / 1000000_rp
+!       lambda = 900000._rp
+!       shift = 0.000002_rp
+!
+!       z =          25.4_rp / 3600._rp * 10._rp ** (&
+!                                 - PTF( phys_desc%ptf_land(i) )%Kappa(7) &
+!                                 - PTF( phys_desc%ptf_land(i) )%Kappa(8) * phys_desc%soil(i)%clay &
+!                                 + PTF( phys_desc%ptf_land(i) )%Kappa(9) * phys_desc%soil(i)%sand ) &
+!                                 / 1000._rp
+!
+!
+!       infil%GA(i)%Ks = Ks_lbound + (Ks_ubound - Ks_lbound)/(1+exp(-lambda*(z-shift)))
+! write(*,*) proc, i, z, infil%GA(i)%Ks
       enddo
     
     elseif (bc_infil == 2) then
@@ -229,9 +249,9 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
     if ( file_exist(1) ) then
         do i = 1, mesh%nc
-            dof0%h(i) = max(0._rp, dof0%h(i) - bathy_cell(i)) !&
-!                     + slope_y(1) * mesh%cell(i)%grav%y &
-!                     + slope_x(1) * mesh%cell(i)%grav%x)
+            dof0%h(i) = max(0._rp, dof0%h(i) - bathy_cell(i) &
+                     + slope_y(1) * mesh%cell(i)%grav%y &
+                     + slope_x(1) * mesh%cell(i)%grav%x)
         enddo
     endif
 

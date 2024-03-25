@@ -250,7 +250,7 @@ CONTAINS
         write(*,*) proc, "Current control vector is too large to show"
       endif
 
-      write(*,*) proc, "cost", cost
+!       write(*,*) proc, "cost", cost
 
          !=============================================================================================================!
          !  Case indic = 4 -> M1QN3 needs new values of the cost and its gradient to compute
@@ -318,8 +318,8 @@ CONTAINS
                cost = cost / cost_ini
 
                i = 1
-write(*,*) proc, "norm_grad_cost_ini", norm_grad_cost_ini
-write(*,*) proc, "control_back", control_back
+! write(*,*) proc, "norm_grad_cost_ini", norm_grad_cost_ini
+! write(*,*) proc, "control_back", control_back
                do k = 1,nb_vars_in_control
 
                   control_back( i : i - 1 + dim_vars_in_control(k) ) = &
@@ -331,8 +331,8 @@ write(*,*) proc, "control_back", control_back
                   i = i + dim_vars_in_control(k)
 
                end do
-write(*,*) proc, "cost", cost
-write(*,*) proc, "control_back", control_back
+! write(*,*) proc, "cost", cost
+! write(*,*) proc, "control_back", control_back
                norm_gradJ  =  sqrt( sum( control_back(:) * control_back(:) ) )
                write(6,'("ite ",I3," , J =",ES13.6," , |grad J| =",ES13.6, " , time =",ES13.6)') &
                ite_min , cost , norm_gradJ , time(1)
@@ -344,7 +344,7 @@ write(*,*) proc, "control_back", control_back
             enddo
             close(1234)
 
-
+stop
 
             end if
 

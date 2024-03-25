@@ -878,6 +878,8 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
        allocate(XSshape(1))
        allocate(slope_x(1))
        allocate(slope_y(1))
+       slope_x(1) = 0_ip
+       slope_y(1) = 0_ip
         write(*,*) "WARNING: you used the option for parameterized bathymetry (use_xsshp == 1), but you did not provide the parameter file (geometry_params.txt)"
 
      endif

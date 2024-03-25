@@ -168,7 +168,7 @@ CONTAINS
                 enddo
 
             endif
-!write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
+write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
 
             if ( use_UVobs == 1 ) then
 
@@ -436,6 +436,7 @@ endif
       !  Fake operation for Tapenade Automatic Differentiation (Last operation ...)
       !================================================================================================================!
       cost = sqrt( cost**2 )
+      write(*,*) "cost", cost
 
    END SUBROUTINE calc_cost_function
 

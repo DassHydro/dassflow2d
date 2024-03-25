@@ -380,8 +380,8 @@ CONTAINS
 
          !bc_back%sum_mass_flux( : )   =  0._rp
 
-write(*,*) proc, "control", control
-write(*,*) proc, "control_back", control_back
+! write(*,*) proc, "control", control
+! write(*,*) proc, "control_back", control_back
 
          call run_model_back( mesh , dof0 , dof0_back , dof , dof_back , cost , cost_back )
 
@@ -394,10 +394,10 @@ write(*,*) proc, "control_back", control_back
       !================================================================================================================!
 
       call write_control_back( dof0_back , mesh )
-write(*,*) proc, "control", control
-write(*,*) proc, "control_back", control_back
-write(*,*) proc, "bc_back%sum_mass_flux( : )", bc_back%sum_mass_flux( : )
-write(*,*) proc, "bc%sum_mass_flux( : )", bc%sum_mass_flux( : )
+! write(*,*) proc, "control", control
+! write(*,*) proc, "control_back", control_back
+! write(*,*) proc, "bc_back%sum_mass_flux( : )", bc_back%sum_mass_flux( : )
+! write(*,*) proc, "bc%sum_mass_flux( : )", bc%sum_mass_flux( : )
 
    END SUBROUTINE adjoint_model
 
@@ -2400,9 +2400,21 @@ Ks_ubound = 0.00001_rp
 
       real(rp), dimension( mesh%nc + mesh%ncb )  ::  temp
 
-      !================================================================================================================!
-      !  Filling input control vector ( control )
-      !================================================================================================================!
+      integer(ip)  ::  mesh_total_size
+
+
+
+         !=============================================================================================================!
+         !  Begin Subroutine
+         !=============================================================================================================!
+
+         #ifdef USE_MPI
+            call MPI_ALLREDUCE( mesh%nc , mesh_total_size , 1 , inttype , MPI_SUM , MPI_COMM_WORLD , code )
+         #else
+            mesh_total_size = mesh%nc
+         #endif
+
+
 
       call system('mkdir -p grad')
 
@@ -2424,7 +2436,17 @@ Ks_ubound = 0.00001_rp
             end do
          end if
 #endif
+write(*,*) c_hydrograph, c_manning, c_bathy, size(control)
 
+            open(1234,file="grad/control_back_current",form='formatted')
+            do i=1, size(control)
+               write(1234,*) control_back(i)
+            enddo
+            close(1234)
+
+
+
+if (c_hydrograph == 1) then
          if ( proc == 0 ) then
 
             do k = 1,bc%nb_in
@@ -2440,7 +2462,9 @@ Ks_ubound = 0.00001_rp
                close(10)
 
             end do
+endif
 
+if (c_rain == 1) then
             do k = 1,bc%nb_rn
 
                write(file_name,'(A,I3.3,A)') 'grad/rain' , k , '_grad'
@@ -2456,34 +2480,47 @@ Ks_ubound = 0.00001_rp
             end do
 
          end if
-
+endif
 !          call write_scalar_field( bathy_cell_back , mesh , 'grad/bathy_grad' )
 
 
-
+if (c_bathy == 1) then
                write(file_name,'(A,I3.3,A)') 'grad/bathy_grad'
 
                open(10,file=file_name,status='replace',form='formatted')
 
-               do i = 1,mesh%nc
+               do i = 1,mesh_total_size
                   write(10,*) i, bathy_cell_back(i)
                end do
 
                close(10)
+endif
 
 
-         do i = 1,mesh%nc
-            temp(i)  =  manning_back( land(i) )
-         end do
 
-         call write_scalar_field( temp , mesh , 'grad/manning_grad' )
+if (c_manning == 1) then
+               write(file_name,'(A,I3.3,A)') 'grad/manning' , k , '_grad'
 
-         do i = 1,mesh%nc
-            temp(i)  =  manning_beta_back( land(i) )
-         end do
+               open(10,file=file_name,status='replace',form='formatted')
 
-         call write_scalar_field( temp , mesh , 'grad/manning_beta_grad' )
+               do i = 1,size(manning_back)
+                  write(10,*) i, manning_back(i)
+               end do
 
+               close(10)
+endif
+
+if (c_manning_beta == 1) then
+               write(file_name,'(A,I3.3,A)') 'grad/manning_beta' , k , '_grad'
+
+               open(10,file=file_name,status='replace',form='formatted')
+
+               do i = 1,size(manning_beta_back)
+                  write(10,*) i, manning_beta_back(i)
+               end do
+
+               close(10)
+endif
       #endif
 
    END SUBROUTINE output_control_back

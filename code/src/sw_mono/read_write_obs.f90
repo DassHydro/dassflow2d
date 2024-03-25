@@ -145,7 +145,7 @@ SUBROUTINE calc_innovation( dof,mesh )
                 innovation ( iobs )%diff( searched_time )    = (h_mean - station( iobs )%h( searched_time ))
                 innovation ( iobs )%ind_t  =  innovation ( iobs )%ind_t + 1
 
-write(*,*) proc, tc, innovation ( iobs )%diff( searched_time ), h_mean,station( iobs )%h( searched_time ) !NOADJ
+! write(*,*) proc, tc, innovation ( iobs )%diff( searched_time ), h_mean,station( iobs )%h( searched_time ) !NOADJ
             endif
 
         enddo

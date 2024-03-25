@@ -173,8 +173,8 @@ class Config(dict):
 
 
        def set(self, custom_config = None):
-              print(custom_config)
-              print(self)
+              #print(custom_config)
+              #print(self)
               """
               update values in fortran kernel based on provided input
               ---------------
@@ -243,6 +243,8 @@ class Config(dict):
                             df2d.wrapping.m_common.set_bc_rain(input_param[k])
                      elif k == 'use_Zobs':
                             df2d.wrapping.m_common.set_use_zobs(input_param[k])
+                     elif k == 'use_hobs':
+                            df2d.wrapping.m_common.set_use_hobs(input_param[k])
                      elif k == 'use_Qobs':
                             df2d.wrapping.m_common.set_use_qobs(input_param[k])
                      elif k == 'use_UVobs':
@@ -312,7 +314,7 @@ class Config(dict):
                      elif k == 'c_ptf':
                             df2d.wrapping.m_model.set_c_ptf(input_param[k])
 
-              print(f"values {[x for x in input_param.keys()]} set")
+              #print(f"values {[x for x in input_param.keys()]} set")
               self.get(input_param)
               return()
 
