@@ -63,7 +63,7 @@
 !>  Initialization Subroutine specific to Shallow-Water Model
 !!
 !! \details
-SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my_phys_desc, my_bc)
+SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_param_model, my_phys_desc, my_bc)
 
    USE m_common
    USE m_mesh
@@ -87,6 +87,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    type( unk ), intent(inout)  ::  dof0
    type( friction_data )    , intent(in   )  ::  my_friction
    type( infiltration_data ), intent(in   )  ::  my_infiltration
+   type( porosity_data )    , intent(in   )  ::  my_porosity
    type( param_model ), intent(in   )  ::  my_param_model
    type( input_data ), intent(in   )  ::  my_phys_desc
    type( bcs ), intent(in   )  ::  my_bc
@@ -112,6 +113,8 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 !     call my_bathy_2_fortran() !(my_param_model)
 
      if (allocated(my_friction%manning))call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
+
+     if (allocated(my_porosity%SP)) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
 
      if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
@@ -1831,7 +1834,31 @@ implicit none
 END SUBROUTINE my_infiltration_2_fortran
 
 
+! use variable my_porosity (wrapped varible)
+! to set up fortran variables (single_porosity, land)
 
+SUBROUTINE my_porosity_2_fortran(my_porosity)
+
+   implicit none
+   
+      type( porosity_data ), intent(in   )  ::  my_porosity
+   
+        nland = my_porosity%nland
+   
+         allocate( single_porosity%SP( my_porosity%nland ) )
+         allocate( single_porosity%land( size(my_porosity%land ) ) )
+      
+         ! loop on all cells to define patch correspondance
+         do i = 1,size(my_porosity%land)
+             single_porosity%land( i )  =  my_porosity%land( i )
+         end do
+   
+         !define values for each patch
+         do i = 1,nland
+            single_porosity%SP(i) = my_porosity%SP(i)
+         end do
+   
+   END SUBROUTINE my_porosity_2_fortran
 
 
 

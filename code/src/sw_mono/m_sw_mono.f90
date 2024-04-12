@@ -164,6 +164,11 @@ MODULE m_model
 
    END TYPE
 
+
+   !===================================================================================================================!
+   !  Infiltration parameters Structure
+   !===================================================================================================================!
+
    TYPE infiltration_data
 
     integer(ip) :: nland
@@ -198,7 +203,25 @@ MODULE m_model
    END TYPE friction_data
 
 
-   ! bathy param structure
+   !===================================================================================================================!
+   !  Porosity parameters Structure
+   !===================================================================================================================!
+
+   TYPE porosity_data
+   !> derived type porosity_data
+
+   integer(ip) :: nland
+   real(rp), dimension(:), allocatable :: SP
+   integer(ip), dimension(:), allocatable  ::  land            !> nland value associated to cell k (land is ordered same as mesh)
+
+   END TYPE porosity_data
+
+   type(porosity_data), target :: single_porosity
+
+
+   !===================================================================================================================!
+   !  Model parameters Structure
+   !===================================================================================================================!
 
       TYPE param_model
    !> bathy_cell
