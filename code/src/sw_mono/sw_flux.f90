@@ -978,19 +978,19 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , zL , phiL , hR , uR , vR , zR , phiR , flu
    !===================================================================================================================!
 
    fL(1)  =  hL * uL
-   fL(2)  =  ( hL * uL * uL  +  0.5_rp * g * hL * hL ) * phiL
+   fL(2)  =  hL * uL * uL  +  0.5_rp * g * hL * hL
 
 
    fR(1)  =  hR * uR
-   fR(2)  =  ( hR * uR * uR  +  0.5_rp * g * hR * hR ) * phiR
+   fR(2)  =  hR * uR * uR  +  0.5_rp * g * hR * hR
 
    !===================================================================================================================!
    !   hll flux computation
    !===================================================================================================================!
 
-   flux(1)  =  phiLR * (sR * fL(1) - sL * fR(1) + sL * sR * ( zR    - zL    ))
+   flux(1)  =  phiLR * (sR * fL(1) - sL * fR(1) + sL * sR * ( hR    - hL    ))
 
-   s2  =  ( demi * (phiR * hR * hR - phiL * hL * hL ) + fact * ( zL - zR ) ) * g / ( max( zerom , sR - sL ) )
+   s2  =  ( demi * (phiR * hR * hR - phiL * hL * hL ) + fact * ( hL - hR ) ) * g / ( max( zerom , sR - sL ) )
 
    ! sM  =  ( sL * hR * uR - sR * hL * uL - sL * sR * ( hR - hL ) ) / ( hR * ( uR - sR ) - hL * ( uL - sL ) )
 
@@ -998,7 +998,7 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , zL , phiL , hR , uR , vR , zR , phiR , flu
 
    s2R  =   sR * s2
 
-   flux(2)  =  sR * ( fL(2) + s2L ) - sL * ( fR(2) - s2R ) + sL * sR * ( phiR * fR(1) - phiL * fL(1) )
+   flux(2)  =  sR * ( phiL * fL(2) + s2L ) - sL * ( phiR * fR(2) - s2R ) + sL * sR * ( phiR * fR(1) - phiL * fL(1) )
 
    flux(1:2)  =  flux(1:2) / ( max( zerom , sR - sL ) )
 
