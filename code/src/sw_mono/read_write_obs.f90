@@ -344,7 +344,10 @@ character(50)  ::  filename
 
           innovUV ( iobs )%diff( searched_time ) =  (u_mean**2_rp + v_mean**2_rp)**(0.5_rp) - &
           (station( iobs )%u( searched_time )**2_rp + station( iobs )%v( searched_time )**2_rp)**(0.5_rp)
-
+!<NOADJ
+!write(*,*) "U: t, model, observed",searched_time, (u_mean**2_rp + v_mean**2_rp)**(0.5_rp), &
+!(station( iobs )%u( searched_time )**2_rp + station( iobs )%v( searched_time )**2_rp)**(0.5_rp)
+!>NOADJ
           innovUV ( iobs )%ind_t  =  innovUV ( iobs )%ind_t + 1
 
 ! Output x,y,obs_diff, cell_id

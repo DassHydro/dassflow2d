@@ -235,7 +235,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
 
             endif
 
-!           call mpi_sum_r( cost_part(1) )
+           call mpi_sum_r( cost_part(1) )
 
 
 !~             !==========================================================================================================!
@@ -264,7 +264,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                         XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
                         (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
                         (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                        ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                        ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**abs(XSshape(1)%s))) &
                         + slope_y(1) * mesh%cell(ie)%grav%y &
                         + slope_x(1) * mesh%cell(ie)%grav%x )
 
@@ -275,7 +275,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                         min( 0._rp, - abs(XSshape(1)%hmax) *&
                         (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
                         (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                        ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                        ((XSshape(1)%xright-XSshape(1)%xcenter)) )**abs(XSshape(1)%s))) &
                         + slope_y(1) * mesh%cell(ie)%grav%y &
                         + slope_x(1) * mesh%cell(ie)%grav%x )
 
@@ -291,7 +291,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                         XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
                         (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
                         (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                        ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                        ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**abs(XSshape(1)%s))) &
                         + slope_y(1) * mesh%cell(ie)%grav%y &
                         + slope_x(1) * mesh%cell(ie)%grav%x )
 
@@ -302,7 +302,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                         min( 0._rp, - abs(XSshape(1)%hmax) *&
                         (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
                         (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                        ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                        ((XSshape(1)%xright-XSshape(1)%xcenter)) )**abs(XSshape(1)%s))) &
                         + slope_y(1) * mesh%cell(ie)%grav%y &
                         + slope_x(1) * mesh%cell(ie)%grav%x )
 
@@ -327,7 +327,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                 do i = 1,mesh%nc
                     cost_part(2) = cost_part(2) + ( ( grad_var(i)%x )**2 +  ( grad_var(i)%y )**2 )
                 end do
-                call mpi_sum_r( cost_part(2) )
+!                 call mpi_sum_r( cost_part(2) )
 
             endif
 
@@ -343,7 +343,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                     XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
                     (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
                     (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                    ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                    ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**abs(XSshape(1)%s))) &
                     + slope_y(1) * mesh%cell(ie)%grav%y &
                     + slope_x(1) * mesh%cell(ie)%grav%x ) ) ** 2
 
@@ -354,7 +354,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                     min( 0._rp, - abs(XSshape(1)%hmax) *&
                     (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
                     (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                    ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                    ((XSshape(1)%xright-XSshape(1)%xcenter)) )**abs(XSshape(1)%s))) &
                     + slope_y(1) * mesh%cell(ie)%grav%y &
                     + slope_x(1) * mesh%cell(ie)%grav%x ) ) **2
 
@@ -372,7 +372,7 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                     XSshape(1)%topz +  min( 0._rp, - abs(XSshape(1)%hmax) *&
                     (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
                     (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                    ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+                    ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**abs(XSshape(1)%s))) &
                     + slope_y(1) * mesh%cell(ie)%grav%y &
                     + slope_x(1) * mesh%cell(ie)%grav%x ) ) ** 2
 
@@ -383,14 +383,14 @@ write(*,*) "cost from use_Zobs", cost_part(1)!NOADJ
                     min( 0._rp, - abs(XSshape(1)%hmax) *&
                     (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
                     (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-                    ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+                    ((XSshape(1)%xright-XSshape(1)%xcenter)) )**abs(XSshape(1)%s))) &
                     + slope_y(1) * mesh%cell(ie)%grav%y &
                     + slope_x(1) * mesh%cell(ie)%grav%x ) ) **2
 
                   endif
                 end do
 
-!                 call mpi_sum_r( cost_part(2) )
+                 call mpi_sum_r( cost_part(2) )
 
               endif
             endif
