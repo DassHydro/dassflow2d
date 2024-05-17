@@ -1,4 +1,4 @@
-!======================================================================================================================!
+======================================================================================================================!
 !	Input File for Shallow-Water Model
 !	(configure your text editor with a 4 tabs space for better reading)
 !======================================================================================================================!
@@ -9,35 +9,31 @@
 !  Mesh Type
 !======================================================================================================================!
 
-	mesh_type		=	'dassflow',				! 'basic' , 'dassflow'
-
-	mesh_name		=	'mesh.geo',			! mesh name
-
+	mesh_type	= 'dassflow',						! 'basic' , 'dassflow'
+	mesh_name 	= "automaticaly_generated_mesh.txt"			!
 
 
 !======================================================================================================================!
 !  Simulation parameters
 !======================================================================================================================!
 
-	ts				=	1000.,					! Simulation Time
+	ts		=	60.d0,						        ! Simulation Time
 
-	dtw				=	100.,					! Time Step to Output Result Files
+	dt		=	1.d0,							! Fixed Time Step
 
-	dtp				=	100.,					! Time Step to Output Post Variables
-
-	dta				=	100.,					! Time Step to Generate BC (for Data Assimilation)
+	dtw		=	3600.d0,						! Output Result File Time Step
 
 !======================================================================================================================!
 !  Numerical parameters
 !======================================================================================================================!
 
-	temp_scheme		=	'euler',		   		! Choice of Temporal Scheme ( euler , rk2 )
+	temp_scheme		=	'euler',				! Choice of Temporal Scheme ( euler , rk2 )
 
-	spatial_scheme	        =	'first_b1',				! Choice of Spatial Scheme ( first , muscl )
+	spatial_scheme	=	'first_b1',				! Choice of Spatial Scheme  (first , muscl )
 
 	adapt_dt		=	1,						! Choice of an Adaptative Time Step (1) or not (0)
 
-	cfl				=	0.8,					! CFL number in case of Adaptative Time Step
+	cfl				=	0.5,					! CFL number in case of Adaptative Time Step
 
 	heps			=	0.,						! Cut-off height to stabilize SW Numerical Schemes
 
@@ -47,34 +43,16 @@
 !  Physical parameters
 !======================================================================================================================!
 
-	g				=	9.81,					! Gravity constant
+	g	=	9.81,								! Gravity constant
 
 !======================================================================================================================!
 !  Output Results Files Switches
 !======================================================================================================================!
 
-	w_gnuplot		=	1,						! in Tecplot ASCII format
-	w_vtk			=	0,						
-        w_obs			=	1,						! Writing obs data relating to obs.txt file
-	use_obs			=	1,
+	w_vtk		=	0,							! in VTK format ( 1 -> ASCII , 2 -> Binary )
+	w_tecplot	=	0,							! in Tecplot ASCII format
+	w_gnuplot       = 	1,
+	w_exact=1,
+	w_norm		=	6
 
-!======================================================================================================================!
-!  Variational Data Assimilation Parameters
-!======================================================================================================================!
-
-	eps_min				=	1.d-3,
-
-	c_manning			=	0,
-	eps_manning			=	0.2,
-	regul_manning		=	0.,
-
-	c_bathy				=	0,
-	eps_bathy			=	0.01,
-	regul_bathy			=	0.,
-
-	c_hydrograph		=   1,
-	eps_hydrograph		=   0.2,
-	regul_hydrograph	=	0.000,
-
-
-//
+/

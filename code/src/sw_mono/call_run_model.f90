@@ -97,7 +97,7 @@ MODULE call_model
  real(rp)   ::  cost            !> cost value
 
 
-  type(Input_Param) :: param     !> not used yet
+ type(Input_Param) :: param     !> not used yet
 
  type(friction_data) :: my_friction !> friction parameterisation
 
@@ -336,8 +336,6 @@ CONTAINS
 
    call Initial(mdl%dof0, mdl%mesh, mdl%my_friction, mdl%my_infiltration, &
    mdl%my_porosity,mdl%my_param_model, mdl%my_phys_desc, mdl%my_bc)
-
-   ! ADD mdl%my_porosity
 
    !>======================================================================================================================!
    !>  Fill arrays usefull to save time computation for some schemes (MUSCL, Diamond Scheme, etc ... )
@@ -749,10 +747,13 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    !  Global Variables
    type(msh), intent(in)  ::  mesh
    type(porosity_data), intent(inout) :: my_porosity
-   
-   allocate (my_porosity%land(mesh%nc))
-   allocate (my_porosity%SP(my_porosity%nland))
 
+    !my_porosity%nland  =  mesh%nc
+    allocate ( my_porosity%land( mesh%nc ) )
+    allocate ( my_porosity%Phi( my_porosity%nland ) )
+
+    allocate ( my_porosity%PhiW( my_porosity%nland ) )
+    allocate ( my_porosity%PhiG( mesh%ne ) )
   
  END SUBROUTINE porosity_initialise
 
@@ -766,8 +767,11 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
      !  Global Variables
      type(porosity_data), intent(inout)  ::  my_porosity
 
-     if (allocated(my_porosity%land))            deallocate(my_porosity%land)
-     if (allocated(my_porosity%SP)) deallocate(my_porosity%SP)
+     if (allocated(my_porosity%land)) deallocate(my_porosity%land)
+     if (allocated(my_porosity%Phi))  deallocate(my_porosity%Phi)
+
+     if (allocated(my_porosity%PhiW)) deallocate(my_porosity%PhiW)
+     if (allocated(my_porosity%PhiG)) deallocate(my_porosity%PhiG)
 
  END SUBROUTINE porosity_finalise
 

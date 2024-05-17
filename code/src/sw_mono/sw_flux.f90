@@ -919,7 +919,7 @@ END SUBROUTINE sw_hllc_balanced_muscl_src_out
 !**********************************************************************************************************************!
 
 
-SUBROUTINE sw_hllc_SP( hL , uL , vL , phiL , hR , uR , vR , phiR , flux )
+SUBROUTINE sw_hllc_SP( hL , uL , vL , zL , phiL , hR , uR , vR , zR , phiR , flux )
 
    USE m_common
    USE m_model
@@ -930,8 +930,8 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , phiL , hR , uR , vR , phiR , flux )
 !  Interface Variables
 !======================================================================================================================!
 
-   real(rp), intent(in)  ::  hL , uL , vL , phiL
-   real(rp), intent(in)  ::  hR , uR , vR , phiR
+   real(rp), intent(in)  ::  hL , uL , vL , zL , phiL
+   real(rp), intent(in)  ::  hR , uR , vR , zR , phiR
 
 
    real(rp), dimension(3), intent(out)  ::  flux
@@ -941,7 +941,7 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , phiL , hR , uR , vR , phiR , flux )
 !  Local Variables
 !======================================================================================================================!
 
-   real(rp)  ::  sL , sR , sM , cL , cR
+   real(rp)  ::  sL , sR , s2 , cL , cR
 
    real(rp), dimension(3)  ::  fL , fR
 
@@ -966,13 +966,11 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , phiL , hR , uR , vR , phiR , flux )
 
       flux(1:3) = 0._rp 
       
-      ! Il faut revoir les différents cas afin de formuler s2L et s2R : Voir SW2D
-      
       return
 
    end if
 
-   phiLR  =  min( phiL , phiR )
+   phiLR  =  min ( phiL , phiR )
    fact  =  demi * phiLR * ( hL + hR )
 
    !===================================================================================================================!
@@ -980,50 +978,42 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , phiL , hR , uR , vR , phiR , flux )
    !===================================================================================================================!
 
    fL(1)  =  hL * uL
-   fL(2)  =  hL * uL * uL  +  0.5_rp * g * hL * hL
+   fL(2)  =  ( hL * uL * uL  +  0.5_rp * g * hL * hL ) * phiL
 
 
    fR(1)  =  hR * uR
-   fR(2)  =  hR * uR * uR  +  0.5_rp * g * hR * hR
+   fR(2)  =  ( hR * uR * uR  +  0.5_rp * g * hR * hR ) * phiR
 
    !===================================================================================================================!
    !   hll flux computation
    !===================================================================================================================!
 
-   flux(1)  =  phiLR * (sR * fL(1) - sL * fR(1) + sL * sR * ( hR    - hL    ))
+   flux(1)  =  phiLR * (sR * fL(1) - sL * fR(1) + sL * sR * ( zR    - zL    ))
 
-   sM  =  demi * (phiR * hR * hR - phiL * hL * hL ) + fact * ( hL - hR )
+   s2  =  ( demi * (phiR * hR * hR - phiL * hL * hL ) + fact * ( zL - zR ) ) * g / ( max( zerom , sR - sL ) )
 
-   sM  =  sM * g / ( sR - sL )
+   ! sM  =  ( sL * hR * uR - sR * hL * uL - sL * sR * ( hR - hL ) ) / ( hR * ( uR - sR ) - hL * ( uL - sL ) )
 
-   s2L  =  -sL * sM
+   s2L  =  -sL * s2
 
-   s2R  =  sR * sM
+   s2R  =   sR * s2
 
    flux(2)  =  sR * ( fL(2) + s2L ) - sL * ( fR(2) - s2R ) + sL * sR * ( phiR * fR(1) - phiL * fL(1) )
 
-   flux(1:2)  =  flux(1:2) / ( sR - sL )
+   flux(1:2)  =  flux(1:2) / ( max( zerom , sR - sL ) )
 
    !===================================================================================================================!
    !   hllC flux computation
    !===================================================================================================================!
 
-   !sM  =  ( sL * hR * uR - sR * hL * uL - sL * sR * ( hR - hL ) ) / ( hR * ( uR - sR ) - hL * ( uL - sL ) )
+   if ( flux(1) >= 0) then
 
-   !if      ( sM < 0._rp ) then
+      flux(3) = flux(1) * vL
 
-   !   flux(3)  =  flux(1) * vR
+   else
 
-   !else if ( sM > 0._rp ) then
+      flux(3) = flux(1) * vR
 
-   !   flux(3)  =  flux(1) * vL
-
-   !else
-
-   !   flux(3)  =  flux(1) * demi * ( vL + vR )
-
-   !end if
-
-   flux(3)  =  demi * ( flux(1) * ( vL + vR ) + abs(flux(1)) * ( vL - vR ))
+   end if
 
 END SUBROUTINE sw_hllc_SP

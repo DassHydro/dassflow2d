@@ -1,0 +1,7 @@
+h5py>=3.6.0
+matplotlib>=3.4.1
+numpy>=1.21.2
+pandas>=1.3.5
+pyvista
+scipy>=1.7.1
+vtk

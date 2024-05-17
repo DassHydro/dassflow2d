@@ -112,26 +112,28 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 !     call my_bathy_2_fortran() !(my_param_model)
 
-     if (allocated(my_friction%manning))call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
+   if (allocated(my_friction%manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
 
-     if (allocated(my_porosity%SP)) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
+   if (allocated(my_porosity%Phi) .or. ( allocated(my_porosity%PhiG) .and. allocated(my_porosity%PhiW) ) ) then
+      call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
+   end if
 
-     if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
+   if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
-     if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
+   if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
 
-     if (allocated(my_bc%rain)) then
-         call my_bc_2_fortran(my_bc)
-     elseif (.not. allocated(bc%rain)) then 
-        allocate( bc%rain(1) )
-        allocate( bc%rain(1)%q(1) )
-        allocate( bc%rain(1)%t(1) )
+   if (allocated(my_bc%rain)) then
+      call my_bc_2_fortran(my_bc)
+   elseif (.not. allocated(bc%rain)) then 
+      allocate( bc%rain(1) )
+      allocate( bc%rain(1)%q(1) )
+      allocate( bc%rain(1)%t(1) )
 
-        bc%rain(1)%q = 0._rp
-        bc%rain(1)%t = 0._rp
-        bc%rain(1)%cumul = 0._rp
-        bc%rain(1)%qin = 0._rp
-     endif
+      bc%rain(1)%q = 0._rp
+      bc%rain(1)%t = 0._rp
+      bc%rain(1)%cumul = 0._rp
+      bc%rain(1)%qin = 0._rp
+   endif
      
 #ifdef USE_MPI
 
@@ -168,55 +170,55 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    ! just keep parralel order com_dof
    !===================================================================================================================!
 
-     filenames(1) = "ic.bin"
-     inquire( file = 'ic.bin'      , exist = file_exist(1) )
-     filenames(2) = "restart.bin"
-     inquire( file = 'restart.bin' , exist = file_exist(2) )
-     filenames(3) = "dof_init.txt"
-     inquire( file = 'dof_init.txt', exist = file_exist(3) )
-     filenames(4) = "zs_init.txt"
-     inquire( file = 'zs_init.txt' , exist = file_exist(4) )
+   filenames(1) = "ic.bin"
+   inquire( file = 'ic.bin'      , exist = file_exist(1) )
+   filenames(2) = "restart.bin"
+   inquire( file = 'restart.bin' , exist = file_exist(2) )
+   filenames(3) = "dof_init.txt"
+   inquire( file = 'dof_init.txt', exist = file_exist(3) )
+   filenames(4) = "zs_init.txt"
+   inquire( file = 'zs_init.txt' , exist = file_exist(4) )
      
-     if      ( file_exist(1) ) then
+   if      ( file_exist(1) ) then
 
-        file_nb = 1
-        open(10,file='ic.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
-        line_read = 1
+      file_nb = 1
+      open(10,file='ic.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
+      line_read = 1
 
-        read(10,rec=1, err=100) tc0
+      read(10,rec=1, err=100) tc0
 
-        tc0 = 0._rp
+      tc0 = 0._rp
 
-     else if (file_exist(3)) then
-        file_nb = 3
-        open(10,file='dof_init.txt',status='old',form='formatted')
-        line_read = 1
-        do i = 1,mesh%nc
+   else if (file_exist(3)) then
+      file_nb = 3
+      open(10,file='dof_init.txt',status='old',form='formatted')
+      line_read = 1
+      do i = 1,mesh%nc
   			read(10,*, err=100, end=100) dof0%h(i), dof0%u(i), dof0%v(i)
          line_read = line_read + 1
       end do
 
 
-     else if (file_exist(4)) then
+   else if (file_exist(4)) then
 
-       file_nb = 4
-       open(10,file='zs_init.txt',status='old',form='formatted')
-  		 line_read = 1
-       do i = 1,mesh%nc
+      file_nb = 4
+      open(10,file='zs_init.txt',status='old',form='formatted')
+  		line_read = 1
+      do i = 1,mesh%nc
   			read(10,*, err=100, end=100) dof0%h(i), dof0%u(i), dof0%v(i)
          line_read = line_read + 1
       end do
         
-     else if ( file_exist(2) ) then
+   else if ( file_exist(2) ) then
 
-       file_nb = 2
-       open(10,file='restart.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
-       line_read = 1
-        read(10,rec=1, err=100) tc0
-        line_read = line_read + 1
-        if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
+      file_nb = 2
+      open(10,file='restart.bin',form='unformatted',status='old',access='direct',recl=3*length_real)
+      line_read = 1
+      read(10,rec=1, err=100) tc0
+      line_read = line_read + 1
+      if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
 
-     end if
+   end if
 
    call com_dof( dof0 , mesh )
 
@@ -352,22 +354,22 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
       line_read = line_read + 1
 
       if (l .ne. bc%nb_gr4in) write(*,*) 'There are ',l,' GR4 warmup catchements and ',&
-     bc%nb_gr4in, ' GR4 launch catchments'
+         bc%nb_gr4in, ' GR4 launch catchments'
 
       do i=1,bc%nb_gr4in
 
-        read(10,*, err=100, end=100)
-        line_read = line_read + 1
-        read(10,*, err=100, end=100) l
-        line_read = line_read + 1
-
-        allocate( bc%gr4( i )%P0( l ))
-        allocate( bc%gr4( i )%E0( l ))
-
-        do j=1,l
-         read(10,*, err=100, end=100) bc%gr4( i )%P0( j ), bc%gr4( i )%E0( j )
+         read(10,*, err=100, end=100)
          line_read = line_read + 1
-        enddo
+         read(10,*, err=100, end=100) l
+         line_read = line_read + 1
+
+         allocate( bc%gr4( i )%P0( l ))
+         allocate( bc%gr4( i )%E0( l ))
+
+         do j=1,l
+          read(10,*, err=100, end=100) bc%gr4( i )%P0( j ), bc%gr4( i )%E0( j )
+          line_read = line_read + 1
+         enddo
 
       enddo
 
@@ -470,7 +472,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 !~       end if
 
-    end if
+   end if
    !===================================================================================================================!
    !  Loading/Creating hpresc File
    !====================================================================================================
@@ -495,7 +497,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
       read(10,*, err=100, end=100) bc%nb_out
       line_read = line_read + 1
 
-    allocate( bc%hpresc( bc%nb_out ) )
+      allocate( bc%hpresc( bc%nb_out ) )
 
       do i = 1,bc%nb_out
 		! 3 comment lines of the file
@@ -548,7 +550,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
       read(10,*, err=100, end=100) bc%nb_out
       line_read = line_read + 1
 
-    allocate( bc%zspresc( bc%nb_out ) )
+      allocate( bc%zspresc( bc%nb_out ) )
 
       do i = 1,bc%nb_out
 		! 3 comment lines of the file
@@ -582,42 +584,18 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    if (bc_rain  == 1) then
 
-   filenames(10)="rain.txt"
-   inquire( file = 'rain.txt' , exist = file_exist(1) )
+      filenames(10)="rain.txt"
+      inquire( file = 'rain.txt' , exist = file_exist(1) )
 
-   call mpi_wait_all
+      call mpi_wait_all
 
-   if ( file_exist(1) ) then
+      if ( file_exist(1) ) then
 
-      file_nb = 10
-      open(10,file='rain.txt',status='old')
-      line_read = 1
+         file_nb = 10
+         open(10,file='rain.txt',status='old')
+         line_read = 1
 
-      if (.not. allocated(bc%rain_land)) allocate(bc%rain_land(mesh%nc)) !in case rain.txt is read directly
-
-      read(10,*, err=100, end=100)
-      line_read = line_read + 1
-      read(10,*, err=100, end=100)
-      line_read = line_read + 1
-      read(10,*, err=100, end=100)
-      line_read = line_read + 1
-      read(10,*, err=100, end=100) bc%nb_rn
-      line_read = line_read + 1
-      read(10,*, err=100, end=100)
-      line_read = line_read + 1
-      read(10,*, err=100, end=100)
-      line_read = line_read + 1
-      read(10,*, err=100, end=100)
-      line_read = line_read + 1
-
-      allocate(bc%rain(bc%nb_rn))
-
-      do i = 1,bc%nb_rn
-         read(10,*, err=100, end=100) bc%rain(i)%x_min, bc%rain(i)%x_max, bc%rain(i)%y_min, bc%rain(i)%y_max
-         line_read = line_read + 1
-      enddo
-
-      do i = 1,bc%nb_rn
+         if (.not. allocated(bc%rain_land)) allocate(bc%rain_land(mesh%nc)) !in case rain.txt is read directly
 
          read(10,*, err=100, end=100)
          line_read = line_read + 1
@@ -625,58 +603,82 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
          line_read = line_read + 1
          read(10,*, err=100, end=100)
          line_read = line_read + 1
-         read(10,*, err=100, end=100) j
+         read(10,*, err=100, end=100) bc%nb_rn
+         line_read = line_read + 1
+         read(10,*, err=100, end=100)
+         line_read = line_read + 1
+         read(10,*, err=100, end=100)
+         line_read = line_read + 1
+         read(10,*, err=100, end=100)
          line_read = line_read + 1
 
-         allocate( bc%rain(i)%t(j) )
-         allocate( bc%rain(i)%q(j) )
+         allocate(bc%rain(bc%nb_rn))
 
-         do k = 1,j
-            read(10,*, err=100, end=100) bc%rain(i)%t(k) , bc%rain(i)%q(k)
+         do i = 1,bc%nb_rn
+            read(10,*, err=100, end=100) bc%rain(i)%x_min, bc%rain(i)%x_max, bc%rain(i)%y_min, bc%rain(i)%y_max
             line_read = line_read + 1
-            bc%rain(i)%q(k) = bc%rain(i)%q(k) / 1000._rp / 3600._rp
          enddo
-      enddo
-      close(10)
+
+         do i = 1,bc%nb_rn
+
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100)
+            line_read = line_read + 1
+            read(10,*, err=100, end=100) j
+            line_read = line_read + 1
+
+            allocate( bc%rain(i)%t(j) )
+            allocate( bc%rain(i)%q(j) )
+
+            do k = 1,j
+               read(10,*, err=100, end=100) bc%rain(i)%t(k) , bc%rain(i)%q(k)
+               line_read = line_read + 1
+               bc%rain(i)%q(k) = bc%rain(i)%q(k) / 1000._rp / 3600._rp
+            enddo
+         enddo
+         close(10)
       
-    !    ===================================================================================================================!
-    !     Rain condition Initialization
-    !    ===================================================================================================================!
+        ! ===================================================================================================================!
+        !     Rain condition Initialization
+        ! ===================================================================================================================!
 
-      do i=1,mesh%nc
+         do i=1,mesh%nc
 
-         do k=1,bc%nb_rn
+            do k=1,bc%nb_rn
 
-              call spatial_index_fromxy(mesh, bc%rain(k)%x_min, bc%rain(k)%x_max,&
-                                              bc%rain(k)%y_min, bc%rain(k)%y_max, spatial_index)
+               call spatial_index_fromxy(mesh, bc%rain(k)%x_min, bc%rain(k)%x_max,&
+                                               bc%rain(k)%y_min, bc%rain(k)%y_max, spatial_index)
 
-              if (spatial_index .ne. 0) exit
+               if (spatial_index .ne. 0) exit
+
+            enddo
 
          enddo
 
-      enddo
+         ! Output cell/rain attribution
+         open(10,file='rain_post.dat',status='replace',form='formatted')
 
-!         Output cell/rain attribution
-        open(10,file='rain_post.dat',status='replace',form='formatted')
+         write(10,*) '# Gnuplot DataFile Version'
+         write(10,*) '# id x y rain_group'
 
-        write(10,*) '# Gnuplot DataFile Version'
-        write(10,*) '# id x y rain_group'
+         do i=1,mesh%nc !ADD ID_CELL AFTER MERGE
 
-        do i=1,mesh%nc !ADD ID_CELL AFTER MERGE
+            write(10,'(i5,2ES15.8,i3)') i, mesh%cell(i)%grav%x    , &
+                                           mesh%cell(i)%grav%y    , &
+                                            bc%rain_land(i)
+         end do
 
-                    write(10,'(i5,2ES15.8,i3)') i, mesh%cell(i)%grav%x    , &
-                                        mesh%cell(i)%grav%y    , &
-                                         bc%rain_land(i)
-        end do
-
-        close(10)
+         close(10)
 
 
-    else
+      else
          mesh%cell(:)%rain = 0_ip
          write(*,*) "WARNING: Rain was not initialized from rain.txt. You need to initialize it through init_bc."
-!          call Stopping_Program_Sub( 'File rain.txt not provided ...')
-    endif
+         !  call Stopping_Program_Sub( 'File rain.txt not provided ...')
+      endif
 
    end if
 
@@ -1053,6 +1055,29 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    call FV_Cell_Grad ( grad_z  , bathy_cell , mesh )
    call FV_Cell_Grad2( grad_z2 , bathy_cell , mesh )
+
+   !===================================================================================================================!
+   !  Initialization of Ghost porosity and Boundary Condition Type
+   !===================================================================================================================!
+
+   call reallocate_r( SPorosity%Phi , mesh%nc + mesh%ncb )
+
+   do i = 1,mesh%ncb
+
+      SPorosity%Phi( mesh%nc + i ) = SPorosity%Phi( mesh%cellb(i)%cell )
+
+   end do
+
+   !===================================================================================================================!
+   !  Cell Bathymetry Gradient
+   !===================================================================================================================!
+
+   allocate( grad_Phi ( mesh%nc + mesh%ncb ) )
+   allocate( grad_Phi2( mesh%nc + mesh%ncb ) )
+
+   call FV_Cell_Grad ( grad_Phi  , SPorosity%Phi , mesh )
+   call FV_Cell_Grad2( grad_Phi2 , SPorosity%Phi , mesh )
+
 
    !===================================================================================================================!
    !  Set heps to be at minimum to zero machine precision
@@ -1648,7 +1673,6 @@ write(*,*) " line commented temporarily ! station( iobs )%pt( pt )%cell = mesh%i
 
          write(100,'(A)') 'TITLE = "DassFlow Station Position"'
          write(100,'(A)') 'VARIABLES = "x","y"'
-
          write(100,'(2ES15.7)') coord%x , coord%y
 
          close(100)
@@ -1745,24 +1769,25 @@ SUBROUTINE my_friction_2_fortran(my_friction)
 
 implicit none
 
-   type( friction_data ), intent(in   )  ::  my_friction
+type( friction_data ), intent(in   )  ::  my_friction
 
-     nland = my_friction%nland
+nland = my_friction%nland
 
-!       allocate( land( size( my_friction%land ) ) )
-      allocate( manning( my_friction%nland ) )
-      allocate( manning_beta( my_friction%nland ) )
 
-      ! loop on all cells to define patch correspondance
-      do i = 1,size(my_friction%land)
-          land( i )  =  my_friction%land( i )
-      end do
+! allocate( land( size( my_friction%land ) ) )
+allocate( manning( size ( my_friction%manning ) ) )
+allocate( manning_beta( size ( my_friction%manning_beta ) ) )
 
-      !define values for each patch
-      do i = 1,nland
-        manning(i) = my_friction%manning(i)
-        manning_beta(i) = my_friction%manning_beta(i)
-      end do
+! loop on all cells to define patch correspondance
+do i = 1,mesh%nc
+   land( i )  =  my_friction%land( i )
+end do
+
+! define values for each patch
+do i = 1,nland
+   manning(i) = my_friction%manning(i)
+   manning_beta(i) = my_friction%manning_beta(i)
+end do
 
 END SUBROUTINE my_friction_2_fortran
 !
@@ -1835,30 +1860,52 @@ END SUBROUTINE my_infiltration_2_fortran
 
 
 ! use variable my_porosity (wrapped varible)
-! to set up fortran variables (single_porosity, land)
+! to set up fortran variables (SPorosity%Phi, land)
 
 SUBROUTINE my_porosity_2_fortran(my_porosity)
 
-   implicit none
+implicit none
    
-      type( porosity_data ), intent(in   )  ::  my_porosity
+type( porosity_data ), intent(in   )  ::  my_porosity
+
+!< Single Porosity
+
+SPorosity%nland = my_porosity%nland
+
+allocate( SPorosity%Phi ( size( my_porosity%Phi  ) ) )
+allocate( SPorosity%land( size( my_porosity%land ) ) )
+
+! loop on all cells to define patch correspondance
+do i = 1,size( my_porosity%land )
+   SPorosity%land( i )  =  my_porosity%land( i )
+end do
    
-        nland = my_porosity%nland
-   
-         allocate( single_porosity%SP( my_porosity%nland ) )
-         allocate( single_porosity%land( size(my_porosity%land ) ) )
-      
-         ! loop on all cells to define patch correspondance
-         do i = 1,size(my_porosity%land)
-             single_porosity%land( i )  =  my_porosity%land( i )
-         end do
-   
-         !define values for each patch
-         do i = 1,nland
-            single_porosity%SP(i) = my_porosity%SP(i)
-         end do
-   
-   END SUBROUTINE my_porosity_2_fortran
+! define values for each patch
+do i = 1,size( my_porosity%Phi )
+   SPorosity%Phi( i ) = my_porosity%Phi( i )
+end do
+
+!< Integral Porosity
+
+IPorosity%nland = my_porosity%nland
+
+allocate( IPorosity%land ( size( my_porosity%land ) ) )
+allocate( IPorosity%PhiW ( size( my_porosity%PhiW ) ) )
+allocate( IPorosity%PhiG ( size( my_porosity%PhiG ) ) )
+
+do i = 1,size( my_porosity%land )
+   IPorosity%land(i) = my_porosity%land(i)
+end do
+
+do i = 1,size( my_porosity%PhiW )
+   IPorosity%PhiW(i) = my_porosity%PhiW(i)
+end do
+
+do i = 1,size( my_porosity%PhiG )
+   IPorosity%PhiG(i) = my_porosity%PhiG(i)
+end do
+
+END SUBROUTINE my_porosity_2_fortran
 
 
 

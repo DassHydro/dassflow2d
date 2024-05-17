@@ -935,7 +935,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
          open(10,file=filename,status='replace',form='formatted')
 
          write(10,*) '# Gnuplot DataFile Version'
-         write(10,*) '# i x y bathy h zs Manning u v'
+         write(10,*) '# i x y bathy h zs Manning u v porosity'
 
          close(10)
 
@@ -956,7 +956,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
          do i=1,mesh%nc
 
-            write(10,'(I5,8(" ",ES15.8))') swap_index(i)					, &
+            write(10,'(I5,9(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
                                  bathy_cell(i)          , &
@@ -965,7 +965,8 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  manning( land(i) )     , &
                                  !infil%GA( infil%land(i)  )%Ks,&
                                  dof%u(i)               , &
-                                 dof%v(i)
+                                 dof%v(i)               , &
+                                 SPorosity%Phi(i)
          end do
 
 
@@ -1119,7 +1120,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
    rec_index = rec_index + mesh%nc
    
    !===================================================================================================================!
-   !   Writing VTK file u cell data
+   !   Writing VTK file v cell data
    !===================================================================================================================!
 
    write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
@@ -1287,6 +1288,28 @@ SUBROUTINE v_vtk( dof , mesh , filename )
     rec_index = rec_index + mesh%nc
 
    endif
+
+!===================================================================================================================!
+!  Writing VTK file porosity cell data
+!===================================================================================================================!   
+
+   if ( use_porosity == 1 ) then 
+
+      write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+      write(10,rec=rec_index+2,fmt='(A16   )') 'porosity               '
+      write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+      write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+      write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+      rec_index = rec_index + 5
+
+      do i = 1,mesh%nc
+         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(i) , char(10)
+      end do
+
+      rec_index = rec_index + mesh%nc
+
+   end if
 
    call mpi_wait_all
 close(10)
@@ -1565,6 +1588,28 @@ SUBROUTINE v_vtk_init( mesh , filename )
         rec_index = rec_index + mesh%nc
 
     endif
+
+!===================================================================================================================!
+!  Writing VTK file porosity cell data
+!===================================================================================================================!   
+
+    if ( use_porosity == 1 ) then 
+
+      write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
+      write(10,rec=rec_index+2,fmt='(A16   )') 'porosity               '
+      write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
+      write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
+      write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
+
+      rec_index = rec_index + 5
+
+      do i = 1,mesh%nc
+         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(i) , char(10)
+      end do
+
+      rec_index = rec_index + mesh%nc
+
+   end if
 
 
     ! Physical descriptors
@@ -2076,6 +2121,31 @@ endif
 !
 !    end do
 
+   !===================================================================================================================!
+   !   Writing VTK file porosity cell data
+   !===================================================================================================================!
+
+if ( use_porosity == 1 ) then
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+         if ( proc == 0    ) write(10) 'SCALARS '//'porosity'//' double 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) SPorosity%Phi(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+
+         close(10)
+              
+      end if
+
+   call mpi_wait_all
+
+   enddo
+end if
+
 
 END SUBROUTINE v_vtk_bin
 
@@ -2374,6 +2444,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
       end if
       call mpi_wait_all
    enddo
+
    
    do k = 0,np-1
       if ( proc == k ) then
@@ -2388,6 +2459,30 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
       end if
       call mpi_wait_all
    enddo
+
+!===================================================================================================================!
+!   Writing VTK file porosity cell data
+!===================================================================================================================!
+   if ( use_porosity == 1 ) then
+      do k = 0,np-1
+
+         if ( proc == k ) then
+
+            open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+            if ( proc == 0    ) write(10) 'SCALARS '//'porosity'//' double 1'//char(10)
+            if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                                write(10) SPorosity%Phi(1:mesh%nc)
+            if ( proc == np-1 ) write(10) char(10)
+
+            close(10)
+
+         end if
+
+         call mpi_wait_all
+
+      enddo
+   end if
    
    !===================================================================================================================!
    ! Writing VTK file rain_land cell data

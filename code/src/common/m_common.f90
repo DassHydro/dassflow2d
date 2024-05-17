@@ -73,7 +73,7 @@ MODULE m_common
 !======================================================================================================================!
 
    integer, parameter  ::  ip = 4                              !< Fix the integer numbers machine precision
-   integer, parameter  ::  rp = 8                              !<  Fix the real    numbers machine precision
+   integer, parameter  ::  rp = 8                              !< Fix the real    numbers machine precision
 
 !   integer, parameter  ::  selected_int_kind ( 18       )     ! Fix the integer numbers machine precision
 !   integer, parameter  ::  selected_real_kind( 15 , 307 )     ! Fix the real    numbers machine precision
@@ -100,8 +100,8 @@ MODULE m_common
    character(len=lchar)  ::  bc_W                             !< Type of boundary condition at West  mesh boundary if mesh = 'basic'
    character(len=lchar)  ::  bc_E                             !< Type of boundary condition at East  mesh boundary if mesh = 'basic'
 
-   integer(ip) :: bc_rain                                      ! rain condition
-   integer(ip) :: bc_infil                                     ! infiltration condition
+   integer(ip)  :: bc_rain                                    !< Rain condition
+   integer(ip)  :: bc_infil                                   !< Infiltration condition
 
    real(rp)     ::  lx                                        !< Lenght of computational domain x horizontal direction if mesh = 'basic'
    real(rp)     ::  ly                                        !< Lenght of computational domain y vertical   direction if mesh = 'basic'
@@ -115,7 +115,7 @@ MODULE m_common
    real(rp)     ::  dt                                        !< Time step if not adaptative
    real(rp)     ::  cfl                                       !< CFL value if adaptative
    
-   logical  ::  do_warmup                                      !> Toggle Warmup run for GR4 module
+   logical      ::  do_warmup                                 !> Toggle Warmup run for GR4 module
 
    real(rp)     ::  dtw                                       !<  Time step to Output Result Files
    real(rp)     ::  dtp                                       !<  Time step to Output Post Variables
@@ -144,6 +144,7 @@ MODULE m_common
    integer(ip)  ::  xsshp_along_y                              !< Toogle whether channel is defined along y-axis
    
    integer(ip)  ::  use_ptf                                    !< Toogle whether a pedotransfer function is used to calculate infil parameters from phys_desc parameters
+   integer(ip)  ::  use_porosity                              !< Use Porosity
 
    character(len=lchar)  ::  spatial_scheme                   !< Name of Spatial  Discretization Scheme ('muscl' only)
    character(len=lchar)  ::  temp_scheme                      !< Name of Temporal Discretization Scheme ('imex' or 'euler')
