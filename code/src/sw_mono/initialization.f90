@@ -116,19 +116,19 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
      if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
      if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
-
-     if (allocated(my_bc%rain)) then
-         call my_bc_2_fortran(my_bc)
-     elseif (.not. allocated(bc%rain)) then 
-        allocate( bc%rain(1) )
-        allocate( bc%rain(1)%q(1) )
-        allocate( bc%rain(1)%t(1) )
-
-        bc%rain(1)%q = 0._rp
-        bc%rain(1)%t = 0._rp
-        bc%rain(1)%cumul = 0._rp
-        bc%rain(1)%qin = 0._rp
-     endif
+!
+!      if (allocated(my_bc%rain)) then
+!          call my_bc_2_fortran(my_bc)
+!      elseif (.not. allocated(bc%rain)) then
+!         allocate( bc%rain(1) )
+!         allocate( bc%rain(1)%q(1) )
+!         allocate( bc%rain(1)%t(1) )
+!
+!         bc%rain(1)%q = 0._rp
+!         bc%rain(1)%t = 0._rp
+!         bc%rain(1)%cumul = 0._rp
+!         bc%rain(1)%qin = 0._rp
+!      endif
      
 #ifdef USE_MPI
 
@@ -468,6 +468,14 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 !~       end if
 
     end if
+
+
+   call my_bc_2_fortran(my_bc)
+
+
+
+
+
    !===================================================================================================================!
    !  Loading/Creating hpresc File
    !====================================================================================================
@@ -1967,6 +1975,8 @@ SUBROUTINE my_bc_2_fortran(my_bc)
 
     type( bcs ), intent(in   )  ::  my_bc
 
+
+    if (allocated(my_bc%rain)) then
       allocate(bc%rain(my_bc%nb_rn))
       bc%nb_rn = my_bc%nb_rn
 
@@ -1989,6 +1999,27 @@ SUBROUTINE my_bc_2_fortran(my_bc)
       do i = 1,size(my_bc%rain_land)
         bc%rain_land(i) = my_bc%rain_land(i)
       enddo
+   elseif (.not. allocated(bc%rain)) then
+        allocate( bc%rain(1) )
+        allocate( bc%rain(1)%q(1) )
+        allocate( bc%rain(1)%t(1) )
+
+        bc%rain(1)%q = 0._rp
+        bc%rain(1)%t = 0._rp
+        bc%rain(1)%cumul = 0._rp
+        bc%rain(1)%qin = 0._rp
+     endif
+
+      if ( allocated(my_bc%hyd) ) then
+         do i = 1, bc%nb_in
+!             write(*,*) i, bc%hyd(i)%t(:), bc%hyd(i)%q(:)
+            bc%hyd(i)%t(:) = my_bc%hyd(i)%t
+            bc%hyd(i)%q(:) = my_bc%hyd(i)%q
+!             write(*,*) i+10, bc%hyd(i)%t(:), bc%hyd(i)%q(:)
+         enddo
+      endif
+
+
     
 
 END SUBROUTINE my_bc_2_fortran

@@ -784,6 +784,18 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
         allocate(my_bc%rain(i)%t(my_bc%nb_rn_t))
         allocate(my_bc%rain(i)%q(my_bc%nb_rn_t))
+
+      enddo
+
+
+
+      allocate(my_bc%hyd( my_bc%nb_in))
+
+      do i = 1,my_bc%nb_in
+        allocate( my_bc%hyd( i )%t( 1 ) )
+        allocate( my_bc%hyd( i )%q( 1 ) )
+        my_bc%hyd(i)%t = 0._rp
+        my_bc%hyd(i)%q = 0._rp
       enddo
 
 

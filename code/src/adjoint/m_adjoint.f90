@@ -1333,15 +1333,15 @@ Kappa9_ubound = 50_rp
 Ks_lbound = 0.0000001_rp
 Ks_ubound = 0.00001_rp
 
-shape_s_lbound = 0.2_rp
+shape_s_lbound = 0.1_rp
 shape_s_ubound = 2_rp
 hmax_lbound = 1.5_rp
 hmax_ubound = 3.5_rp
 xcenter_lbound = 20_rp
 xcenter_ubound = 40_rp
 
-hydrograph_lbound = 7.5_rp
-hydrograph_ubound = 9.5_rp
+hydrograph_lbound = 7.65_rp
+hydrograph_ubound = 9.35_rp
 
 
       if ( c_shape_s == 1 ) then

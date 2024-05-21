@@ -334,7 +334,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !===================================================================================================================!
    !  Cost Function Calculation using Innovation Vector
    !===================================================================================================================!
-write(*,*) "call calc_cost_function( cost , mesh )"
+! write(*,*) "call calc_cost_function( cost , mesh )"
    call calc_cost_function( cost , mesh )
 
 CONTAINS

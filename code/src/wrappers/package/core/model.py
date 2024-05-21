@@ -319,8 +319,9 @@ class dassflowmodel(object):
                 
                 
         if self.run_type =="direct":
-            self.outputs = Output(bin_dir = self.bin_dir, 
-                ts = self.config["ts"], 
+            #print(self.config)
+            self.outputs = Output(bin_dir = self.bin_dir,
+                ts = 0,#self.config["ts"],
                 boundary_metadata = self.boundary.get_metadata())
 
 #=================================================================#
@@ -334,7 +335,7 @@ class dassflowmodel(object):
         self.config.save(hdf5_path=self.hdf5_path)
         self.meshing.save(hdf5_path=self.hdf5_path)
         self.boundary.save(hdf5_path=self.hdf5_path) 
-        self.param.save(hdf5_path=self.hdf5_path) 
+        #self.param.save(hdf5_path=self.hdf5_path)
 
 
 
