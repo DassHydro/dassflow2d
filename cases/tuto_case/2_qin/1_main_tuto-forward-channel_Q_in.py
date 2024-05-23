@@ -16,17 +16,17 @@ import numpy as np
 import os
 import sys
 import matplotlib.pyplot as plt
+from mpi4py import MPI
+import h5py                # for save file
+import pandas as pd        # for read tables
+
 #=======================================================#
 # copy existing case files
 #=======================================================#
 
-#os.chdir('/home/pagarambois/Documents/Distant/dasshydro/cases/tuto_case/2_qin')
-#dassflow_dir = "/home/pagarambois/Documents/Distant/dassflow2d-wrap"
+df2d.wrapping.m_mpi.init_mpi()
 
-dassflow_dir = os.getcwd() # os.path.abspath(os.curdir)
-if dassflow_dir.split('/')[-1] != "dasshydro":
-   os.chdir("../../..")
-   dassflow_dir = os.getcwd()
+dassflow_dir = os.path.abspath(os.path.join(__file__ ,"../../../.."))
 
 case_dir = os.path.join(f"{dassflow_dir}","cases/tuto_case/2_qin")
 run_dir = os.path.join(f"{dassflow_dir}","code/bin_A")
@@ -45,54 +45,63 @@ os.system("make cleanres cleanmin")
 # initialise + run + save results
 #=======================================================#
 
+df2d.wrapping.read_input(f" {dassflow_dir}/code/bin_A/input.txt")
+
 my_model = df2d.dassflowmodel(bin_dir = run_dir,hdf5_path = f"{run_dir}/res/simu.hdf5", run_type = "direct",clean=True) # initialise fortran/python instance
+
 my_model.init_all() # allocate and initialise many fortran variables
+
 my_model.run() # run model
+
 my_model.save_all() # save simulation results in hdf5 files
 
-bathy = my_model.outputs.all_res[0.0][["bathy"]]
-my_scalar = bathy
-h = my_model.outputs.all_res[0.0][["h"]]
-labels = dict(xlabel='X [m]', ylabel='Y [m]', zlabel='')
-plotter = my_model.meshing.plot(my_scalar,
-                                     title_scale_bar ="Zb [m] ", 
-                                     title_plot = "bathymetry elevation on 2D mesh grid", 
-                                     axis_labels = labels)
+#Acces stored data (vectors)
+# bathy = my_model.outputs.result.bathy#[0.0][["bathy"]]
+# my_scalar = bathy
+# h = my_model.outputs.result.h
+# labels = dict(xlabel='X [m]', ylabel='Y [m]', zlabel='')
+# plotter = my_model.meshing.plot(my_scalar,
+#                                      title_scale_bar ="Zb [m] ", 
+#                                      title_plot = "Bathymetry elevation on 2D mesh grid", 
+#                                      xlabel = labels["xlabel"],
+#                                      ylabel = labels["ylabel"],
+#                                      zlabel = labels["zlabel"])
 
-plotter = my_model.meshing.plot(my_scalar=h)
+# plotter = my_model.meshing.plot(my_scalar=h)
+
+
+#Read hdf5 save files (tables)
+my_hdf5_file =  h5py.File(f"{run_dir}/res/simu.hdf5", "r")
+
+print(list(my_hdf5_file.keys()))
+print(list(my_hdf5_file["input"].keys()))
+print(list(my_hdf5_file["output"].keys()))
+print(list(my_hdf5_file["input"]["meshing"].keys()))
+print(list(my_hdf5_file["input"]["boundary"].keys()))
+print(list(my_hdf5_file["output"]["result"].keys()))
+
+bathy = my_hdf5_file["output"]["result"]["bathy"]
 
 allx =[]
 allz = []
 for i in range(my_model.meshing.mesh_fortran.nc):
-    x =my_model.meshing.mesh_fortran.cell[i].grav.x
+    x = my_model.meshing.mesh_fortran.cell[i].grav.x
     y = my_model.meshing.mesh_fortran.cell[i].grav.y
-    print(y)
+
     if(y==50.0):
         allx.append(x)
-        allz.append(my_model.outputs.all_res[0.0][["bathy"]].iloc[i-1])
+        allz.append(bathy[i])
 
-time_out = my_model.outputs.all_times[2]
-v = my_model.outputs.all_res[time_out][["v"]]
-        
-
-
-
-#plot en passant par autre fonction... via struct de vars...
-# my_model.
-
-for key, value in my_model.outputs.all_res.items():
-    tmp = value["h"]
-
-    # my_model.meshing.plot()
+#Plot water depth at each saved time with Meshing.mesh_pyvista
+for i in range(0,my_hdf5_file["output"]["result"]["h"].shape[1]):
+    tmp = my_hdf5_file["output"]["result"]["h"][:,i]
 
     my_model.meshing.mesh_pyvista.plot(scalars = tmp, show_edges=True, cpos= "xy", notebook =False)
 
-time = 0.0
-h0 = my_model.outputs.all_res[time][["h"]]
-u0 = my_model.outputs.all_res[time][["u"]]
-v0 = my_model.outputs.all_res[time][["v"]]
 
-plotter = my_model.meshing.plot(my_scalar = U,
+#Plot v at a given time through Meshing.plot
+v = my_hdf5_file["output"]["result"]["v"][:,2]
+plotter = my_model.meshing.plot(my_scalar = v,
                                      title_scale_bar ="", 
                                      title_plot = f"Initial", 
                                      xlabel = "X [m]", 
