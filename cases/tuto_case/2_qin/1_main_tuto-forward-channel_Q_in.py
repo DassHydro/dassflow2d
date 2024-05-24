@@ -11,6 +11,7 @@
 #=======================================================#
 # Source librairies
 #=======================================================#
+
 import dassflow2d as df2d
 import numpy as np
 import os
@@ -41,6 +42,7 @@ os.system(f"rm -r {dassflow_dir}/code/bin_A/*")
 os.system(f"cp -r {dassflow_dir}/cases/tuto_case/2_qin/bin_A/* {dassflow_dir}/code/bin_A")
 os.chdir( f"{dassflow_dir}/code/")
 os.system("make cleanres cleanmin")
+
 #=======================================================#
 # initialise + run + save results
 #=======================================================#
@@ -92,6 +94,11 @@ for i in range(my_model.meshing.mesh_fortran.nc):
         allx.append(x)
         allz.append(bathy[i])
 
+plt.plot(allx, allz, 'k')
+plt.title("Longitudinal bathymetry")
+plt.show()
+
+
 #Plot water depth at each saved time with Meshing.mesh_pyvista
 for i in range(0,my_hdf5_file["output"]["result"]["h"].shape[1]):
     tmp = my_hdf5_file["output"]["result"]["h"][:,i]
@@ -106,7 +113,7 @@ plotter = my_model.meshing.plot(my_scalar = v,
                                      title_plot = f"Initial", 
                                      xlabel = "X [m]", 
                                      ylabel = "Y [m]") # for a local run remove notebook option or set notebook=False 
-plotter.show() # remove jupyter_backend if needed
+#plotter.show() # remove jupyter_backend if needed
 
 #=======================================================#
 # Save results as observed data
