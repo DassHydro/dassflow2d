@@ -40,6 +40,17 @@ model.init_mesh()
 model.kernel.dof  = df2d.wrapping.m_model.unk(model.kernel.mesh)
 model.kernel.dof0 = model.kernel.dof     
 
+# ------------ Define Default values------------------
+
+df2d.wrapping.read_input(f"{bin_dir}/input.txt")
+
+model = df2d.dassflowmodel(bin_dir =  bin_dir, hdf5_path = f"{bin_dir}/res/simu.hdf5" , run_type = "direct", clean = True, custom_config = None)
+
+model.init_mesh()
+
+model.kernel.dof  = df2d.wrapping.m_model.unk(model.kernel.mesh)
+model.kernel.dof0 = model.kernel.dof     
+
 df2d.wrapping.call_model.init_fortran(model.kernel)
 df2d.wrapping.call_model.run(model.kernel, arg = "direct")
 df2d.wrapping.call_model.clean_model(model.kernel)  

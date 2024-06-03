@@ -40,6 +40,7 @@ print("Running directory is: ", run_dir)
 os.system(f"rm -r {dassflow_dir}/code/bin_A/*")
 # Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.
 os.system(f"cp -r {dassflow_dir}/cases/tuto_case/2_qin/bin_A/* {dassflow_dir}/code/bin_A")
+
 os.chdir( f"{dassflow_dir}/code/")
 os.system("make cleanres cleanmin")
 
