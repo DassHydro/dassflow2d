@@ -281,9 +281,9 @@ class Config(dict):
                      elif k == 'c_hydrograph':
                             df2d.wrapping.m_model.set_c_hydrograph(input_param[k])
                      elif k == 'c_rain':
-                            df2d.wrapping.m_model.set_c_rain(input_param[k]input_param[k])
+                            df2d.wrapping.m_model.set_c_rain(input_param[k])
                      elif k == 'c_ic':
-                            df2d.wrapping.m_model.set_c_ic(input_param[k]input_param[k])
+                            df2d.wrapping.m_model.set_c_ic(input_param[k])
                      elif k == 'c_shape_s':
                             df2d.wrapping.m_model.set_c_shape_s(input_param[k])
                      elif k == 'c_hmax':
