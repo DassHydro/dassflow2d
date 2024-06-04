@@ -66,7 +66,7 @@
 	w_gnuplot		=	1,						! in Tecplot ASCII format
     	w_obs			=	1,						! Writing obs data relating to obs.txt file
     	w_vtk 			=       1,
-	use_obs			=	1,
+	use_obs			=	0,
 	use_Zobs		=	1,
 
 !======================================================================================================================!

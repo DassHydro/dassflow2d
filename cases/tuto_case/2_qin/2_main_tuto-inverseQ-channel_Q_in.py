@@ -22,6 +22,8 @@ from mpi4py import MPI
 # copy existing case files
 #=======================================================#
 
+df2d.wrapping.m_mpi.init_mpi()
+
 dassflow_dir = os.path.abspath(os.path.join(__file__ ,"../../../.."))
 
 case_dir = os.path.join(f"{dassflow_dir}","cases/tuto_case/2_qin")
@@ -36,13 +38,19 @@ os.system(f"rm -r {dassflow_dir}/code/bin_A/*")
 # Copy recursively the files provided in DassFlow case repository into your own simulation directory **code/bin_A/**.
 os.system(f"cp -r {dassflow_dir}/cases/tuto_case/2_qin/bin_A/* {dassflow_dir}/code/bin_A")
 
+os.chdir( f"{dassflow_dir}/code/")
+os.system("make cleanres cleanmin")
+
 #=======================================================#
 # Direct simulation and save results
 #=======================================================#
 # initialise fortran instance, and python corrponding data
-df2d.wrapping.m_mpi.init_mpi()
 
-df2d.wrapping.read_input(f" {dassflow_dir}/code/bin_A/input.txt")
+os.system(f"rm {dassflow_dir}/code/bin_A/hydrograph.txt")                                    # delete the "true" hydrograph used in a run above to generate water level observations
+os.system(f"cp {dassflow_dir}/code/bin_A/hydrograph_target.txt  {dassflow_dir}/code/bin_A/hydrograph.txt")  # define first guess on hydrograph for inference
+
+
+df2d.wrapping.read_input(f" {dassflow_dir}/code/bin_A/input_direct.txt")
 
 my_model = df2d.dassflowmodel(bin_dir = run_dir,hdf5_path = f"{run_dir}/res/simu.hdf5", run_type = "direct",clean=True)
 
@@ -56,19 +64,19 @@ my_model.save_all()
 #my_model.build_grid() # necessary for plots # builds callable objects
 #my_model.grid
 
-
+del my_model
 #=======================================================#
 # Prepare twin experiment for hydrograph inference from water levels observations
 #=======================================================#
 
 os.system(f"rm {dassflow_dir}/code/bin_A/obs/*")
-os.system(f"cp {dassflow_dir}/code/bin_A/res/obs/* bin_A/obs/")
+os.system(f"cp {dassflow_dir}/code/bin_A/res/obs/* {dassflow_dir}/code/bin_A/obs/")
 
 os.system(f"rm {dassflow_dir}/code/bin_A/hydrograph.txt")                                    # delete the "true" hydrograph used in a run above to generate water level observations
-os.system(f"cp {dassflow_dir}/code/bin_A/hydrograph_first_guess.txt  bin_A/hydrograph.txt")  # define first guess on hydrograph for inference
+os.system(f"cp {dassflow_dir}/code/bin_A/hydrograph_first_guess.txt  {dassflow_dir}/code/bin_A/hydrograph.txt")  # define first guess on hydrograph for inference
 
-print("Observation files and first guess hydrograph copied for twin experiment")
-wait = input("Press Enter to continue.")
+#print("Observation files and first guess hydrograph copied for twin experiment")
+#wait = input("Press Enter to continue.")
 
 
 #=======================================================#
@@ -77,8 +85,13 @@ wait = input("Press Enter to continue.")
 
 df2d.wrapping.read_input(f" {dassflow_dir}/code/bin_A/input_inverse.txt")
 
-my_model_inferQ_in = df2d.dassflowmodel(bin_dir = run_dir, hdf5_path = f"{run_dir}/res/simu.hdf5", run_type = "min",clean=True)
-my_model_inferQ_in.run()
+my_model = df2d.dassflowmodel(bin_dir = run_dir,hdf5_path = f"{run_dir}/res/simu.hdf5", run_type = "min",clean=True)
+
+my_model.init_all() # allocate and initialise many fortran variables
+
+# run model
+my_model.run()
+#df2d.wrapping.call_model.run(my_model.kernel, arg = "min")
 
 #=======================================================#
 # Post-processing
