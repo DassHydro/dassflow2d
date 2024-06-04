@@ -67,11 +67,10 @@
 	w_gnuplot       = 	1,
 	w_exact=0,
 	
-	
-	
-	
 	w_obs = 1,
 	use_obs = 1,
+	use_Zobs = 1,
+	
 	c_hydrograph=1,
 	c_manning=0,
 	c_manning_beta=0,
