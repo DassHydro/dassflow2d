@@ -32,7 +32,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    integer(ip), dimension(:), allocatable :: index_bathy_min
    real(rp), dimension(:), allocatable :: bathy_min , bathy_min_glob, temp
    if (allocated(my_friction%manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
-   if (allocated(my_porosity%SP)) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
+   if (allocated(my_porosity%Phi) ) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
    if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
    if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
    if (allocated(my_bc%rain)) then
@@ -557,6 +557,20 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    call FV_Cell_Grad ( grad_z , bathy_cell , mesh )
    call FV_Cell_Grad2( grad_z2 , bathy_cell , mesh )
    !===================================================================================================================!
+   ! Initialization of Ghost porosity and Boundary Condition Type
+   !===================================================================================================================!
+   call reallocate_i( SPorosity%land , mesh%nc + mesh%ncb )
+   do i = 1,mesh%ncb
+      SPorosity%land( mesh%nc + i ) = SPorosity%land( mesh%cellb(i)%cell )
+   end do
+   !===================================================================================================================!
+   ! Cell Bathymetry Gradient
+   !===================================================================================================================!
+   allocate( grad_Phi ( mesh%nc + mesh%ncb ) )
+   allocate( grad_Phi2( mesh%nc + mesh%ncb ) )
+   call FV_Cell_Grad ( grad_Phi , SPorosity%Phi , mesh )
+   call FV_Cell_Grad2( grad_Phi2 , SPorosity%Phi , mesh )
+   !===================================================================================================================!
    ! Set heps to be at minimum to zero machine precision
    !===================================================================================================================!
    heps = heps + zerom
@@ -926,7 +940,7 @@ type( friction_data ), intent(in ) :: my_friction
 nland = my_friction%nland
 allocate( manning( size ( my_friction%manning ) ) )
 allocate( manning_beta( size ( my_friction%manning_beta ) ) )
-do i = 1,nland
+do i = 1,mesh%nc
    land( i ) = my_friction%land( i )
 end do
 do i = 1,nland
@@ -972,14 +986,27 @@ END SUBROUTINE my_infiltration_2_fortran
 SUBROUTINE my_porosity_2_fortran(my_porosity)
 implicit none
 type( porosity_data ), intent(in ) :: my_porosity
-nland = my_porosity%nland
-allocate( single_porosity%SP( my_porosity%nland ) )
-allocate( single_porosity%land( size( my_porosity%land ) ) )
+SPorosity%nland = my_porosity%nland
+allocate( SPorosity%Phi ( size( my_porosity%Phi ) ) )
+allocate( SPorosity%land( size( my_porosity%land ) ) )
 do i = 1,size( my_porosity%land )
-   single_porosity%land( i ) = my_porosity%land( i )
+   SPorosity%land( i ) = my_porosity%land( i )
 end do
-do i = 1,size( my_porosity%SP )
-   single_porosity%SP( i ) = my_porosity%SP( i )
+do i = 1,size( my_porosity%Phi )
+   SPorosity%Phi( i ) = my_porosity%Phi( i )
+end do
+IPorosity%nland = my_porosity%nland
+allocate( IPorosity%land ( size( my_porosity%land ) ) )
+allocate( IPorosity%PhiW ( size( my_porosity%PhiW ) ) )
+allocate( IPorosity%PhiG ( size( my_porosity%PhiG ) ) )
+do i = 1,size( my_porosity%land )
+   IPorosity%land(i) = my_porosity%land(i)
+end do
+do i = 1,size( my_porosity%PhiW )
+   IPorosity%PhiW(i) = my_porosity%PhiW(i)
+end do
+do i = 1,size( my_porosity%PhiG )
+   IPorosity%PhiG(i) = my_porosity%PhiG(i)
 end do
 END SUBROUTINE my_porosity_2_fortran
 SUBROUTINE my_bathy_2_fortran() !(my_param_model)

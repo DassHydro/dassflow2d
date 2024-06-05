@@ -1025,6 +1025,7 @@ CONTAINS
       if ( allocated( PTF ) ) 		     deallocate( PTF )
       if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
       if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
+      if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
       if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
       if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
       

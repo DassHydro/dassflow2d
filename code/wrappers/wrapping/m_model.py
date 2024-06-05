@@ -2,7 +2,7 @@
 Module m_model
 
 
-Defined at m_sw_mono.f90 lines 1-829
+Defined at m_sw_mono.f90 lines 1-848
 
 """
 from __future__ import print_function, absolute_import, division
@@ -29,7 +29,7 @@ class unk(f90wrap.runtime.FortranDerivedType):
         self = Unk(mesh)
         
         
-        Defined at m_sw_mono.f90 lines 770-794
+        Defined at m_sw_mono.f90 lines 789-813
         
         Parameters
         ----------
@@ -49,7 +49,7 @@ class unk(f90wrap.runtime.FortranDerivedType):
         Destructor for class Unk
         
         
-        Defined at m_sw_mono.f90 lines 797-811
+        Defined at m_sw_mono.f90 lines 816-830
         
         Parameters
         ----------
@@ -251,7 +251,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
     Type(name=xsshp)
     
     
-    Defined at m_sw_mono.f90 lines 44-50
+    Defined at m_sw_mono.f90 lines 46-52
     
     """
     def __init__(self, handle=None):
@@ -259,7 +259,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         self = Xsshp()
         
         
-        Defined at m_sw_mono.f90 lines 44-50
+        Defined at m_sw_mono.f90 lines 46-52
         
         
         Returns
@@ -279,7 +279,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Destructor for class Xsshp
         
         
-        Defined at m_sw_mono.f90 lines 44-50
+        Defined at m_sw_mono.f90 lines 46-52
         
         Parameters
         ----------
@@ -298,7 +298,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Element xleft ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 45
+        Defined at m_sw_mono.f90 line 47
         
         """
         return _wrapping.f90wrap_xsshp__get__xleft(self._handle)
@@ -313,7 +313,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Element xcenter ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 46
+        Defined at m_sw_mono.f90 line 48
         
         """
         return _wrapping.f90wrap_xsshp__get__xcenter(self._handle)
@@ -328,7 +328,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Element xright ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 47
+        Defined at m_sw_mono.f90 line 49
         
         """
         return _wrapping.f90wrap_xsshp__get__xright(self._handle)
@@ -343,7 +343,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Element s ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 48
+        Defined at m_sw_mono.f90 line 50
         
         """
         return _wrapping.f90wrap_xsshp__get__s(self._handle)
@@ -358,7 +358,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Element hmax ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 49
+        Defined at m_sw_mono.f90 line 51
         
         """
         return _wrapping.f90wrap_xsshp__get__hmax(self._handle)
@@ -373,7 +373,7 @@ class xsshp(f90wrap.runtime.FortranDerivedType):
         Element topz ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 50
+        Defined at m_sw_mono.f90 line 52
         
         """
         return _wrapping.f90wrap_xsshp__get__topz(self._handle)
@@ -408,7 +408,7 @@ class greenampt(f90wrap.runtime.FortranDerivedType):
     Type(name=greenampt)
     
     
-    Defined at m_sw_mono.f90 lines 56-59
+    Defined at m_sw_mono.f90 lines 58-61
     
     """
     def __init__(self, handle=None):
@@ -416,7 +416,7 @@ class greenampt(f90wrap.runtime.FortranDerivedType):
         self = Greenampt()
         
         
-        Defined at m_sw_mono.f90 lines 56-59
+        Defined at m_sw_mono.f90 lines 58-61
         
         
         Returns
@@ -436,7 +436,7 @@ class greenampt(f90wrap.runtime.FortranDerivedType):
         Destructor for class Greenampt
         
         
-        Defined at m_sw_mono.f90 lines 56-59
+        Defined at m_sw_mono.f90 lines 58-61
         
         Parameters
         ----------
@@ -455,7 +455,7 @@ class greenampt(f90wrap.runtime.FortranDerivedType):
         Element psif ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 57
+        Defined at m_sw_mono.f90 line 59
         
         """
         return _wrapping.f90wrap_greenampt__get__psif(self._handle)
@@ -470,7 +470,7 @@ class greenampt(f90wrap.runtime.FortranDerivedType):
         Element ks ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 58
+        Defined at m_sw_mono.f90 line 60
         
         """
         return _wrapping.f90wrap_greenampt__get__ks(self._handle)
@@ -485,7 +485,7 @@ class greenampt(f90wrap.runtime.FortranDerivedType):
         Element deltatheta ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 59
+        Defined at m_sw_mono.f90 line 61
         
         """
         return _wrapping.f90wrap_greenampt__get__deltatheta(self._handle)
@@ -514,7 +514,7 @@ class scs_cn(f90wrap.runtime.FortranDerivedType):
     Type(name=scs_cn)
     
     
-    Defined at m_sw_mono.f90 lines 61-63
+    Defined at m_sw_mono.f90 lines 63-65
     
     """
     def __init__(self, handle=None):
@@ -522,7 +522,7 @@ class scs_cn(f90wrap.runtime.FortranDerivedType):
         self = Scs_Cn()
         
         
-        Defined at m_sw_mono.f90 lines 61-63
+        Defined at m_sw_mono.f90 lines 63-65
         
         
         Returns
@@ -542,7 +542,7 @@ class scs_cn(f90wrap.runtime.FortranDerivedType):
         Destructor for class Scs_Cn
         
         
-        Defined at m_sw_mono.f90 lines 61-63
+        Defined at m_sw_mono.f90 lines 63-65
         
         Parameters
         ----------
@@ -561,7 +561,7 @@ class scs_cn(f90wrap.runtime.FortranDerivedType):
         Element lambdacn ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 62
+        Defined at m_sw_mono.f90 line 64
         
         """
         return _wrapping.f90wrap_scs_cn__get__lambdacn(self._handle)
@@ -576,7 +576,7 @@ class scs_cn(f90wrap.runtime.FortranDerivedType):
         Element cn ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 63
+        Defined at m_sw_mono.f90 line 65
         
         """
         return _wrapping.f90wrap_scs_cn__get__cn(self._handle)
@@ -603,7 +603,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
     Type(name=infiltration_data)
     
     
-    Defined at m_sw_mono.f90 lines 68-75
+    Defined at m_sw_mono.f90 lines 70-77
     
     """
     def __init__(self, handle=None):
@@ -611,7 +611,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         self = Infiltration_Data()
         
         
-        Defined at m_sw_mono.f90 lines 68-75
+        Defined at m_sw_mono.f90 lines 70-77
         
         
         Returns
@@ -631,7 +631,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Infiltration_Data
         
         
-        Defined at m_sw_mono.f90 lines 68-75
+        Defined at m_sw_mono.f90 lines 70-77
         
         Parameters
         ----------
@@ -650,7 +650,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Element nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 69
+        Defined at m_sw_mono.f90 line 71
         
         """
         return _wrapping.f90wrap_infiltration_data__get__nland(self._handle)
@@ -665,7 +665,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Element land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 70
+        Defined at m_sw_mono.f90 line 72
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -692,7 +692,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Element ga ftype=type(greenampt) pytype=Greenampt
         
         
-        Defined at m_sw_mono.f90 line 72
+        Defined at m_sw_mono.f90 line 74
         
         """, greenampt)
         return self.ga
@@ -706,7 +706,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Element scs ftype=type(scs_cn) pytype=Scs_Cn
         
         
-        Defined at m_sw_mono.f90 line 73
+        Defined at m_sw_mono.f90 line 75
         
         """, scs_cn)
         return self.scs
@@ -717,7 +717,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Element coord ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 74
+        Defined at m_sw_mono.f90 line 76
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -741,7 +741,7 @@ class infiltration_data(f90wrap.runtime.FortranDerivedType):
         Element h_infil_max ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 75
+        Defined at m_sw_mono.f90 line 77
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -781,7 +781,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
     Type(name=friction_data)
     
     
-    Defined at m_sw_mono.f90 lines 81-86
+    Defined at m_sw_mono.f90 lines 83-88
     
     """
     def __init__(self, handle=None):
@@ -789,7 +789,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
         self = Friction_Data()
         
         
-        Defined at m_sw_mono.f90 lines 81-86
+        Defined at m_sw_mono.f90 lines 83-88
         
         
         Returns
@@ -809,7 +809,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Friction_Data
         
         
-        Defined at m_sw_mono.f90 lines 81-86
+        Defined at m_sw_mono.f90 lines 83-88
         
         Parameters
         ----------
@@ -828,7 +828,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
         Element nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 83
+        Defined at m_sw_mono.f90 line 85
         
         """
         return _wrapping.f90wrap_friction_data__get__nland(self._handle)
@@ -843,7 +843,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
         Element manning ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 84
+        Defined at m_sw_mono.f90 line 86
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -867,7 +867,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
         Element manning_beta ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 85
+        Defined at m_sw_mono.f90 line 87
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -891,7 +891,7 @@ class friction_data(f90wrap.runtime.FortranDerivedType):
         Element land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 86
+        Defined at m_sw_mono.f90 line 88
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -931,7 +931,7 @@ class porosity_data(f90wrap.runtime.FortranDerivedType):
     Type(name=porosity_data)
     
     
-    Defined at m_sw_mono.f90 lines 91-95
+    Defined at m_sw_mono.f90 lines 93-101
     
     """
     def __init__(self, handle=None):
@@ -939,7 +939,7 @@ class porosity_data(f90wrap.runtime.FortranDerivedType):
         self = Porosity_Data()
         
         
-        Defined at m_sw_mono.f90 lines 91-95
+        Defined at m_sw_mono.f90 lines 93-101
         
         
         Returns
@@ -959,7 +959,7 @@ class porosity_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Porosity_Data
         
         
-        Defined at m_sw_mono.f90 lines 91-95
+        Defined at m_sw_mono.f90 lines 93-101
         
         Parameters
         ----------
@@ -978,7 +978,7 @@ class porosity_data(f90wrap.runtime.FortranDerivedType):
         Element nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 93
+        Defined at m_sw_mono.f90 line 95
         
         """
         return _wrapping.f90wrap_porosity_data__get__nland(self._handle)
@@ -988,36 +988,12 @@ class porosity_data(f90wrap.runtime.FortranDerivedType):
         _wrapping.f90wrap_porosity_data__set__nland(self._handle, nland)
     
     @property
-    def sp(self):
-        """
-        Element sp ftype=real(rp) pytype=float
-        
-        
-        Defined at m_sw_mono.f90 line 94
-        
-        """
-        array_ndim, array_type, array_shape, array_handle = \
-            _wrapping.f90wrap_porosity_data__array__sp(self._handle)
-        if array_handle in self._arrays:
-            sp = self._arrays[array_handle]
-        else:
-            sp = f90wrap.runtime.get_array(f90wrap.runtime.sizeof_fortran_t,
-                                    self._handle,
-                                    _wrapping.f90wrap_porosity_data__array__sp)
-            self._arrays[array_handle] = sp
-        return sp
-    
-    @sp.setter
-    def sp(self, sp):
-        self.sp[...] = sp
-    
-    @property
     def land(self):
         """
         Element land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 95
+        Defined at m_sw_mono.f90 line 96
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1035,14 +1011,90 @@ class porosity_data(f90wrap.runtime.FortranDerivedType):
     def land(self, land):
         self.land[...] = land
     
+    @property
+    def phi(self):
+        """
+        Element phi ftype=real(rp) pytype=float
+        
+        
+        Defined at m_sw_mono.f90 line 98
+        
+        """
+        array_ndim, array_type, array_shape, array_handle = \
+            _wrapping.f90wrap_porosity_data__array__phi(self._handle)
+        if array_handle in self._arrays:
+            phi = self._arrays[array_handle]
+        else:
+            phi = f90wrap.runtime.get_array(f90wrap.runtime.sizeof_fortran_t,
+                                    self._handle,
+                                    _wrapping.f90wrap_porosity_data__array__phi)
+            self._arrays[array_handle] = phi
+        return phi
+    
+    @phi.setter
+    def phi(self, phi):
+        self.phi[...] = phi
+    
+    @property
+    def phig(self):
+        """
+        Element phig ftype=real(rp) pytype=float
+        
+        
+        Defined at m_sw_mono.f90 line 100
+        
+        """
+        array_ndim, array_type, array_shape, array_handle = \
+            _wrapping.f90wrap_porosity_data__array__phig(self._handle)
+        if array_handle in self._arrays:
+            phig = self._arrays[array_handle]
+        else:
+            phig = f90wrap.runtime.get_array(f90wrap.runtime.sizeof_fortran_t,
+                                    self._handle,
+                                    _wrapping.f90wrap_porosity_data__array__phig)
+            self._arrays[array_handle] = phig
+        return phig
+    
+    @phig.setter
+    def phig(self, phig):
+        self.phig[...] = phig
+    
+    @property
+    def phiw(self):
+        """
+        Element phiw ftype=real(rp) pytype=float
+        
+        
+        Defined at m_sw_mono.f90 line 101
+        
+        """
+        array_ndim, array_type, array_shape, array_handle = \
+            _wrapping.f90wrap_porosity_data__array__phiw(self._handle)
+        if array_handle in self._arrays:
+            phiw = self._arrays[array_handle]
+        else:
+            phiw = f90wrap.runtime.get_array(f90wrap.runtime.sizeof_fortran_t,
+                                    self._handle,
+                                    _wrapping.f90wrap_porosity_data__array__phiw)
+            self._arrays[array_handle] = phiw
+        return phiw
+    
+    @phiw.setter
+    def phiw(self, phiw):
+        self.phiw[...] = phiw
+    
     def __str__(self):
         ret = ['<porosity_data>{\n']
         ret.append('    nland : ')
         ret.append(repr(self.nland))
-        ret.append(',\n    sp : ')
-        ret.append(repr(self.sp))
         ret.append(',\n    land : ')
         ret.append(repr(self.land))
+        ret.append(',\n    phi : ')
+        ret.append(repr(self.phi))
+        ret.append(',\n    phig : ')
+        ret.append(repr(self.phig))
+        ret.append(',\n    phiw : ')
+        ret.append(repr(self.phiw))
         ret.append('}')
         return ''.join(ret)
     
@@ -1055,7 +1107,7 @@ class param_model(f90wrap.runtime.FortranDerivedType):
     Type(name=param_model)
     
     
-    Defined at m_sw_mono.f90 lines 101-103
+    Defined at m_sw_mono.f90 lines 108-110
     
     """
     def __init__(self, handle=None):
@@ -1063,7 +1115,7 @@ class param_model(f90wrap.runtime.FortranDerivedType):
         self = Param_Model()
         
         
-        Defined at m_sw_mono.f90 lines 101-103
+        Defined at m_sw_mono.f90 lines 108-110
         
         
         Returns
@@ -1083,7 +1135,7 @@ class param_model(f90wrap.runtime.FortranDerivedType):
         Destructor for class Param_Model
         
         
-        Defined at m_sw_mono.f90 lines 101-103
+        Defined at m_sw_mono.f90 lines 108-110
         
         Parameters
         ----------
@@ -1102,7 +1154,7 @@ class param_model(f90wrap.runtime.FortranDerivedType):
         Element bathy_cell ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 103
+        Defined at m_sw_mono.f90 line 110
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1136,7 +1188,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
     Type(name=gr4)
     
     
-    Defined at m_sw_mono.f90 lines 110-115
+    Defined at m_sw_mono.f90 lines 117-122
     
     """
     def __init__(self, handle=None):
@@ -1144,7 +1196,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         self = Gr4()
         
         
-        Defined at m_sw_mono.f90 lines 110-115
+        Defined at m_sw_mono.f90 lines 117-122
         
         
         Returns
@@ -1164,7 +1216,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Destructor for class Gr4
         
         
-        Defined at m_sw_mono.f90 lines 110-115
+        Defined at m_sw_mono.f90 lines 117-122
         
         Parameters
         ----------
@@ -1183,7 +1235,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element cell_id ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 111
+        Defined at m_sw_mono.f90 line 118
         
         """
         return _wrapping.f90wrap_gr4__get__cell_id(self._handle)
@@ -1198,7 +1250,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element surf ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 112
+        Defined at m_sw_mono.f90 line 119
         
         """
         return _wrapping.f90wrap_gr4__get__surf(self._handle)
@@ -1213,7 +1265,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 113
+        Defined at m_sw_mono.f90 line 120
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1237,7 +1289,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element p ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 113
+        Defined at m_sw_mono.f90 line 120
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1261,7 +1313,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element e ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 113
+        Defined at m_sw_mono.f90 line 120
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1285,7 +1337,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 113
+        Defined at m_sw_mono.f90 line 120
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1309,7 +1361,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element p0 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 113
+        Defined at m_sw_mono.f90 line 120
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1333,7 +1385,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element e0 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 113
+        Defined at m_sw_mono.f90 line 120
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1357,7 +1409,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element params ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 114
+        Defined at m_sw_mono.f90 line 121
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1381,7 +1433,7 @@ class gr4(f90wrap.runtime.FortranDerivedType):
         Element state ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 115
+        Defined at m_sw_mono.f90 line 122
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1433,7 +1485,7 @@ class hydrograph(f90wrap.runtime.FortranDerivedType):
     Type(name=hydrograph)
     
     
-    Defined at m_sw_mono.f90 lines 118-120
+    Defined at m_sw_mono.f90 lines 125-127
     
     """
     def __init__(self, handle=None):
@@ -1441,7 +1493,7 @@ class hydrograph(f90wrap.runtime.FortranDerivedType):
         self = Hydrograph()
         
         
-        Defined at m_sw_mono.f90 lines 118-120
+        Defined at m_sw_mono.f90 lines 125-127
         
         
         Returns
@@ -1461,7 +1513,7 @@ class hydrograph(f90wrap.runtime.FortranDerivedType):
         Destructor for class Hydrograph
         
         
-        Defined at m_sw_mono.f90 lines 118-120
+        Defined at m_sw_mono.f90 lines 125-127
         
         Parameters
         ----------
@@ -1480,7 +1532,7 @@ class hydrograph(f90wrap.runtime.FortranDerivedType):
         Element group ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 119
+        Defined at m_sw_mono.f90 line 126
         
         """
         return _wrapping.f90wrap_hydrograph__get__group(self._handle)
@@ -1495,7 +1547,7 @@ class hydrograph(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 120
+        Defined at m_sw_mono.f90 line 127
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1519,7 +1571,7 @@ class hydrograph(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 120
+        Defined at m_sw_mono.f90 line 127
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1557,7 +1609,7 @@ class hpresc(f90wrap.runtime.FortranDerivedType):
     Type(name=hpresc)
     
     
-    Defined at m_sw_mono.f90 lines 122-124
+    Defined at m_sw_mono.f90 lines 129-131
     
     """
     def __init__(self, handle=None):
@@ -1565,7 +1617,7 @@ class hpresc(f90wrap.runtime.FortranDerivedType):
         self = Hpresc()
         
         
-        Defined at m_sw_mono.f90 lines 122-124
+        Defined at m_sw_mono.f90 lines 129-131
         
         
         Returns
@@ -1585,7 +1637,7 @@ class hpresc(f90wrap.runtime.FortranDerivedType):
         Destructor for class Hpresc
         
         
-        Defined at m_sw_mono.f90 lines 122-124
+        Defined at m_sw_mono.f90 lines 129-131
         
         Parameters
         ----------
@@ -1604,7 +1656,7 @@ class hpresc(f90wrap.runtime.FortranDerivedType):
         Element group ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 123
+        Defined at m_sw_mono.f90 line 130
         
         """
         return _wrapping.f90wrap_hpresc__get__group(self._handle)
@@ -1619,7 +1671,7 @@ class hpresc(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 124
+        Defined at m_sw_mono.f90 line 131
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1643,7 +1695,7 @@ class hpresc(f90wrap.runtime.FortranDerivedType):
         Element h ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 124
+        Defined at m_sw_mono.f90 line 131
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1681,7 +1733,7 @@ class zspresc(f90wrap.runtime.FortranDerivedType):
     Type(name=zspresc)
     
     
-    Defined at m_sw_mono.f90 lines 126-128
+    Defined at m_sw_mono.f90 lines 133-135
     
     """
     def __init__(self, handle=None):
@@ -1689,7 +1741,7 @@ class zspresc(f90wrap.runtime.FortranDerivedType):
         self = Zspresc()
         
         
-        Defined at m_sw_mono.f90 lines 126-128
+        Defined at m_sw_mono.f90 lines 133-135
         
         
         Returns
@@ -1709,7 +1761,7 @@ class zspresc(f90wrap.runtime.FortranDerivedType):
         Destructor for class Zspresc
         
         
-        Defined at m_sw_mono.f90 lines 126-128
+        Defined at m_sw_mono.f90 lines 133-135
         
         Parameters
         ----------
@@ -1728,7 +1780,7 @@ class zspresc(f90wrap.runtime.FortranDerivedType):
         Element group ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 127
+        Defined at m_sw_mono.f90 line 134
         
         """
         return _wrapping.f90wrap_zspresc__get__group(self._handle)
@@ -1743,7 +1795,7 @@ class zspresc(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 128
+        Defined at m_sw_mono.f90 line 135
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1767,7 +1819,7 @@ class zspresc(f90wrap.runtime.FortranDerivedType):
         Element z ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 128
+        Defined at m_sw_mono.f90 line 135
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1805,7 +1857,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
     Type(name=ratcurve)
     
     
-    Defined at m_sw_mono.f90 lines 131-134
+    Defined at m_sw_mono.f90 lines 138-141
     
     """
     def __init__(self, handle=None):
@@ -1813,7 +1865,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         self = Ratcurve()
         
         
-        Defined at m_sw_mono.f90 lines 131-134
+        Defined at m_sw_mono.f90 lines 138-141
         
         
         Returns
@@ -1833,7 +1885,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Destructor for class Ratcurve
         
         
-        Defined at m_sw_mono.f90 lines 131-134
+        Defined at m_sw_mono.f90 lines 138-141
         
         Parameters
         ----------
@@ -1852,7 +1904,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element group ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 132
+        Defined at m_sw_mono.f90 line 139
         
         """
         return _wrapping.f90wrap_ratcurve__get__group(self._handle)
@@ -1867,7 +1919,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element h ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 133
+        Defined at m_sw_mono.f90 line 140
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1891,7 +1943,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 133
+        Defined at m_sw_mono.f90 line 140
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -1915,7 +1967,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element z_rat_ref ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 134
+        Defined at m_sw_mono.f90 line 141
         
         """
         return _wrapping.f90wrap_ratcurve__get__z_rat_ref(self._handle)
@@ -1930,7 +1982,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element zout ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 134
+        Defined at m_sw_mono.f90 line 141
         
         """
         return _wrapping.f90wrap_ratcurve__get__zout(self._handle)
@@ -1945,7 +1997,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element c1 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 134
+        Defined at m_sw_mono.f90 line 141
         
         """
         return _wrapping.f90wrap_ratcurve__get__c1(self._handle)
@@ -1960,7 +2012,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element c2 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 134
+        Defined at m_sw_mono.f90 line 141
         
         """
         return _wrapping.f90wrap_ratcurve__get__c2(self._handle)
@@ -1975,7 +2027,7 @@ class ratcurve(f90wrap.runtime.FortranDerivedType):
         Element pow ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 134
+        Defined at m_sw_mono.f90 line 141
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2023,7 +2075,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
     Type(name=rain)
     
     
-    Defined at m_sw_mono.f90 lines 136-144
+    Defined at m_sw_mono.f90 lines 143-151
     
     """
     def __init__(self, handle=None):
@@ -2031,7 +2083,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         self = Rain()
         
         
-        Defined at m_sw_mono.f90 lines 136-144
+        Defined at m_sw_mono.f90 lines 143-151
         
         
         Returns
@@ -2051,7 +2103,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Destructor for class Rain
         
         
-        Defined at m_sw_mono.f90 lines 136-144
+        Defined at m_sw_mono.f90 lines 143-151
         
         Parameters
         ----------
@@ -2070,7 +2122,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element x_min ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 137
+        Defined at m_sw_mono.f90 line 144
         
         """
         return _wrapping.f90wrap_rain__get__x_min(self._handle)
@@ -2085,7 +2137,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element x_max ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 138
+        Defined at m_sw_mono.f90 line 145
         
         """
         return _wrapping.f90wrap_rain__get__x_max(self._handle)
@@ -2100,7 +2152,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element y_min ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 139
+        Defined at m_sw_mono.f90 line 146
         
         """
         return _wrapping.f90wrap_rain__get__y_min(self._handle)
@@ -2115,7 +2167,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element y_max ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 140
+        Defined at m_sw_mono.f90 line 147
         
         """
         return _wrapping.f90wrap_rain__get__y_max(self._handle)
@@ -2130,7 +2182,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element tile_index ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 141
+        Defined at m_sw_mono.f90 line 148
         
         """
         return _wrapping.f90wrap_rain__get__tile_index(self._handle)
@@ -2145,7 +2197,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 142
+        Defined at m_sw_mono.f90 line 149
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2169,7 +2221,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 142
+        Defined at m_sw_mono.f90 line 149
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2193,7 +2245,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element qin ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 143
+        Defined at m_sw_mono.f90 line 150
         
         """
         return _wrapping.f90wrap_rain__get__qin(self._handle)
@@ -2208,7 +2260,7 @@ class rain(f90wrap.runtime.FortranDerivedType):
         Element cumul ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 144
+        Defined at m_sw_mono.f90 line 151
         
         """
         return _wrapping.f90wrap_rain__get__cumul(self._handle)
@@ -2249,7 +2301,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
     Type(name=bcs)
     
     
-    Defined at m_sw_mono.f90 lines 147-160
+    Defined at m_sw_mono.f90 lines 154-167
     
     """
     def __init__(self, handle=None):
@@ -2257,7 +2309,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         self = Bcs()
         
         
-        Defined at m_sw_mono.f90 lines 147-160
+        Defined at m_sw_mono.f90 lines 154-167
         
         
         Returns
@@ -2277,7 +2329,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Destructor for class Bcs
         
         
-        Defined at m_sw_mono.f90 lines 147-160
+        Defined at m_sw_mono.f90 lines 154-167
         
         Parameters
         ----------
@@ -2296,7 +2348,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element nb ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 148
+        Defined at m_sw_mono.f90 line 155
         
         """
         return _wrapping.f90wrap_bcs__get__nb(self._handle)
@@ -2311,7 +2363,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element nb_in ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 148
+        Defined at m_sw_mono.f90 line 155
         
         """
         return _wrapping.f90wrap_bcs__get__nb_in(self._handle)
@@ -2326,7 +2378,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element nb_out ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 148
+        Defined at m_sw_mono.f90 line 155
         
         """
         return _wrapping.f90wrap_bcs__get__nb_out(self._handle)
@@ -2341,7 +2393,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element nb_rn ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 148
+        Defined at m_sw_mono.f90 line 155
         
         """
         return _wrapping.f90wrap_bcs__get__nb_rn(self._handle)
@@ -2356,7 +2408,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element nb_rn_t ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 148
+        Defined at m_sw_mono.f90 line 155
         
         """
         return _wrapping.f90wrap_bcs__get__nb_rn_t(self._handle)
@@ -2371,7 +2423,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element nb_gr4in ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 148
+        Defined at m_sw_mono.f90 line 155
         
         """
         return _wrapping.f90wrap_bcs__get__nb_gr4in(self._handle)
@@ -2386,7 +2438,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element typ ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 149
+        Defined at m_sw_mono.f90 line 156
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2410,7 +2462,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element grpf ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 150
+        Defined at m_sw_mono.f90 line 157
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2434,7 +2486,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element inflow ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 151
+        Defined at m_sw_mono.f90 line 158
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2458,7 +2510,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element outflow ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 152
+        Defined at m_sw_mono.f90 line 159
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2485,7 +2537,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element hyd ftype=type(hydrograph) pytype=Hydrograph
         
         
-        Defined at m_sw_mono.f90 line 153
+        Defined at m_sw_mono.f90 line 160
         
         """, hydrograph)
         return self.hyd
@@ -2499,7 +2551,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element gr4 ftype=type(gr4) pytype=Gr4
         
         
-        Defined at m_sw_mono.f90 line 154
+        Defined at m_sw_mono.f90 line 161
         
         """, gr4)
         return self.gr4
@@ -2513,7 +2565,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element rat ftype=type(ratcurve) pytype=Ratcurve
         
         
-        Defined at m_sw_mono.f90 line 155
+        Defined at m_sw_mono.f90 line 162
         
         """, ratcurve)
         return self.rat
@@ -2527,7 +2579,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element hpresc ftype=type(hpresc) pytype=Hpresc
         
         
-        Defined at m_sw_mono.f90 line 156
+        Defined at m_sw_mono.f90 line 163
         
         """, hpresc)
         return self.hpresc
@@ -2541,7 +2593,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element zspresc ftype=type(zspresc) pytype=Zspresc
         
         
-        Defined at m_sw_mono.f90 line 157
+        Defined at m_sw_mono.f90 line 164
         
         """, zspresc)
         return self.zspresc
@@ -2555,7 +2607,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element rain ftype=type(rain) pytype=Rain
         
         
-        Defined at m_sw_mono.f90 line 158
+        Defined at m_sw_mono.f90 line 165
         
         """, rain)
         return self.rain
@@ -2566,7 +2618,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element rain_land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 159
+        Defined at m_sw_mono.f90 line 166
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2590,7 +2642,7 @@ class bcs(f90wrap.runtime.FortranDerivedType):
         Element sum_mass_flux ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 160
+        Defined at m_sw_mono.f90 line 167
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2647,7 +2699,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
     Type(name=station_obs)
     
     
-    Defined at m_sw_mono.f90 lines 168-177
+    Defined at m_sw_mono.f90 lines 175-184
     
     """
     def __init__(self, handle=None):
@@ -2655,7 +2707,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         self = Station_Obs()
         
         
-        Defined at m_sw_mono.f90 lines 168-177
+        Defined at m_sw_mono.f90 lines 175-184
         
         
         Returns
@@ -2675,7 +2727,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Destructor for class Station_Obs
         
         
-        Defined at m_sw_mono.f90 lines 168-177
+        Defined at m_sw_mono.f90 lines 175-184
         
         Parameters
         ----------
@@ -2694,7 +2746,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element weight ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 170
+        Defined at m_sw_mono.f90 line 177
         
         """
         return _wrapping.f90wrap_station_obs__get__weight(self._handle)
@@ -2709,7 +2761,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element length ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 171
+        Defined at m_sw_mono.f90 line 178
         
         """
         return _wrapping.f90wrap_station_obs__get__length(self._handle)
@@ -2724,7 +2776,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element dt_offset ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 172
+        Defined at m_sw_mono.f90 line 179
         
         """
         return _wrapping.f90wrap_station_obs__get__dt_offset(self._handle)
@@ -2739,7 +2791,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element dt ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 173
+        Defined at m_sw_mono.f90 line 180
         
         """
         return _wrapping.f90wrap_station_obs__get__dt(self._handle)
@@ -2754,7 +2806,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element dt_obs ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 174
+        Defined at m_sw_mono.f90 line 181
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2778,7 +2830,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element ind_t ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 175
+        Defined at m_sw_mono.f90 line 182
         
         """
         return _wrapping.f90wrap_station_obs__get__ind_t(self._handle)
@@ -2793,7 +2845,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element nb_dt ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 176
+        Defined at m_sw_mono.f90 line 183
         
         """
         return _wrapping.f90wrap_station_obs__get__nb_dt(self._handle)
@@ -2808,7 +2860,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 177
+        Defined at m_sw_mono.f90 line 184
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2832,7 +2884,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element h ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 177
+        Defined at m_sw_mono.f90 line 184
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2856,7 +2908,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element u ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 177
+        Defined at m_sw_mono.f90 line 184
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2880,7 +2932,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element v ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 177
+        Defined at m_sw_mono.f90 line 184
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2904,7 +2956,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 177
+        Defined at m_sw_mono.f90 line 184
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2928,7 +2980,7 @@ class station_obs(f90wrap.runtime.FortranDerivedType):
         Element w ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 177
+        Defined at m_sw_mono.f90 line 184
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -2986,7 +3038,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
     Type(name=section_obs)
     
     
-    Defined at m_sw_mono.f90 lines 180-184
+    Defined at m_sw_mono.f90 lines 187-191
     
     """
     def __init__(self, handle=None):
@@ -2994,7 +3046,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         self = Section_Obs()
         
         
-        Defined at m_sw_mono.f90 lines 180-184
+        Defined at m_sw_mono.f90 lines 187-191
         
         
         Returns
@@ -3014,7 +3066,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Destructor for class Section_Obs
         
         
-        Defined at m_sw_mono.f90 lines 180-184
+        Defined at m_sw_mono.f90 lines 187-191
         
         Parameters
         ----------
@@ -3033,7 +3085,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element dt ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 182
+        Defined at m_sw_mono.f90 line 189
         
         """
         return _wrapping.f90wrap_section_obs__get__dt(self._handle)
@@ -3048,7 +3100,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element dx ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 182
+        Defined at m_sw_mono.f90 line 189
         
         """
         return _wrapping.f90wrap_section_obs__get__dx(self._handle)
@@ -3063,7 +3115,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 183
+        Defined at m_sw_mono.f90 line 190
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3087,7 +3139,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element h ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 183
+        Defined at m_sw_mono.f90 line 190
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3111,7 +3163,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element u ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 183
+        Defined at m_sw_mono.f90 line 190
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3135,7 +3187,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element v ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 183
+        Defined at m_sw_mono.f90 line 190
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3159,7 +3211,7 @@ class section_obs(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 183
+        Defined at m_sw_mono.f90 line 190
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3205,7 +3257,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
     Type(name=station_obsq)
     
     
-    Defined at m_sw_mono.f90 lines 186-196
+    Defined at m_sw_mono.f90 lines 193-203
     
     """
     def __init__(self, handle=None):
@@ -3213,7 +3265,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         self = Station_Obsq()
         
         
-        Defined at m_sw_mono.f90 lines 186-196
+        Defined at m_sw_mono.f90 lines 193-203
         
         
         Returns
@@ -3233,7 +3285,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Destructor for class Station_Obsq
         
         
-        Defined at m_sw_mono.f90 lines 186-196
+        Defined at m_sw_mono.f90 lines 193-203
         
         Parameters
         ----------
@@ -3252,7 +3304,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element weight ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 188
+        Defined at m_sw_mono.f90 line 195
         
         """
         return _wrapping.f90wrap_station_obsq__get__weight(self._handle)
@@ -3267,7 +3319,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element length ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 189
+        Defined at m_sw_mono.f90 line 196
         
         """
         return _wrapping.f90wrap_station_obsq__get__length(self._handle)
@@ -3282,7 +3334,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element dt_offset ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 190
+        Defined at m_sw_mono.f90 line 197
         
         """
         return _wrapping.f90wrap_station_obsq__get__dt_offset(self._handle)
@@ -3297,7 +3349,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element dt ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 191
+        Defined at m_sw_mono.f90 line 198
         
         """
         return _wrapping.f90wrap_station_obsq__get__dt(self._handle)
@@ -3312,7 +3364,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element dt_obs ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 192
+        Defined at m_sw_mono.f90 line 199
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3336,7 +3388,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element ind_t ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 193
+        Defined at m_sw_mono.f90 line 200
         
         """
         return _wrapping.f90wrap_station_obsq__get__ind_t(self._handle)
@@ -3351,7 +3403,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element ind_bc ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 194
+        Defined at m_sw_mono.f90 line 201
         
         """
         return _wrapping.f90wrap_station_obsq__get__ind_bc(self._handle)
@@ -3366,7 +3418,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element nb_dt ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 195
+        Defined at m_sw_mono.f90 line 202
         
         """
         return _wrapping.f90wrap_station_obsq__get__nb_dt(self._handle)
@@ -3381,7 +3433,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element t ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 196
+        Defined at m_sw_mono.f90 line 203
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3405,7 +3457,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element h ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 196
+        Defined at m_sw_mono.f90 line 203
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3429,7 +3481,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element u ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 196
+        Defined at m_sw_mono.f90 line 203
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3453,7 +3505,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element v ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 196
+        Defined at m_sw_mono.f90 line 203
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3477,7 +3529,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element q ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 196
+        Defined at m_sw_mono.f90 line 203
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3501,7 +3553,7 @@ class station_obsQ(f90wrap.runtime.FortranDerivedType):
         Element w ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 196
+        Defined at m_sw_mono.f90 line 203
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3561,7 +3613,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
     Type(name=soil_data)
     
     
-    Defined at m_sw_mono.f90 lines 207-212
+    Defined at m_sw_mono.f90 lines 214-219
     
     """
     def __init__(self, handle=None):
@@ -3569,7 +3621,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         self = Soil_Data()
         
         
-        Defined at m_sw_mono.f90 lines 207-212
+        Defined at m_sw_mono.f90 lines 214-219
         
         
         Returns
@@ -3589,7 +3641,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Soil_Data
         
         
-        Defined at m_sw_mono.f90 lines 207-212
+        Defined at m_sw_mono.f90 lines 214-219
         
         Parameters
         ----------
@@ -3608,7 +3660,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         Element clay ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 208
+        Defined at m_sw_mono.f90 line 215
         
         """
         return _wrapping.f90wrap_soil_data__get__clay(self._handle)
@@ -3623,7 +3675,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         Element silt ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 209
+        Defined at m_sw_mono.f90 line 216
         
         """
         return _wrapping.f90wrap_soil_data__get__silt(self._handle)
@@ -3638,7 +3690,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         Element sand ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 210
+        Defined at m_sw_mono.f90 line 217
         
         """
         return _wrapping.f90wrap_soil_data__get__sand(self._handle)
@@ -3653,7 +3705,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         Element thetas ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 211
+        Defined at m_sw_mono.f90 line 218
         
         """
         return _wrapping.f90wrap_soil_data__get__thetas(self._handle)
@@ -3668,7 +3720,7 @@ class soil_data(f90wrap.runtime.FortranDerivedType):
         Element thetar ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 212
+        Defined at m_sw_mono.f90 line 219
         
         """
         return _wrapping.f90wrap_soil_data__get__thetar(self._handle)
@@ -3701,7 +3753,7 @@ class ptf_data(f90wrap.runtime.FortranDerivedType):
     Type(name=ptf_data)
     
     
-    Defined at m_sw_mono.f90 lines 214-215
+    Defined at m_sw_mono.f90 lines 221-222
     
     """
     def __init__(self, handle=None):
@@ -3709,7 +3761,7 @@ class ptf_data(f90wrap.runtime.FortranDerivedType):
         self = Ptf_Data()
         
         
-        Defined at m_sw_mono.f90 lines 214-215
+        Defined at m_sw_mono.f90 lines 221-222
         
         
         Returns
@@ -3729,7 +3781,7 @@ class ptf_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Ptf_Data
         
         
-        Defined at m_sw_mono.f90 lines 214-215
+        Defined at m_sw_mono.f90 lines 221-222
         
         Parameters
         ----------
@@ -3748,7 +3800,7 @@ class ptf_data(f90wrap.runtime.FortranDerivedType):
         Element kappa ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 215
+        Defined at m_sw_mono.f90 line 222
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3782,7 +3834,7 @@ class surface_data(f90wrap.runtime.FortranDerivedType):
     Type(name=surface_data)
     
     
-    Defined at m_sw_mono.f90 lines 217-219
+    Defined at m_sw_mono.f90 lines 224-226
     
     """
     def __init__(self, handle=None):
@@ -3790,7 +3842,7 @@ class surface_data(f90wrap.runtime.FortranDerivedType):
         self = Surface_Data()
         
         
-        Defined at m_sw_mono.f90 lines 217-219
+        Defined at m_sw_mono.f90 lines 224-226
         
         
         Returns
@@ -3810,7 +3862,7 @@ class surface_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Surface_Data
         
         
-        Defined at m_sw_mono.f90 lines 217-219
+        Defined at m_sw_mono.f90 lines 224-226
         
         Parameters
         ----------
@@ -3829,7 +3881,7 @@ class surface_data(f90wrap.runtime.FortranDerivedType):
         Element imperm ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 218
+        Defined at m_sw_mono.f90 line 225
         
         """
         return _wrapping.f90wrap_surface_data__get__imperm(self._handle)
@@ -3844,7 +3896,7 @@ class surface_data(f90wrap.runtime.FortranDerivedType):
         Element dmax ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 219
+        Defined at m_sw_mono.f90 line 226
         
         """
         return _wrapping.f90wrap_surface_data__get__dmax(self._handle)
@@ -3871,7 +3923,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
     Type(name=structure_data)
     
     
-    Defined at m_sw_mono.f90 lines 221-227
+    Defined at m_sw_mono.f90 lines 228-234
     
     """
     def __init__(self, handle=None):
@@ -3879,7 +3931,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         self = Structure_Data()
         
         
-        Defined at m_sw_mono.f90 lines 221-227
+        Defined at m_sw_mono.f90 lines 228-234
         
         
         Returns
@@ -3899,7 +3951,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Structure_Data
         
         
-        Defined at m_sw_mono.f90 lines 221-227
+        Defined at m_sw_mono.f90 lines 228-234
         
         Parameters
         ----------
@@ -3918,7 +3970,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Element name ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 222
+        Defined at m_sw_mono.f90 line 229
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -3942,7 +3994,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Element c1 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 223
+        Defined at m_sw_mono.f90 line 230
         
         """
         return _wrapping.f90wrap_structure_data__get__c1(self._handle)
@@ -3957,7 +4009,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Element c2 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 224
+        Defined at m_sw_mono.f90 line 231
         
         """
         return _wrapping.f90wrap_structure_data__get__c2(self._handle)
@@ -3972,7 +4024,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Element c3 ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 225
+        Defined at m_sw_mono.f90 line 232
         
         """
         return _wrapping.f90wrap_structure_data__get__c3(self._handle)
@@ -3987,7 +4039,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Element true_x ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 226
+        Defined at m_sw_mono.f90 line 233
         
         """
         return _wrapping.f90wrap_structure_data__get__true_x(self._handle)
@@ -4002,7 +4054,7 @@ class structure_data(f90wrap.runtime.FortranDerivedType):
         Element true_y ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 227
+        Defined at m_sw_mono.f90 line 234
         
         """
         return _wrapping.f90wrap_structure_data__get__true_y(self._handle)
@@ -4037,7 +4089,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
     Type(name=input_data)
     
     
-    Defined at m_sw_mono.f90 lines 229-241
+    Defined at m_sw_mono.f90 lines 236-248
     
     """
     def __init__(self, handle=None):
@@ -4045,7 +4097,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         self = Input_Data()
         
         
-        Defined at m_sw_mono.f90 lines 229-241
+        Defined at m_sw_mono.f90 lines 236-248
         
         
         Returns
@@ -4065,7 +4117,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Destructor for class Input_Data
         
         
-        Defined at m_sw_mono.f90 lines 229-241
+        Defined at m_sw_mono.f90 lines 236-248
         
         Parameters
         ----------
@@ -4087,7 +4139,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element soil ftype=type(soil_data) pytype=Soil_Data
         
         
-        Defined at m_sw_mono.f90 line 230
+        Defined at m_sw_mono.f90 line 237
         
         """, soil_data)
         return self.soil
@@ -4098,7 +4150,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element soil_nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 231
+        Defined at m_sw_mono.f90 line 238
         
         """
         return _wrapping.f90wrap_input_data__get__soil_nland(self._handle)
@@ -4113,7 +4165,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element soil_land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 232
+        Defined at m_sw_mono.f90 line 239
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -4140,7 +4192,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element ptf ftype=type(ptf_data) pytype=Ptf_Data
         
         
-        Defined at m_sw_mono.f90 line 233
+        Defined at m_sw_mono.f90 line 240
         
         """, ptf_data)
         return self.ptf
@@ -4151,7 +4203,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element ptf_nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 234
+        Defined at m_sw_mono.f90 line 241
         
         """
         return _wrapping.f90wrap_input_data__get__ptf_nland(self._handle)
@@ -4166,7 +4218,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element ptf_land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 235
+        Defined at m_sw_mono.f90 line 242
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -4193,7 +4245,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element surf ftype=type(surface_data) pytype=Surface_Data
         
         
-        Defined at m_sw_mono.f90 line 236
+        Defined at m_sw_mono.f90 line 243
         
         """, surface_data)
         return self.surf
@@ -4204,7 +4256,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element surf_nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 237
+        Defined at m_sw_mono.f90 line 244
         
         """
         return _wrapping.f90wrap_input_data__get__surf_nland(self._handle)
@@ -4219,7 +4271,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element surf_land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 238
+        Defined at m_sw_mono.f90 line 245
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -4246,7 +4298,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element structures ftype=type(structure_data) pytype=Structure_Data
         
         
-        Defined at m_sw_mono.f90 line 239
+        Defined at m_sw_mono.f90 line 246
         
         """, structure_data)
         return self.structures
@@ -4257,7 +4309,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element struct_nland ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 240
+        Defined at m_sw_mono.f90 line 247
         
         """
         return _wrapping.f90wrap_input_data__get__struct_nland(self._handle)
@@ -4272,7 +4324,7 @@ class input_data(f90wrap.runtime.FortranDerivedType):
         Element struct_land ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 241
+        Defined at m_sw_mono.f90 line 248
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -4321,7 +4373,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
     Type(name=input_param)
     
     
-    Defined at m_sw_mono.f90 lines 393-485
+    Defined at m_sw_mono.f90 lines 403-497
     
     """
     def __init__(self, handle=None):
@@ -4329,7 +4381,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         self = Input_Param()
         
         
-        Defined at m_sw_mono.f90 lines 393-485
+        Defined at m_sw_mono.f90 lines 403-497
         
         
         Returns
@@ -4349,7 +4401,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Destructor for class Input_Param
         
         
-        Defined at m_sw_mono.f90 lines 393-485
+        Defined at m_sw_mono.f90 lines 403-497
         
         Parameters
         ----------
@@ -4368,7 +4420,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element mesh_type ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 394
+        Defined at m_sw_mono.f90 line 404
         
         """
         return _wrapping.f90wrap_input_param__get__mesh_type(self._handle)
@@ -4383,7 +4435,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element mesh_name ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 395
+        Defined at m_sw_mono.f90 line 405
         
         """
         return _wrapping.f90wrap_input_param__get__mesh_name(self._handle)
@@ -4398,7 +4450,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element bc_n ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 396
+        Defined at m_sw_mono.f90 line 406
         
         """
         return _wrapping.f90wrap_input_param__get__bc_n(self._handle)
@@ -4413,7 +4465,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element bc_s ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 397
+        Defined at m_sw_mono.f90 line 407
         
         """
         return _wrapping.f90wrap_input_param__get__bc_s(self._handle)
@@ -4428,7 +4480,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element bc_w ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 398
+        Defined at m_sw_mono.f90 line 408
         
         """
         return _wrapping.f90wrap_input_param__get__bc_w(self._handle)
@@ -4443,7 +4495,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element bc_e ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 399
+        Defined at m_sw_mono.f90 line 409
         
         """
         return _wrapping.f90wrap_input_param__get__bc_e(self._handle)
@@ -4458,7 +4510,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element bc_rain ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 400
+        Defined at m_sw_mono.f90 line 410
         
         """
         return _wrapping.f90wrap_input_param__get__bc_rain(self._handle)
@@ -4473,7 +4525,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element bc_infil ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 401
+        Defined at m_sw_mono.f90 line 411
         
         """
         return _wrapping.f90wrap_input_param__get__bc_infil(self._handle)
@@ -4488,7 +4540,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element lx ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 402
+        Defined at m_sw_mono.f90 line 412
         
         """
         return _wrapping.f90wrap_input_param__get__lx(self._handle)
@@ -4503,7 +4555,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element ly ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 403
+        Defined at m_sw_mono.f90 line 413
         
         """
         return _wrapping.f90wrap_input_param__get__ly(self._handle)
@@ -4518,7 +4570,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element nx ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 404
+        Defined at m_sw_mono.f90 line 414
         
         """
         return _wrapping.f90wrap_input_param__get__nx(self._handle)
@@ -4533,7 +4585,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element ny ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 405
+        Defined at m_sw_mono.f90 line 415
         
         """
         return _wrapping.f90wrap_input_param__get__ny(self._handle)
@@ -4548,7 +4600,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element ts ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 406
+        Defined at m_sw_mono.f90 line 416
         
         """
         return _wrapping.f90wrap_input_param__get__ts(self._handle)
@@ -4563,7 +4615,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element adapt_dt ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 407
+        Defined at m_sw_mono.f90 line 417
         
         """
         return _wrapping.f90wrap_input_param__get__adapt_dt(self._handle)
@@ -4578,7 +4630,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element dt ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 408
+        Defined at m_sw_mono.f90 line 418
         
         """
         return _wrapping.f90wrap_input_param__get__dt(self._handle)
@@ -4593,7 +4645,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element cfl ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 409
+        Defined at m_sw_mono.f90 line 419
         
         """
         return _wrapping.f90wrap_input_param__get__cfl(self._handle)
@@ -4608,7 +4660,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element do_warmup ftype=logical pytype=bool
         
         
-        Defined at m_sw_mono.f90 line 410
+        Defined at m_sw_mono.f90 line 420
         
         """
         return _wrapping.f90wrap_input_param__get__do_warmup(self._handle)
@@ -4623,7 +4675,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element dtw ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 411
+        Defined at m_sw_mono.f90 line 421
         
         """
         return _wrapping.f90wrap_input_param__get__dtw(self._handle)
@@ -4638,7 +4690,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element dtp ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 412
+        Defined at m_sw_mono.f90 line 422
         
         """
         return _wrapping.f90wrap_input_param__get__dtp(self._handle)
@@ -4653,7 +4705,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element dta ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 413
+        Defined at m_sw_mono.f90 line 423
         
         """
         return _wrapping.f90wrap_input_param__get__dta(self._handle)
@@ -4668,7 +4720,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_tecplot ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 415
+        Defined at m_sw_mono.f90 line 425
         
         """
         return _wrapping.f90wrap_input_param__get__w_tecplot(self._handle)
@@ -4683,7 +4735,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_vtk ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 416
+        Defined at m_sw_mono.f90 line 426
         
         """
         return _wrapping.f90wrap_input_param__get__w_vtk(self._handle)
@@ -4698,7 +4750,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_gnuplot ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 417
+        Defined at m_sw_mono.f90 line 427
         
         """
         return _wrapping.f90wrap_input_param__get__w_gnuplot(self._handle)
@@ -4713,7 +4765,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_bin ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 418
+        Defined at m_sw_mono.f90 line 428
         
         """
         return _wrapping.f90wrap_input_param__get__w_bin(self._handle)
@@ -4728,7 +4780,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_exact ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 419
+        Defined at m_sw_mono.f90 line 429
         
         """
         return _wrapping.f90wrap_input_param__get__w_exact(self._handle)
@@ -4743,7 +4795,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_norm ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 420
+        Defined at m_sw_mono.f90 line 430
         
         """
         return _wrapping.f90wrap_input_param__get__w_norm(self._handle)
@@ -4758,7 +4810,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element w_obs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 421
+        Defined at m_sw_mono.f90 line 431
         
         """
         return _wrapping.f90wrap_input_param__get__w_obs(self._handle)
@@ -4773,7 +4825,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_obs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 422
+        Defined at m_sw_mono.f90 line 432
         
         """
         return _wrapping.f90wrap_input_param__get__use_obs(self._handle)
@@ -4788,7 +4840,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_zobs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 423
+        Defined at m_sw_mono.f90 line 433
         
         """
         return _wrapping.f90wrap_input_param__get__use_zobs(self._handle)
@@ -4803,7 +4855,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_hobs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 424
+        Defined at m_sw_mono.f90 line 434
         
         """
         return _wrapping.f90wrap_input_param__get__use_hobs(self._handle)
@@ -4818,7 +4870,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_uvobs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 425
+        Defined at m_sw_mono.f90 line 435
         
         """
         return _wrapping.f90wrap_input_param__get__use_uvobs(self._handle)
@@ -4833,7 +4885,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_huvobs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 426
+        Defined at m_sw_mono.f90 line 436
         
         """
         return _wrapping.f90wrap_input_param__get__use_huvobs(self._handle)
@@ -4848,7 +4900,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_qobs ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 427
+        Defined at m_sw_mono.f90 line 437
         
         """
         return _wrapping.f90wrap_input_param__get__use_qobs(self._handle)
@@ -4863,7 +4915,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_qobs_gr4 ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 428
+        Defined at m_sw_mono.f90 line 438
         
         """
         return _wrapping.f90wrap_input_param__get__use_qobs_gr4(self._handle)
@@ -4878,7 +4930,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_nse ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 429
+        Defined at m_sw_mono.f90 line 439
         
         """
         return _wrapping.f90wrap_input_param__get__use_nse(self._handle)
@@ -4893,7 +4945,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_xsshp ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 430
+        Defined at m_sw_mono.f90 line 440
         
         """
         return _wrapping.f90wrap_input_param__get__use_xsshp(self._handle)
@@ -4908,7 +4960,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element xsshp_along_x ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 431
+        Defined at m_sw_mono.f90 line 441
         
         """
         return _wrapping.f90wrap_input_param__get__xsshp_along_x(self._handle)
@@ -4923,7 +4975,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element xsshp_along_y ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 432
+        Defined at m_sw_mono.f90 line 442
         
         """
         return _wrapping.f90wrap_input_param__get__xsshp_along_y(self._handle)
@@ -4938,7 +4990,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element use_ptf ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 433
+        Defined at m_sw_mono.f90 line 443
         
         """
         return _wrapping.f90wrap_input_param__get__use_ptf(self._handle)
@@ -4948,12 +5000,27 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         _wrapping.f90wrap_input_param__set__use_ptf(self._handle, use_ptf)
     
     @property
+    def use_porosity(self):
+        """
+        Element use_porosity ftype=integer(ip) pytype=int
+        
+        
+        Defined at m_sw_mono.f90 line 444
+        
+        """
+        return _wrapping.f90wrap_input_param__get__use_porosity(self._handle)
+    
+    @use_porosity.setter
+    def use_porosity(self, use_porosity):
+        _wrapping.f90wrap_input_param__set__use_porosity(self._handle, use_porosity)
+    
+    @property
     def spatial_scheme(self):
         """
         Element spatial_scheme ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 434
+        Defined at m_sw_mono.f90 line 445
         
         """
         return _wrapping.f90wrap_input_param__get__spatial_scheme(self._handle)
@@ -4968,7 +5035,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element temp_scheme ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 435
+        Defined at m_sw_mono.f90 line 446
         
         """
         return _wrapping.f90wrap_input_param__get__temp_scheme(self._handle)
@@ -4983,7 +5050,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element args ftype=character(len=lchar) pytype=str
         
         
-        Defined at m_sw_mono.f90 line 436
+        Defined at m_sw_mono.f90 line 447
         
         """
         array_ndim, array_type, array_shape, array_handle = \
@@ -5007,7 +5074,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element max_nt_for_direct ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 437
+        Defined at m_sw_mono.f90 line 448
         
         """
         return _wrapping.f90wrap_input_param__get__max_nt_for_direct(self._handle)
@@ -5023,7 +5090,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element max_nt_for_adjoint ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 438
+        Defined at m_sw_mono.f90 line 449
         
         """
         return _wrapping.f90wrap_input_param__get__max_nt_for_adjoint(self._handle)
@@ -5039,7 +5106,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element g ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 440
+        Defined at m_sw_mono.f90 line 451
         
         """
         return _wrapping.f90wrap_input_param__get__g(self._handle)
@@ -5054,7 +5121,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element heps ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 441
+        Defined at m_sw_mono.f90 line 452
         
         """
         return _wrapping.f90wrap_input_param__get__heps(self._handle)
@@ -5069,7 +5136,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element friction ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 442
+        Defined at m_sw_mono.f90 line 453
         
         """
         return _wrapping.f90wrap_input_param__get__friction(self._handle)
@@ -5084,7 +5151,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_shape_s ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 445
+        Defined at m_sw_mono.f90 line 456
         
         """
         return _wrapping.f90wrap_input_param__get__c_shape_s(self._handle)
@@ -5099,7 +5166,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_xcenter ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 446
+        Defined at m_sw_mono.f90 line 457
         
         """
         return _wrapping.f90wrap_input_param__get__c_xcenter(self._handle)
@@ -5114,7 +5181,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_hmax ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 447
+        Defined at m_sw_mono.f90 line 458
         
         """
         return _wrapping.f90wrap_input_param__get__c_hmax(self._handle)
@@ -5129,7 +5196,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_manning ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 448
+        Defined at m_sw_mono.f90 line 459
         
         """
         return _wrapping.f90wrap_input_param__get__c_manning(self._handle)
@@ -5144,7 +5211,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_manning_beta ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 449
+        Defined at m_sw_mono.f90 line 460
         
         """
         return _wrapping.f90wrap_input_param__get__c_manning_beta(self._handle)
@@ -5154,12 +5221,27 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         _wrapping.f90wrap_input_param__set__c_manning_beta(self._handle, c_manning_beta)
     
     @property
+    def c_porosity(self):
+        """
+        Element c_porosity ftype=integer(ip) pytype=int
+        
+        
+        Defined at m_sw_mono.f90 line 461
+        
+        """
+        return _wrapping.f90wrap_input_param__get__c_porosity(self._handle)
+    
+    @c_porosity.setter
+    def c_porosity(self, c_porosity):
+        _wrapping.f90wrap_input_param__set__c_porosity(self._handle, c_porosity)
+    
+    @property
     def c_bathy(self):
         """
         Element c_bathy ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 450
+        Defined at m_sw_mono.f90 line 462
         
         """
         return _wrapping.f90wrap_input_param__get__c_bathy(self._handle)
@@ -5174,7 +5256,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_ic ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 451
+        Defined at m_sw_mono.f90 line 463
         
         """
         return _wrapping.f90wrap_input_param__get__c_ic(self._handle)
@@ -5189,7 +5271,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_hydrograph ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 452
+        Defined at m_sw_mono.f90 line 464
         
         """
         return _wrapping.f90wrap_input_param__get__c_hydrograph(self._handle)
@@ -5204,7 +5286,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_ratcurve ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 453
+        Defined at m_sw_mono.f90 line 465
         
         """
         return _wrapping.f90wrap_input_param__get__c_ratcurve(self._handle)
@@ -5219,7 +5301,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_rain ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 454
+        Defined at m_sw_mono.f90 line 466
         
         """
         return _wrapping.f90wrap_input_param__get__c_rain(self._handle)
@@ -5234,7 +5316,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_gr4params ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 455
+        Defined at m_sw_mono.f90 line 467
         
         """
         return _wrapping.f90wrap_input_param__get__c_gr4params(self._handle)
@@ -5249,7 +5331,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_infil_max ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 456
+        Defined at m_sw_mono.f90 line 468
         
         """
         return _wrapping.f90wrap_input_param__get__c_infil_max(self._handle)
@@ -5264,7 +5346,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_ks ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 457
+        Defined at m_sw_mono.f90 line 469
         
         """
         return _wrapping.f90wrap_input_param__get__c_ks(self._handle)
@@ -5279,7 +5361,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_psif ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 458
+        Defined at m_sw_mono.f90 line 470
         
         """
         return _wrapping.f90wrap_input_param__get__c_psif(self._handle)
@@ -5294,7 +5376,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_deltatheta ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 459
+        Defined at m_sw_mono.f90 line 471
         
         """
         return _wrapping.f90wrap_input_param__get__c_deltatheta(self._handle)
@@ -5309,7 +5391,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_lambda ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 460
+        Defined at m_sw_mono.f90 line 472
         
         """
         return _wrapping.f90wrap_input_param__get__c_lambda(self._handle)
@@ -5324,7 +5406,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_cn ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 461
+        Defined at m_sw_mono.f90 line 473
         
         """
         return _wrapping.f90wrap_input_param__get__c_cn(self._handle)
@@ -5339,7 +5421,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element c_ptf ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 462
+        Defined at m_sw_mono.f90 line 474
         
         """
         return _wrapping.f90wrap_input_param__get__c_ptf(self._handle)
@@ -5354,7 +5436,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_min ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 465
+        Defined at m_sw_mono.f90 line 477
         
         """
         return _wrapping.f90wrap_input_param__get__eps_min(self._handle)
@@ -5369,7 +5451,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_manning ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 466
+        Defined at m_sw_mono.f90 line 478
         
         """
         return _wrapping.f90wrap_input_param__get__eps_manning(self._handle)
@@ -5384,7 +5466,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_bathy ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 467
+        Defined at m_sw_mono.f90 line 479
         
         """
         return _wrapping.f90wrap_input_param__get__eps_bathy(self._handle)
@@ -5399,7 +5481,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_ic ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 468
+        Defined at m_sw_mono.f90 line 480
         
         """
         return _wrapping.f90wrap_input_param__get__eps_ic(self._handle)
@@ -5414,7 +5496,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_hydrograph ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 469
+        Defined at m_sw_mono.f90 line 481
         
         """
         return _wrapping.f90wrap_input_param__get__eps_hydrograph(self._handle)
@@ -5429,7 +5511,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_ratcurve ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 470
+        Defined at m_sw_mono.f90 line 482
         
         """
         return _wrapping.f90wrap_input_param__get__eps_ratcurve(self._handle)
@@ -5444,7 +5526,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_rain ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 471
+        Defined at m_sw_mono.f90 line 483
         
         """
         return _wrapping.f90wrap_input_param__get__eps_rain(self._handle)
@@ -5459,7 +5541,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_ks ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 472
+        Defined at m_sw_mono.f90 line 484
         
         """
         return _wrapping.f90wrap_input_param__get__eps_ks(self._handle)
@@ -5474,7 +5556,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_psif ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 473
+        Defined at m_sw_mono.f90 line 485
         
         """
         return _wrapping.f90wrap_input_param__get__eps_psif(self._handle)
@@ -5489,7 +5571,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_deltatheta ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 474
+        Defined at m_sw_mono.f90 line 486
         
         """
         return _wrapping.f90wrap_input_param__get__eps_deltatheta(self._handle)
@@ -5504,7 +5586,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_lambdacn ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 475
+        Defined at m_sw_mono.f90 line 487
         
         """
         return _wrapping.f90wrap_input_param__get__eps_lambdacn(self._handle)
@@ -5519,7 +5601,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_cn ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 476
+        Defined at m_sw_mono.f90 line 488
         
         """
         return _wrapping.f90wrap_input_param__get__eps_cn(self._handle)
@@ -5534,7 +5616,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element eps_ptf ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 477
+        Defined at m_sw_mono.f90 line 489
         
         """
         return _wrapping.f90wrap_input_param__get__eps_ptf(self._handle)
@@ -5549,7 +5631,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_manning ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 479
+        Defined at m_sw_mono.f90 line 491
         
         """
         return _wrapping.f90wrap_input_param__get__regul_manning(self._handle)
@@ -5564,7 +5646,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_bathy ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 480
+        Defined at m_sw_mono.f90 line 492
         
         """
         return _wrapping.f90wrap_input_param__get__regul_bathy(self._handle)
@@ -5579,7 +5661,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_bathy_grad ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 481
+        Defined at m_sw_mono.f90 line 493
         
         """
         return _wrapping.f90wrap_input_param__get__regul_bathy_grad(self._handle)
@@ -5595,7 +5677,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_bathy_shape ftype=integer(ip) pytype=int
         
         
-        Defined at m_sw_mono.f90 line 482
+        Defined at m_sw_mono.f90 line 494
         
         """
         return _wrapping.f90wrap_input_param__get__regul_bathy_shape(self._handle)
@@ -5611,7 +5693,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_ic ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 483
+        Defined at m_sw_mono.f90 line 495
         
         """
         return _wrapping.f90wrap_input_param__get__regul_ic(self._handle)
@@ -5626,7 +5708,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_hydrograph ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 484
+        Defined at m_sw_mono.f90 line 496
         
         """
         return _wrapping.f90wrap_input_param__get__regul_hydrograph(self._handle)
@@ -5642,7 +5724,7 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         Element regul_ratcurve ftype=real(rp) pytype=float
         
         
-        Defined at m_sw_mono.f90 line 485
+        Defined at m_sw_mono.f90 line 497
         
         """
         return _wrapping.f90wrap_input_param__get__regul_ratcurve(self._handle)
@@ -5731,6 +5813,8 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         ret.append(repr(self.xsshp_along_y))
         ret.append(',\n    use_ptf : ')
         ret.append(repr(self.use_ptf))
+        ret.append(',\n    use_porosity : ')
+        ret.append(repr(self.use_porosity))
         ret.append(',\n    spatial_scheme : ')
         ret.append(repr(self.spatial_scheme))
         ret.append(',\n    temp_scheme : ')
@@ -5757,6 +5841,8 @@ class Input_Param(f90wrap.runtime.FortranDerivedType):
         ret.append(repr(self.c_manning))
         ret.append(',\n    c_manning_beta : ')
         ret.append(repr(self.c_manning_beta))
+        ret.append(',\n    c_porosity : ')
+        ret.append(repr(self.c_porosity))
         ret.append(',\n    c_bathy : ')
         ret.append(repr(self.c_bathy))
         ret.append(',\n    c_ic : ')
@@ -5834,7 +5920,7 @@ def default_values():
     default_values()
     
     
-    Defined at m_sw_mono.f90 lines 489-572
+    Defined at m_sw_mono.f90 lines 501-586
     
     
     Details: h,u,v are the unknowns of the model
@@ -5846,7 +5932,7 @@ def alloc_dof(self):
     dof = alloc_dof(self)
     
     
-    Defined at m_sw_mono.f90 lines 574-626
+    Defined at m_sw_mono.f90 lines 588-640
     
     Parameters
     ----------
@@ -5891,7 +5977,7 @@ def dealloc_dof(self):
     dealloc_dof(self)
     
     
-    Defined at m_sw_mono.f90 lines 628-639
+    Defined at m_sw_mono.f90 lines 642-653
     
     Parameters
     ----------
@@ -5905,7 +5991,7 @@ def dealloc_model():
     dealloc_model()
     
     
-    Defined at m_sw_mono.f90 lines 641-693
+    Defined at m_sw_mono.f90 lines 655-712
     
     
     ------------------------------------------------
@@ -5920,7 +6006,7 @@ def spatial_index_fromxy(self, xmin, xmax, ymin, ymax, spatial_index):
     spatial_index_fromxy(self, xmin, xmax, ymin, ymax, spatial_index)
     
     
-    Defined at m_sw_mono.f90 lines 820-828
+    Defined at m_sw_mono.f90 lines 839-847
     
     Parameters
     ----------
@@ -6084,7 +6170,7 @@ def get_mass_cut():
     Element mass_cut ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 40
+    Defined at m_sw_mono.f90 line 42
     
     """
     return _wrapping.f90wrap_m_model__get__mass_cut()
@@ -6097,7 +6183,7 @@ def get_manning_data_glob():
     Element manning_data_glob ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 41
+    Defined at m_sw_mono.f90 line 43
     
     """
     return _wrapping.f90wrap_m_model__get__manning_data_glob()
@@ -6110,7 +6196,7 @@ def get_array_slope_y():
     Element slope_y ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 42
+    Defined at m_sw_mono.f90 line 44
     
     """
     global slope_y
@@ -6133,7 +6219,7 @@ def get_array_slope_x():
     Element slope_x ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 43
+    Defined at m_sw_mono.f90 line 45
     
     """
     global slope_x
@@ -6151,33 +6237,54 @@ def get_array_slope_x():
 def set_array_slope_x(slope_x):
     globals()['slope_x'][...] = slope_x
 
-def get_single_porosity():
+def get_sporosity():
     """
-    Element single_porosity ftype=type(porosity_data) pytype=Porosity_Data
+    Element sporosity ftype=type(porosity_data) pytype=Porosity_Data
     
     
-    Defined at m_sw_mono.f90 line 97
+    Defined at m_sw_mono.f90 line 103
     
     """
-    global single_porosity
-    single_porosity_handle = _wrapping.f90wrap_m_model__get__single_porosity()
-    if tuple(single_porosity_handle) in _objs:
-        single_porosity = _objs[tuple(single_porosity_handle)]
+    global sporosity
+    sporosity_handle = _wrapping.f90wrap_m_model__get__sporosity()
+    if tuple(sporosity_handle) in _objs:
+        sporosity = _objs[tuple(sporosity_handle)]
     else:
-        single_porosity = porosity_data.from_handle(single_porosity_handle)
-        _objs[tuple(single_porosity_handle)] = single_porosity
-    return single_porosity
+        sporosity = porosity_data.from_handle(sporosity_handle)
+        _objs[tuple(sporosity_handle)] = sporosity
+    return sporosity
 
-def set_single_porosity(single_porosity):
-    single_porosity = single_porosity._handle
-    _wrapping.f90wrap_m_model__set__single_porosity(single_porosity)
+def set_sporosity(sporosity):
+    sporosity = sporosity._handle
+    _wrapping.f90wrap_m_model__set__sporosity(sporosity)
+
+def get_iporosity():
+    """
+    Element iporosity ftype=type(porosity_data) pytype=Porosity_Data
+    
+    
+    Defined at m_sw_mono.f90 line 104
+    
+    """
+    global iporosity
+    iporosity_handle = _wrapping.f90wrap_m_model__get__iporosity()
+    if tuple(iporosity_handle) in _objs:
+        iporosity = _objs[tuple(iporosity_handle)]
+    else:
+        iporosity = porosity_data.from_handle(iporosity_handle)
+        _objs[tuple(iporosity_handle)] = iporosity
+    return iporosity
+
+def set_iporosity(iporosity):
+    iporosity = iporosity._handle
+    _wrapping.f90wrap_m_model__set__iporosity(iporosity)
 
 def get_feedback_inflow():
     """
     Element feedback_inflow ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 108
+    Defined at m_sw_mono.f90 line 115
     
     """
     return _wrapping.f90wrap_m_model__get__feedback_inflow()
@@ -6190,7 +6297,7 @@ def get_coef_feedback():
     Element coef_feedback ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 109
+    Defined at m_sw_mono.f90 line 116
     
     """
     return _wrapping.f90wrap_m_model__get__coef_feedback()
@@ -6203,7 +6310,7 @@ def get_bc():
     Element bc ftype=type(bcs) pytype=Bcs
     
     
-    Defined at m_sw_mono.f90 line 163
+    Defined at m_sw_mono.f90 line 170
     
     """
     global bc
@@ -6224,7 +6331,7 @@ def get_phys_desc():
     Element phys_desc ftype=type(input_data) pytype=Input_Data
     
     
-    Defined at m_sw_mono.f90 line 243
+    Defined at m_sw_mono.f90 line 250
     
     """
     global phys_desc
@@ -6245,7 +6352,7 @@ def get_g():
     Element g ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 248
+    Defined at m_sw_mono.f90 line 255
     
     """
     return _wrapping.f90wrap_m_model__get__g()
@@ -6258,7 +6365,7 @@ def get_heps():
     Element heps ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 249
+    Defined at m_sw_mono.f90 line 256
     
     """
     return _wrapping.f90wrap_m_model__get__heps()
@@ -6271,7 +6378,7 @@ def get_friction():
     Element friction ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 250
+    Defined at m_sw_mono.f90 line 257
     
     """
     return _wrapping.f90wrap_m_model__get__friction()
@@ -6284,7 +6391,7 @@ def get_c_shape_s():
     Element c_shape_s ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 253
+    Defined at m_sw_mono.f90 line 260
     
     """
     return _wrapping.f90wrap_m_model__get__c_shape_s()
@@ -6297,7 +6404,7 @@ def get_c_xcenter():
     Element c_xcenter ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 254
+    Defined at m_sw_mono.f90 line 261
     
     """
     return _wrapping.f90wrap_m_model__get__c_xcenter()
@@ -6310,7 +6417,7 @@ def get_c_hmax():
     Element c_hmax ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 255
+    Defined at m_sw_mono.f90 line 262
     
     """
     return _wrapping.f90wrap_m_model__get__c_hmax()
@@ -6323,7 +6430,7 @@ def get_c_manning():
     Element c_manning ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 256
+    Defined at m_sw_mono.f90 line 263
     
     """
     return _wrapping.f90wrap_m_model__get__c_manning()
@@ -6336,7 +6443,7 @@ def get_c_manning_beta():
     Element c_manning_beta ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 257
+    Defined at m_sw_mono.f90 line 264
     
     """
     return _wrapping.f90wrap_m_model__get__c_manning_beta()
@@ -6344,12 +6451,25 @@ def get_c_manning_beta():
 def set_c_manning_beta(c_manning_beta):
     _wrapping.f90wrap_m_model__set__c_manning_beta(c_manning_beta)
 
+def get_c_porosity():
+    """
+    Element c_porosity ftype=integer(ip) pytype=int
+    
+    
+    Defined at m_sw_mono.f90 line 265
+    
+    """
+    return _wrapping.f90wrap_m_model__get__c_porosity()
+
+def set_c_porosity(c_porosity):
+    _wrapping.f90wrap_m_model__set__c_porosity(c_porosity)
+
 def get_c_bathy():
     """
     Element c_bathy ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 258
+    Defined at m_sw_mono.f90 line 266
     
     """
     return _wrapping.f90wrap_m_model__get__c_bathy()
@@ -6362,7 +6482,7 @@ def get_c_slope_y():
     Element c_slope_y ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 259
+    Defined at m_sw_mono.f90 line 267
     
     """
     return _wrapping.f90wrap_m_model__get__c_slope_y()
@@ -6375,7 +6495,7 @@ def get_c_slope_x():
     Element c_slope_x ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 260
+    Defined at m_sw_mono.f90 line 268
     
     """
     return _wrapping.f90wrap_m_model__get__c_slope_x()
@@ -6388,7 +6508,7 @@ def get_c_ic():
     Element c_ic ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 261
+    Defined at m_sw_mono.f90 line 269
     
     """
     return _wrapping.f90wrap_m_model__get__c_ic()
@@ -6401,7 +6521,7 @@ def get_c_hydrograph():
     Element c_hydrograph ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 262
+    Defined at m_sw_mono.f90 line 270
     
     """
     return _wrapping.f90wrap_m_model__get__c_hydrograph()
@@ -6414,7 +6534,7 @@ def get_c_ratcurve():
     Element c_ratcurve ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 263
+    Defined at m_sw_mono.f90 line 271
     
     """
     return _wrapping.f90wrap_m_model__get__c_ratcurve()
@@ -6427,7 +6547,7 @@ def get_c_gr4params():
     Element c_gr4params ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 264
+    Defined at m_sw_mono.f90 line 272
     
     """
     return _wrapping.f90wrap_m_model__get__c_gr4params()
@@ -6440,7 +6560,7 @@ def get_c_rain():
     Element c_rain ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 265
+    Defined at m_sw_mono.f90 line 273
     
     """
     return _wrapping.f90wrap_m_model__get__c_rain()
@@ -6453,7 +6573,7 @@ def get_c_infil_max():
     Element c_infil_max ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 266
+    Defined at m_sw_mono.f90 line 274
     
     """
     return _wrapping.f90wrap_m_model__get__c_infil_max()
@@ -6466,7 +6586,7 @@ def get_c_ks():
     Element c_ks ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 267
+    Defined at m_sw_mono.f90 line 275
     
     """
     return _wrapping.f90wrap_m_model__get__c_ks()
@@ -6479,7 +6599,7 @@ def get_c_psif():
     Element c_psif ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 268
+    Defined at m_sw_mono.f90 line 276
     
     """
     return _wrapping.f90wrap_m_model__get__c_psif()
@@ -6492,7 +6612,7 @@ def get_c_deltatheta():
     Element c_deltatheta ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 269
+    Defined at m_sw_mono.f90 line 277
     
     """
     return _wrapping.f90wrap_m_model__get__c_deltatheta()
@@ -6505,7 +6625,7 @@ def get_c_lambda():
     Element c_lambda ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 270
+    Defined at m_sw_mono.f90 line 278
     
     """
     return _wrapping.f90wrap_m_model__get__c_lambda()
@@ -6518,7 +6638,7 @@ def get_c_cn():
     Element c_cn ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 271
+    Defined at m_sw_mono.f90 line 279
     
     """
     return _wrapping.f90wrap_m_model__get__c_cn()
@@ -6531,7 +6651,7 @@ def get_c_ptf():
     Element c_ptf ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 272
+    Defined at m_sw_mono.f90 line 280
     
     """
     return _wrapping.f90wrap_m_model__get__c_ptf()
@@ -6544,7 +6664,7 @@ def get_eps_manning():
     Element eps_manning ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 275
+    Defined at m_sw_mono.f90 line 283
     
     """
     return _wrapping.f90wrap_m_model__get__eps_manning()
@@ -6557,7 +6677,7 @@ def get_eps_bathy():
     Element eps_bathy ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 276
+    Defined at m_sw_mono.f90 line 284
     
     """
     return _wrapping.f90wrap_m_model__get__eps_bathy()
@@ -6570,7 +6690,7 @@ def get_eps_ic():
     Element eps_ic ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 277
+    Defined at m_sw_mono.f90 line 285
     
     """
     return _wrapping.f90wrap_m_model__get__eps_ic()
@@ -6583,7 +6703,7 @@ def get_eps_hydrograph():
     Element eps_hydrograph ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 278
+    Defined at m_sw_mono.f90 line 286
     
     """
     return _wrapping.f90wrap_m_model__get__eps_hydrograph()
@@ -6596,7 +6716,7 @@ def get_eps_ratcurve():
     Element eps_ratcurve ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 279
+    Defined at m_sw_mono.f90 line 287
     
     """
     return _wrapping.f90wrap_m_model__get__eps_ratcurve()
@@ -6609,7 +6729,7 @@ def get_eps_gr4params():
     Element eps_gr4params ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 280
+    Defined at m_sw_mono.f90 line 288
     
     """
     return _wrapping.f90wrap_m_model__get__eps_gr4params()
@@ -6622,7 +6742,7 @@ def get_eps_rain():
     Element eps_rain ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 281
+    Defined at m_sw_mono.f90 line 289
     
     """
     return _wrapping.f90wrap_m_model__get__eps_rain()
@@ -6635,7 +6755,7 @@ def get_eps_ks():
     Element eps_ks ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 282
+    Defined at m_sw_mono.f90 line 290
     
     """
     return _wrapping.f90wrap_m_model__get__eps_ks()
@@ -6648,7 +6768,7 @@ def get_eps_psif():
     Element eps_psif ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 283
+    Defined at m_sw_mono.f90 line 291
     
     """
     return _wrapping.f90wrap_m_model__get__eps_psif()
@@ -6661,7 +6781,7 @@ def get_eps_deltatheta():
     Element eps_deltatheta ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 284
+    Defined at m_sw_mono.f90 line 292
     
     """
     return _wrapping.f90wrap_m_model__get__eps_deltatheta()
@@ -6674,7 +6794,7 @@ def get_eps_lambdacn():
     Element eps_lambdacn ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 285
+    Defined at m_sw_mono.f90 line 293
     
     """
     return _wrapping.f90wrap_m_model__get__eps_lambdacn()
@@ -6687,7 +6807,7 @@ def get_eps_cn():
     Element eps_cn ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 286
+    Defined at m_sw_mono.f90 line 294
     
     """
     return _wrapping.f90wrap_m_model__get__eps_cn()
@@ -6700,7 +6820,7 @@ def get_eps_ptf():
     Element eps_ptf ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 287
+    Defined at m_sw_mono.f90 line 295
     
     """
     return _wrapping.f90wrap_m_model__get__eps_ptf()
@@ -6713,7 +6833,7 @@ def get_regul_manning():
     Element regul_manning ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 288
+    Defined at m_sw_mono.f90 line 296
     
     """
     return _wrapping.f90wrap_m_model__get__regul_manning()
@@ -6726,7 +6846,7 @@ def get_regul_bathy():
     Element regul_bathy ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 289
+    Defined at m_sw_mono.f90 line 297
     
     """
     return _wrapping.f90wrap_m_model__get__regul_bathy()
@@ -6739,7 +6859,7 @@ def get_regul_bathy_grad():
     Element regul_bathy_grad ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 290
+    Defined at m_sw_mono.f90 line 298
     
     """
     return _wrapping.f90wrap_m_model__get__regul_bathy_grad()
@@ -6752,7 +6872,7 @@ def get_regul_bathy_shape():
     Element regul_bathy_shape ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 291
+    Defined at m_sw_mono.f90 line 299
     
     """
     return _wrapping.f90wrap_m_model__get__regul_bathy_shape()
@@ -6765,7 +6885,7 @@ def get_regul_ic():
     Element regul_ic ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 292
+    Defined at m_sw_mono.f90 line 300
     
     """
     return _wrapping.f90wrap_m_model__get__regul_ic()
@@ -6778,7 +6898,7 @@ def get_regul_hydrograph():
     Element regul_hydrograph ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 293
+    Defined at m_sw_mono.f90 line 301
     
     """
     return _wrapping.f90wrap_m_model__get__regul_hydrograph()
@@ -6791,7 +6911,7 @@ def get_regul_ratcurve():
     Element regul_ratcurve ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 294
+    Defined at m_sw_mono.f90 line 302
     
     """
     return _wrapping.f90wrap_m_model__get__regul_ratcurve()
@@ -6804,7 +6924,7 @@ def get_regul_gr4params():
     Element regul_gr4params ftype=real(rp) pytype=float
     
     
-    Defined at m_sw_mono.f90 line 295
+    Defined at m_sw_mono.f90 line 303
     
     """
     return _wrapping.f90wrap_m_model__get__regul_gr4params()
@@ -6817,7 +6937,7 @@ def get_fix_time_step_serie():
     Element fix_time_step_serie ftype=integer(ip) pytype=int
     
     
-    Defined at m_sw_mono.f90 line 296
+    Defined at m_sw_mono.f90 line 304
     
     """
     return _wrapping.f90wrap_m_model__get__fix_time_step_serie()

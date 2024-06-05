@@ -37,6 +37,8 @@ MODULE m_model
    type(vec2d), dimension(:), allocatable :: grad_z !> Cell Gradient of bathy_cell
    type(vec2d), dimension(:), allocatable :: grad_z2 !> Cell Gradient of bathy_cell^2
    type(vec2d), dimension(:), allocatable :: z_eq !> Equivalent Bathymetry
+   type(vec2d), dimension(:), allocatable :: grad_Phi !> Cell gradient of porosity
+   type(vec2d), dimension(:), allocatable :: grad_Phi2 !> Cell gradient of porosity^2
    real(rp) :: mass_cut !> ??????? mystery
    integer(ip) :: manning_data_glob !> ??????? mystery
    real(rp), dimension(:), allocatable :: slope_y !Added for Andromede, to expand
@@ -91,10 +93,15 @@ MODULE m_model
    TYPE porosity_data
    !> derived type porosity_data
    integer(ip) :: nland
-   real(rp), dimension(:), allocatable :: SP
    integer(ip), dimension(:), allocatable :: land !> nland value associated to cell k (land is ordered same as mesh)
+   ! Single Porosity associated to SPorosity
+   real(rp), dimension(:), allocatable :: Phi
+   ! Integral Porosity associated to IPorosity
+   real(rp), dimension(:), allocatable :: PhiG
+   real(rp), dimension(:), allocatable :: PhiW
    END TYPE porosity_data
-   type(porosity_data), target :: single_porosity
+   type(porosity_data), target :: SPorosity
+   type(porosity_data), target :: IPorosity
    !===================================================================================================================!
    ! Model parameters Structure
    !===================================================================================================================!
@@ -255,6 +262,7 @@ MODULE m_model
    integer(ip) :: c_hmax
    integer(ip) :: c_manning !> activate inference of manning alpha parameter
    integer(ip) :: c_manning_beta !> activate inference of manning_beta parameter
+   integer(ip) :: c_porosity !> activate inference of porosity
    integer(ip) :: c_bathy !> activate inference of bathymetry
    integer(ip) :: c_slope_y
    integer(ip) :: c_slope_x
@@ -336,6 +344,7 @@ MODULE m_model
       xsshp_along_x,&
       xsshp_along_y,&
       use_ptf,&
+      use_porosity,&
       spatial_scheme, &
       temp_scheme, &
       max_nt_for_direct , &
@@ -352,6 +361,7 @@ MODULE m_model
       c_hmax, &
       c_manning, &
       c_manning_beta, &
+      c_porosity, &
       c_bathy, &
       c_slope_y,&
       c_slope_x,&
@@ -431,6 +441,7 @@ MODULE m_model
         integer(ip) :: xsshp_along_x !< Toogle whether channel is defined along x-axis
         integer(ip) :: xsshp_along_y !< Toogle whether channel is defined along y-axis
         integer(ip) :: use_ptf !< Toogle whether a pedotransfer function is used to calculate infil parameters from phys_desc parameters
+        integer(ip) :: use_porosity !< Activation of use of porosity
   character(len=lchar) :: spatial_scheme !> Name of Spatial Discretization Scheme ('first_b1' only at the moment)
    character(len=lchar) :: temp_scheme !> Name of Temporal Discretization Scheme ('euler' or 'imex' at the moment )
    character(len=lchar), dimension(:), allocatable :: args !> Arguments passed on the command line
@@ -447,6 +458,7 @@ MODULE m_model
         integer(ip) :: c_hmax
    integer(ip) :: c_manning !> activate inference of manning alpha parameter (if c_xxx = 1)
    integer(ip) :: c_manning_beta !> activate inference of manning beta parameter (if c_xxx = 1)
+   integer(ip) :: c_porosity !> activate inference of porosity parameter (if c_xxx = 1)
    integer(ip) :: c_bathy !> activate inference of bathymetry (if c_xxx = 1)
    integer(ip) :: c_ic !> activate inference of ???(if c_xxx = 1)
    integer(ip) :: c_hydrograph !> activate inference of hydrograph r (if c_xxx = 1)
@@ -510,6 +522,7 @@ CONTAINS
       xsshp_along_x = 0_ip
       xsshp_along_y = 0_ip
       use_ptf = 0_ip
+      use_porosity = 0._ip
       do_warmup = .True.
       spatial_scheme = 'first_b1'
       temp_scheme = 'euler'
@@ -523,6 +536,7 @@ CONTAINS
       c_hmax = 0_ip
       c_manning = 0_ip
       c_manning_beta = 0_ip
+      c_porosity = 0_ip
       c_bathy = 0_ip
       c_slope_y = 0_ip
       c_slope_x = 0_ip
@@ -658,6 +672,11 @@ CONTAINS
       if ( allocated( phys_desc%ptf_land ) ) deallocate( phys_desc%ptf_land )
       if ( allocated( phys_desc%ptf ) ) deallocate( phys_desc%ptf )
       if ( allocated( PTF ) ) deallocate( PTF )
+      if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
+      if ( allocated( SPorosity%Phi ) ) deallocate( SPorosity%Phi )
+      if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
+      if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
+      if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
       !------------------------------------------------!
       ! millascenious forgoten variables to deallocate
       !------------------------------------------------!

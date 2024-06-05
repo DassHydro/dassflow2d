@@ -38,8 +38,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh)
 ! Right State in edge cell normal coordinates
   REAL(rp) :: hr(2), ur(2), vr(2), zr
   REAL(rp) :: hr_back(2), ur_back(2), vr_back(2), zr_back
-! Left/Right porosity in cell
-  REAL(rp) :: phil, phir
 ! Finite Volume normal edge flux
   REAL(rp), DIMENSION(sw_nb) :: nflux
   REAL(rp), DIMENSION(sw_nb) :: nflux_back

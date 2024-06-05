@@ -741,25 +741,12 @@ def get_bc_infil():
 def set_bc_infil(bc_infil):
     _wrapping.f90wrap_m_common__set__bc_infil(bc_infil)
 
-def get_bc_porosity():
-    """
-    Element bc_porosity ftype=integer(ip) pytype=int
-    
-    
-    Defined at m_common.f90 line 17
-    
-    """
-    return _wrapping.f90wrap_m_common__get__bc_porosity()
-
-def set_bc_porosity(bc_porosity):
-    _wrapping.f90wrap_m_common__set__bc_porosity(bc_porosity)
-
 def get_lx():
     """
     Element lx ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 18
+    Defined at m_common.f90 line 17
     
     """
     return _wrapping.f90wrap_m_common__get__lx()
@@ -772,7 +759,7 @@ def get_ly():
     Element ly ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 19
+    Defined at m_common.f90 line 18
     
     """
     return _wrapping.f90wrap_m_common__get__ly()
@@ -785,7 +772,7 @@ def get_nx():
     Element nx ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 20
+    Defined at m_common.f90 line 19
     
     """
     return _wrapping.f90wrap_m_common__get__nx()
@@ -798,7 +785,7 @@ def get_ny():
     Element ny ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 21
+    Defined at m_common.f90 line 20
     
     """
     return _wrapping.f90wrap_m_common__get__ny()
@@ -811,7 +798,7 @@ def get_ts():
     Element ts ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 22
+    Defined at m_common.f90 line 21
     
     """
     return _wrapping.f90wrap_m_common__get__ts()
@@ -824,7 +811,7 @@ def get_adapt_dt():
     Element adapt_dt ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 23
+    Defined at m_common.f90 line 22
     
     """
     return _wrapping.f90wrap_m_common__get__adapt_dt()
@@ -837,7 +824,7 @@ def get_dt():
     Element dt ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 24
+    Defined at m_common.f90 line 23
     
     """
     return _wrapping.f90wrap_m_common__get__dt()
@@ -850,7 +837,7 @@ def get_cfl():
     Element cfl ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 25
+    Defined at m_common.f90 line 24
     
     """
     return _wrapping.f90wrap_m_common__get__cfl()
@@ -863,7 +850,7 @@ def get_do_warmup():
     Element do_warmup ftype=logical pytype=bool
     
     
-    Defined at m_common.f90 line 26
+    Defined at m_common.f90 line 25
     
     """
     return _wrapping.f90wrap_m_common__get__do_warmup()
@@ -876,7 +863,7 @@ def get_dtw():
     Element dtw ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 27
+    Defined at m_common.f90 line 26
     
     """
     return _wrapping.f90wrap_m_common__get__dtw()
@@ -889,7 +876,7 @@ def get_dtp():
     Element dtp ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 28
+    Defined at m_common.f90 line 27
     
     """
     return _wrapping.f90wrap_m_common__get__dtp()
@@ -902,7 +889,7 @@ def get_dta():
     Element dta ftype=real(rp) pytype=float
     
     
-    Defined at m_common.f90 line 29
+    Defined at m_common.f90 line 28
     
     """
     return _wrapping.f90wrap_m_common__get__dta()
@@ -915,7 +902,7 @@ def get_w_tecplot():
     Element w_tecplot ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 30
+    Defined at m_common.f90 line 29
     
     """
     return _wrapping.f90wrap_m_common__get__w_tecplot()
@@ -928,7 +915,7 @@ def get_w_vtk():
     Element w_vtk ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 31
+    Defined at m_common.f90 line 30
     
     """
     return _wrapping.f90wrap_m_common__get__w_vtk()
@@ -941,7 +928,7 @@ def get_w_gnuplot():
     Element w_gnuplot ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 32
+    Defined at m_common.f90 line 31
     
     """
     return _wrapping.f90wrap_m_common__get__w_gnuplot()
@@ -954,7 +941,7 @@ def get_w_bin():
     Element w_bin ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 33
+    Defined at m_common.f90 line 32
     
     """
     return _wrapping.f90wrap_m_common__get__w_bin()
@@ -967,7 +954,7 @@ def get_w_exact():
     Element w_exact ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 34
+    Defined at m_common.f90 line 33
     
     """
     return _wrapping.f90wrap_m_common__get__w_exact()
@@ -980,7 +967,7 @@ def get_w_norm():
     Element w_norm ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 35
+    Defined at m_common.f90 line 34
     
     """
     return _wrapping.f90wrap_m_common__get__w_norm()
@@ -993,7 +980,7 @@ def get_w_obs():
     Element w_obs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 36
+    Defined at m_common.f90 line 35
     
     """
     return _wrapping.f90wrap_m_common__get__w_obs()
@@ -1006,7 +993,7 @@ def get_use_obs():
     Element use_obs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 37
+    Defined at m_common.f90 line 36
     
     """
     return _wrapping.f90wrap_m_common__get__use_obs()
@@ -1019,7 +1006,7 @@ def get_use_zobs():
     Element use_zobs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 38
+    Defined at m_common.f90 line 37
     
     """
     return _wrapping.f90wrap_m_common__get__use_zobs()
@@ -1032,7 +1019,7 @@ def get_use_hobs():
     Element use_hobs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 39
+    Defined at m_common.f90 line 38
     
     """
     return _wrapping.f90wrap_m_common__get__use_hobs()
@@ -1045,7 +1032,7 @@ def get_use_uvobs():
     Element use_uvobs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 40
+    Defined at m_common.f90 line 39
     
     """
     return _wrapping.f90wrap_m_common__get__use_uvobs()
@@ -1058,7 +1045,7 @@ def get_use_huvobs():
     Element use_huvobs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 41
+    Defined at m_common.f90 line 40
     
     """
     return _wrapping.f90wrap_m_common__get__use_huvobs()
@@ -1071,7 +1058,7 @@ def get_use_qobs():
     Element use_qobs ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 42
+    Defined at m_common.f90 line 41
     
     """
     return _wrapping.f90wrap_m_common__get__use_qobs()
@@ -1084,7 +1071,7 @@ def get_use_qobs_gr4():
     Element use_qobs_gr4 ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 43
+    Defined at m_common.f90 line 42
     
     """
     return _wrapping.f90wrap_m_common__get__use_qobs_gr4()
@@ -1097,7 +1084,7 @@ def get_use_nse():
     Element use_nse ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 44
+    Defined at m_common.f90 line 43
     
     """
     return _wrapping.f90wrap_m_common__get__use_nse()
@@ -1110,7 +1097,7 @@ def get_use_xsshp():
     Element use_xsshp ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 45
+    Defined at m_common.f90 line 44
     
     """
     return _wrapping.f90wrap_m_common__get__use_xsshp()
@@ -1123,7 +1110,7 @@ def get_xsshp_along_x():
     Element xsshp_along_x ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 46
+    Defined at m_common.f90 line 45
     
     """
     return _wrapping.f90wrap_m_common__get__xsshp_along_x()
@@ -1136,7 +1123,7 @@ def get_xsshp_along_y():
     Element xsshp_along_y ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 47
+    Defined at m_common.f90 line 46
     
     """
     return _wrapping.f90wrap_m_common__get__xsshp_along_y()
@@ -1149,13 +1136,26 @@ def get_use_ptf():
     Element use_ptf ftype=integer(ip) pytype=int
     
     
-    Defined at m_common.f90 line 48
+    Defined at m_common.f90 line 47
     
     """
     return _wrapping.f90wrap_m_common__get__use_ptf()
 
 def set_use_ptf(use_ptf):
     _wrapping.f90wrap_m_common__set__use_ptf(use_ptf)
+
+def get_use_porosity():
+    """
+    Element use_porosity ftype=integer(ip) pytype=int
+    
+    
+    Defined at m_common.f90 line 48
+    
+    """
+    return _wrapping.f90wrap_m_common__get__use_porosity()
+
+def set_use_porosity(use_porosity):
+    _wrapping.f90wrap_m_common__set__use_porosity(use_porosity)
 
 def get_spatial_scheme():
     """

@@ -1,9 +1,16 @@
 import dassflow2d as df2d
 import matplotlib.pyplot as plt
-import shutil, os
+import shutil, os, sys
 import numpy as np
 import csv
 from mpi4py import MPI
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
+print(parent_dir)
+
+sys.path.append(parent_dir)
+
+from Outils.out import affichage
 
 # TODO : adapt this into ? model.meshing object + mesh_extent_box from a real dassflow mesh/setup (with wrapped object)
 class mesh_box:
@@ -55,8 +62,13 @@ rank = comm.Get_rank()
 ##########
 # Model
 ##########
-input_params={ "mesh_name":'mesh_5_1000.geo',
-              "ts":"20",
+
+mesh = 'mesh_5_1000.geo'
+ts = 10
+
+
+input_params={ "mesh_name": mesh,
+              "ts": ts,
 			   "use_obs":'0',
 			   "use_UVobs":'0',
 			   "use_Zobs":'1',
@@ -67,11 +79,11 @@ input_params={ "mesh_name":'mesh_5_1000.geo',
                "w_gnuplot":'1',
                "w_tecplot":'0',
 
-               "adapt_dt":'0',
+               "adapt_dt":'1',
                'g':'9.81',
                'dt':'0.05',
 
-               "dtw":'1',
+               "dtw":'10',
                "dta":"100",
                
                "bc_infil":"0",
@@ -96,7 +108,7 @@ Config.set(custom_config = input_params)
 my_model.kernel.my_friction =  df2d.wrapping.m_model.friction_data(my_model.kernel.mesh)
 
 #Allocate and get initial values from Fortran
-my_model.kernel.my_friction.nland = 200
+my_model.kernel.my_friction.nland = 1
 df2d.wrapping.call_model.init_friction(my_model.kernel)
 
 #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
@@ -105,7 +117,9 @@ my_model.kernel.my_friction.manning[:] = 0.
 my_model.kernel.my_friction.manning_beta[:] = 0
 my_model.kernel.my_friction.land[:] = 1.
 
-mil = int(np.trunc(my_model.kernel.my_friction.nland * 0.5))
+nc = my_model.kernel.mesh.nc
+
+mil = int(nc/2)
 
 ##########
 # Porosity
@@ -115,17 +129,15 @@ mil = int(np.trunc(my_model.kernel.my_friction.nland * 0.5))
 my_model.kernel.my_porosity = df2d.wrapping.m_model.porosity_data(my_model.kernel.mesh)
 #Allocate and get initial values from Fortran
 
-my_model.kernel.my_porosity.nland = my_model.kernel.my_friction.nland
+my_model.kernel.my_porosity.nland = 1
 df2d.wrapping.call_model.init_porosity(my_model.kernel)
 
 #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
 
-phiL = 0.5
-phiR = 0.5
+phi0 = 0.5
 
-my_model.kernel.my_porosity.land[:] = my_model.kernel.my_friction.land[:]
-my_model.kernel.my_porosity.phi[:mil] = phiL
-my_model.kernel.my_porosity.phi[mil:] = phiL
+my_model.kernel.my_porosity.land[:] = 1
+my_model.kernel.my_porosity.phi[:] = phi0
 
 
 ##########
@@ -160,5 +172,20 @@ df2d.wrapping.call_model.run(my_model.kernel, arg = "direct")
 if (os.path.isdir("./obs")):
     shutil.rmtree('./obs')
 shutil.copytree("./res/obs", "./obs")
+
+
+##############################################################################################################
+
+########################
+# Outputs from python
+########################
+
+graphe = [1,1,0,1,0]
+
+h = my_model.kernel.dof.h[:nc]
+u = my_model.kernel.dof.u[:nc]
+v = my_model.kernel.dof.v[:nc]
+
+print(affichage(graphe,mesh,nc,ts,h,u,v))
 
 df2d.wrapping.call_model.clean_model(my_model.kernel)

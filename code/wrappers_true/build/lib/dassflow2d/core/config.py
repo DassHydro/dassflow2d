@@ -53,6 +53,7 @@ class Config(dict):
                                                  "max_nt_for_adjoint":0,
                                                  "c_manning":0,
                                                  "c_manning_beta":0,
+                                                 "c_porosity":0,
                                                  "c_bathy":0,
                                                  "c_hydrograph":0,
                                                  "c_ratcurve":0,
@@ -95,6 +96,7 @@ class Config(dict):
                                                  "max_nt_for_adjoint":0,
                                                  "c_manning":0,
                                                  "c_manning_beta":0,
+                                                 "c_porosity":0,
                                                  "c_bathy":0,
                                                  "c_hydrograph":0,
                                                  "c_ratcurve":0,
@@ -102,7 +104,8 @@ class Config(dict):
                                                  #"c_infil":0,
                                                  "c_ic":0,
                                                  "restart_min":0,
-                                                 "eps_min":0}
+                                                 "eps_min":0,
+                                                 "use_porosity":0}
               for k in res:
                      # in module m_common
                      if k == 'mesh_name':
@@ -141,6 +144,8 @@ class Config(dict):
                             res[k] = df2d.wrapping.m_common.get_restart_min()
                      elif k == 'get_eps_min':
                             res[k] = df2d.wrapping.m_common.get_eps_min()
+                     elif k == 'use_porosity':
+                            res[k] = df2d.wrapping.m_common.get_use_porosity()
 
                      #in module m_model
                      elif k == 'feedback_inflow':
@@ -155,14 +160,17 @@ class Config(dict):
                             res[k] =  df2d.wrapping.m_model.get_c_manning()
                      elif k == 'c_manning_beta':
                             res[k] = df2d.wrapping.m_model.get_c_manning_beta()
+                     elif k == 'c_porosity':
+                            res[k] = df2d.wrapping.m_model.get_c_porosity()
                      elif k == 'c_bathy':
-                            df2d.wrapping.m_model.get_c_bathy()
+                            res[k] = df2d.wrapping.m_model.get_c_bathy()
                      elif k == 'c_hydrograph':
                             res[k] = df2d.wrapping.m_model.get_c_hydrograph()
                      elif k == 'c_rain':
                             res[k] = df2d.wrapping.m_model.get_c_rain()
                      elif k == 'c_ic':
                             res[k] = df2d.wrapping.m_model.get_c_ic()
+
                      self[k] = res[k]
 
               self = res
@@ -236,6 +244,9 @@ class Config(dict):
                      elif k == 'set_eps_min':
                             df2d.wrapping.m_common.set_eps_min(input_param[k])
 
+                     elif k == 'use_porosity':
+                            df2d.wrapping.m_common.set_use_porosity(input_param[k])
+
                      #in m_common linked to infiltration
                      elif k == 'bc_infil':
                             df2d.wrapping.m_common.set_bc_infil(input_param[k])
@@ -276,6 +287,8 @@ class Config(dict):
                             df2d.wrapping.m_model.set_c_manning(input_param[k])
                      elif k == 'c_manning_beta':
                             df2d.wrapping.m_model.set_c_manning_beta(input_param[k])
+                     elif k == 'c_porosity':
+                            df2d.wrapping.m_model.set_c_porosity(input_param[k])
                      elif k == 'c_bathy':
                             df2d.wrapping.m_model.set_c_bathy(input_param[k])
                      elif k == 'c_hydrograph':
@@ -376,6 +389,7 @@ class Config(dict):
                                                  "max_nt_for_adjoint":0,
                                                  "c_manning":0,
                                                  "c_manning_beta":0,
+                                                 "c_porosity":0,
                                                  "c_bathy":0,
                                                  "c_hydrograph":0,
                                                  "c_ratcurve":0,

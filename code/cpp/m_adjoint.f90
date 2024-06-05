@@ -130,6 +130,7 @@ CONTAINS
          XSshape_back(1)%topz = 0._rp
          manning_back(:) = 0._rp
          manning_beta_back(:) = 0._rp
+         SPorosity_back%Phi(:) = 0._rp
          slope_y_back = 0._rp
          slope_x_back = 0._rp
          !bc_back%sum_mass_flux( : ) = 0._rp
@@ -333,6 +334,7 @@ CONTAINS
          if ( c_DeltaTheta == 1 ) call var_2_control( infil%GA(:)%DeltaTheta, infil%nland , 0 )
          if ( c_lambda == 1 ) call var_2_control( infil%SCS(:)%lambdacn , infil%nland , 0 )
          if ( c_CN == 1 ) call var_2_control( infil%SCS(:)%CN, infil%nland , 0 )
+         if ( c_porosity == 1 ) call var_2_control( SPorosity%Phi(:), SPorosity%nland, 0 )
          if (c_ptf == 1 ) then
             do i = 1, phys_desc%ptf_nland
                 call var_2_control( PTF(i)%kappa(7:9) , 3 , 0 )
@@ -421,6 +423,7 @@ CONTAINS
          if ( c_manning == 1 ) call var_2_control_diff( eps_manning * manning , nland , manning_data_glob )
          if ( c_manning_beta == 1 ) call var_2_control_diff( eps_manning * manning_beta , nland , manning_data_glob ) ! should have manning_BETA_data_glob ??
          if ( c_bathy == 1 ) call var_2_control_diff( eps_bathy * bathy_cell , mesh%nc , 0 )
+         if ( c_porosity == 1 ) call var_2_control_diff( SPorosity%Phi(:), SPorosity%nland, 0 )
          if ( c_slope_y == 1 ) call var_2_control_diff( slope_y , size(slope_y) , 0 )
          if ( c_slope_x == 1 ) call var_2_control_diff( slope_x , size(slope_x) , 0 )
          if ( c_ic == 1 ) call var_2_control_diff( eps_ic * dof0%h , mesh%nc , 0 )
@@ -536,6 +539,7 @@ CONTAINS
          if ( c_manning == 1 ) call var_2_control_back( manning_back , nland , manning_data_glob )
          if ( c_manning_beta == 1 ) call var_2_control_back( manning_beta_back , nland , manning_data_glob )
          if ( c_bathy == 1 ) call var_2_control_back( bathy_cell_back, mesh%nc , 0 )
+         if ( c_porosity == 1 ) call var_2_control_back( SPorosity%Phi(:), SPorosity%nland, 0 )
          if ( c_slope_y == 1 ) call var_2_control_back( slope_y , size(slope_y) , 0 )
          if ( c_slope_x == 1 ) call var_2_control_back( slope_x , size(slope_x) , 0 )
          if ( c_ic == 1 ) call var_2_control_back( dof0_back%h , mesh%nc , 0 )
@@ -696,6 +700,7 @@ CONTAINS
          if ( c_manning == 1 ) call control_2_var( manning , nland , manning_data_glob )
          if ( c_manning_beta == 1 ) call control_2_var( manning_beta , nland , manning_data_glob )
          if ( c_bathy == 1 ) call control_2_var( bathy_cell, mesh%nc , 0 )
+         if ( c_porosity == 1 ) call control_2_var( SPorosity%Phi(:), SPorosity%nland, 0 )
          if ( c_slope_y == 1 ) call control_2_var( slope_y , size(slope_y) , 0 )
          if ( c_slope_x == 1 ) call control_2_var( slope_x , size(slope_x) , 0 )
          do ie = 1,mesh%neb
@@ -811,6 +816,7 @@ CONTAINS
          if ( c_manning == 1 ) call control_diff_2_var( manning_diff , nland , manning_data_glob )
          if ( c_manning_beta == 1 ) call control_diff_2_var( manning_beta_diff , nland , manning_data_glob )
          if ( c_bathy == 1 ) call control_diff_2_var( bathy_cell_diff , mesh%nc , 0 )
+         if ( c_porosity == 1 ) call control_diff_2_var( SPorosity%Phi(:), SPorosity%nland, 0 )
          if ( c_slope_y == 1 ) call control_diff_2_var( slope_y , size(slope_y) , 0 )
          if ( c_slope_x == 1 ) call control_diff_2_var( slope_x , size(slope_x) , 0 )
          if ( c_ic == 1 ) call control_diff_2_var( dof0_diff%h , mesh%nc , 0 )
@@ -900,6 +906,7 @@ CONTAINS
          if ( c_manning == 1 ) call control_perturb_2_var( manning , nland , manning_data_glob )
          if ( c_manning_beta == 1 ) call control_perturb_2_var( manning_beta , nland , manning_data_glob )
          if ( c_bathy == 1 ) call control_perturb_2_var( bathy_cell , mesh%nc , 0 )
+         if ( c_porosity == 1 ) call control_perturb_2_var( SPorosity%Phi(:), SPorosity%nland, 0 )
          if ( c_slope_y == 1 ) call control_perturb_2_var( slope_y , size(slope_y) , 0 )
          if ( c_slope_x == 1 ) call control_perturb_2_var( slope_x , size(slope_x) , 0 )
          if ( c_ic == 1 ) call control_perturb_2_var( dof0%h , mesh%nc , 0 )
@@ -1014,6 +1021,14 @@ CONTAINS
             open(10,file=file_name,status='replace',form='formatted')
             do i = 1,nland
                write(10,*) i , manning_beta(i)
+            end do
+            close(10)
+         end if
+         if ( proc == 0 .and. c_porosity == 1 ) then
+            write(file_name,'(A,I3.3)') 'min/SPorosity.' , ite_min
+            open(10,file=file_name,status='replace',form='formatted')
+            do i = 1,SPorosity%nland
+               write(10,*) i , SPorosity%Phi(i)
             end do
             close(10)
          end if
@@ -1172,6 +1187,14 @@ if (c_manning_beta == 1) then
                open(10,file=file_name,status='replace',form='formatted')
                do i = 1,size(manning_beta_back)
                   write(10,*) i, manning_beta_back(i)
+               end do
+               close(10)
+endif
+if (c_porosity == 1) then
+               write(file_name,'(A,I3.3,A)') 'grad/SPorosity' , k , '_grad'
+               open(10,file=file_name,status='replace',form='formatted')
+               do i = 1,size(SPorosity_back%Phi)
+                  write(10,*) i, SPorosity_back%Phi(i)
                end do
                close(10)
 endif

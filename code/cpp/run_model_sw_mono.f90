@@ -73,7 +73,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
         enddo
       endif
    endif
-      !===================================================================================================================!
+   !===================================================================================================================!
    ! Define parameterized bathymetry
    !===================================================================================================================!
    if (use_ptf == 1) then
@@ -180,11 +180,15 @@ CONTAINS
          !=============================================================================================================!
          ! Time Stepping Performing ( Euler + first_b1, IMEX + )
          !=============================================================================================================!
- select case( temp_scheme )
+       select case( temp_scheme )
     case( 'euler' )
        select case( spatial_scheme )
       case( 'first_b1' )
-       call euler_time_step_first_b1( dof , mesh )
+                           if (use_porosity == 1) then
+                              call euler_time_step_first_b1_porosity( dof , mesh )
+                           else
+                              call euler_time_step_first_b1( dof , mesh )
+                           end if
       case default
        call Stopping_Program_Sub( 'Unknow spatial scheme' )
      end select

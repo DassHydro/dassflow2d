@@ -9,8 +9,8 @@
 !                *manning *ptf.kappa *(*(bc.hyd).t) *(*(bc.hyd).q)
 !                *(*(bc.rat).h) *(*(bc.rat).q) *(*(bc.rain).t)
 !                *(*(bc.rain).q) *xsshape.xcenter *xsshape.s *xsshape.hmax
-!                *bathy_cell *manning_beta *(dof0.h) *(dof0.u)
-!                *(dof0.v)
+!                *bathy_cell *manning_beta *(sporosity.phi) *(dof0.h)
+!                *(dof0.u) *(dof0.v)
 !   RW status of diff variables: tc:(loc) *(infil.ga).psif:in *(infil.ga).ks:in-killed
 !                *(infil.ga).deltatheta:in *(infil.scs).lambdacn:in
 !                *(infil.scs).cn:in *manning:in *ptf.kappa:in *(bc.inflow):(loc)
@@ -19,20 +19,20 @@
 !                *(*(bc.rain).t):in *(*(bc.rain).q):in *(bc.rain).qin:(loc)
 !                *(bc.rain).cumul:(loc) *(bc.sum_mass_flux):(loc)
 !                *xsshape.xcenter:in *xsshape.s:in *xsshape.hmax:in
-!                *bathy_cell:in-killed *manning_beta:in *(*innovation.diff):out
-!                *(*innovq.diff):out *(*innovw.diff):(loc) *(*innovuv.diff):out
-!                dof.h:(loc) *(dof.h):out dof.u:(loc) *(dof.u):out
-!                dof.v:(loc) *(dof.v):out *(dof.infil):(loc) cost:out
-!                dof0.h:(loc) *(dof0.h):in-killed dof0.u:(loc)
-!                *(dof0.u):in dof0.v:(loc) *(dof0.v):in
+!                *bathy_cell:in-killed *manning_beta:in *(sporosity.phi):in
+!                *(*innovation.diff):out *(*innovq.diff):out *(*innovw.diff):(loc)
+!                *(*innovuv.diff):out dof.h:(loc) *(dof.h):out
+!                dof.u:(loc) *(dof.u):out dof.v:(loc) *(dof.v):out
+!                *(dof.infil):(loc) cost:out dof0.h:(loc) *(dof0.h):in-killed
+!                dof0.u:(loc) *(dof0.u):in dof0.v:(loc) *(dof0.v):in
 !   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
 !                ptf:in bc.inflow:in bc.outflow:in bc.hyd:in *(bc.hyd).t:in
 !                *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in *(bc.rat).q:in
 !                bc.hpresc:in *(bc.hpresc).t:in *(bc.hpresc).h:in
 !                bc.zspresc:in *(bc.zspresc).t:in *(bc.zspresc).z:in
 !                bc.rain:in *(bc.rain).t:in *(bc.rain).q:in bc.sum_mass_flux:in
-!                xsshape:in bathy_cell:in manning_beta:in innovation:in
-!                *innovation.diff:in innovq:in *innovq.diff:in
+!                xsshape:in bathy_cell:in manning_beta:in sporosity.phi:in
+!                innovation:in *innovation.diff:in innovq:in *innovq.diff:in
 !                innovuv:in *innovuv.diff:in dof.h:in dof.u:in
 !                dof.v:in dof.infil:in dof0.h:in dof0.u:in dof0.v:in
 SUBROUTINE RUN_MODEL_DIFF(mesh, dof0, dof0_diff, dof, dof_diff, cost, &
@@ -396,9 +396,10 @@ CONTAINS
 !                *(*(bc.rain).t)[from module m_model] *(*(bc.rain).q)[from module m_model]
 !                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
 !                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
-!                *manning_beta[from module m_model] *(*innovation.diff)[from module m_obs]
-!                *(*innovq.diff)[from module m_obs] *(*innovuv.diff)[from module m_obs]
-!                *(dof.h) *(dof.u) *(dof.v) *(dof.infil) cost
+!                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
+!                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil) cost
 !   Plus diff mem management of: infil.ga[from module m_model]:in
 !                infil.scs[from module m_model]:in manning[from module m_model]:in
 !                bc.inflow[from module m_model]:in bc.outflow[from module m_model]:in
@@ -411,10 +412,11 @@ CONTAINS
 !                bc.rain[from module m_model]:in *(bc.rain).t[from module m_model]:in
 !                *(bc.rain).q[from module m_model]:in bc.sum_mass_flux[from module m_model]:in
 !                bathy_cell[from module m_model]:in manning_beta[from module m_model]:in
-!                innovation[from module m_obs]:in *innovation.diff[from module m_obs]:in
-!                innovq[from module m_obs]:in *innovq.diff[from module m_obs]:in
-!                innovuv[from module m_obs]:in *innovuv.diff[from module m_obs]:in
-!                dof.h:in dof.u:in dof.v:in dof.infil:in
+!                sporosity.phi[from module m_model]:in innovation[from module m_obs]:in
+!                *innovation.diff[from module m_obs]:in innovq[from module m_obs]:in
+!                *innovq.diff[from module m_obs]:in innovuv[from module m_obs]:in
+!                *innovuv.diff[from module m_obs]:in dof.h:in dof.u:in
+!                dof.v:in dof.infil:in
   SUBROUTINE SUB_RUN_MODEL_DIFF()
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
@@ -430,7 +432,12 @@ CONTAINS
       CASE ('euler') 
         SELECT CASE  (spatial_scheme) 
         CASE ('first_b1') 
-          CALL EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh)
+          IF (use_porosity .EQ. 1) THEN
+            CALL EULER_TIME_STEP_FIRST_B1_POROSITY_DIFF(dof, dof_diff, &
+&                                                 mesh)
+          ELSE
+            CALL EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh)
+          END IF
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT
@@ -466,7 +473,11 @@ CONTAINS
       CASE ('euler') 
         SELECT CASE  (spatial_scheme) 
         CASE ('first_b1') 
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
+          IF (use_porosity .EQ. 1) THEN
+            CALL EULER_TIME_STEP_FIRST_B1_POROSITY(dof, mesh) ! Replaced by Perl Script
+          ELSE
+            CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
+          END IF
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT

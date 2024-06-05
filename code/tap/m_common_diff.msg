@@ -18,36 +18,37 @@
 18 update_cost_function: Tool: (Build MP call info) Unexpected MPI primitive mpi_sum_r in call(none(), ident:mpi_sum_r, expressions[ident:h_mean])
 19 sw_post_treatment: Tool: (Build MP call info) Unexpected MPI primitive mpi_sum_r in call(none(), ident:mpi_sum_r, expressions[arrayAccess(fieldAccess(ident:bc, ident:sum_mass_flux), expressions[ident:num_bc])])
 20 sw_post_treatment: Tool: (Build MP call info) Unexpected MPI primitive mpi_sum_r in call(none(), ident:mpi_sum_r, expressions[arrayAccess(pointerAccess(fieldAccess(ident:bc, ident:sum_mass_flux), none()), expressions[ident:num_bc])])
-21 alloc_or_realloc_station: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBS(*) POINTER
-22 alloc_or_realloc_station: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBS(*) POINTER
-23 alloc_or_realloc_stationq: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBSQ(*) POINTER
-24 alloc_or_realloc_stationq: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBSQ(*) POINTER
-25 end_mpi: (TC32) Conflicting numbers of arguments for procedure exit, expected 1, is here 0
-26 reallocate_cell: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
-27 reallocate_cell: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
-28 reallocate_cell: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
-29 reallocate_cell: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
-30 reallocate_edge: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
-31 reallocate_edge: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
-32 reallocate_edge: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
-33 reallocate_edge: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
-34 reallocate_node: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
-35 reallocate_node: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
-36 reallocate_node: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
-37 reallocate_node: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
-38 reallocate_cellb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
-39 reallocate_cellb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
-40 reallocate_cellb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
-41 reallocate_cellb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
-42 reallocate_edgeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
-43 reallocate_edgeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
-44 reallocate_edgeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
-45 reallocate_edgeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
-46 reallocate_nodeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
-47 reallocate_nodeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
-48 reallocate_nodeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
-49 reallocate_nodeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
-50 reading_args: (TC33) External procedure command_argument_count is not declared
-51 reading_args: (TC33) External procedure get_command_argument is not declared
-52 msh_initialise: (TC33) External procedure mesh_input is not declared
-53 mpi_sum_r: Tool: (Build MP call info) Unexpected MPI primitive mpi_wait_all in call(none(), ident:mpi_wait_all, expressions[])
+21 default_values: (TC16) Type mismatch in assignment: INTEGER*4 receives REAL*4
+22 alloc_or_realloc_station: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBS(*) POINTER
+23 alloc_or_realloc_station: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBS(*) POINTER
+24 alloc_or_realloc_stationq: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBSQ(*) POINTER
+25 alloc_or_realloc_stationq: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE STATION_OBSQ(*) POINTER
+26 end_mpi: (TC32) Conflicting numbers of arguments for procedure exit, expected 1, is here 0
+27 reallocate_cell: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
+28 reallocate_cell: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
+29 reallocate_cell: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
+30 reallocate_cell: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPE(*) POINTER
+31 reallocate_edge: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
+32 reallocate_edge: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
+33 reallocate_edge: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
+34 reallocate_edge: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPE(*) POINTER
+35 reallocate_node: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
+36 reallocate_node: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
+37 reallocate_node: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
+38 reallocate_node: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPE(*) POINTER
+39 reallocate_cellb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
+40 reallocate_cellb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
+41 reallocate_cellb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
+42 reallocate_cellb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE CELLTYPELIM(*) POINTER
+43 reallocate_edgeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
+44 reallocate_edgeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
+45 reallocate_edgeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
+46 reallocate_edgeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE EDGETYPELIM(*) POINTER
+47 reallocate_nodeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
+48 reallocate_nodeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
+49 reallocate_nodeb: (TC30) Type mismatch in argument 1 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
+50 reallocate_nodeb: (TC30) Type mismatch in argument 2 of procedure move_alloc, expected REAL*8(*) POINTER, is here derived TYPE NODETYPELIM(*) POINTER
+51 reading_args: (TC33) External procedure command_argument_count is not declared
+52 reading_args: (TC33) External procedure get_command_argument is not declared
+53 msh_initialise: (TC33) External procedure mesh_input is not declared
+54 mpi_sum_r: Tool: (Build MP call info) Unexpected MPI primitive mpi_wait_all in call(none(), ident:mpi_wait_all, expressions[])

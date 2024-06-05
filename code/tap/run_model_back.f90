@@ -9,8 +9,8 @@
 !                *manning *ptf.kappa *(*(bc.hyd).t) *(*(bc.hyd).q)
 !                *(*(bc.rat).h) *(*(bc.rat).q) *(*(bc.rain).t)
 !                *(*(bc.rain).q) *xsshape.xcenter *xsshape.s *xsshape.hmax
-!                *bathy_cell *manning_beta *(dof0.h) *(dof0.u)
-!                *(dof0.v)
+!                *bathy_cell *manning_beta *(sporosity.phi) *(dof0.h)
+!                *(dof0.u) *(dof0.v)
 !   RW status of diff variables: tc:(loc) *(infil.ga).psif:out
 !                *(infil.ga).ks:out *(infil.ga).deltatheta:out
 !                *(infil.scs).lambdacn:out *(infil.scs).cn:out
@@ -20,21 +20,21 @@
 !                *(*(bc.rain).t):out *(*(bc.rain).q):out *(bc.rain).qin:(loc)
 !                *(bc.rain).cumul:(loc) *(bc.sum_mass_flux):(loc)
 !                *xsshape.xcenter:out *xsshape.s:out *xsshape.hmax:out
-!                *bathy_cell:out *manning_beta:out *(*innovation.diff):in-killed
-!                *(*innovq.diff):in-killed *(*innovw.diff):(loc)
-!                *(*innovuv.diff):in-killed dof.h:(loc) *(dof.h):in-killed
-!                dof.u:(loc) *(dof.u):in-killed dof.v:(loc) *(dof.v):in-killed
-!                *(dof.infil):(loc) cost:in-killed dof0.h:(loc)
-!                *(dof0.h):out dof0.u:(loc) *(dof0.u):out dof0.v:(loc)
-!                *(dof0.v):out
+!                *bathy_cell:out *manning_beta:out *(sporosity.phi):out
+!                *(*innovation.diff):in-killed *(*innovq.diff):in-killed
+!                *(*innovw.diff):(loc) *(*innovuv.diff):in-killed
+!                dof.h:(loc) *(dof.h):in-killed dof.u:(loc) *(dof.u):in-killed
+!                dof.v:(loc) *(dof.v):in-killed *(dof.infil):(loc)
+!                cost:in-killed dof0.h:(loc) *(dof0.h):out dof0.u:(loc)
+!                *(dof0.u):out dof0.v:(loc) *(dof0.v):out
 !   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
 !                ptf:in bc.inflow:in bc.outflow:in bc.hyd:in *(bc.hyd).t:in
 !                *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in *(bc.rat).q:in
 !                bc.hpresc:in *(bc.hpresc).t:in *(bc.hpresc).h:in
 !                bc.zspresc:in *(bc.zspresc).t:in *(bc.zspresc).z:in
 !                bc.rain:in *(bc.rain).t:in *(bc.rain).q:in bc.sum_mass_flux:in
-!                xsshape:in bathy_cell:in manning_beta:in innovation:in
-!                *innovation.diff:in innovq:in *innovq.diff:in
+!                xsshape:in bathy_cell:in manning_beta:in sporosity.phi:in
+!                innovation:in *innovation.diff:in innovq:in *innovq.diff:in
 !                innovuv:in *innovuv.diff:in dof.h:in dof.u:in
 !                dof.v:in dof.infil:in dof0.h:in dof0.u:in dof0.v:in
 SUBROUTINE RUN_MODEL_BACK(mesh, dof0, dof0_back, dof, dof_back, cost, &
@@ -398,6 +398,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, dof0, dof0_back, dof, dof_back, cost, &
   bc_back%rain%cumul = 0.0_8
   bc_back%sum_mass_flux = 0.0_8
   IF (ALLOCATED(manning_beta_back)) manning_beta_back = 0.0_8
+  sporosity_back%phi = 0.0_8
   dof_back%infil = 0.0_8
   CALL POPINTEGER4(ad_count)
   DO i0=1,ad_count
@@ -684,9 +685,10 @@ CONTAINS
 !                *(*(bc.rain).t)[from module m_model] *(*(bc.rain).q)[from module m_model]
 !                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
 !                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
-!                *manning_beta[from module m_model] *(*innovation.diff)[from module m_obs]
-!                *(*innovq.diff)[from module m_obs] *(*innovuv.diff)[from module m_obs]
-!                *(dof.h) *(dof.u) *(dof.v) *(dof.infil) cost
+!                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
+!                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil) cost
 !   with respect to varying inputs: *(infil.ga).psif[from module m_model]
 !                *(infil.ga).ks[from module m_model] *(infil.ga).deltatheta[from module m_model]
 !                *(infil.scs).lambdacn[from module m_model] *(infil.scs).cn[from module m_model]
@@ -697,9 +699,10 @@ CONTAINS
 !                *(*(bc.rain).t)[from module m_model] *(*(bc.rain).q)[from module m_model]
 !                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
 !                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
-!                *manning_beta[from module m_model] *(*innovation.diff)[from module m_obs]
-!                *(*innovq.diff)[from module m_obs] *(*innovuv.diff)[from module m_obs]
-!                *(dof.h) *(dof.u) *(dof.v) *(dof.infil) cost
+!                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
+!                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil) cost
 !   Plus diff mem management of: infil.ga[from module m_model]:in
 !                infil.scs[from module m_model]:in manning[from module m_model]:in
 !                bc.inflow[from module m_model]:in bc.outflow[from module m_model]:in
@@ -712,10 +715,11 @@ CONTAINS
 !                bc.rain[from module m_model]:in *(bc.rain).t[from module m_model]:in
 !                *(bc.rain).q[from module m_model]:in bc.sum_mass_flux[from module m_model]:in
 !                bathy_cell[from module m_model]:in manning_beta[from module m_model]:in
-!                innovation[from module m_obs]:in *innovation.diff[from module m_obs]:in
-!                innovq[from module m_obs]:in *innovq.diff[from module m_obs]:in
-!                innovuv[from module m_obs]:in *innovuv.diff[from module m_obs]:in
-!                dof.h:in dof.u:in dof.v:in dof.infil:in
+!                sporosity.phi[from module m_model]:in innovation[from module m_obs]:in
+!                *innovation.diff[from module m_obs]:in innovq[from module m_obs]:in
+!                *innovq.diff[from module m_obs]:in innovuv[from module m_obs]:in
+!                *innovuv.diff[from module m_obs]:in dof.h:in dof.u:in
+!                dof.v:in dof.infil:in
   SUBROUTINE SUB_RUN_MODEL_BACK()
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
@@ -743,26 +747,44 @@ CONTAINS
       CASE ('euler') 
         SELECT CASE  (spatial_scheme) 
         CASE ('first_b1') 
-          IF (ALLOCATED(bathy_cell)) THEN
-            CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
-            CALL PUSHCONTROL1B(1)
+          IF (use_porosity .EQ. 1) THEN
+            IF (ALLOCATED(bathy_cell)) THEN
+              CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
+              CALL PUSHCONTROL1B(1)
+            ELSE
+              CALL PUSHCONTROL1B(0)
+            END IF
+            CALL PUSHREAL8ARRAY(bc%sum_mass_flux, &
+&                         size(bc%sum_mass_flux,1))
+            CALL PUSHREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
+            CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
+            CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
+            CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
+            CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
+            CALL EULER_TIME_STEP_FIRST_B1_POROSITY(dof, mesh) ! Replaced by Perl Script
+            CALL PUSHCONTROL2B(0)
           ELSE
-            CALL PUSHCONTROL1B(0)
+            IF (ALLOCATED(bathy_cell)) THEN
+              CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
+              CALL PUSHCONTROL1B(1)
+            ELSE
+              CALL PUSHCONTROL1B(0)
+            END IF
+            CALL PUSHREAL8ARRAY(bc%sum_mass_flux, &
+&                         size(bc%sum_mass_flux,1))
+            CALL PUSHREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
+            CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
+            CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
+            CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
+            CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
+            CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
+            CALL PUSHCONTROL2B(1)
           END IF
-          CALL PUSHREAL8ARRAY(bc%sum_mass_flux, &
-&                       size(bc%sum_mass_flux,1))
-          CALL PUSHREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
-          CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
-          CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
-          CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
-          CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
-          CALL PUSHCONTROL2B(0)
         CASE DEFAULT
-          CALL PUSHCONTROL2B(1)
+          CALL PUSHCONTROL2B(2)
         END SELECT
       CASE DEFAULT
-        CALL PUSHCONTROL2B(2)
+        CALL PUSHCONTROL2B(3)
       END SELECT
       CALL PUSHREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       CALL SW_POST_TREATMENT(dof, mesh) ! Replaced by Perl Script
@@ -845,18 +867,33 @@ CONTAINS
       CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       CALL SW_POST_TREATMENT_BACK(dof, mesh)
       CALL POPCONTROL2B(branch)
-      IF (branch .EQ. 0) THEN
-        CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
-        CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
-        CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
-        CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
-        CALL POPREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
-        CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1)&
-&                   )
-        CALL POPCONTROL1B(branch)
-        IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
-&                                       size(bathy_cell,1))
-        CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh)
+      IF (branch .LT. 2) THEN
+        IF (branch .EQ. 0) THEN
+          CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
+          CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
+          CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
+          CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
+          CALL POPREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
+          CALL POPREAL8ARRAY(bc%sum_mass_flux, &
+&                      size(bc%sum_mass_flux,1))
+          CALL POPCONTROL1B(branch)
+          IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
+&                                         size(bathy_cell,1))
+          CALL EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, &
+&                                               mesh)
+        ELSE
+          CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
+          CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
+          CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
+          CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
+          CALL POPREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
+          CALL POPREAL8ARRAY(bc%sum_mass_flux, &
+&                      size(bc%sum_mass_flux,1))
+          CALL POPCONTROL1B(branch)
+          IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
+&                                         size(bathy_cell,1))
+          CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh)
+        END IF
       END IF
       CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       bc_back%sum_mass_flux = 0.0_8
@@ -886,7 +923,11 @@ CONTAINS
       CASE ('euler') 
         SELECT CASE  (spatial_scheme) 
         CASE ('first_b1') 
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
+          IF (use_porosity .EQ. 1) THEN
+            CALL EULER_TIME_STEP_FIRST_B1_POROSITY(dof, mesh) ! Replaced by Perl Script
+          ELSE
+            CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
+          END IF
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT

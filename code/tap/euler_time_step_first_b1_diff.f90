@@ -35,8 +35,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh)
 ! Right State in edge cell normal coordinates
   REAL(rp) :: hr(2), ur(2), vr(2), zr
   REAL(rp) :: hr_diff(2), ur_diff(2), vr_diff(2), zr_diff
-! Left/Right porosity in cell
-  REAL(rp) :: phil, phir
 ! Finite Volume normal edge flux
   REAL(rp), DIMENSION(sw_nb) :: nflux
   REAL(rp), DIMENSION(sw_nb) :: nflux_diff
@@ -181,8 +179,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh)
           vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*&
 &           ur(1)
         END IF
-        phil = single_porosity%sp(il)
-        phir = phil
       ELSE
         zl_diff = bathy_cell_diff(il)
         zl = bathy_cell(il)
@@ -200,8 +196,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh)
 &         normal%y*ur_diff(1)
         vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*ur&
 &         (1)
-        phil = single_porosity%sp(il)
-        phir = single_porosity%sp(ir)
       END IF
       IF (zl .LT. zr) THEN
         max1_diff = zr_diff

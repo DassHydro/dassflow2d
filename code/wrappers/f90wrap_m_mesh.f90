@@ -260,7 +260,7 @@ subroutine f90wrap_nodetypelim__set__group(this, f90wrap_group)
 end subroutine f90wrap_nodetypelim__set__group
 
 subroutine f90wrap_nodetypelim_initialise(nodelim, ind, group)
-    use m_mesh, only: nodetypelim_initialise, nodetypelim
+    use m_mesh, only: nodetypelim, nodetypelim_initialise
     implicit none
     
     type nodetypelim_ptr_type

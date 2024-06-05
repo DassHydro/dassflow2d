@@ -24,6 +24,8 @@ MODULE m_tap_vars
       real(rp), dimension(:), allocatable :: manning_back , manning_beta_back, bathy_cell_back
       real(rp), dimension(:), allocatable :: slope_y_back, slope_y_diff
       real(rp), dimension(:), allocatable :: slope_x_back, slope_x_diff
+   type(porosity_data), target :: SPorosity_diff
+   type(porosity_data), target :: SPorosity_back
 CONTAINS
    SUBROUTINE alloc_diff_vars( dof0_diff , dof_diff , mesh )
       type( unk ), intent(inout) :: dof0_diff , dof_diff
@@ -183,6 +185,7 @@ CONTAINS
          allocate( bathy_cell_back( size( bathy_cell ) ) )
          allocate( slope_y_back (size(slope_y)))
          allocate( slope_x_back (size(slope_x)))
+         allocate( SPorosity_back%Phi (size(SPorosity%Phi)))
          XSshape_back(:)%xleft = 0._rp
          XSshape_back(:)%xcenter = 0._rp
          XSshape_back(:)%xright = 0._rp
@@ -194,6 +197,7 @@ CONTAINS
          bathy_cell_back(:) = 0._rp
          slope_y_back(:) = 0._rp
          slope_x_back(:) = 0._rp
+         SPorosity_back%Phi(:) = 0._rp
          allocate( bc_back%sum_mass_flux( bc%nb ) )
          bc_back%sum_mass_flux( : ) = 0._rp
    END SUBROUTINE alloc_back_vars

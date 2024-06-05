@@ -1,9 +1,9 @@
 ! Module m_adjoint defined in file m_adjoint.f90
 
 subroutine f90wrap_model_direct(mesh, dof0, dof)
-    use m_mesh, only: msh
     use m_model, only: unk
     use m_adjoint, only: model_direct
+    use m_mesh, only: msh
     implicit none
     
     type unk_ptr_type
@@ -25,9 +25,9 @@ subroutine f90wrap_model_direct(mesh, dof0, dof)
 end subroutine f90wrap_model_direct
 
 subroutine f90wrap_model_direct_perturb(mesh, dof0, dof)
-    use m_mesh, only: msh
-    use m_model, only: unk
     use m_adjoint, only: model_direct_perturb
+    use m_model, only: unk
+    use m_mesh, only: msh
     implicit none
     
     type unk_ptr_type
@@ -73,9 +73,9 @@ subroutine f90wrap_adjoint_model(mesh, dof0, dof)
 end subroutine f90wrap_adjoint_model
 
 subroutine f90wrap_write_control(dof0, mesh)
+    use m_model, only: unk
     use m_adjoint, only: write_control
     use m_mesh, only: msh
-    use m_model, only: unk
     implicit none
     
     type unk_ptr_type
@@ -94,9 +94,9 @@ subroutine f90wrap_write_control(dof0, mesh)
 end subroutine f90wrap_write_control
 
 subroutine f90wrap_write_control_back(dof0, mesh)
-    use m_mesh, only: msh
-    use m_model, only: unk
     use m_adjoint, only: write_control_back
+    use m_model, only: unk
+    use m_mesh, only: msh
     implicit none
     
     type unk_ptr_type
@@ -137,8 +137,8 @@ end subroutine f90wrap_read_control
 
 subroutine f90wrap_output_control(dof0, mesh)
     use m_adjoint, only: output_control
-    use m_mesh, only: msh
     use m_model, only: unk
+    use m_mesh, only: msh
     implicit none
     
     type unk_ptr_type

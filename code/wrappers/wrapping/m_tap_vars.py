@@ -2,7 +2,7 @@
 Module m_tap_vars
 
 
-Defined at m_tap_vars.f90 lines 1-226
+Defined at m_tap_vars.f90 lines 1-230
 
 """
 from __future__ import print_function, absolute_import, division
@@ -10,10 +10,11 @@ import _wrapping
 import f90wrap.runtime
 import logging
 import numpy
-from wrapping.m_model import ptf_data
-from wrapping.m_model import xsshp
 from wrapping.m_model import infiltration_data
+from wrapping.m_model import xsshp
 from wrapping.m_model import bcs
+from wrapping.m_model import ptf_data
+from wrapping.m_model import porosity_data
 
 _arrays = {}
 _objs = {}
@@ -23,7 +24,7 @@ def alloc_back_vars(self, dof_back, mesh):
     alloc_back_vars(self, dof_back, mesh)
     
     
-    Defined at m_tap_vars.f90 lines 97-198
+    Defined at m_tap_vars.f90 lines 99-202
     
     Parameters
     ----------
@@ -43,7 +44,7 @@ def dealloc_back_vars(self, dof_back):
     dealloc_back_vars(self, dof_back)
     
     
-    Defined at m_tap_vars.f90 lines 200-226
+    Defined at m_tap_vars.f90 lines 204-230
     
     Parameters
     ----------
@@ -481,6 +482,48 @@ def get_array_slope_x_diff():
 
 def set_array_slope_x_diff(slope_x_diff):
     globals()['slope_x_diff'][...] = slope_x_diff
+
+def get_sporosity_diff():
+    """
+    Element sporosity_diff ftype=type(porosity_data) pytype=Porosity_Data
+    
+    
+    Defined at m_tap_vars.f90 line 27
+    
+    """
+    global sporosity_diff
+    sporosity_diff_handle = _wrapping.f90wrap_m_tap_vars__get__sporosity_diff()
+    if tuple(sporosity_diff_handle) in _objs:
+        sporosity_diff = _objs[tuple(sporosity_diff_handle)]
+    else:
+        sporosity_diff = porosity_data.from_handle(sporosity_diff_handle)
+        _objs[tuple(sporosity_diff_handle)] = sporosity_diff
+    return sporosity_diff
+
+def set_sporosity_diff(sporosity_diff):
+    sporosity_diff = sporosity_diff._handle
+    _wrapping.f90wrap_m_tap_vars__set__sporosity_diff(sporosity_diff)
+
+def get_sporosity_back():
+    """
+    Element sporosity_back ftype=type(porosity_data) pytype=Porosity_Data
+    
+    
+    Defined at m_tap_vars.f90 line 28
+    
+    """
+    global sporosity_back
+    sporosity_back_handle = _wrapping.f90wrap_m_tap_vars__get__sporosity_back()
+    if tuple(sporosity_back_handle) in _objs:
+        sporosity_back = _objs[tuple(sporosity_back_handle)]
+    else:
+        sporosity_back = porosity_data.from_handle(sporosity_back_handle)
+        _objs[tuple(sporosity_back_handle)] = sporosity_back
+    return sporosity_back
+
+def set_sporosity_back(sporosity_back):
+    sporosity_back = sporosity_back._handle
+    _wrapping.f90wrap_m_tap_vars__set__sporosity_back(sporosity_back)
 
 
 _array_initialisers = [get_array_manning_diff, get_array_manning_beta_diff, \

@@ -145,7 +145,7 @@ SUBROUTINE advance_time( dof , mesh )
 
             vel = sqrt( dof%u(i)**2 + dof%v(i)**2 )
 
-            dt_min = min( dt , dist / ( vel + c ) )
+            dt_min = min( dt , dist /  ( vel + c ) )
             if (dt_min <= dt) then
 				dt = dt_min
 				imin = i

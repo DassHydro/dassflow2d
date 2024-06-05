@@ -4,6 +4,8 @@ run_model_diff.f90		ISIZE1OFDrfinnovation		innovation
 run_model_diff.f90		ISIZE1OFDrfinnovw		innovw
 euler_time_step_first_b1_back.f90		ISIZE1OFDrfbathy_cell		bathy_cell
 euler_time_step_first_b1_back.f90		ISIZE1OFDrfbc_sum_mass_flux		bc%sum_mass_flux
+euler_time_step_first_b1_porosity_back.f90		ISIZE1OFDrfbathy_cell		bathy_cell
+euler_time_step_first_b1_porosity_back.f90		ISIZE1OFDrfbc_sum_mass_flux		bc%sum_mass_flux
 m_obs_back.f90		ISIZE1OFDrfbc_hyd		bc%hyd
 run_model_back.f90		ISIZE1OFDrfdof_infil		dof%infil
 run_model_back.f90		ISIZE1OFDrfdof_v		dof%v

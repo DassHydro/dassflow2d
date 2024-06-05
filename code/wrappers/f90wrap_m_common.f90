@@ -607,22 +607,6 @@ subroutine f90wrap_m_common__set__bc_infil(f90wrap_bc_infil)
     m_common_bc_infil = f90wrap_bc_infil
 end subroutine f90wrap_m_common__set__bc_infil
 
-subroutine f90wrap_m_common__get__bc_porosity(f90wrap_bc_porosity)
-    use m_common, only: m_common_bc_porosity => bc_porosity
-    implicit none
-    integer(4), intent(out) :: f90wrap_bc_porosity
-    
-    f90wrap_bc_porosity = m_common_bc_porosity
-end subroutine f90wrap_m_common__get__bc_porosity
-
-subroutine f90wrap_m_common__set__bc_porosity(f90wrap_bc_porosity)
-    use m_common, only: m_common_bc_porosity => bc_porosity
-    implicit none
-    integer(4), intent(in) :: f90wrap_bc_porosity
-    
-    m_common_bc_porosity = f90wrap_bc_porosity
-end subroutine f90wrap_m_common__set__bc_porosity
-
 subroutine f90wrap_m_common__get__lx(f90wrap_lx)
     use m_common, only: m_common_lx => lx
     implicit none
@@ -1118,6 +1102,22 @@ subroutine f90wrap_m_common__set__use_ptf(f90wrap_use_ptf)
     
     m_common_use_ptf = f90wrap_use_ptf
 end subroutine f90wrap_m_common__set__use_ptf
+
+subroutine f90wrap_m_common__get__use_porosity(f90wrap_use_porosity)
+    use m_common, only: m_common_use_porosity => use_porosity
+    implicit none
+    integer(4), intent(out) :: f90wrap_use_porosity
+    
+    f90wrap_use_porosity = m_common_use_porosity
+end subroutine f90wrap_m_common__get__use_porosity
+
+subroutine f90wrap_m_common__set__use_porosity(f90wrap_use_porosity)
+    use m_common, only: m_common_use_porosity => use_porosity
+    implicit none
+    integer(4), intent(in) :: f90wrap_use_porosity
+    
+    m_common_use_porosity = f90wrap_use_porosity
+end subroutine f90wrap_m_common__set__use_porosity
 
 subroutine f90wrap_m_common__get__spatial_scheme(f90wrap_spatial_scheme)
     use m_common, only: m_common_spatial_scheme => spatial_scheme

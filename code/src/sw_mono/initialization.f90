@@ -114,9 +114,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    if (allocated(my_friction%manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
 
-   if (allocated(my_porosity%Phi) .or. ( allocated(my_porosity%PhiG) .and. allocated(my_porosity%PhiW) ) ) then
-      call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
-   end if
+   if (allocated(my_porosity%Phi) ) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
 
    if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
@@ -1060,11 +1058,11 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    !  Initialization of Ghost porosity and Boundary Condition Type
    !===================================================================================================================!
 
-   call reallocate_r( SPorosity%Phi , mesh%nc + mesh%ncb )
+   call reallocate_i( SPorosity%land , mesh%nc + mesh%ncb )
 
    do i = 1,mesh%ncb
 
-      SPorosity%Phi( mesh%nc + i ) = SPorosity%Phi( mesh%cellb(i)%cell )
+      SPorosity%land( mesh%nc + i ) = SPorosity%land( mesh%cellb(i)%cell )
 
    end do
 
@@ -1859,7 +1857,7 @@ implicit none
 END SUBROUTINE my_infiltration_2_fortran
 
 
-! use variable my_porosity (wrapped varible)
+! use variable my_porosity (wrapped variable)
 ! to set up fortran variables (SPorosity%Phi, land)
 
 SUBROUTINE my_porosity_2_fortran(my_porosity)

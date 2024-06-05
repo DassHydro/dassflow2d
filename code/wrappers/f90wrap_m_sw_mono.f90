@@ -473,8 +473,8 @@ subroutine f90wrap_unk__array_len__grad_z(f90wrap_this, f90wrap_n)
 end subroutine f90wrap_unk__array_len__grad_z
 
 subroutine f90wrap_unk_initialise(dof, mesh)
+    use m_model, only: unk, unk_initialise
     use m_mesh, only: msh
-    use m_model, only: unk_initialise, unk
     implicit none
     
     type unk_ptr_type
@@ -948,7 +948,7 @@ end subroutine f90wrap_infiltration_data__array__land
 
 subroutine f90wrap_infiltration_data__array_getitem__ga(f90wrap_this, f90wrap_i, gaitem)
     
-    use m_model, only: greenampt, infiltration_data
+    use m_model, only: infiltration_data, greenampt
     implicit none
     
     type infiltration_data_ptr_type
@@ -978,7 +978,7 @@ end subroutine f90wrap_infiltration_data__array_getitem__ga
 
 subroutine f90wrap_infiltration_data__array_setitem__ga(f90wrap_this, f90wrap_i, gaitem)
     
-    use m_model, only: greenampt, infiltration_data
+    use m_model, only: infiltration_data, greenampt
     implicit none
     
     type infiltration_data_ptr_type
@@ -1008,7 +1008,7 @@ end subroutine f90wrap_infiltration_data__array_setitem__ga
 
 subroutine f90wrap_infiltration_data__array_len__ga(f90wrap_this, f90wrap_n)
     
-    use m_model, only: greenampt, infiltration_data
+    use m_model, only: infiltration_data, greenampt
     implicit none
     
     type infiltration_data_ptr_type
@@ -1345,31 +1345,6 @@ subroutine f90wrap_porosity_data__set__nland(this, f90wrap_nland)
     this_ptr%p%nland = f90wrap_nland
 end subroutine f90wrap_porosity_data__set__nland
 
-subroutine f90wrap_porosity_data__array__SP(this, nd, dtype, dshape, dloc)
-    use m_model, only: porosity_data
-    use, intrinsic :: iso_c_binding, only : c_int
-    implicit none
-    type porosity_data_ptr_type
-        type(porosity_data), pointer :: p => NULL()
-    end type porosity_data_ptr_type
-    integer(c_int), intent(in) :: this(2)
-    type(porosity_data_ptr_type) :: this_ptr
-    integer(c_int), intent(out) :: nd
-    integer(c_int), intent(out) :: dtype
-    integer(c_int), dimension(10), intent(out) :: dshape
-    integer*8, intent(out) :: dloc
-    
-    nd = 1
-    dtype = 12
-    this_ptr = transfer(this, this_ptr)
-    if (allocated(this_ptr%p%SP)) then
-        dshape(1:1) = shape(this_ptr%p%SP)
-        dloc = loc(this_ptr%p%SP)
-    else
-        dloc = 0
-    end if
-end subroutine f90wrap_porosity_data__array__SP
-
 subroutine f90wrap_porosity_data__array__land(this, nd, dtype, dshape, dloc)
     use m_model, only: porosity_data
     use, intrinsic :: iso_c_binding, only : c_int
@@ -1394,6 +1369,81 @@ subroutine f90wrap_porosity_data__array__land(this, nd, dtype, dshape, dloc)
         dloc = 0
     end if
 end subroutine f90wrap_porosity_data__array__land
+
+subroutine f90wrap_porosity_data__array__Phi(this, nd, dtype, dshape, dloc)
+    use m_model, only: porosity_data
+    use, intrinsic :: iso_c_binding, only : c_int
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer(c_int), intent(in) :: this(2)
+    type(porosity_data_ptr_type) :: this_ptr
+    integer(c_int), intent(out) :: nd
+    integer(c_int), intent(out) :: dtype
+    integer(c_int), dimension(10), intent(out) :: dshape
+    integer*8, intent(out) :: dloc
+    
+    nd = 1
+    dtype = 12
+    this_ptr = transfer(this, this_ptr)
+    if (allocated(this_ptr%p%Phi)) then
+        dshape(1:1) = shape(this_ptr%p%Phi)
+        dloc = loc(this_ptr%p%Phi)
+    else
+        dloc = 0
+    end if
+end subroutine f90wrap_porosity_data__array__Phi
+
+subroutine f90wrap_porosity_data__array__PhiG(this, nd, dtype, dshape, dloc)
+    use m_model, only: porosity_data
+    use, intrinsic :: iso_c_binding, only : c_int
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer(c_int), intent(in) :: this(2)
+    type(porosity_data_ptr_type) :: this_ptr
+    integer(c_int), intent(out) :: nd
+    integer(c_int), intent(out) :: dtype
+    integer(c_int), dimension(10), intent(out) :: dshape
+    integer*8, intent(out) :: dloc
+    
+    nd = 1
+    dtype = 12
+    this_ptr = transfer(this, this_ptr)
+    if (allocated(this_ptr%p%PhiG)) then
+        dshape(1:1) = shape(this_ptr%p%PhiG)
+        dloc = loc(this_ptr%p%PhiG)
+    else
+        dloc = 0
+    end if
+end subroutine f90wrap_porosity_data__array__PhiG
+
+subroutine f90wrap_porosity_data__array__PhiW(this, nd, dtype, dshape, dloc)
+    use m_model, only: porosity_data
+    use, intrinsic :: iso_c_binding, only : c_int
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer(c_int), intent(in) :: this(2)
+    type(porosity_data_ptr_type) :: this_ptr
+    integer(c_int), intent(out) :: nd
+    integer(c_int), intent(out) :: dtype
+    integer(c_int), dimension(10), intent(out) :: dshape
+    integer*8, intent(out) :: dloc
+    
+    nd = 1
+    dtype = 12
+    this_ptr = transfer(this, this_ptr)
+    if (allocated(this_ptr%p%PhiW)) then
+        dshape(1:1) = shape(this_ptr%p%PhiW)
+        dloc = loc(this_ptr%p%PhiW)
+    else
+        dloc = 0
+    end if
+end subroutine f90wrap_porosity_data__array__PhiW
 
 subroutine f90wrap_porosity_data_initialise(this)
     use m_model, only: porosity_data
@@ -2837,7 +2887,7 @@ end subroutine f90wrap_bcs__array__outflow
 
 subroutine f90wrap_bcs__array_getitem__hyd(f90wrap_this, f90wrap_i, hyditem)
     
-    use m_model, only: hydrograph, bcs
+    use m_model, only: bcs, hydrograph
     implicit none
     
     type bcs_ptr_type
@@ -2867,7 +2917,7 @@ end subroutine f90wrap_bcs__array_getitem__hyd
 
 subroutine f90wrap_bcs__array_setitem__hyd(f90wrap_this, f90wrap_i, hyditem)
     
-    use m_model, only: hydrograph, bcs
+    use m_model, only: bcs, hydrograph
     implicit none
     
     type bcs_ptr_type
@@ -2897,7 +2947,7 @@ end subroutine f90wrap_bcs__array_setitem__hyd
 
 subroutine f90wrap_bcs__array_len__hyd(f90wrap_this, f90wrap_n)
     
-    use m_model, only: hydrograph, bcs
+    use m_model, only: bcs, hydrograph
     implicit none
     
     type bcs_ptr_type
@@ -2920,7 +2970,7 @@ end subroutine f90wrap_bcs__array_len__hyd
 
 subroutine f90wrap_bcs__array_getitem__gr4(f90wrap_this, f90wrap_i, gr4item)
     
-    use m_model, only: bcs, gr4
+    use m_model, only: gr4, bcs
     implicit none
     
     type bcs_ptr_type
@@ -2950,7 +3000,7 @@ end subroutine f90wrap_bcs__array_getitem__gr4
 
 subroutine f90wrap_bcs__array_setitem__gr4(f90wrap_this, f90wrap_i, gr4item)
     
-    use m_model, only: bcs, gr4
+    use m_model, only: gr4, bcs
     implicit none
     
     type bcs_ptr_type
@@ -2980,7 +3030,7 @@ end subroutine f90wrap_bcs__array_setitem__gr4
 
 subroutine f90wrap_bcs__array_len__gr4(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, gr4
+    use m_model, only: gr4, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3003,7 +3053,7 @@ end subroutine f90wrap_bcs__array_len__gr4
 
 subroutine f90wrap_bcs__array_getitem__rat(f90wrap_this, f90wrap_i, ratitem)
     
-    use m_model, only: bcs, ratcurve
+    use m_model, only: ratcurve, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3033,7 +3083,7 @@ end subroutine f90wrap_bcs__array_getitem__rat
 
 subroutine f90wrap_bcs__array_setitem__rat(f90wrap_this, f90wrap_i, ratitem)
     
-    use m_model, only: bcs, ratcurve
+    use m_model, only: ratcurve, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3063,7 +3113,7 @@ end subroutine f90wrap_bcs__array_setitem__rat
 
 subroutine f90wrap_bcs__array_len__rat(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, ratcurve
+    use m_model, only: ratcurve, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3086,7 +3136,7 @@ end subroutine f90wrap_bcs__array_len__rat
 
 subroutine f90wrap_bcs__array_getitem__hpresc(f90wrap_this, f90wrap_i, hprescitem)
     
-    use m_model, only: bcs, hpresc
+    use m_model, only: hpresc, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3116,7 +3166,7 @@ end subroutine f90wrap_bcs__array_getitem__hpresc
 
 subroutine f90wrap_bcs__array_setitem__hpresc(f90wrap_this, f90wrap_i, hprescitem)
     
-    use m_model, only: bcs, hpresc
+    use m_model, only: hpresc, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3146,7 +3196,7 @@ end subroutine f90wrap_bcs__array_setitem__hpresc
 
 subroutine f90wrap_bcs__array_len__hpresc(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, hpresc
+    use m_model, only: hpresc, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3169,7 +3219,7 @@ end subroutine f90wrap_bcs__array_len__hpresc
 
 subroutine f90wrap_bcs__array_getitem__zspresc(f90wrap_this, f90wrap_i, zsprescitem)
     
-    use m_model, only: zspresc, bcs
+    use m_model, only: bcs, zspresc
     implicit none
     
     type bcs_ptr_type
@@ -3199,7 +3249,7 @@ end subroutine f90wrap_bcs__array_getitem__zspresc
 
 subroutine f90wrap_bcs__array_setitem__zspresc(f90wrap_this, f90wrap_i, zsprescitem)
     
-    use m_model, only: zspresc, bcs
+    use m_model, only: bcs, zspresc
     implicit none
     
     type bcs_ptr_type
@@ -3229,7 +3279,7 @@ end subroutine f90wrap_bcs__array_setitem__zspresc
 
 subroutine f90wrap_bcs__array_len__zspresc(f90wrap_this, f90wrap_n)
     
-    use m_model, only: zspresc, bcs
+    use m_model, only: bcs, zspresc
     implicit none
     
     type bcs_ptr_type
@@ -3252,7 +3302,7 @@ end subroutine f90wrap_bcs__array_len__zspresc
 
 subroutine f90wrap_bcs__array_getitem__rain(f90wrap_this, f90wrap_i, rainitem)
     
-    use m_model, only: bcs, rain
+    use m_model, only: rain, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3282,7 +3332,7 @@ end subroutine f90wrap_bcs__array_getitem__rain
 
 subroutine f90wrap_bcs__array_setitem__rain(f90wrap_this, f90wrap_i, rainitem)
     
-    use m_model, only: bcs, rain
+    use m_model, only: rain, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3312,7 +3362,7 @@ end subroutine f90wrap_bcs__array_setitem__rain
 
 subroutine f90wrap_bcs__array_len__rain(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, rain
+    use m_model, only: rain, bcs
     implicit none
     
     type bcs_ptr_type
@@ -4870,7 +4920,7 @@ end subroutine f90wrap_structure_data_finalise
 
 subroutine f90wrap_input_data__array_getitem__soil(f90wrap_this, f90wrap_i, soilitem)
     
-    use m_model, only: soil_data, input_data
+    use m_model, only: input_data, soil_data
     implicit none
     
     type input_data_ptr_type
@@ -4900,7 +4950,7 @@ end subroutine f90wrap_input_data__array_getitem__soil
 
 subroutine f90wrap_input_data__array_setitem__soil(f90wrap_this, f90wrap_i, soilitem)
     
-    use m_model, only: soil_data, input_data
+    use m_model, only: input_data, soil_data
     implicit none
     
     type input_data_ptr_type
@@ -4930,7 +4980,7 @@ end subroutine f90wrap_input_data__array_setitem__soil
 
 subroutine f90wrap_input_data__array_len__soil(f90wrap_this, f90wrap_n)
     
-    use m_model, only: soil_data, input_data
+    use m_model, only: input_data, soil_data
     implicit none
     
     type input_data_ptr_type
@@ -5006,7 +5056,7 @@ end subroutine f90wrap_input_data__array__soil_land
 
 subroutine f90wrap_input_data__array_getitem__ptf(f90wrap_this, f90wrap_i, ptfitem)
     
-    use m_model, only: ptf_data, input_data
+    use m_model, only: input_data, ptf_data
     implicit none
     
     type input_data_ptr_type
@@ -5036,7 +5086,7 @@ end subroutine f90wrap_input_data__array_getitem__ptf
 
 subroutine f90wrap_input_data__array_setitem__ptf(f90wrap_this, f90wrap_i, ptfitem)
     
-    use m_model, only: ptf_data, input_data
+    use m_model, only: input_data, ptf_data
     implicit none
     
     type input_data_ptr_type
@@ -5066,7 +5116,7 @@ end subroutine f90wrap_input_data__array_setitem__ptf
 
 subroutine f90wrap_input_data__array_len__ptf(f90wrap_this, f90wrap_n)
     
-    use m_model, only: ptf_data, input_data
+    use m_model, only: input_data, ptf_data
     implicit none
     
     type input_data_ptr_type
@@ -5142,7 +5192,7 @@ end subroutine f90wrap_input_data__array__ptf_land
 
 subroutine f90wrap_input_data__array_getitem__surf(f90wrap_this, f90wrap_i, surfitem)
     
-    use m_model, only: input_data, surface_data
+    use m_model, only: surface_data, input_data
     implicit none
     
     type input_data_ptr_type
@@ -5172,7 +5222,7 @@ end subroutine f90wrap_input_data__array_getitem__surf
 
 subroutine f90wrap_input_data__array_setitem__surf(f90wrap_this, f90wrap_i, surfitem)
     
-    use m_model, only: input_data, surface_data
+    use m_model, only: surface_data, input_data
     implicit none
     
     type input_data_ptr_type
@@ -5202,7 +5252,7 @@ end subroutine f90wrap_input_data__array_setitem__surf
 
 subroutine f90wrap_input_data__array_len__surf(f90wrap_this, f90wrap_n)
     
-    use m_model, only: input_data, surface_data
+    use m_model, only: surface_data, input_data
     implicit none
     
     type input_data_ptr_type
@@ -6530,6 +6580,34 @@ subroutine f90wrap_input_param__set__use_ptf(this, f90wrap_use_ptf)
     this_ptr%p%use_ptf = f90wrap_use_ptf
 end subroutine f90wrap_input_param__set__use_ptf
 
+subroutine f90wrap_input_param__get__use_porosity(this, f90wrap_use_porosity)
+    use m_model, only: input_param
+    implicit none
+    type input_param_ptr_type
+        type(input_param), pointer :: p => NULL()
+    end type input_param_ptr_type
+    integer, intent(in)   :: this(2)
+    type(input_param_ptr_type) :: this_ptr
+    integer(4), intent(out) :: f90wrap_use_porosity
+    
+    this_ptr = transfer(this, this_ptr)
+    f90wrap_use_porosity = this_ptr%p%use_porosity
+end subroutine f90wrap_input_param__get__use_porosity
+
+subroutine f90wrap_input_param__set__use_porosity(this, f90wrap_use_porosity)
+    use m_model, only: input_param
+    implicit none
+    type input_param_ptr_type
+        type(input_param), pointer :: p => NULL()
+    end type input_param_ptr_type
+    integer, intent(in)   :: this(2)
+    type(input_param_ptr_type) :: this_ptr
+    integer(4), intent(in) :: f90wrap_use_porosity
+    
+    this_ptr = transfer(this, this_ptr)
+    this_ptr%p%use_porosity = f90wrap_use_porosity
+end subroutine f90wrap_input_param__set__use_porosity
+
 subroutine f90wrap_input_param__get__spatial_scheme(this, f90wrap_spatial_scheme)
     use m_model, only: input_param
     implicit none
@@ -6890,6 +6968,34 @@ subroutine f90wrap_input_param__set__c_manning_beta(this, f90wrap_c_manning_beta
     this_ptr = transfer(this, this_ptr)
     this_ptr%p%c_manning_beta = f90wrap_c_manning_beta
 end subroutine f90wrap_input_param__set__c_manning_beta
+
+subroutine f90wrap_input_param__get__c_porosity(this, f90wrap_c_porosity)
+    use m_model, only: input_param
+    implicit none
+    type input_param_ptr_type
+        type(input_param), pointer :: p => NULL()
+    end type input_param_ptr_type
+    integer, intent(in)   :: this(2)
+    type(input_param_ptr_type) :: this_ptr
+    integer(4), intent(out) :: f90wrap_c_porosity
+    
+    this_ptr = transfer(this, this_ptr)
+    f90wrap_c_porosity = this_ptr%p%c_porosity
+end subroutine f90wrap_input_param__get__c_porosity
+
+subroutine f90wrap_input_param__set__c_porosity(this, f90wrap_c_porosity)
+    use m_model, only: input_param
+    implicit none
+    type input_param_ptr_type
+        type(input_param), pointer :: p => NULL()
+    end type input_param_ptr_type
+    integer, intent(in)   :: this(2)
+    type(input_param_ptr_type) :: this_ptr
+    integer(4), intent(in) :: f90wrap_c_porosity
+    
+    this_ptr = transfer(this, this_ptr)
+    this_ptr%p%c_porosity = f90wrap_c_porosity
+end subroutine f90wrap_input_param__set__c_porosity
 
 subroutine f90wrap_input_param__get__c_bathy(this, f90wrap_c_bathy)
     use m_model, only: input_param
@@ -7849,8 +7955,8 @@ subroutine f90wrap_default_values
 end subroutine f90wrap_default_values
 
 subroutine f90wrap_alloc_dof(dof, mesh)
+    use m_model, only: unk, alloc_dof
     use m_mesh, only: msh
-    use m_model, only: alloc_dof, unk
     implicit none
     
     type unk_ptr_type
@@ -7870,7 +7976,7 @@ subroutine f90wrap_alloc_dof(dof, mesh)
 end subroutine f90wrap_alloc_dof
 
 subroutine f90wrap_dealloc_dof(dof)
-    use m_model, only: unk, dealloc_dof
+    use m_model, only: dealloc_dof, unk
     implicit none
     
     type unk_ptr_type
@@ -8147,31 +8253,57 @@ subroutine f90wrap_m_model__array__slope_x(dummy_this, nd, dtype, dshape, dloc)
     end if
 end subroutine f90wrap_m_model__array__slope_x
 
-subroutine f90wrap_m_model__get__single_porosity(f90wrap_single_porosity)
-    use m_model, only: porosity_data, m_model_single_porosity => single_porosity
+subroutine f90wrap_m_model__get__SPorosity(f90wrap_SPorosity)
+    use m_model, only: porosity_data, m_model_SPorosity => SPorosity
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
     end type porosity_data_ptr_type
-    integer, intent(out) :: f90wrap_single_porosity(2)
-    type(porosity_data_ptr_type) :: single_porosity_ptr
+    integer, intent(out) :: f90wrap_SPorosity(2)
+    type(porosity_data_ptr_type) :: SPorosity_ptr
     
-    single_porosity_ptr%p => m_model_single_porosity
-    f90wrap_single_porosity = transfer(single_porosity_ptr,f90wrap_single_porosity)
-end subroutine f90wrap_m_model__get__single_porosity
+    SPorosity_ptr%p => m_model_SPorosity
+    f90wrap_SPorosity = transfer(SPorosity_ptr,f90wrap_SPorosity)
+end subroutine f90wrap_m_model__get__SPorosity
 
-subroutine f90wrap_m_model__set__single_porosity(f90wrap_single_porosity)
-    use m_model, only: porosity_data, m_model_single_porosity => single_porosity
+subroutine f90wrap_m_model__set__SPorosity(f90wrap_SPorosity)
+    use m_model, only: porosity_data, m_model_SPorosity => SPorosity
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
     end type porosity_data_ptr_type
-    integer, intent(in) :: f90wrap_single_porosity(2)
-    type(porosity_data_ptr_type) :: single_porosity_ptr
+    integer, intent(in) :: f90wrap_SPorosity(2)
+    type(porosity_data_ptr_type) :: SPorosity_ptr
     
-    single_porosity_ptr = transfer(f90wrap_single_porosity,single_porosity_ptr)
-    m_model_single_porosity = single_porosity_ptr%p
-end subroutine f90wrap_m_model__set__single_porosity
+    SPorosity_ptr = transfer(f90wrap_SPorosity,SPorosity_ptr)
+    m_model_SPorosity = SPorosity_ptr%p
+end subroutine f90wrap_m_model__set__SPorosity
+
+subroutine f90wrap_m_model__get__IPorosity(f90wrap_IPorosity)
+    use m_model, only: porosity_data, m_model_IPorosity => IPorosity
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer, intent(out) :: f90wrap_IPorosity(2)
+    type(porosity_data_ptr_type) :: IPorosity_ptr
+    
+    IPorosity_ptr%p => m_model_IPorosity
+    f90wrap_IPorosity = transfer(IPorosity_ptr,f90wrap_IPorosity)
+end subroutine f90wrap_m_model__get__IPorosity
+
+subroutine f90wrap_m_model__set__IPorosity(f90wrap_IPorosity)
+    use m_model, only: porosity_data, m_model_IPorosity => IPorosity
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer, intent(in) :: f90wrap_IPorosity(2)
+    type(porosity_data_ptr_type) :: IPorosity_ptr
+    
+    IPorosity_ptr = transfer(f90wrap_IPorosity,IPorosity_ptr)
+    m_model_IPorosity = IPorosity_ptr%p
+end subroutine f90wrap_m_model__set__IPorosity
 
 subroutine f90wrap_m_model__get__feedback_inflow(f90wrap_feedback_inflow)
     use m_model, only: m_model_feedback_inflow => feedback_inflow
@@ -8384,6 +8516,22 @@ subroutine f90wrap_m_model__set__c_manning_beta(f90wrap_c_manning_beta)
     
     m_model_c_manning_beta = f90wrap_c_manning_beta
 end subroutine f90wrap_m_model__set__c_manning_beta
+
+subroutine f90wrap_m_model__get__c_porosity(f90wrap_c_porosity)
+    use m_model, only: m_model_c_porosity => c_porosity
+    implicit none
+    integer(4), intent(out) :: f90wrap_c_porosity
+    
+    f90wrap_c_porosity = m_model_c_porosity
+end subroutine f90wrap_m_model__get__c_porosity
+
+subroutine f90wrap_m_model__set__c_porosity(f90wrap_c_porosity)
+    use m_model, only: m_model_c_porosity => c_porosity
+    implicit none
+    integer(4), intent(in) :: f90wrap_c_porosity
+    
+    m_model_c_porosity = f90wrap_c_porosity
+end subroutine f90wrap_m_model__set__c_porosity
 
 subroutine f90wrap_m_model__get__c_bathy(f90wrap_c_bathy)
     use m_model, only: m_model_c_bathy => c_bathy

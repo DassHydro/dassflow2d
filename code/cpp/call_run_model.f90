@@ -419,9 +419,10 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    ! Global Variables
    type(msh), intent(in) :: mesh
    type(porosity_data), intent(inout) :: my_porosity
-   !my_porosity%nland = mesh%nc
-   allocate (my_porosity%land(mesh%nc))
-   allocate (my_porosity%SP(my_porosity%nland))
+    allocate ( my_porosity%land( my_porosity%nland ) )
+    allocate ( my_porosity%Phi ( mesh%nc ) )
+    allocate ( my_porosity%PhiW( mesh%nc ) )
+    allocate ( my_porosity%PhiG( mesh%ne ) )
  END SUBROUTINE porosity_initialise
  SUBROUTINE porosity_finalise(my_porosity)
   !>++++++++++++++++++++++++++++++++++++++++++++++++
@@ -432,7 +433,9 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
      ! Global Variables
      type(porosity_data), intent(inout) :: my_porosity
      if (allocated(my_porosity%land)) deallocate(my_porosity%land)
-     if (allocated(my_porosity%SP)) deallocate(my_porosity%SP)
+     if (allocated(my_porosity%Phi)) deallocate(my_porosity%Phi)
+     if (allocated(my_porosity%PhiW)) deallocate(my_porosity%PhiW)
+     if (allocated(my_porosity%PhiG)) deallocate(my_porosity%PhiG)
  END SUBROUTINE porosity_finalise
  SUBROUTINE phys_desc_initialise(my_phys_desc, mesh)
      implicit none

@@ -727,5 +727,61 @@ subroutine f90wrap_m_tap_vars__array__slope_x_diff(dummy_this, nd, dtype, dshape
     end if
 end subroutine f90wrap_m_tap_vars__array__slope_x_diff
 
+subroutine f90wrap_m_tap_vars__get__SPorosity_diff(f90wrap_SPorosity_diff)
+    use m_model, only: porosity_data
+    use m_tap_vars, only: m_tap_vars_SPorosity_diff => SPorosity_diff
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer, intent(out) :: f90wrap_SPorosity_diff(2)
+    type(porosity_data_ptr_type) :: SPorosity_diff_ptr
+    
+    SPorosity_diff_ptr%p => m_tap_vars_SPorosity_diff
+    f90wrap_SPorosity_diff = transfer(SPorosity_diff_ptr,f90wrap_SPorosity_diff)
+end subroutine f90wrap_m_tap_vars__get__SPorosity_diff
+
+subroutine f90wrap_m_tap_vars__set__SPorosity_diff(f90wrap_SPorosity_diff)
+    use m_model, only: porosity_data
+    use m_tap_vars, only: m_tap_vars_SPorosity_diff => SPorosity_diff
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer, intent(in) :: f90wrap_SPorosity_diff(2)
+    type(porosity_data_ptr_type) :: SPorosity_diff_ptr
+    
+    SPorosity_diff_ptr = transfer(f90wrap_SPorosity_diff,SPorosity_diff_ptr)
+    m_tap_vars_SPorosity_diff = SPorosity_diff_ptr%p
+end subroutine f90wrap_m_tap_vars__set__SPorosity_diff
+
+subroutine f90wrap_m_tap_vars__get__SPorosity_back(f90wrap_SPorosity_back)
+    use m_model, only: porosity_data
+    use m_tap_vars, only: m_tap_vars_SPorosity_back => SPorosity_back
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer, intent(out) :: f90wrap_SPorosity_back(2)
+    type(porosity_data_ptr_type) :: SPorosity_back_ptr
+    
+    SPorosity_back_ptr%p => m_tap_vars_SPorosity_back
+    f90wrap_SPorosity_back = transfer(SPorosity_back_ptr,f90wrap_SPorosity_back)
+end subroutine f90wrap_m_tap_vars__get__SPorosity_back
+
+subroutine f90wrap_m_tap_vars__set__SPorosity_back(f90wrap_SPorosity_back)
+    use m_model, only: porosity_data
+    use m_tap_vars, only: m_tap_vars_SPorosity_back => SPorosity_back
+    implicit none
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
+    integer, intent(in) :: f90wrap_SPorosity_back(2)
+    type(porosity_data_ptr_type) :: SPorosity_back_ptr
+    
+    SPorosity_back_ptr = transfer(f90wrap_SPorosity_back,SPorosity_back_ptr)
+    m_tap_vars_SPorosity_back = SPorosity_back_ptr%p
+end subroutine f90wrap_m_tap_vars__set__SPorosity_back
+
 ! End of module m_tap_vars defined in file m_tap_vars.f90
 

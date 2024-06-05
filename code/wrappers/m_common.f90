@@ -14,7 +14,6 @@ MODULE m_common
    character(len=lchar) :: bc_E !< Type of boundary condition at East mesh boundary if mesh = 'basic'
    integer(ip) :: bc_rain !< Rain condition
    integer(ip) :: bc_infil !< Infiltration condition
-   integer(ip) :: bc_porosity !< Porosity condition
    real(rp) :: lx !< Lenght of computational domain x horizontal direction if mesh = 'basic'
    real(rp) :: ly !< Lenght of computational domain y vertical direction if mesh = 'basic'
    integer(ip) :: nx !< Number of nodes in x horizontal direction if mesh = 'basic'
@@ -46,6 +45,7 @@ MODULE m_common
    integer(ip) :: xsshp_along_x !< Toogle whether channel is defined along x-axis
    integer(ip) :: xsshp_along_y !< Toogle whether channel is defined along y-axis
    integer(ip) :: use_ptf !< Toogle whether a pedotransfer function is used to calculate infil parameters from phys_desc parameters
+   integer(ip) :: use_porosity !< Use Porosity
    character(len=lchar) :: spatial_scheme !< Name of Spatial Discretization Scheme ('muscl' only)
    character(len=lchar) :: temp_scheme !< Name of Temporal Discretization Scheme ('imex' or 'euler')
    character(len=lchar), dimension(:), allocatable :: args !< Arguments passed on the command line
