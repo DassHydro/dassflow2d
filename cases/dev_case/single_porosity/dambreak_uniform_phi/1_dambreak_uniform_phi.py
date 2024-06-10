@@ -68,7 +68,7 @@ ts = 10
 
 
 input_params={ "mesh_name": mesh,
-              "ts": ts,
+               "ts": ts,
 			   "use_obs":'0',
 			   "use_UVobs":'0',
 			   "use_Zobs":'1',
@@ -83,7 +83,7 @@ input_params={ "mesh_name": mesh,
                'g':'9.81',
                'dt':'0.05',
 
-               "dtw":'10',
+               "dtw":'1',
                "dta":"100",
                
                "bc_infil":"0",

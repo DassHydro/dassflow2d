@@ -63,7 +63,7 @@ rank = comm.Get_rank()
 # Model
 ##########
 
-mesh = 'mesh_10_30.geo'
+mesh = 'mesh_1_100.geo'
 ts = 10
 
 input_params={ "mesh_name": mesh ,
@@ -129,9 +129,13 @@ df2d.wrapping.call_model.init_porosity(my_model.kernel)
 
 my_model.kernel.my_porosity.land[:] = 1.
 
-my_model.kernel.my_porosity.phi[0] = 0.25
-my_model.kernel.my_porosity.phi[1] = 0.5
-my_model.kernel.my_porosity.phi[2] = 0.75
+nc = my_model.kernel.mesh.nc
+
+my_model.kernel.my_porosity.land[:] = 1
+
+for i in range(nc):
+
+    my_model.kernel.my_porosity.phi[i] = (i+1)/nc
 
 
 ##########
@@ -171,8 +175,6 @@ shutil.copytree("./res/obs", "./obs")
 ########################
 
 graphe = [1,1,0,1,0]
-
-nc = my_model.kernel.mesh.nc
 
 h = my_model.kernel.dof.h[:nc]
 u = my_model.kernel.dof.u[:nc]

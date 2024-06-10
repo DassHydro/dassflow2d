@@ -473,16 +473,16 @@ subroutine f90wrap_unk__array_len__grad_z(f90wrap_this, f90wrap_n)
 end subroutine f90wrap_unk__array_len__grad_z
 
 subroutine f90wrap_unk_initialise(dof, mesh)
-    use m_model, only: unk, unk_initialise
+    use m_model, only: unk_initialise, unk
     use m_mesh, only: msh
     implicit none
     
-    type unk_ptr_type
-        type(unk), pointer :: p => NULL()
-    end type unk_ptr_type
     type msh_ptr_type
         type(msh), pointer :: p => NULL()
     end type msh_ptr_type
+    type unk_ptr_type
+        type(unk), pointer :: p => NULL()
+    end type unk_ptr_type
     type(unk_ptr_type) :: dof_ptr
     integer, intent(out), dimension(2) :: dof
     type(msh_ptr_type) :: mesh_ptr
@@ -2887,7 +2887,7 @@ end subroutine f90wrap_bcs__array__outflow
 
 subroutine f90wrap_bcs__array_getitem__hyd(f90wrap_this, f90wrap_i, hyditem)
     
-    use m_model, only: bcs, hydrograph
+    use m_model, only: hydrograph, bcs
     implicit none
     
     type bcs_ptr_type
@@ -2917,7 +2917,7 @@ end subroutine f90wrap_bcs__array_getitem__hyd
 
 subroutine f90wrap_bcs__array_setitem__hyd(f90wrap_this, f90wrap_i, hyditem)
     
-    use m_model, only: bcs, hydrograph
+    use m_model, only: hydrograph, bcs
     implicit none
     
     type bcs_ptr_type
@@ -2947,7 +2947,7 @@ end subroutine f90wrap_bcs__array_setitem__hyd
 
 subroutine f90wrap_bcs__array_len__hyd(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, hydrograph
+    use m_model, only: hydrograph, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3219,7 +3219,7 @@ end subroutine f90wrap_bcs__array_len__hpresc
 
 subroutine f90wrap_bcs__array_getitem__zspresc(f90wrap_this, f90wrap_i, zsprescitem)
     
-    use m_model, only: bcs, zspresc
+    use m_model, only: zspresc, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3249,7 +3249,7 @@ end subroutine f90wrap_bcs__array_getitem__zspresc
 
 subroutine f90wrap_bcs__array_setitem__zspresc(f90wrap_this, f90wrap_i, zsprescitem)
     
-    use m_model, only: bcs, zspresc
+    use m_model, only: zspresc, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3279,7 +3279,7 @@ end subroutine f90wrap_bcs__array_setitem__zspresc
 
 subroutine f90wrap_bcs__array_len__zspresc(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, zspresc
+    use m_model, only: zspresc, bcs
     implicit none
     
     type bcs_ptr_type
@@ -5192,7 +5192,7 @@ end subroutine f90wrap_input_data__array__ptf_land
 
 subroutine f90wrap_input_data__array_getitem__surf(f90wrap_this, f90wrap_i, surfitem)
     
-    use m_model, only: surface_data, input_data
+    use m_model, only: input_data, surface_data
     implicit none
     
     type input_data_ptr_type
@@ -5222,7 +5222,7 @@ end subroutine f90wrap_input_data__array_getitem__surf
 
 subroutine f90wrap_input_data__array_setitem__surf(f90wrap_this, f90wrap_i, surfitem)
     
-    use m_model, only: surface_data, input_data
+    use m_model, only: input_data, surface_data
     implicit none
     
     type input_data_ptr_type
@@ -5252,7 +5252,7 @@ end subroutine f90wrap_input_data__array_setitem__surf
 
 subroutine f90wrap_input_data__array_len__surf(f90wrap_this, f90wrap_n)
     
-    use m_model, only: surface_data, input_data
+    use m_model, only: input_data, surface_data
     implicit none
     
     type input_data_ptr_type
@@ -7955,16 +7955,16 @@ subroutine f90wrap_default_values
 end subroutine f90wrap_default_values
 
 subroutine f90wrap_alloc_dof(dof, mesh)
-    use m_model, only: unk, alloc_dof
+    use m_model, only: alloc_dof, unk
     use m_mesh, only: msh
     implicit none
     
-    type unk_ptr_type
-        type(unk), pointer :: p => NULL()
-    end type unk_ptr_type
     type msh_ptr_type
         type(msh), pointer :: p => NULL()
     end type msh_ptr_type
+    type unk_ptr_type
+        type(unk), pointer :: p => NULL()
+    end type unk_ptr_type
     type(unk_ptr_type) :: dof_ptr
     integer, intent(out), dimension(2) :: dof
     type(msh_ptr_type) :: mesh_ptr
@@ -7996,8 +7996,8 @@ subroutine f90wrap_dealloc_model
 end subroutine f90wrap_dealloc_model
 
 subroutine f90wrap_spatial_index_fromxy(mesh, xmin, xmax, ymin, ymax, spatial_index)
-    use m_mesh, only: msh
     use m_model, only: spatial_index_fromxy
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type

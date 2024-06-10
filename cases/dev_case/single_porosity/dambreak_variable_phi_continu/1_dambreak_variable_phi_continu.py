@@ -134,7 +134,7 @@ mil = int(nc/2)
 
 my_model.kernel.my_porosity.land[:] = 1
 
-for i in range(my_model.kernel.my_friction.nland):
+for i in range(nc):
 
     my_model.kernel.my_porosity.phi[i] = (i+1)/nc
 
