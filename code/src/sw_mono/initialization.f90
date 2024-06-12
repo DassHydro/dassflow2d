@@ -1870,16 +1870,16 @@ type( porosity_data ), intent(in   )  ::  my_porosity
 
 SPorosity%nland = my_porosity%nland
 
-allocate( SPorosity%Phi ( size( my_porosity%Phi  ) ) )
-allocate( SPorosity%land( size( my_porosity%land ) ) )
+allocate( SPorosity%land( mesh%nc ) )
+allocate( SPorosity%Phi ( SPorosity%nland ) )
 
 ! loop on all cells to define patch correspondance
-do i = 1,size( my_porosity%land )
+do i = 1,mesh%nc
    SPorosity%land( i )  =  my_porosity%land( i )
 end do
    
 ! define values for each patch
-do i = 1,size( my_porosity%Phi )
+do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
 end do
 
@@ -1887,19 +1887,19 @@ end do
 
 IPorosity%nland = my_porosity%nland
 
-allocate( IPorosity%land ( size( my_porosity%land ) ) )
-allocate( IPorosity%PhiW ( size( my_porosity%PhiW ) ) )
-allocate( IPorosity%PhiG ( size( my_porosity%PhiG ) ) )
+allocate( IPorosity%land ( mesh%nc ) )
+allocate( IPorosity%PhiW ( IPorosity%nland ) )
+allocate( IPorosity%PhiG ( IPorosity%nland ) )
 
-do i = 1,size( my_porosity%land )
+do i = 1,mesh%nc
    IPorosity%land(i) = my_porosity%land(i)
 end do
 
-do i = 1,size( my_porosity%PhiW )
+do i = 1,IPorosity%nland
    IPorosity%PhiW(i) = my_porosity%PhiW(i)
 end do
 
-do i = 1,size( my_porosity%PhiG )
+do i = 1,IPorosity%nland
    IPorosity%PhiG(i) = my_porosity%PhiG(i)
 end do
 

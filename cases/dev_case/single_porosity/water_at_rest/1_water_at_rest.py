@@ -65,6 +65,7 @@ rank = comm.Get_rank()
 
 mesh = 'mesh_1_100.geo'
 ts = 10
+nland = 3
 
 input_params={ "mesh_name": mesh ,
                "ts": ts ,
@@ -105,14 +106,14 @@ Config.set(custom_config = input_params)
 #Create Python class by calling wrapped initialise routines
 my_model.kernel.my_friction =  df2d.wrapping.m_model.friction_data(my_model.kernel.mesh)
 #Allocate and get initial values from Fortran
-my_model.kernel.my_friction.nland = 2
+my_model.kernel.my_friction.nland = nland
 df2d.wrapping.call_model.init_friction(my_model.kernel)
 
 #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
 
 my_model.kernel.my_friction.manning[:] = 0.15
 my_model.kernel.my_friction.manning_beta[:] = 0
-my_model.kernel.my_friction.land[:] = 1.
+my_model.kernel.my_friction.land[:] = 1
 
 ##########
 # Porosity
@@ -127,15 +128,18 @@ df2d.wrapping.call_model.init_porosity(my_model.kernel)
 
 #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
 
-my_model.kernel.my_porosity.land[:] = 1.
-
 nc = my_model.kernel.mesh.nc
 
-my_model.kernel.my_porosity.land[:] = 1
+tiers = int(nc/3)
 
-for i in range(nc):
+for i in range(nland) :
 
-    my_model.kernel.my_porosity.phi[i] = (i+1)/nc
+    my_model.kernel.my_porosity.phi[i] = (i+1)*0.25
+
+my_model.kernel.my_porosity.land[:tiers] = 1
+my_model.kernel.my_porosity.land[tiers:2*tiers] = 2
+my_model.kernel.my_porosity.land[2*tiers:] = 3
+
 
 
 ##########

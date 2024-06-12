@@ -427,7 +427,7 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
 
             endif
 
-            phiL  =  SPorosity%Phi( iL )
+            phiL  =  SPorosity%Phi( SPorosity%land(iL) )
             phiR  =  phiL
 
          else
@@ -441,8 +441,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
             uR(2)  =  mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
             vR(2)  =  mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
 
-            phiL  =  SPorosity%Phi( iL )
-            phiR  =  SPorosity%Phi( iR )
+            phiL  =  SPorosity%Phi( SPorosity%land(iL) )
+            phiR  =  SPorosity%Phi( SPorosity%land(iR) )
 
          end if
 
@@ -535,7 +535,7 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
       u  =  dof%u(i)
       v  =  dof%v(i)
 
-      dof%h(i)  =  max( 0._rp , h  -  dt / SPorosity%Phi(i) * tflux(1,i) * mesh%cell(i)%invsurf )
+      dof%h(i)  =  max( 0._rp , h  -  dt / SPorosity%Phi( SPorosity%land(i) ) * tflux(1,i) * mesh%cell(i)%invsurf )
 
       ! Add rain source term
       if (bc_rain == 1) then
@@ -624,8 +624,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
 
       else
 
-         dof%u(i)  =  (  h * u  -  dt / SPorosity%Phi(i) * ( tflux(2,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
-         dof%v(i)  =  (  h * v  -  dt / SPorosity%Phi(i) * ( tflux(3,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
+         dof%u(i)  =  (  h * u  -  dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(2,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
+         dof%v(i)  =  (  h * v  -  dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(3,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
 
          !=============================================================================================================!
          !   Semi-Implicit Treatment of Friction Source Term (Manning/Strickler Formula)

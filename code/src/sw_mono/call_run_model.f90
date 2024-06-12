@@ -748,11 +748,11 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    type(msh), intent(in)  ::  mesh
    type(porosity_data), intent(inout) :: my_porosity
 
-    allocate ( my_porosity%land( my_porosity%nland ) )
-    allocate ( my_porosity%Phi ( mesh%nc ) )
+    allocate ( my_porosity%Phi  ( my_porosity%nland ) )
+    allocate ( my_porosity%land ( mesh%nc ) )
 
-    allocate ( my_porosity%PhiW( mesh%nc ) )
-    allocate ( my_porosity%PhiG( mesh%ne ) )
+    allocate ( my_porosity%PhiW ( my_porosity%nland ) )
+    allocate ( my_porosity%PhiG ( my_porosity%nland ) )
   
  END SUBROUTINE porosity_initialise
 

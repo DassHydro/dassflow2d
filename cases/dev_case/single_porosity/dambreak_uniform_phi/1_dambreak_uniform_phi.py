@@ -65,7 +65,7 @@ rank = comm.Get_rank()
 
 mesh = 'mesh_5_1000.geo'
 ts = 10
-
+nland = 100
 
 input_params={ "mesh_name": mesh,
                "ts": ts,
@@ -115,7 +115,7 @@ df2d.wrapping.call_model.init_friction(my_model.kernel)
 
 my_model.kernel.my_friction.manning[:] = 0.
 my_model.kernel.my_friction.manning_beta[:] = 0
-my_model.kernel.my_friction.land[:] = 1.
+my_model.kernel.my_friction.land[:] = 1
 
 nc = my_model.kernel.mesh.nc
 
