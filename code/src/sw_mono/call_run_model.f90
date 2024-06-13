@@ -787,16 +787,16 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
       enddo
 
+      if (my_bc%nb_in .gt. 0) then
+        allocate(my_bc%hyd(my_bc%nb_in))
 
-
-      allocate(my_bc%hyd( my_bc%nb_in))
-
-      do i = 1,my_bc%nb_in
-        allocate( my_bc%hyd( i )%t( 1 ) )
-        allocate( my_bc%hyd( i )%q( 1 ) )
-        my_bc%hyd(i)%t = 0._rp
-        my_bc%hyd(i)%q = 0._rp
-      enddo
+        do i = 1,my_bc%nb_in
+          allocate( my_bc%hyd( i )%t( 1 ) )
+          allocate( my_bc%hyd( i )%q( 1 ) )
+          my_bc%hyd(i)%t = 0._rp
+          my_bc%hyd(i)%q = 0._rp
+        enddo
+      endif
 
 
   END SUBROUTINE bc_initialise

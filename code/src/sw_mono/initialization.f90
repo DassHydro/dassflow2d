@@ -135,10 +135,10 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
    call reallocate_i( land ,                 mesh%nc   )
 
-   if (bc_rain == 1) then
-         call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
-         call reallocate_i( bc%rain_land ,                 mesh%nc   )
-   endif
+!    if (bc_rain == 1) then
+!          call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
+!          call reallocate_i( bc%rain_land ,                 mesh%nc   )
+!    endif
 
    if (bc_infil .ne. 0) then
          call swap_vec_i  ( infil%land , swap_index( 1 : mesh%nc ) )
@@ -472,7 +472,10 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
    call my_bc_2_fortran(my_bc)
 
-
+   if (bc_rain == 1) then
+         call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
+         call reallocate_i( bc%rain_land ,                 mesh%nc   )
+   endif
 
 
 
@@ -1820,7 +1823,6 @@ implicit none
 
       do i = 1, size(my_infiltration%land )
           infil%land( i )  =  my_infiltration%land( i )
-          infil%h_infil_max( i )  =  my_infiltration%h_infil_max( i )
       end do
 
       do i = 1, size(my_infiltration%h_infil_max )
