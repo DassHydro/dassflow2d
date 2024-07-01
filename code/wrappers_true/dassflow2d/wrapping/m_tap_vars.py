@@ -10,11 +10,11 @@ from dassflow2d.wrapping import _wrapping
 import f90wrap.runtime
 import logging
 import numpy
-from dassflow2d.wrapping.m_model import xsshp
-from dassflow2d.wrapping.m_model import infiltration_data
-from dassflow2d.wrapping.m_model import bcs
 from dassflow2d.wrapping.m_model import porosity_data
 from dassflow2d.wrapping.m_model import ptf_data
+from dassflow2d.wrapping.m_model import bcs
+from dassflow2d.wrapping.m_model import infiltration_data
+from dassflow2d.wrapping.m_model import xsshp
 
 _arrays = {}
 _objs = {}

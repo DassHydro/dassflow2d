@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 import shutil, os, sys
 import numpy as np
 import csv
+import random
 from mpi4py import MPI
 
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
-print(parent_dir)
+path_to_Outils = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
 
-sys.path.append(parent_dir)
+sys.path.append(path_to_Outils)
 
-from Outils.out import affichage
+from Outils.out import plot_dat, plot_vtk
 
 # TODO : adapt this into ? model.meshing object + mesh_extent_box from a real dassflow mesh/setup (with wrapped object)
 class mesh_box:
@@ -63,26 +63,27 @@ rank = comm.Get_rank()
 # Model
 ##########
 
-mesh = 'mesh_1_100.geo'
-ts = 10
-nland = 3
+mesh = 'mesh_1.0000_100.geo'
+ts = 1000
+nland = 100
+use_porosity = 1
 
 input_params={ "mesh_name": mesh ,
                "ts": ts ,
 			   "use_obs":'0',
 			   "use_UVobs":'0',
 			   "use_Zobs":'1',
-               "use_porosity":'1',
-               
+               "use_porosity": use_porosity,
+            
 			   "w_obs":'1',
-               "w_vtk":'2',
+               "w_vtk":'1',
                "w_gnuplot":'1',
                "w_tecplot":'0',
                "adapt_dt":'1',
 
                "dt":'0.1',
 
-               "dtw":'1',
+               "dtw":'100',
                "dta":"100",
                
                "bc_infil":"0",
@@ -119,26 +120,24 @@ my_model.kernel.my_friction.land[:] = 1
 # Porosity
 ##########
 
-#Create Python class by calling wrapped initialise routines
-my_model.kernel.my_porosity = df2d.wrapping.m_model.porosity_data(my_model.kernel.mesh)
-#Allocate and get initial values from Fortran
-
-my_model.kernel.my_porosity.nland = my_model.kernel.my_friction.nland
-df2d.wrapping.call_model.init_porosity(my_model.kernel)
-
-#Provide values, on top of initial ones from Fortran initialization routine, in Python structure
-
 nc = my_model.kernel.mesh.nc
 
-tiers = int(nc/3)
+if use_porosity == 1 :
 
-for i in range(nland) :
+    #Create Python class by calling wrapped initialise routines
+    my_model.kernel.my_porosity = df2d.wrapping.m_model.porosity_data(my_model.kernel.mesh)
+    #Allocate and get initial values from Fortran
 
-    my_model.kernel.my_porosity.phi[i] = (i+1)*0.25
+    my_model.kernel.my_porosity.nland = my_model.kernel.my_friction.nland
+    df2d.wrapping.call_model.init_porosity(my_model.kernel)
 
-my_model.kernel.my_porosity.land[:tiers] = 1
-my_model.kernel.my_porosity.land[tiers:2*tiers] = 2
-my_model.kernel.my_porosity.land[2*tiers:] = 3
+    #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
+
+    for i in range(nland) :
+
+        my_model.kernel.my_porosity.phi[i] = 0.5
+
+    my_model.kernel.my_porosity.land[:] = range(1,nland+1)
 
 
 
@@ -149,7 +148,9 @@ my_model.kernel.my_porosity.land[2*tiers:] = 3
 my_model.kernel.dof  = df2d.wrapping.m_model.unk(my_model.kernel.mesh)
 my_model.kernel.dof0 = my_model.kernel.dof
 
-my_model.kernel.dof0.h[:] = 1.
+for i in range(nc) :
+    my_model.kernel.dof0.h[i] = 1 + random.randint(0,1)*0.1
+
 my_model.kernel.dof0.u[:] = 0.
 my_model.kernel.dof0.v[:] = 0.
 #my_model.kernel.dof0.h[:] = 0  #Disregarded if ic.bin is provided
@@ -178,14 +179,26 @@ shutil.copytree("./res/obs", "./obs")
 # Outputs from python
 ########################
 
-graphe = [1,1,0,1,0]
+graphe = [1,0,0,0,0]
 
+h0 = my_model.kernel.dof0.h[:nc]
+u0 = my_model.kernel.dof0.u[:nc]
+v0 = my_model.kernel.dof0.v[:nc]
 h = my_model.kernel.dof.h[:nc]
 u = my_model.kernel.dof.u[:nc]
 v = my_model.kernel.dof.v[:nc]
 
-print(affichage(graphe,mesh,nc,ts,h,u,v))
+plot_dat(graphe,mesh,ts,h,u,v,h0,u0,v0)
 
+# To save pictures : save = 1
+save = 1
+
+# Put : 'initial' or 'final'
+time = 'initial'
+
+#plot_vtk(code_dir,'h',time,ts,save)
+#plot_vtk(code_dir,'u',time,ts,save)
+#plot_vtk(code_dir,'porosity',time,ts,save)
 
 
 df2d.wrapping.call_model.clean_model(my_model.kernel)

@@ -189,7 +189,7 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
           CALL PUSHCONTROL1B(1)
         END IF
         CALL PUSHREAL8(phil)
-        phil = sporosity%phi(il)
+        phil = sporosity%phi(sporosity%land(il))
         CALL PUSHREAL8(phir)
         phir = phil
         CALL PUSHCONTROL1B(0)
@@ -207,9 +207,9 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
         vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*ur&
 &         (1)
         CALL PUSHREAL8(phil)
-        phil = sporosity%phi(il)
+        phil = sporosity%phi(sporosity%land(il))
         CALL PUSHREAL8(phir)
-        phir = sporosity%phi(ir)
+        phir = sporosity%phi(sporosity%land(ir))
         CALL PUSHCONTROL1B(1)
       END IF
       IF (zl .LT. zr) THEN
@@ -322,11 +322,11 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
     u = dof%u(i)
     CALL PUSHREAL8(v)
     v = dof%v(i)
-    IF (0._rp .LT. h - dt/sporosity%phi(i)*tflux(1, i)*mesh%cell(i)%&
-&       invsurf) THEN
+    IF (0._rp .LT. h - dt/sporosity%phi(sporosity%land(i))*tflux(1, i)*&
+&       mesh%cell(i)%invsurf) THEN
       CALL PUSHREAL8(dof%h(i))
-      dof%h(i) = h - dt/sporosity%phi(i)*tflux(1, i)*mesh%cell(i)%&
-&       invsurf
+      dof%h(i) = h - dt/sporosity%phi(sporosity%land(i))*tflux(1, i)*&
+&       mesh%cell(i)%invsurf
       CALL PUSHCONTROL1B(0)
     ELSE
       CALL PUSHREAL8(dof%h(i))
@@ -453,11 +453,11 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
       CALL PUSHCONTROL1B(1)
     ELSE
       CALL PUSHREAL8(dof%u(i))
-      dof%u(i) = (h*u-dt/sporosity%phi(i)*(tflux(2, i)*mesh%cell(i)%&
-&       invsurf))/dof%h(i)
+      dof%u(i) = (h*u-dt/sporosity%phi(sporosity%land(i))*(tflux(2, i)*&
+&       mesh%cell(i)%invsurf))/dof%h(i)
       CALL PUSHREAL8(dof%v(i))
-      dof%v(i) = (h*v-dt/sporosity%phi(i)*(tflux(3, i)*mesh%cell(i)%&
-&       invsurf))/dof%h(i)
+      dof%v(i) = (h*v-dt/sporosity%phi(sporosity%land(i))*(tflux(3, i)*&
+&       mesh%cell(i)%invsurf))/dof%h(i)
       IF (friction .EQ. 1) THEN
         CALL PUSHREAL8(vel)
         vel = SQRT(dof%u(i)**2 + dof%v(i)**2)
@@ -545,28 +545,30 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
       END IF
       CALL POPREAL8(dof%v(i))
       temp0 = dt*mesh%cell(i)%invsurf
-      temp = tflux(3, i)/sporosity%phi(i)
+      temp = tflux(3, i)/sporosity%phi(sporosity%land(i))
       temp_back1 = dof_back%v(i)/dof%h(i)
       dof_back%v(i) = 0.0_8
       h_back = v*temp_back1
       v_back = h*temp_back1
-      temp_back = -(temp0*temp_back1/sporosity%phi(i))
+      temp_back = -(temp0*temp_back1/sporosity%phi(sporosity%land(i)))
       dof_back%h(i) = dof_back%h(i) - (h*v-temp0*temp)*temp_back1/dof%h(&
 &       i)
       tflux_back(3, i) = tflux_back(3, i) + temp_back
-      sporosity_back%phi(i) = sporosity_back%phi(i) - temp*temp_back
+      sporosity_back%phi(sporosity%land(i)) = sporosity_back%phi(&
+&       sporosity%land(i)) - temp*temp_back
       CALL POPREAL8(dof%u(i))
       temp0 = dt*mesh%cell(i)%invsurf
-      temp = tflux(2, i)/sporosity%phi(i)
+      temp = tflux(2, i)/sporosity%phi(sporosity%land(i))
       temp_back1 = dof_back%u(i)/dof%h(i)
       dof_back%u(i) = 0.0_8
       h_back = h_back + u*temp_back1
       u_back = h*temp_back1
-      temp_back = -(temp0*temp_back1/sporosity%phi(i))
+      temp_back = -(temp0*temp_back1/sporosity%phi(sporosity%land(i)))
       dof_back%h(i) = dof_back%h(i) - (h*u-temp0*temp)*temp_back1/dof%h(&
 &       i)
       tflux_back(2, i) = tflux_back(2, i) + temp_back
-      sporosity_back%phi(i) = sporosity_back%phi(i) - temp*temp_back
+      sporosity_back%phi(sporosity%land(i)) = sporosity_back%phi(&
+&       sporosity%land(i)) - temp*temp_back
     ELSE
       CALL POPREAL8(dof%v(i))
       dof_back%v(i) = 0.0_8
@@ -703,11 +705,12 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
       CALL POPREAL8(dof%h(i))
       h_back = h_back + dof_back%h(i)
       temp_back = -(dt*mesh%cell(i)%invsurf*dof_back%h(i)/sporosity%phi(&
-&       i))
+&       sporosity%land(i)))
       dof_back%h(i) = 0.0_8
       tflux_back(1, i) = tflux_back(1, i) + temp_back
-      sporosity_back%phi(i) = sporosity_back%phi(i) - tflux(1, i)*&
-&       temp_back/sporosity%phi(i)
+      sporosity_back%phi(sporosity%land(i)) = sporosity_back%phi(&
+&       sporosity%land(i)) - tflux(1, i)*temp_back/sporosity%phi(&
+&       sporosity%land(i))
     ELSE
       CALL POPREAL8(dof%h(i))
       dof_back%h(i) = 0.0_8
@@ -844,7 +847,8 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
         CALL POPREAL8(phir)
         phil_back = phil_back + phir_back
         CALL POPREAL8(phil)
-        sporosity_back%phi(il) = sporosity_back%phi(il) + phil_back
+        sporosity_back%phi(sporosity%land(il)) = sporosity_back%phi(&
+&         sporosity%land(il)) + phil_back
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
           CALL POPREAL8(hr(1))
@@ -890,9 +894,11 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_BACK(dof, dof_back, mesh)
         bathy_cell_back(il) = bathy_cell_back(il) + zl_back
       ELSE
         CALL POPREAL8(phir)
-        sporosity_back%phi(ir) = sporosity_back%phi(ir) + phir_back
+        sporosity_back%phi(sporosity%land(ir)) = sporosity_back%phi(&
+&         sporosity%land(ir)) + phir_back
         CALL POPREAL8(phil)
-        sporosity_back%phi(il) = sporosity_back%phi(il) + phil_back
+        sporosity_back%phi(sporosity%land(il)) = sporosity_back%phi(&
+&         sporosity%land(il)) + phil_back
         CALL POPREAL8(vr(2))
         vr_back(1) = vr_back(1) + mesh%edge(ie)%normal%x*vr_back(2) + &
 &         mesh%edge(ie)%normal%y*ur_back(2)

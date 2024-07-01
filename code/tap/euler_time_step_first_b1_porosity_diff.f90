@@ -188,8 +188,8 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_DIFF(dof, dof_diff, mesh)
           vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*&
 &           ur(1)
         END IF
-        phil_diff = sporosity_diff%phi(il)
-        phil = sporosity%phi(il)
+        phil_diff = sporosity_diff%phi(sporosity%land(il))
+        phil = sporosity%phi(sporosity%land(il))
         phir_diff = phil_diff
         phir = phil
       ELSE
@@ -209,10 +209,10 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_DIFF(dof, dof_diff, mesh)
 &         normal%y*ur_diff(1)
         vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*ur&
 &         (1)
-        phil_diff = sporosity_diff%phi(il)
-        phil = sporosity%phi(il)
-        phir_diff = sporosity_diff%phi(ir)
-        phir = sporosity%phi(ir)
+        phil_diff = sporosity_diff%phi(sporosity%land(il))
+        phil = sporosity%phi(sporosity%land(il))
+        phir_diff = sporosity_diff%phi(sporosity%land(ir))
+        phir = sporosity%phi(sporosity%land(ir))
       END IF
       IF (zl .LT. zr) THEN
         max1_diff = zr_diff
@@ -327,12 +327,13 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_DIFF(dof, dof_diff, mesh)
     u = dof%u(i)
     v_diff = dof_diff%v(i)
     v = dof%v(i)
-    IF (0._rp .LT. h - dt/sporosity%phi(i)*tflux(1, i)*mesh%cell(i)%&
-&       invsurf) THEN
+    IF (0._rp .LT. h - dt/sporosity%phi(sporosity%land(i))*tflux(1, i)*&
+&       mesh%cell(i)%invsurf) THEN
       temp = dt*mesh%cell(i)%invsurf
-      temp0 = tflux(1, i)/sporosity%phi(i)
+      temp0 = tflux(1, i)/sporosity%phi(sporosity%land(i))
       dof_diff%h(i) = h_diff - temp*(tflux_diff(1, i)-temp0*&
-&       sporosity_diff%phi(i))/sporosity%phi(i)
+&       sporosity_diff%phi(sporosity%land(i)))/sporosity%phi(sporosity%&
+&       land(i))
       dof%h(i) = h - temp*temp0
     ELSE
       dof_diff%h(i) = 0.0_8
@@ -458,18 +459,18 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_POROSITY_DIFF(dof, dof_diff, mesh)
       dof%v(i) = 0._rp
     ELSE
       temp1 = dt*mesh%cell(i)%invsurf
-      temp0 = tflux(2, i)/sporosity%phi(i)
+      temp0 = tflux(2, i)/sporosity%phi(sporosity%land(i))
       temp = (h*u-temp1*temp0)/dof%h(i)
       dof_diff%u(i) = (u*h_diff+h*u_diff-temp1*(tflux_diff(2, i)-temp0*&
-&       sporosity_diff%phi(i))/sporosity%phi(i)-temp*dof_diff%h(i))/dof%&
-&       h(i)
+&       sporosity_diff%phi(sporosity%land(i)))/sporosity%phi(sporosity%&
+&       land(i))-temp*dof_diff%h(i))/dof%h(i)
       dof%u(i) = temp
       temp1 = dt*mesh%cell(i)%invsurf
-      temp0 = tflux(3, i)/sporosity%phi(i)
+      temp0 = tflux(3, i)/sporosity%phi(sporosity%land(i))
       temp = (h*v-temp1*temp0)/dof%h(i)
       dof_diff%v(i) = (v*h_diff+h*v_diff-temp1*(tflux_diff(3, i)-temp0*&
-&       sporosity_diff%phi(i))/sporosity%phi(i)-temp*dof_diff%h(i))/dof%&
-&       h(i)
+&       sporosity_diff%phi(sporosity%land(i)))/sporosity%phi(sporosity%&
+&       land(i))-temp*dof_diff%h(i))/dof%h(i)
       dof%v(i) = temp
       IF (friction .EQ. 1) THEN
         arg1_diff = 2*dof%u(i)*dof_diff%u(i) + 2*dof%v(i)*dof_diff%v(i)

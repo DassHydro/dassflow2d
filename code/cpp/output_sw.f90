@@ -460,7 +460,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  !infil%GA( infil%land(i) )%Ks,&
                                  dof%u(i) , &
                                  dof%v(i) , &
-                                 SPorosity%Phi(i)
+                                 SPorosity%Phi(SPorosity%land(i))
          end do
          close(10)
       end if
@@ -686,7 +686,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
       write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
       rec_index = rec_index + 5
       do i = 1,mesh%nc
-         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(i) , char(10)
+         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(SPorosity%land(i)) , char(10)
       end do
       rec_index = rec_index + mesh%nc
    end if
@@ -888,7 +888,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
       write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
       rec_index = rec_index + 5
       do i = 1,mesh%nc
-         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(i) , char(10)
+         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(SPorosity%land(i)) , char(10)
       end do
       rec_index = rec_index + mesh%nc
    end if

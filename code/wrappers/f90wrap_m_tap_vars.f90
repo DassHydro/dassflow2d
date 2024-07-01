@@ -1,9 +1,9 @@
 ! Module m_tap_vars defined in file m_tap_vars.f90
 
 subroutine f90wrap_alloc_back_vars(dof0_back, dof_back, mesh)
+    use m_tap_vars, only: alloc_back_vars
     use m_model, only: unk
     use m_mesh, only: msh
-    use m_tap_vars, only: alloc_back_vars
     implicit none
     
     type msh_ptr_type

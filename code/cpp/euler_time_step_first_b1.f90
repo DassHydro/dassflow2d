@@ -309,7 +309,7 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
                uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
                vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
             endif
-            phiL = SPorosity%Phi( iL )
+            phiL = SPorosity%Phi( SPorosity%land(iL) )
             phiR = phiL
          else
             zL = bathy_cell( iL )
@@ -318,8 +318,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
             vR(1) = dof%v( iR )
             uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
             vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
-            phiL = SPorosity%Phi( iL )
-            phiR = SPorosity%Phi( iR )
+            phiL = SPorosity%Phi( SPorosity%land(iL) )
+            phiR = SPorosity%Phi( SPorosity%land(iR) )
          end if
          !=============================================================================================================!
          ! New reconstructed well balanced water depth
@@ -382,7 +382,7 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
       h = dof%h(i)
       u = dof%u(i)
       v = dof%v(i)
-      dof%h(i) = max( 0._rp , h - dt / SPorosity%Phi(i) * tflux(1,i) * mesh%cell(i)%invsurf )
+      dof%h(i) = max( 0._rp , h - dt / SPorosity%Phi( SPorosity%land(i) ) * tflux(1,i) * mesh%cell(i)%invsurf )
       ! Add rain source term
       if (bc_rain == 1) then
          k = bc%rain_land(i)!mesh%cell(i)%rain !Get rain group for current cell
@@ -433,8 +433,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
          dof%u(i) = 0._rp
          dof%v(i) = 0._rp
       else
-         dof%u(i) = ( h * u - dt / SPorosity%Phi(i) * ( tflux(2,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
-         dof%v(i) = ( h * v - dt / SPorosity%Phi(i) * ( tflux(3,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
+         dof%u(i) = ( h * u - dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(2,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
+         dof%v(i) = ( h * v - dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(3,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
          !=============================================================================================================!
          ! Semi-Implicit Treatment of Friction Source Term (Manning/Strickler Formula)
          !=============================================================================================================!

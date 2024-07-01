@@ -429,7 +429,7 @@ subroutine f90wrap_model__set__my_bc(this, f90wrap_my_bc)
 end subroutine f90wrap_model__set__my_bc
 
 subroutine f90wrap_model_initialise(mdl)
-    use call_model, only: model_initialise, model
+    use call_model, only: model, model_initialise
     implicit none
     
     type model_ptr_type
@@ -443,7 +443,7 @@ subroutine f90wrap_model_initialise(mdl)
 end subroutine f90wrap_model_initialise
 
 subroutine f90wrap_model_finalise(mdl)
-    use call_model, only: model, model_finalise
+    use call_model, only: model_finalise, model
     implicit none
     
     type model_ptr_type
@@ -457,7 +457,7 @@ subroutine f90wrap_model_finalise(mdl)
 end subroutine f90wrap_model_finalise
 
 subroutine f90wrap_init_solver(mdl)
-    use call_model, only: init_solver, model
+    use call_model, only: model, init_solver
     implicit none
     
     type model_ptr_type
@@ -470,7 +470,7 @@ subroutine f90wrap_init_solver(mdl)
 end subroutine f90wrap_init_solver
 
 subroutine f90wrap_init_friction(mdl)
-    use call_model, only: init_friction, model
+    use call_model, only: model, init_friction
     implicit none
     
     type model_ptr_type
@@ -483,7 +483,7 @@ subroutine f90wrap_init_friction(mdl)
 end subroutine f90wrap_init_friction
 
 subroutine f90wrap_init_infiltration(mdl)
-    use call_model, only: init_infiltration, model
+    use call_model, only: model, init_infiltration
     implicit none
     
     type model_ptr_type
@@ -509,7 +509,7 @@ subroutine f90wrap_init_porosity(mdl)
 end subroutine f90wrap_init_porosity
 
 subroutine f90wrap_init_phys_desc(mdl)
-    use call_model, only: init_phys_desc, model
+    use call_model, only: model, init_phys_desc
     implicit none
     
     type model_ptr_type
@@ -535,7 +535,7 @@ subroutine f90wrap_init_bc(mdl)
 end subroutine f90wrap_init_bc
 
 subroutine f90wrap_init_fortran(mdl)
-    use call_model, only: init_fortran, model
+    use call_model, only: model, init_fortran
     implicit none
     
     type model_ptr_type
@@ -548,7 +548,7 @@ subroutine f90wrap_init_fortran(mdl)
 end subroutine f90wrap_init_fortran
 
 subroutine f90wrap_init_back(mdl)
-    use call_model, only: model, init_back
+    use call_model, only: init_back, model
     implicit none
     
     type model_ptr_type
@@ -588,7 +588,7 @@ subroutine f90wrap_clean_model(mdl)
 end subroutine f90wrap_clean_model
 
 subroutine f90wrap_output_gnu(mdl, dof, filename)
-    use call_model, only: output_gnu, model
+    use call_model, only: model, output_gnu
     use m_model, only: unk
     implicit none
     
@@ -630,7 +630,7 @@ subroutine f90wrap_output_vtk(mdl, dof, filename)
 end subroutine f90wrap_output_vtk
 
 subroutine f90wrap_output_tec(mdl, dof, filename)
-    use call_model, only: output_tec, model
+    use call_model, only: model, output_tec
     use m_model, only: unk
     implicit none
     
@@ -651,9 +651,9 @@ subroutine f90wrap_output_tec(mdl, dof, filename)
 end subroutine f90wrap_output_tec
 
 subroutine f90wrap_friction_initialise(my_friction, mesh)
-    use m_model, only: friction_data
     use call_model, only: friction_initialise
     use m_mesh, only: msh
+    use m_model, only: friction_data
     implicit none
     
     type friction_data_ptr_type
@@ -688,9 +688,9 @@ subroutine f90wrap_friction_finalise(my_friction)
 end subroutine f90wrap_friction_finalise
 
 subroutine f90wrap_infiltration_initialise(my_infiltration, mesh)
-    use m_model, only: infiltration_data
     use call_model, only: infiltration_initialise
     use m_mesh, only: msh
+    use m_model, only: infiltration_data
     implicit none
     
     type msh_ptr_type
@@ -725,17 +725,17 @@ subroutine f90wrap_infiltration_finalise(my_infiltration)
 end subroutine f90wrap_infiltration_finalise
 
 subroutine f90wrap_porosity_initialise(my_porosity, mesh)
+    use m_mesh, only: msh
     use call_model, only: porosity_initialise
     use m_model, only: porosity_data
-    use m_mesh, only: msh
     implicit none
     
-    type porosity_data_ptr_type
-        type(porosity_data), pointer :: p => NULL()
-    end type porosity_data_ptr_type
     type msh_ptr_type
         type(msh), pointer :: p => NULL()
     end type msh_ptr_type
+    type porosity_data_ptr_type
+        type(porosity_data), pointer :: p => NULL()
+    end type porosity_data_ptr_type
     type(porosity_data_ptr_type) :: my_porosity_ptr
     integer, intent(out), dimension(2) :: my_porosity
     type(msh_ptr_type) :: mesh_ptr
@@ -747,8 +747,8 @@ subroutine f90wrap_porosity_initialise(my_porosity, mesh)
 end subroutine f90wrap_porosity_initialise
 
 subroutine f90wrap_porosity_finalise(my_porosity)
-    use m_model, only: porosity_data
     use call_model, only: porosity_finalise
+    use m_model, only: porosity_data
     implicit none
     
     type porosity_data_ptr_type
@@ -762,9 +762,9 @@ subroutine f90wrap_porosity_finalise(my_porosity)
 end subroutine f90wrap_porosity_finalise
 
 subroutine f90wrap_phys_desc_initialise(my_phys_desc, mesh)
+    use m_mesh, only: msh
     use call_model, only: phys_desc_initialise
     use m_model, only: input_data
-    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type
@@ -799,17 +799,17 @@ subroutine f90wrap_phys_desc_finalise(my_phys_desc)
 end subroutine f90wrap_phys_desc_finalise
 
 subroutine f90wrap_bc_initialise(my_bc, mesh)
-    use m_model, only: bcs
     use call_model, only: bc_initialise
     use m_mesh, only: msh
+    use m_model, only: bcs
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type bcs_ptr_type
         type(bcs), pointer :: p => NULL()
     end type bcs_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(bcs_ptr_type) :: my_bc_ptr
     integer, intent(out), dimension(2) :: my_bc
     type(msh_ptr_type) :: mesh_ptr
@@ -821,8 +821,8 @@ subroutine f90wrap_bc_initialise(my_bc, mesh)
 end subroutine f90wrap_bc_initialise
 
 subroutine f90wrap_bc_finalise(my_bc)
-    use m_model, only: bcs
     use call_model, only: bc_finalise
+    use m_model, only: bcs
     implicit none
     
     type bcs_ptr_type
@@ -836,7 +836,7 @@ subroutine f90wrap_bc_finalise(my_bc)
 end subroutine f90wrap_bc_finalise
 
 subroutine f90wrap_func(mdl, ctrl_in, cost_func, grad_func, n0, n1)
-    use call_model, only: func, model
+    use call_model, only: model, func
     implicit none
     
     type model_ptr_type
@@ -877,8 +877,8 @@ subroutine f90wrap_write_hydrograph
 end subroutine f90wrap_write_hydrograph
 
 subroutine f90wrap_boundaries_copy(i, o)
-    use m_model, only: bcs
     use call_model, only: boundaries_copy
+    use m_model, only: bcs
     implicit none
     
     type bcs_ptr_type
@@ -913,8 +913,8 @@ subroutine f90wrap_dof_copy(i, o)
 end subroutine f90wrap_dof_copy
 
 subroutine f90wrap_mesh_copy(i, o)
-    use call_model, only: mesh_copy
     use m_mesh, only: msh
+    use call_model, only: mesh_copy
     implicit none
     
     type msh_ptr_type

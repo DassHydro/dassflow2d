@@ -1,16 +1,15 @@
 import dassflow2d as df2d
 import matplotlib.pyplot as plt
-import shutil, os , sys
+import shutil, os, sys
 import numpy as np
 import csv
 from mpi4py import MPI
 
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
-print(parent_dir)
+path_to_Outils = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
 
-sys.path.append(parent_dir)
+sys.path.append(path_to_Outils)
 
-from Outils.out import affichage
+from Outils.out import plot_dat, plot_vtk
 
 # TODO : adapt this into ? model.meshing object + mesh_extent_box from a real dassflow mesh/setup (with wrapped object)
 class mesh_box:
@@ -63,9 +62,8 @@ rank = comm.Get_rank()
 # Model
 ##########
 
-mesh = 'mesh_1_100.geo'
+mesh = 'mesh_0.1000_100.geo'
 ts = 4
-nland = 100
 
 input_params={ "mesh_name": mesh ,
                "ts": ts ,
@@ -83,7 +81,7 @@ input_params={ "mesh_name": mesh ,
                "adapt_dt":'1',
                "dt":'0.001',
 
-               "dtw":'0.1',
+               "dtw":'1',
                "dta":"10",
                
                "bc_infil":"0",
@@ -99,6 +97,8 @@ my_model.init_mesh()
 
 Config = df2d.core.config.Config()
 Config.set(custom_config = input_params)
+
+nland = my_model.kernel.mesh.nc
 
 ##########
 # Friction
@@ -139,9 +139,7 @@ for i in range(nland):
 
     my_model.kernel.my_porosity.phi[i] = (i+1)/nland
 
-for i in range(nc) :
-
-    my_model.kernel.my_porosity.land[i] = i+1
+my_model.kernel.my_porosity.land[:] = range(1,nc+1)
 
 
 ##########
@@ -184,12 +182,25 @@ shutil.copytree("./res/obs", "./obs")
 # Outputs from python
 ########################
 
-graphe = [1,1,0,1,0]
+graphe = [1,1,1,1,1]
 
+h0 = my_model.kernel.dof0.h[:nc]
+u0 = my_model.kernel.dof0.u[:nc]
+v0 = my_model.kernel.dof0.v[:nc]
 h = my_model.kernel.dof.h[:nc]
 u = my_model.kernel.dof.u[:nc]
 v = my_model.kernel.dof.v[:nc]
 
-print(affichage(graphe,mesh,nc,ts,h,u,v))
+plot_dat(graphe,mesh,ts,h,u,v,h0,u0,v0)
+
+# To save pictures : save = 1
+save = 0
+
+# Put : 'initial' or 'final'
+time = 'final'
+
+#plot_vtk(code_dir,'h',time,ts,save)
+#plot_vtk(code_dir,'u',time,ts,save)
+#plot_vtk(code_dir,'porosity',time,ts,save)
 
 df2d.wrapping.call_model.clean_model(my_model.kernel)
