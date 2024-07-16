@@ -956,7 +956,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
          do i=1,mesh%nc
 
-            write(10,'(I5,9(" ",ES15.8))') swap_index(i)					, &
+            write(10,'(I8,9(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
                                  bathy_cell(i)          , &
@@ -2001,56 +2001,57 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 !    end do
 
 
-      !===================================================================================================================!
+   !===================================================================================================================!
    !   Writing VTK file dof%infil cell data
    !===================================================================================================================!
-if (bc_infil .ne. 0) then
-   do k = 0,np-1
+   
+      if (bc_infil .ne. 0) then
+         do k = 0,np-1
 
-      if ( proc == k ) then
+            if ( proc == k ) then
 
-         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+               open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
 
-   	     if ( proc == 0    ) write(10) 'SCALARS '//'dof_infil'//' double 1'//char(10)
-         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-                             write(10) dof%infil(1:mesh%nc)
-         if ( proc == np-1 ) write(10) char(10)
+   	         if ( proc == 0    ) write(10) 'SCALARS '//'dof_infil'//' double 1'//char(10)
+               if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                                write(10) dof%infil(1:mesh%nc)
+               if ( proc == np-1 ) write(10) char(10)
 
-         close(10)
+               close(10)
 
-      end if
+            end if
 
-      call mpi_wait_all
+            call mpi_wait_all
 
-   end do
+         end do
 
 
    !===================================================================================================================!
    !   Writing VTK file infil_land cell data
    !===================================================================================================================!
 
-   do k = 0,np-1
+         do k = 0,np-1
 
-      if ( proc == k ) then
+            if ( proc == k ) then
 
-         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+               open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
 
-   	   if ( proc == 0    ) write(10) 'SCALARS '//'infil_land'//' integer 1'//char(10)
-         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-                             write(10) infil%land(1:mesh%nc)
+   	         if ( proc == 0    ) write(10) 'SCALARS '//'infil_land'//' integer 1'//char(10)
+               if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                                   write(10) infil%land(1:mesh%nc)
 !                              write(*,*)  infil%land(1:mesh%nc), proc, mesh%nc, maxval(infil%land(1:mesh%nc)), minval(infil%land(1:mesh%nc))
 
-         if ( proc == np-1 ) write(10) char(10)
-         close(10)
+               if ( proc == np-1 ) write(10) char(10)
+               close(10)
 
-      end if
+            end if
 
-      call mpi_wait_all
+            call mpi_wait_all
 
-   end do
+         end do
 
- endif
-      !===================================================================================================================!
+      endif
+   !===================================================================================================================!
    !   Writing VTK file manning_land cell data
    !===================================================================================================================!
 

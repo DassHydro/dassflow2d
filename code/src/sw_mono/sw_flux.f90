@@ -959,8 +959,8 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , zL , phiL , s2L , hR , uR , vR , zR , phiR
    cL  =  sqrt( g * hL )
    cR  =  sqrt( g * hR )
 
-   sL  =  min( 0._rp , uL - cL , uR - 2._rp * cR + cL )
-   sR  =  max( 0._rp , uR + cR , uL + 2._rp * cL - cR )
+   sL  =  min( 0._rp , uL - cL , uR - cR )
+   sR  =  max( 0._rp , uR + cR , uL + cL )
 
    if ( ( sL > - zerom .and. sR < zerom ) .or. &
         ( hL <   zerom .and. hR < zerom ) ) then
@@ -990,9 +990,9 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , zL , phiL , s2L , hR , uR , vR , zR , phiR
    !   hll flux computation
    !===================================================================================================================!
 
-   flux(1)  =  phiLR * ( sR * fL(1) - sL * fR(1) + sL * sR * ( hR - hL ) )
+   flux(1)  =  phiLR * ( sR * fL(1) - sL * fR(1) + sL * sR * (( hR + zR ) - ( hL + zL )) )
 
-   s2  =  ( demi * (phiR * hR * hR - phiL * hL * hL ) + fact * ( hL - hR ) ) * g / ( max( zerom , sR - sL ) )
+   s2  =  ( demi * (phiR * hR * hR - phiL * hL * hL ) - fact * (( hR + zR ) - ( hL + zL )) ) * g / ( max( zerom , sR - sL ) )
 
    s2L  =  -sL * s2
 
@@ -1014,6 +1014,28 @@ SUBROUTINE sw_hllc_SP( hL , uL , vL , zL , phiL , s2L , hR , uR , vR , zR , phiR
 
       flux(3) = flux(1) * vR
 
+   end if
+
+   if ( ( hL <= heps ) .and. ( zR + hR <= zL + heps ) ) then
+   
+      !The cell L is empty and the water level in the cell R
+      !is below zbL - filling is impossible
+      
+      flux(:) = 0.
+
+      s2L = 0.
+      s2R = phiR * demi * g * hR * hR
+    
+   else if ( ( hR <= heps ) .and. ( zL + hL <= zR + heps ) ) then
+
+      !The cell R is empty and the water level in the cell L
+      !is below zbR - filling is impossible
+      
+      flux(:) = 0.
+
+      s2L = -phiL * demi * g * hL * hL
+      s2R = 0.  
+      
    end if
 
 END SUBROUTINE sw_hllc_SP
