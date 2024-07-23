@@ -450,8 +450,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
          !   New reconstructed well balanced water depth
          !=============================================================================================================!
 
-         hL(2)  =  max( 0._rp , hL(1) + zL - max( zL , zR ) )
-         hR(2)  =  max( 0._rp , hR(1) + zR - max( zL , zR ) )
+!          hL(2)  =   hL(1) ! max( 0._rp , hL(1) + zL - max( zL , zR ) )
+!          hR(2)  =   hR(1) ! max( 0._rp , hR(1) + zR - max( zL , zR ) )
 
          !=============================================================================================================!
          !  Calling the balanced HLLC Solver dedicated to Shallow-Water Equations
@@ -459,8 +459,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
 
          if ( phiL > zerom .or. phiR > zerom ) then
 
-            call sw_hllc_SP( hL(2) , uL(2) , vL(2) , zL , phiL , s2L , &
-                             hR(2) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
+            call sw_hllc_SP( hL(1) , uL(2) , vL(2) , zL , phiL , s2L , &
+                             hR(1) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
 
          else 
 
@@ -477,7 +477,6 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
 
          if ( mesh%edge(ie)%boundary ) then
             call boundary_post( nflux(1) , iR , mesh )
-            !          write(*,*) proc, tc, "bc%sum_mass_flux", bc%sum_mass_flux, nflux(1) , iR
          endif
          
          !=============================================================================================================!
