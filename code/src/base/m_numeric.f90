@@ -236,6 +236,7 @@ END SUBROUTINE dealloc_m_numeric
          grad_var(i)%y = grad_var(i)%y * mesh%cell(i)%invsurf
 
       end do
+
       call com_var_r( grad_var(:)%x , mesh )
       call com_var_r( grad_var(:)%y , mesh )
 

@@ -112,13 +112,19 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 !     call my_bathy_2_fortran() !(my_param_model)
 
+write(*,*) allocated(my_friction%manning), allocated(manning)
+write(*,*) land
+write(*,*) manning
+
    if (allocated(my_friction%manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
 
    if (allocated(my_porosity%Phi) ) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
 
    if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
-     if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
+   if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
+
+
 !
 !      if (allocated(my_bc%rain)) then
 !          call my_bc_2_fortran(my_bc)
@@ -143,11 +149,16 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !          call reallocate_i( bc%rain_land ,                 mesh%nc   )
 !    endif
 
+   if (allocated(my_porosity%Phi)) then
+         call swap_vec_i  ( SPorosity%land , swap_index( 1 : mesh%nc ) )
+         call reallocate_i( SPorosity%land ,                 mesh%nc   )
+   endif
+
    if (bc_infil .ne. 0) then
          call swap_vec_i  ( infil%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( infil%land ,                 mesh%nc   )
    endif
-   
+
    if (allocated(phys_desc%soil_land)) then
          call swap_vec_i  ( phys_desc%soil_land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( phys_desc%soil_land ,                 mesh%nc   )
@@ -158,9 +169,9 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !          endif
 
    endif
-
+write(*,*) "DDDDD"
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
-   
+
 #endif
 
    !===================================================================================================================!
@@ -1069,16 +1080,20 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    !  Initialization of Ghost porosity and Boundary Condition Type
    !===================================================================================================================!
 
-   call reallocate_i( SPorosity%land , mesh%nc + mesh%ncb )
+   if (allocated(SPorosity%land)) then
 
-   do i = 1,mesh%ncb
+      call reallocate_i( SPorosity%land , mesh%nc + mesh%ncb )
 
-      SPorosity%land( mesh%nc + i ) = SPorosity%land( mesh%cellb(i)%cell )
+      do i = 1,mesh%ncb
 
-   end do
+         SPorosity%land( mesh%nc + i ) = SPorosity%land( mesh%cellb(i)%cell )
+
+      end do
+
+
 
    !===================================================================================================================!
-   !  Cell Bathymetry Gradient
+   !  Cell Porosity Gradient
    !===================================================================================================================!
 
    allocate( grad_Phi ( mesh%nc + mesh%ncb ) )
@@ -1087,6 +1102,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    call FV_Cell_Grad ( grad_Phi  , SPorosity%Phi , mesh )
    call FV_Cell_Grad2( grad_Phi2 , SPorosity%Phi , mesh )
 
+   endif
 
    !===================================================================================================================!
    !  Set heps to be at minimum to zero machine precision
@@ -1895,23 +1911,23 @@ end do
 
 !< Integral Porosity
 
-IPorosity%nland = my_porosity%nland
-
-allocate( IPorosity%land ( mesh%nc ) )
-allocate( IPorosity%PhiW ( IPorosity%nland ) )
-allocate( IPorosity%PhiG ( IPorosity%nland ) )
-
-do i = 1,mesh%nc
-   IPorosity%land(i) = my_porosity%land(i)
-end do
-
-do i = 1,IPorosity%nland
-   IPorosity%PhiW(i) = my_porosity%PhiW(i)
-end do
-
-do i = 1,IPorosity%nland
-   IPorosity%PhiG(i) = my_porosity%PhiG(i)
-end do
+! IPorosity%nland = my_porosity%nland
+!
+! allocate( IPorosity%land ( mesh%nc ) )
+! allocate( IPorosity%PhiW ( IPorosity%nland ) )
+! allocate( IPorosity%PhiG ( IPorosity%nland ) )
+!
+! do i = 1,mesh%nc
+!    IPorosity%land(i) = my_porosity%land(i)
+! end do
+!
+! do i = 1,IPorosity%nland
+!    IPorosity%PhiW(i) = my_porosity%PhiW(i)
+! end do
+!
+! do i = 1,IPorosity%nland
+!    IPorosity%PhiG(i) = my_porosity%PhiG(i)
+! end do
 
 END SUBROUTINE my_porosity_2_fortran
 
