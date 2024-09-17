@@ -219,15 +219,26 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    !===================================================================================================================!
    
    do i = 1,mesh%nc
+
       h = dof%h(i)
       u = dof%u(i)
       v = dof%v(i)
+
       dof%h(i) = max( 0._rp , h - dt * tflux(1,i) * mesh%cell(i)%invsurf )
-    ! Add rain source term
-    if (bc_rain == 1) then
-      k = bc%rain_land(i)!mesh%cell(i)%rain !Get rain group for current cell
+
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! Adding rain source term for GA or SCS method
+
+    if (bc_rain == 1) then ! If rain is accounted for
+
+      k = bc%rain_land(i) !Get rain group for current cell
+
       if (k > 0) then !If the cell does have a rain value attributed
+
          if ( bc_infil == 2 ) then ! If SCS-type infiltration is selected and this cell does have an infiltration value attributed
+         !Then substract SCS retention from raw rain data and inject the rest in the hydraulic model
+
             S = 25.4_rp * ( 1000._rp / abs(infil%SCS( infil%land( i ) )%CN) - 10._rp ) / 1000._rp
             if ( bc%rain(k)%cumul > abs(infil%SCS( infil%land(i) )%lambdacn) * S ) then
                Fn1 = S * abs( infil%SCS( infil%land( i ) )%lambdacn ) + &
@@ -238,30 +249,44 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
             endif
             dof%h( i ) = dof%h( i ) + dt * bc%rain( k )%qin - Fn1 + dof%infil( i ) ! Output SCS-modified rain
             dof%infil( i ) = Fn1
-         else !Unmodified rain
+
+         else ! Raw rain data injected
+
             dof%h( i ) = dof%h( i ) + dt * bc%rain( k )%qin
+
          endif
        endif
     endif
+
      if ( bc_infil == 1 ) then !If Green-Ampt infiltration is selected
+
         if (infil%land(i) .ne. 0) then !If the current cell does have an infiltration value attributed
-        !!!FOR INVERSE MODEL, MOVE LATER
-        !!!
-         aFn1 = dof%infil(i) + dt * infil%GA( infil%land( i ) )%Ks * ( 1._rp - infil%GA( infil%land( i ) )%DeltaTheta )
-         bFn1 = infil%GA( infil%land( i ) )%Ks * dt * infil%GA( infil%land(i) )%DeltaTheta * &
-                ( dof%infil(i) + dof%h(i) + infil%GA( infil%land(i) )%PsiF )
-         Fn1 = ( aFn1 + sqrt( aFn1**2._rp + 4._rp * bFn1 ) ) / 2._rp
-   h_infil = dof%h(i) + dof%infil(i) - Fn1
-   if (h_infil < 0._rp ) then
-             Fn1 = dof%h( i ) + dof%infil( i )
-    h_infil = 0._rp
-         endif
-         if (dof%infil(i) < infil%h_infil_max( infil%land(i)) ) then!1.2_rp) then !TEST MAX INFIL
-            dof%h( i ) = h_infil !Replace the local variable h_infil
-            dof%infil( i ) = Fn1
-         endif
+        ! Then use compute infiltrated depth at each cell using GA solving method on quadratic equation from Ni et al. (2020) : 10.1002/hyp.13722
+
+          if (dof%infil(i) < infil%h_infil_max( infil%land(i)) ) then ! If current infiltrated depth is lower than the max soil depth, then apply computed infiltration (else do not infiltrate)
+
+            aFn1 = dof%infil(i) + dt * infil%GA( infil%land( i ) )%Ks * ( 1._rp - infil%GA( infil%land( i ) )%DeltaTheta )
+            bFn1 = infil%GA( infil%land( i ) )%Ks * dt * infil%GA( infil%land(i) )%DeltaTheta * &
+                    ( dof%infil(i) + dof%h(i) + infil%GA( infil%land(i) )%PsiF )
+
+            Fn1 = ( aFn1 + sqrt( aFn1**2._rp + 4._rp * bFn1 ) ) / 2._rp ! Infiltrated depth over current time step (F^(n+1))
+
+
+            h_infil = dof%h(i)       + dof%infil(i) - Fn1
+!           h^(n+1) = (h^n + r * Dt) + F^n          - F^(n+1)
+
+
+            if (h_infil < 0._rp ) then ! If more than the available water depth should be infiltrated, infiltrate only the total depth (h^n + r * Dt)
+                      Fn1 = dof%h( i ) + dof%infil( i )
+                      h_infil = 0._rp
+            endif
+
+            dof%h( i ) = h_infil ! Pass h^(n+1) to dof%h (h^n)
+            dof%infil( i ) = Fn1 ! Pass F^(n+1) to dof%infil (F^n)
+
         endif
       endif
+    endif
       !================================================================================================================!
       ! Positivity cut-off
       !================================================================================================================!
@@ -271,9 +296,11 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
       else
          dof%u(i) = ( h * u - dt * ( tflux(2,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
          dof%v(i) = ( h * v - dt * ( tflux(3,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
+
          !=============================================================================================================!
          ! Semi-Implicit Treatment of Friction Source Term (Manning/Strickler Formula)
          !=============================================================================================================!
+
          if ( friction == 1 ) then
             vel = sqrt( dof%u( i )**2 + dof%v( i )**2 )
             sfl = dof%h( i )**d2p3 + sqrt( dof%h( i)**d4p3 + 4._rp * dt * g * &
@@ -284,8 +311,10 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          else
             sfl = 1._rp
          end if
+
          dof%u( i ) = dof%u( i ) * sfl
          dof%v( i ) = dof%v( i ) * sfl
+
       end if
    end do
    !===================================================================================================================!

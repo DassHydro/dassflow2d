@@ -112,9 +112,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 !     call my_bathy_2_fortran() !(my_param_model)
 
-write(*,*) allocated(my_friction%manning), allocated(manning)
-write(*,*) land
-write(*,*) manning
 
    if (allocated(my_friction%manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
 
@@ -169,7 +166,7 @@ write(*,*) manning
 !          endif
 
    endif
-write(*,*) "DDDDD"
+
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
 
 #endif
@@ -1560,8 +1557,8 @@ CONTAINS
 
                      if ( part( cell ) == proc ) then
 
-!                         station( iobs )%pt( pt )%cell = mesh%inv_swap_index( cell )
-write(*,*) " line commented temporarily ! station( iobs )%pt( pt )%cell = mesh%inv_swap_index( cell ) "
+                        station( iobs )%pt( pt )%cell = mesh%inv_swap_index( cell )
+! write(*,*) " line commented temporarily ! station( iobs )%pt( pt )%cell = mesh%inv_swap_index( cell ) "
 
                         station( iobs )%pt( pt )%coord  =  mesh%cell( station( iobs )%pt( pt )%cell )%grav
 
