@@ -68,14 +68,18 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    !===================================================================================================================!
    ! Local Variables
    !===================================================================================================================!
+
    integer(ip) :: iL , iR ! Left and Right cells indexes to edge
+
    real(rp) :: hL(2) , uL(2) , vL(2) , zL ! Left State in edge cell normal coordinates
    real(rp) :: hR(2) , uR(2) , vR(2) , zR ! Right State in edge cell normal coordinates
    
    real(rp), dimension( sw_nb ) :: nflux ! Finite Volume normal edge flux
    real(rp), dimension( sw_nb ) :: lflux ! Finite Volume edge flux in (x,y) coordinates
    real(rp), dimension( sw_nb , mesh%nc ) :: tflux ! Finite Volume total flux for each cell
+
    real(rp) :: h , u , v ! Temporal primitive variables
+
    !Infiltration variables
    real(rp) :: S ! potential maximal retention
    real(rp) :: Fn1 ! Temporal Fn+1
@@ -84,65 +88,93 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    real(rp) :: vel ! Velocity norm
    real(rp) :: sfl ! Manning
    real(rp) :: madd ! mass rain >TGADJ
+
+   !Porosity variables
+   real(rp)  ::  phiL , phiR                             ! Left/Right porosity in cell
+   real(rp)  ::  s2L  , s2R                              ! Left/Right term source
+
    !===================================================================================================================!
    ! Begin Subroutine
    !===================================================================================================================!
    tflux(:,:) = 0._rp
-   !write(6,'(A,I3)') 'mesh%ne = ', mesh%ne
+
    do ie = 1,mesh%ne
       !================================================================================================================!
       ! Calculate Left and Right States
       !================================================================================================================!
       iL = mesh%edge(ie)%cell(1)
       iR = mesh%edge(ie)%cell(2) !Left cell id for a normal cell
-      !write(6,*) 'ie = ', ie, 'noeuds = ', mesh%edge(ie)%node(:)
+
     if ( mesh%edge(ie)%boundary ) then !Check if bounfary first so typlim exists
         if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_1D' ) cycle
         if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
             iR = mesh%edge(ie)%cell1D2D !Get id of the single 1D-like cell with interface in the connected bc number => this should be done once!
         endif
     endif
+
       hL(1) = dof%h( iL )
       hR(1) = dof%h( iR )
+
       if ( hL(1) > heps .or. hR(1) > heps ) then
-         !zL = bathy_cell( iL )! + global_bathy_shift(1)
+
+         !zL = bathy_cell( iL )! + global_bathy_shift(1) !global_bathy_shift is not maintained
          !zR = bathy_cell( iR )! + global_bathy_shift(1)
+
          uL(1) = dof%u( iL )
          vL(1) = dof%v( iL )
+
          uL(2) = mesh%edge(ie)%normal%x * uL(1) + mesh%edge(ie)%normal%y * vL(1)
          vL(2) = mesh%edge(ie)%normal%x * vL(1) - mesh%edge(ie)%normal%y * uL(1)
+
          if ( mesh%edge(ie)%boundary) then
-         zL = bathy_cell( iL )
-            !================= TEMP FOR ANDROMEDE
-            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
-               zR = bathy_cell( iL ) !&
-                     !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
-                     !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
-            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
-               zR = bathy_cell( iL ) &
-               + slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
-               + slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
-            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
-               zR = bathy_cell( iL )
-            endif
-            !================= END TEMP
+
+          zL = bathy_cell( iL )
+
+            !================= Temporary modifications for some Andromede cases
+!             if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
+!                zR = bathy_cell( iL ) !&
+!                      !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+!                      !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+!             else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
+!                zR = bathy_cell( iL ) &
+!                + slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+!                + slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+!             else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
+!                zR = bathy_cell( iL )
+!             endif
+            !================= Temporary modifications for some Andromede cases
+
              if (.not. ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' )) then !do not call boundary calculations for internal BCs
                 call calc_boundary_state( mesh , hL(1) , zL , uL(2) , vL(2) , &
                                                  hR(1) , zR , uR(2) , vR(2) )
              else
+
                 uR(1) = dof%u( iR )
                 vR(1) = dof%v( iR )
+
                 uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
                 vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
-            endif
 
+            endif
+#ifdef USE_PORO
+            phiL  =  SPorosity%Phi( SPorosity%land(iL) )
+            phiR  =  phiL
+#endif
          else
+
             zL = bathy_cell( iL )
             zR = bathy_cell( iR )
+
             uR(1) = dof%u( iR )
             vR(1) = dof%v( iR )
+
             uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
             vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
+
+#ifdef USE_PORO
+            phiL  =  SPorosity%Phi( SPorosity%land(iL) )
+            phiR  =  SPorosity%Phi( SPorosity%land(iR) )
+#endif
 
          end if
 
@@ -156,10 +188,23 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          !=============================================================================================================!
          ! Calling the balanced HLLC Solver dedicated to Shallow-Water Equations
          !=============================================================================================================!
-         
+#ifdef USE_PORO
+        if ( phiL > zerom .or. phiR > zerom ) then
+
+            call sw_hllc_SP( hL(1) , uL(2) , vL(2) , zL , phiL , s2L , &
+                             hR(1) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
+
+         else
+
+            call sw_hllc_Impervious_SP( hL(2) , uL(2) , vL(2) , zL , phiL , s2L , &
+                                        hR(2) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
+
+         end if
+
+#else
          call sw_hllc( hL(2) , uL(2) , vL(2) , &
                        hR(2) , uR(2) , vR(2) , nflux )
-
+#endif
          !=============================================================================================================!
          ! Boundary post treatment :
          ! - Feedback control of bathy_cell in ghost cells to properly control the Qin imposed
@@ -172,17 +217,44 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          !=============================================================================================================!
          ! Flux rotation and summation (as antisymmetric part to save time computation)
          !=============================================================================================================!
+
          lflux(1) = nflux(1)
          lflux(2) = mesh%edge(ie)%normal%x * nflux(2) - mesh%edge(ie)%normal%y * nflux(3)
          lflux(3) = mesh%edge(ie)%normal%y * nflux(2) + mesh%edge(ie)%normal%x * nflux(3)
+
          lflux(1:3) = lflux(1:3) * mesh%edge(ie)%length
+
+#ifdef USE_PORO
+         tflux( 1 , iL )  =  tflux( 1 , iL )  +  lflux(1)
+         tflux( 2 , iL )  =  tflux( 2 , iL )  +  lflux(2)  -  mesh%edge(ie)%normal%x * s2L * mesh%edge(ie)%length
+         tflux( 3 , iL )  =  tflux( 3 , iL )  +  lflux(3)  -  mesh%edge(ie)%normal%y * s2L * mesh%edge(ie)%length
+
+         if ( .not. mesh%edge(ie)%boundary .and. .not. mesh%edge(ie)%subdomain ) then
+
+            tflux( 1 , iR )  =  tflux( 1 , iR )  -  lflux(1)
+            tflux( 2 , iR )  =  tflux( 2 , iR )  -  lflux(2)  -  mesh%edge(ie)%normal%x * s2R * mesh%edge(ie)%length
+            tflux( 3 , iR )  =  tflux( 3 , iR )  -  lflux(3)  -  mesh%edge(ie)%normal%y * s2R * mesh%edge(ie)%length
+
+         end if
+
+         if ( mesh%edge(ie)%boundary ) then
+            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then
+
+               tflux( 1 , iR )  =  tflux( 1 , iR )  -  lflux(1)
+               tflux( 2 , iR )  =  tflux( 2 , iR )  -  lflux(2)  -  mesh%edge(ie)%normal%x * s2R * mesh%edge(ie)%length
+               tflux( 3 , iR )  =  tflux( 3 , iR )  -  lflux(3)  -  mesh%edge(ie)%normal%y * s2R * mesh%edge(ie)%length
+            endif
+         endif
+#else
          tflux( 1 , iL ) = tflux( 1 , iL ) + lflux(1)
          tflux( 2 , iL ) = tflux( 2 , iL ) + lflux(2)
          tflux( 3 , iL ) = tflux( 3 , iL ) + lflux(3)
+
          tflux( 2 , iL ) = tflux( 2 , iL ) + mesh%edge(ie)%normal%x * mesh%edge(ie)%length * 0.5_rp * g * ( &
                                                  ( hL(1)**2 - hL(2)**2 ) )
          tflux( 3 , iL ) = tflux( 3 , iL ) + mesh%edge(ie)%normal%y * mesh%edge(ie)%length * 0.5_rp * g * ( &
                                                  ( hL(1)**2 - hL(2)**2 ) )
+
          if ( .not. mesh%edge(ie)%boundary .and. .not. mesh%edge(ie)%subdomain ) then
             tflux( 1 , iR ) = tflux( 1 , iR ) - lflux(1)
             tflux( 2 , iR ) = tflux( 2 , iR ) - lflux(2)
@@ -191,8 +263,10 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
                                                     ( hR(1)**2 - hR(2)**2 ) )
             tflux( 3 , iR ) = tflux( 3 , iR ) - mesh%edge(ie)%normal%y * mesh%edge(ie)%length * 0.5_rp * g * ( &
                                                     ( hR(1)**2 - hR(2)**2 ) )
-         end if
+         endif
+
          if ( mesh%edge(ie)%boundary ) then
+
             if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then
                 tflux( 1 , iR ) = tflux( 1 , iR ) - lflux(1)
                 tflux( 2 , iR ) = tflux( 2 , iR ) - lflux(2)
@@ -203,17 +277,21 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
                                                         ( hR(1)**2 - hR(2)**2 ) )
             endif
         endif
-      end if
-   end do
+
+#endif
+      endif
+   enddo
 
    !===================================================================================================================!
    ! Cumulative rain Calculation
    !===================================================================================================================!
    
+#ifdef USE_INFIL
    do k=1,bc%nb_rn
       bc%rain(k)%cumul = bc%rain(k)%cumul + dt*bc%rain(k)%qin
-   
    end do
+#endif
+
    !===================================================================================================================!
    ! Euler Time Step
    !===================================================================================================================!
@@ -224,11 +302,16 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
       u = dof%u(i)
       v = dof%v(i)
 
+#ifdef USE_PORO
+      dof%h(i)  =  max( 0._rp , h  -  dt / SPorosity%Phi( SPorosity%land(i) ) * tflux(1,i) * mesh%cell(i)%invsurf )
+#else
       dof%h(i) = max( 0._rp , h - dt * tflux(1,i) * mesh%cell(i)%invsurf )
+#endif
 
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifdef USE_INFIL
+    !===================================================================================================================!
     ! Adding rain source term for GA or SCS method
+    !===================================================================================================================!
 
     if (bc_rain == 1) then ! If rain is accounted for
 
@@ -287,6 +370,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
         endif
       endif
     endif
+#endif
+
       !================================================================================================================!
       ! Positivity cut-off
       !================================================================================================================!
@@ -294,8 +379,14 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          dof%u(i) = 0._rp
          dof%v(i) = 0._rp
       else
+
+#ifdef USE_PORO
+         dof%u(i)  =  (  h * u  -  dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(2,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
+         dof%v(i)  =  (  h * v  -  dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(3,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
+#else
          dof%u(i) = ( h * u - dt * ( tflux(2,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
          dof%v(i) = ( h * v - dt * ( tflux(3,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
+#endif
 
          !=============================================================================================================!
          ! Semi-Implicit Treatment of Friction Source Term (Manning/Strickler Formula)
@@ -314,14 +405,16 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
          dof%u( i ) = dof%u( i ) * sfl
          dof%v( i ) = dof%v( i ) * sfl
-
       end if
    end do
+
    !===================================================================================================================!
    ! Calling MPI and filling ghost cells
    !===================================================================================================================!
+
    call com_dof( dof , mesh )
    call com_var_r( bathy_cell , mesh ) ! Required MPI Communication due to inverse variable dependency
+
 END SUBROUTINE euler_time_step_first_b1
 
 
@@ -491,11 +584,11 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
             call sw_hllc_SP( hL(1) , uL(2) , vL(2) , zL , phiL , s2L , &
                              hR(1) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
 
-         else 
+         else
 
             call sw_hllc_Impervious_SP( hL(2) , uL(2) , vL(2) , zL , phiL , s2L , &
                                         hR(2) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
-                  
+
          end if
 
          !=============================================================================================================!
@@ -507,7 +600,7 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
          if ( mesh%edge(ie)%boundary ) then
             call boundary_post( nflux(1) , iR , mesh )
          endif
-         
+
          !=============================================================================================================!
          !  Flux rotation and summation (as antisymmetric part to save time computation)
          !=============================================================================================================!

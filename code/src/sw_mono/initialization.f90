@@ -145,12 +145,13 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !          call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
 !          call reallocate_i( bc%rain_land ,                 mesh%nc   )
 !    endif
-
+#ifdef USE_PORO
    if (allocated(my_porosity%Phi)) then
          call swap_vec_i  ( SPorosity%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( SPorosity%land ,                 mesh%nc   )
    endif
-
+#endif
+#ifdef USE_INFIL
    if (bc_infil .ne. 0) then
          call swap_vec_i  ( infil%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( infil%land ,                 mesh%nc   )
@@ -166,7 +167,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !          endif
 
    endif
-
+#endif
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
 
 #endif
@@ -594,7 +595,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
     end if
 
-   
+#ifdef USE_INFIL
    !===================================================================================================================!
    !  Loading/Creating rain File
    !===================================================================================================================!
@@ -698,12 +699,12 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
       endif
 
    end if
+#endif
 
+#ifdef USE_INFIL
 !    ===================================================================================================================!
 !     Reading infiltration parameters and localization
 !    ===================================================================================================================!
-
-!    infil%nland = 0
 
    if (( mesh_type == 'dassflow' ) .and. ( .not. allocated(infil%land) )) then ! This is skipped if infiltration_initilise was called through python earlier
 
@@ -861,7 +862,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
     endif
 
    endif
-
+#endif
    
    !===================================================================================================================!
    !  Read geometry parameters if needed
@@ -1073,6 +1074,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    call FV_Cell_Grad ( grad_z  , bathy_cell , mesh )
    call FV_Cell_Grad2( grad_z2 , bathy_cell , mesh )
 
+#ifdef USE_PORO
    !===================================================================================================================!
    !  Initialization of Ghost porosity and Boundary Condition Type
    !===================================================================================================================!
@@ -1087,8 +1089,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
       end do
 
-
-
    !===================================================================================================================!
    !  Cell Porosity Gradient
    !===================================================================================================================!
@@ -1101,6 +1101,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    endif
 
+#endif
    !===================================================================================================================!
    !  Set heps to be at minimum to zero machine precision
    !===================================================================================================================!

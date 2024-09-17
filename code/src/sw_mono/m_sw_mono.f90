@@ -981,8 +981,9 @@ CONTAINS
       if (allocated(dof%h)) deallocate(dof%h)
       if (allocated(dof%u)) deallocate(dof%u)
       if (allocated(dof%v)) deallocate(dof%v)
-
+#ifdef USE_INFIL
       if (allocated(dof%infil)) deallocate(dof%infil)
+#endif
 !      if (allocated(dof%entropy)) deallocate(dof%entropy)  ! entropy for low froude scheme
       if (allocated(dof%grad_h)) deallocate(dof%grad_h)
       if (allocated(dof%grad_u)) deallocate(dof%grad_u)
@@ -1013,6 +1014,7 @@ CONTAINS
       if ( allocated( land       ) ) 		deallocate( land       )
       if ( allocated( manning    ) ) 		deallocate( manning    )
       if ( allocated( manning_beta ) ) 		deallocate( manning_beta )
+#ifdef USE_INFIL
       if ( allocated( infil%land ) ) 		deallocate( infil%land )
       if ( allocated( infil%coord ) ) 		deallocate( infil%coord )
       if ( allocated( infil%GA   ) ) 		deallocate( infil%GA   )
@@ -1023,12 +1025,14 @@ CONTAINS
       if ( allocated( phys_desc%ptf_land ) ) 		 deallocate( phys_desc%ptf_land )
       if ( allocated( phys_desc%ptf ) ) 		     deallocate( phys_desc%ptf )
       if ( allocated( PTF ) ) 		     deallocate( PTF )
+#endif
+#ifdef USE_PORO
       if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
       if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
       if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
       if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
       if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
-      
+#endif
 !       if ( allocated( phys_desc%surf_land ) ) 		 deallocate( phys_desc%surf_land )
 !       if ( allocated( phys_desc%surf ) ) 		     deallocate( phys_desc%surf )
 !       if ( allocated( phys_desc%struct_land ) ) 	 deallocate( phys_desc%struct_land )
@@ -1326,7 +1330,9 @@ CONTAINS
       if (allocated(dof%v)) deallocate(dof%v)
       call mpi_wait_all
 ! write(*,*) proc, "(allocated(dof%h)) deallocate(dof%infil)", allocated(dof%infil), size(dof%infil)
+#ifdef USE_INFIL
       if (allocated(dof%infil)) deallocate(dof%infil)
+#endif
 !       write(*,*) proc, "(allocated(dof%h)) deallocate(dof%grad_h)", allocated(dof%grad_h), size(dof%grad_h)
 !      if (allocated(dof%entropy)) deallocate(dof%entropy)   ! entropy for low froude scheme
       if (allocated(dof%grad_h)) deallocate(dof%grad_h)

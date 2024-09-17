@@ -220,6 +220,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
    !===================================================================================================================!
    !  Infiltration write , TODO make its own routine
    !===================================================================================================================!
+#ifdef USE_INFIL
    if (bc_infil/=0) then
     open(10,file='infil_temp.dat',status='replace',form='formatted')
 
@@ -231,21 +232,7 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
 
         close(10)
    endif
-   
-   !===================================================================================================================!
-   !  Infiltration write , TODO make its own routine
-   !===================================================================================================================!
-!    if (bc_infil .ne. 0) then
-!     open(10,file= trim(filename)//'_infil_qty.dat',status='replace',form='formatted')
-!
-!     write(10,*) '# id_cell infil_group infil_qty'
-!
-!     do i=1,mesh%nc
-!                 write(10,'(2i4, ES15.8)') i, infil%land(i), dof%infil(i)
-!     end do
-!
-!     close(10)
-!    endif
+#endif
 
 END SUBROUTINE write_result_file
 
@@ -1155,6 +1142,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
 
    rec_index = rec_index + mesh%nc
 
+#ifdef USE_INFIL
    !===================================================================================================================!
    !  Writing VTK file rain cell data
    !===================================================================================================================!
@@ -1194,6 +1182,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
 
     rec_index = rec_index + mesh%nc
    endif
+#endif
 
    if ((use_UVobs .eq. 1) .and. (use_obs .eq. 1)) then
 
@@ -1289,30 +1278,6 @@ SUBROUTINE v_vtk( dof , mesh , filename )
 
    endif
 
-!===================================================================================================================!
-!  Writing VTK file porosity cell data
-!===================================================================================================================!   
-
-   if ( use_porosity == 1 ) then 
-
-      write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
-      write(10,rec=rec_index+2,fmt='(A16   )') 'porosity               '
-      write(10,rec=rec_index+3,fmt='(A15,A1)') 'double 1       ' , char(10)
-      write(10,rec=rec_index+4,fmt='(A16   )') 'LOOKUP_TABLE def'
-      write(10,rec=rec_index+5,fmt='(A15,A1)') 'ault           ' , char(10)
-
-      rec_index = rec_index + 5
-
-      do i = 1,mesh%nc
-         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi( SPorosity%land(i) ) , char(10)
-      end do
-
-      rec_index = rec_index + mesh%nc
-
-   end if
-
-   call mpi_wait_all
-close(10)
 END SUBROUTINE v_vtk
 
 !**********************************************************************************************************************!
@@ -1466,7 +1431,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
    !===================================================================================================================!
    !   Writing VTK file infiltration params cell data
    !===================================================================================================================!
-
+#ifdef USE_INFIL
    if (bc_rain == 1) then
 
         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
@@ -1588,11 +1553,12 @@ SUBROUTINE v_vtk_init( mesh , filename )
         rec_index = rec_index + mesh%nc
 
     endif
+#endif
 
 !===================================================================================================================!
 !  Writing VTK file porosity cell data
 !===================================================================================================================!   
-
+#ifdef USE_PORO
     if ( use_porosity == 1 ) then 
 
       write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
@@ -1610,8 +1576,9 @@ SUBROUTINE v_vtk_init( mesh , filename )
       rec_index = rec_index + mesh%nc
 
    end if
+#endif
 
-
+#ifdef USE_INFIL
     ! Physical descriptors
 
 !     if (allocated(phys_desc%soil)) then !.or. (size(phys_desc%soil_land) .gt. 0)
@@ -1673,7 +1640,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 !         rec_index = rec_index + mesh%nc
 !
 !     endif
-
+#endif
 !     if (use_obs == 1) then
 ! 
 !         write(10,rec=rec_index+1,fmt='(A16   )') 'SCALARS         '
@@ -1710,6 +1677,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 ! 
 ! 
 !     endif
+
 
    call mpi_wait_all
 close(10)
@@ -2004,7 +1972,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
    !===================================================================================================================!
    !   Writing VTK file dof%infil cell data
    !===================================================================================================================!
-   
+#ifdef USE_INFIL
       if (bc_infil .ne. 0) then
          do k = 0,np-1
 
@@ -2051,6 +2019,8 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
          end do
 
       endif
+#endif
+
    !===================================================================================================================!
    !   Writing VTK file manning_land cell data
    !===================================================================================================================!
@@ -2097,56 +2067,6 @@ if (bc_rain == 1) then
 
    end do
 endif
-
-
-   !===================================================================================================================!
-   !   Writing VTK file soil-land cell data
-   !===================================================================================================================!
-
-!    do k = 0,np-1
-!
-!       if ( proc == k ) then
-!
-!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
-!
-!    	   if ( proc == 0    ) write(10) 'SCALARS '//'soil-land'//' integer 1'//char(10)
-!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-!                              write(10) phys_desc%soil_land(1:mesh%nc)
-!          if ( proc == np-1 ) write(10) char(10)
-!
-!          close(10)
-!
-!       end if
-!
-!       call mpi_wait_all
-!
-!    end do
-
-   !===================================================================================================================!
-   !   Writing VTK file porosity cell data
-   !===================================================================================================================!
-
-if ( use_porosity == 1 ) then
-   do k = 0,np-1
-
-      if ( proc == k ) then
-
-         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
-
-         if ( proc == 0    ) write(10) 'SCALARS '//'porosity'//' double 1'//char(10)
-         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-                             write(10) SPorosity%Phi(1:mesh%nc)
-         if ( proc == np-1 ) write(10) char(10)
-
-         close(10)
-              
-      end if
-
-   call mpi_wait_all
-
-   enddo
-end if
-
 
 END SUBROUTINE v_vtk_bin
 
@@ -2275,7 +2195,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
    !===================================================================================================================!
    ! Writing VTK file infil cell data
    !===================================================================================================================!
-   
+#ifdef USE_INFIL
     if (bc_infil .ne. 0) then
     
     !===================================================================================================================!
@@ -2370,7 +2290,8 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
         endif
     
     endif
-    
+#endif
+#ifdef USE_INFIL
 !     if (allocated(phys_desc%soil)) then
 !
 !         do k = 0,np-1
@@ -2416,7 +2337,8 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 ! !         enddo
 !
 !     endif
-    
+#endif
+
    !===================================================================================================================!
    ! Writing VTK file manning_land cell data
    !===================================================================================================================!
@@ -2464,6 +2386,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 !===================================================================================================================!
 !   Writing VTK file porosity cell data
 !===================================================================================================================!
+#ifdef USE_PORO
    if ( use_porosity == 1 ) then
       do k = 0,np-1
 
@@ -2484,11 +2407,12 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 
       enddo
    end if
-   
+#endif
+
    !===================================================================================================================!
    ! Writing VTK file rain_land cell data
    !===================================================================================================================!
-   
+#ifdef USE_INFIL
     if (bc_rain == 1) then
     
         do k = 0,np-1
@@ -2518,7 +2442,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
         end do
         
     endif
-
+#endif
 !  endif
 
    !===================================================================================================================!
