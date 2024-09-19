@@ -67,50 +67,41 @@ rank = comm.Get_rank()
 ##########
 
 L = 100
-dx = 0.1
+dx = 1
 type = 'channel'
 
 mesh_name = gen_mesh(type,L,dx)
 
-##########
-# MPI
-##########
+# Remark : If you choose type = 'box' or 'flat_square' you must comment the call to the function plot_dat and add '_box' to the name function plot_vtk
 
-df2d.wrapping.m_mpi.init_mpi()
-rank = df2d.wrapping.m_mpi.get_proc() # get the rank and number of processors
-nproc = df2d.wrapping.m_mpi.get_np()
-mpi = [rank, nproc]
-
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
 
 ##########
 # Model
 ##########
 
-ts = 3
-dtw = ts*0.25
+ts = 1000
+dtw = ts*0.2
 
-nland = 1
+# REMARK : In this test-case, you must set nland equal to the number of cells in your mesh
+
 use_porosity = 1
 
-input_params={ "mesh_name": mesh_name,
-               "ts": ts,
+input_params={ "mesh_name": mesh_name ,
+               "ts": ts ,
 			   "use_obs":'0',
 			   "use_UVobs":'0',
 			   "use_Zobs":'0',
                "use_porosity": use_porosity,
-               
+            
 			   "w_obs":'1',
                "w_vtk":'1',
                "w_gnuplot":'1',
                "w_tecplot":'0',
-
                "adapt_dt":'1',
-               'g':'9.81',
-               'dt':'0.05',
 
-               "dtw": dtw,
+               "dt":'0.1',
+
+               "dtw": dtw ,
                "dta":"100",
                
                "bc_infil":"0",
@@ -131,26 +122,27 @@ Config.set(custom_config = input_params)
 # Friction
 ##########
 
+nc = my_model.kernel.mesh.nc
+
+nland = nc
+
 #Create Python class by calling wrapped initialise routines
 my_model.kernel.my_friction =  df2d.wrapping.m_model.friction_data(my_model.kernel.mesh)
-
 #Allocate and get initial values from Fortran
-my_model.kernel.my_friction.nland = 1
+my_model.kernel.my_friction.nland = nland
 df2d.wrapping.call_model.init_friction(my_model.kernel)
 
 #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
 
-my_model.kernel.my_friction.manning[:] = 0.
+my_model.kernel.my_friction.manning[:] = 0.0
 my_model.kernel.my_friction.manning_beta[:] = 0
 my_model.kernel.my_friction.land[:] = 1
-
-nc = my_model.kernel.mesh.nc
-
-mil = int(nc/2)
 
 ##########
 # Porosity
 ##########
+
+nc = my_model.kernel.mesh.nc
 
 #Create Python class by calling wrapped initialise routines
 
@@ -158,15 +150,17 @@ my_model.kernel.my_porosity = df2d.wrapping.m_model.porosity_data(my_model.kerne
 
 #Allocate and get initial values from Fortran
 
-my_model.kernel.my_porosity.nland = 1
+my_model.kernel.my_porosity.nland = my_model.kernel.my_friction.nland
 df2d.wrapping.call_model.init_porosity(my_model.kernel)
 
 #Provide values, on top of initial ones from Fortran initialization routine, in Python structure
 
-phi0 = 1
+for i in range(nland) :
 
-my_model.kernel.my_porosity.land[:] = 1
-my_model.kernel.my_porosity.phi[:] = phi0
+    my_model.kernel.my_porosity.phi[i] = 0.5
+
+my_model.kernel.my_porosity.land[:] = range(1,nland+1)
+
 
 
 ##########
@@ -176,15 +170,11 @@ my_model.kernel.my_porosity.phi[:] = phi0
 my_model.kernel.dof  = df2d.wrapping.m_model.unk(my_model.kernel.mesh)
 my_model.kernel.dof0 = my_model.kernel.dof
 
-hL = 10.
-hR = 1.
-
-my_model.kernel.dof0.h[:mil] = hL
-my_model.kernel.dof0.h[mil:] = hR
+for i in range(nc) :
+    my_model.kernel.dof0.h[i] = 1. + random.randint(0,1)*0.1
 
 my_model.kernel.dof0.u[:] = 0.
 my_model.kernel.dof0.v[:] = 0.
-#my_model.kernel.dof0.h[:] = 0  #Disregarded if ic.bin is provided
 
 ##############################################################################################################
 
@@ -203,6 +193,7 @@ if (os.path.isdir("./obs")):
 #shutil.copytree("./res/obs", "./obs")
 
 
+
 ##############################################################################################################
 
 ########################
@@ -211,9 +202,11 @@ if (os.path.isdir("./obs")):
 
 # Meaning of graphe = [ 'h' , 'u' , 'v' , 'qx' , 'qy' ]
 
-graphe = [1,0,0,1,0]
+graphe = [1,0,0,0,0]
 
-display_ref = 1
+# Remark : reference not usable here
+
+display_ref = 0
 
 h0 = my_model.kernel.dof0.h[:nc]
 u0 = my_model.kernel.dof0.u[:nc]
@@ -232,11 +225,13 @@ save = 0
 
 time = 'final'
 
-plot_vtk(code_dir,'h',time,ts,save)
+#plot_vtk(code_dir,'h',time,ts,save)
 #plot_vtk(code_dir,'u',time,ts,save)
 #plot_vtk(code_dir,'v',time,ts,save)
-#plot_vtk(code_dir,'zs',time,ts,save)
+plot_vtk(code_dir,'zs','initial',ts,save)
+plot_vtk(code_dir,'zs',time,ts,save)
 #plot_vtk(code_dir,'porosity',time,ts,save)
+
 
 df2d.wrapping.call_model.clean_model(my_model.kernel)
 

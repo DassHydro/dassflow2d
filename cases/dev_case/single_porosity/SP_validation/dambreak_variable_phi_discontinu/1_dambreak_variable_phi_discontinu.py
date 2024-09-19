@@ -68,7 +68,7 @@ rank = comm.Get_rank()
 ##########
 
 L = 100
-dx = 0.1
+dx = 1
 type = 'channel'
 
 mesh_name = gen_mesh(type,L,dx)
