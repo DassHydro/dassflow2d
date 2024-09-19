@@ -120,34 +120,41 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
 
-   if (allocated(my_bc%rain)) then
-      call my_bc_2_fortran(my_bc)
-   elseif (.not. allocated(bc%rain)) then 
-      allocate( bc%rain(1) )
-      allocate( bc%rain(1)%q(1) )
-      allocate( bc%rain(1)%t(1) )
 
-      bc%rain(1)%q = 0._rp
-      bc%rain(1)%t = 0._rp
-      bc%rain(1)%cumul = 0._rp
-      bc%rain(1)%qin = 0._rp
-   endif
+!
+!      if (allocated(my_bc%rain)) then
+!          call my_bc_2_fortran(my_bc)
+!      elseif (.not. allocated(bc%rain)) then
+!         allocate( bc%rain(1) )
+!         allocate( bc%rain(1)%q(1) )
+!         allocate( bc%rain(1)%t(1) )
+!
+!         bc%rain(1)%q = 0._rp
+!         bc%rain(1)%t = 0._rp
+!         bc%rain(1)%cumul = 0._rp
+!         bc%rain(1)%qin = 0._rp
+!      endif
      
 #ifdef USE_MPI
 
    call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
    call reallocate_i( land ,                 mesh%nc   )
 
-   if (bc_rain == 1) then
-         call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
-         call reallocate_i( bc%rain_land ,                 mesh%nc   )
+!    if (bc_rain == 1) then
+!          call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
+!          call reallocate_i( bc%rain_land ,                 mesh%nc   )
+!    endif
+
+   if (allocated(my_porosity%Phi)) then
+         call swap_vec_i  ( SPorosity%land , swap_index( 1 : mesh%nc ) )
+         call reallocate_i( SPorosity%land ,                 mesh%nc   )
    endif
 
    if (bc_infil .ne. 0) then
          call swap_vec_i  ( infil%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( infil%land ,                 mesh%nc   )
    endif
-   
+
    if (allocated(phys_desc%soil_land)) then
          call swap_vec_i  ( phys_desc%soil_land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( phys_desc%soil_land ,                 mesh%nc   )
@@ -160,7 +167,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    endif
 
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
-   
+
 #endif
 
    !===================================================================================================================!
@@ -470,7 +477,18 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 !~       end if
 
-   end if
+    end if
+
+
+   call my_bc_2_fortran(my_bc)
+
+   if (bc_rain == 1) then
+         call swap_vec_i  ( bc%rain_land , swap_index( 1 : mesh%nc ) )
+         call reallocate_i( bc%rain_land ,                 mesh%nc   )
+   endif
+
+
+
    !===================================================================================================================!
    !  Loading/Creating hpresc File
    !====================================================================================================
@@ -1058,16 +1076,20 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    !  Initialization of Ghost porosity and Boundary Condition Type
    !===================================================================================================================!
 
-   call reallocate_i( SPorosity%land , mesh%nc + mesh%ncb )
+   if (allocated(SPorosity%land)) then
 
-   do i = 1,mesh%ncb
+      call reallocate_i( SPorosity%land , mesh%nc + mesh%ncb )
 
-      SPorosity%land( mesh%nc + i ) = SPorosity%land( mesh%cellb(i)%cell )
+      do i = 1,mesh%ncb
 
-   end do
+         SPorosity%land( mesh%nc + i ) = SPorosity%land( mesh%cellb(i)%cell )
+
+      end do
+
+
 
    !===================================================================================================================!
-   !  Cell Bathymetry Gradient
+   !  Cell Porosity Gradient
    !===================================================================================================================!
 
    allocate( grad_Phi ( mesh%nc + mesh%ncb ) )
@@ -1076,6 +1098,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    call FV_Cell_Grad ( grad_Phi  , SPorosity%Phi , mesh )
    call FV_Cell_Grad2( grad_Phi2 , SPorosity%Phi , mesh )
 
+   endif
 
    !===================================================================================================================!
    !  Set heps to be at minimum to zero machine precision
@@ -1838,7 +1861,6 @@ implicit none
 
       do i = 1, size(my_infiltration%land )
           infil%land( i )  =  my_infiltration%land( i )
-          infil%h_infil_max( i )  =  my_infiltration%h_infil_max( i )
       end do
 
       do i = 1, size(my_infiltration%h_infil_max )
@@ -1885,23 +1907,23 @@ end do
 
 !< Integral Porosity
 
-IPorosity%nland = my_porosity%nland
-
-allocate( IPorosity%land ( mesh%nc ) )
-allocate( IPorosity%PhiW ( IPorosity%nland ) )
-allocate( IPorosity%PhiG ( IPorosity%nland ) )
-
-do i = 1,mesh%nc
-   IPorosity%land(i) = my_porosity%land(i)
-end do
-
-do i = 1,IPorosity%nland
-   IPorosity%PhiW(i) = my_porosity%PhiW(i)
-end do
-
-do i = 1,IPorosity%nland
-   IPorosity%PhiG(i) = my_porosity%PhiG(i)
-end do
+! IPorosity%nland = my_porosity%nland
+!
+! allocate( IPorosity%land ( mesh%nc ) )
+! allocate( IPorosity%PhiW ( IPorosity%nland ) )
+! allocate( IPorosity%PhiG ( IPorosity%nland ) )
+!
+! do i = 1,mesh%nc
+!    IPorosity%land(i) = my_porosity%land(i)
+! end do
+!
+! do i = 1,IPorosity%nland
+!    IPorosity%PhiW(i) = my_porosity%PhiW(i)
+! end do
+!
+! do i = 1,IPorosity%nland
+!    IPorosity%PhiG(i) = my_porosity%PhiG(i)
+! end do
 
 END SUBROUTINE my_porosity_2_fortran
 
@@ -2039,6 +2061,8 @@ SUBROUTINE my_bc_2_fortran(my_bc)
 
     type( bcs ), intent(in   )  ::  my_bc
 
+
+    if (allocated(my_bc%rain)) then
       allocate(bc%rain(my_bc%nb_rn))
       bc%nb_rn = my_bc%nb_rn
 
@@ -2061,6 +2085,27 @@ SUBROUTINE my_bc_2_fortran(my_bc)
       do i = 1,size(my_bc%rain_land)
         bc%rain_land(i) = my_bc%rain_land(i)
       enddo
+   elseif (.not. allocated(bc%rain)) then
+        allocate( bc%rain(1) )
+        allocate( bc%rain(1)%q(1) )
+        allocate( bc%rain(1)%t(1) )
+
+        bc%rain(1)%q = 0._rp
+        bc%rain(1)%t = 0._rp
+        bc%rain(1)%cumul = 0._rp
+        bc%rain(1)%qin = 0._rp
+     endif
+
+      if ( allocated(my_bc%hyd) ) then
+         do i = 1, bc%nb_in
+!             write(*,*) i, bc%hyd(i)%t(:), bc%hyd(i)%q(:)
+            bc%hyd(i)%t(:) = my_bc%hyd(i)%t
+            bc%hyd(i)%q(:) = my_bc%hyd(i)%q
+!             write(*,*) i+10, bc%hyd(i)%t(:), bc%hyd(i)%q(:)
+         enddo
+      endif
+
+
     
 
 END SUBROUTINE my_bc_2_fortran

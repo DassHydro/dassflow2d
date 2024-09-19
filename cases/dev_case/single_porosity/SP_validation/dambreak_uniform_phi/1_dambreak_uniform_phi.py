@@ -67,7 +67,7 @@ rank = comm.Get_rank()
 ##########
 
 L = 100
-dx = 1
+dx = 0.1
 type = 'channel'
 
 mesh_name = gen_mesh(type,L,dx)
@@ -195,8 +195,6 @@ my_model.kernel.dof0.v[:] = 0.
 #my_model.meshing.plot_dev("cell")
 
 df2d.wrapping.call_model.init_fortran(my_model.kernel)
-
-print('Je suis apres l initfortran')
 
 df2d.wrapping.call_model.run(my_model.kernel, arg = "direct")
 

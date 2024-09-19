@@ -69,8 +69,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    ! Local Variables
    !===================================================================================================================!
    integer(ip) :: iL , iR ! Left and Right cells indexes to edge
-   real(rp) :: hL(2) , uL(2) , vL(2) , zL ! Left State in edge cell normal coordinates
-   real(rp) :: hR(2) , uR(2) , vR(2) , zR ! Right State in edge cell normal coordinates
+   real(rp) :: hL(2) , uL(2) , vL(2) , zL , phiL ! Left State in edge cell normal coordinates
+   real(rp) :: hR(2) , uR(2) , vR(2) , zR , phiR ! Right State in edge cell normal coordinates
    
    real(rp), dimension( sw_nb ) :: nflux ! Finite Volume normal edge flux
    real(rp), dimension( sw_nb ) :: lflux ! Finite Volume edge flux in (x,y) coordinates
@@ -112,7 +112,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          uL(2) = mesh%edge(ie)%normal%x * uL(1) + mesh%edge(ie)%normal%y * vL(1)
          vL(2) = mesh%edge(ie)%normal%x * vL(1) - mesh%edge(ie)%normal%y * uL(1)
          if ( mesh%edge(ie)%boundary) then
-         zL = bathy_cell( iL )
+            zL = bathy_cell( iL )
             !================= TEMP FOR ANDROMEDE
             if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
                zR = bathy_cell( iL ) !&
@@ -135,7 +135,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
                 uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
                 vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
             endif
-
+            phiL = SPorosity%Phi( SPorosity%land(iL) )
+            phiR = phiL
          else
             zL = bathy_cell( iL )
             zR = bathy_cell( iR )
@@ -450,8 +451,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
          !   New reconstructed well balanced water depth
          !=============================================================================================================!
 
-         hL(2)  =  max( 0._rp , hL(1) + zL - max( zL , zR ) )
-         hR(2)  =  max( 0._rp , hR(1) + zR - max( zL , zR ) )
+!          hL(2)  =   hL(1) ! max( 0._rp , hL(1) + zL - max( zL , zR ) )
+!          hR(2)  =   hR(1) ! max( 0._rp , hR(1) + zR - max( zL , zR ) )
 
          !=============================================================================================================!
          !  Calling the balanced HLLC Solver dedicated to Shallow-Water Equations
@@ -459,8 +460,8 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
 
          if ( phiL > zerom .or. phiR > zerom ) then
 
-            call sw_hllc_SP( hL(2) , uL(2) , vL(2) , zL , phiL , s2L , &
-                             hR(2) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
+            call sw_hllc_SP( hL(1) , uL(2) , vL(2) , zL , phiL , s2L , &
+                             hR(1) , uR(2) , vR(2) , zR , phiR , s2R , nflux )
 
          else 
 
@@ -477,7 +478,6 @@ SUBROUTINE euler_time_step_first_b1_porosity( dof , mesh )
 
          if ( mesh%edge(ie)%boundary ) then
             call boundary_post( nflux(1) , iR , mesh )
-            !          write(*,*) proc, tc, "bc%sum_mass_flux", bc%sum_mass_flux, nflux(1) , iR
          endif
          
          !=============================================================================================================!

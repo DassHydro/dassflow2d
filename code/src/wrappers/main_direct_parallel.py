@@ -5,11 +5,12 @@ import dassflow2d as df2d
 import numpy as np
 import sys
 import os
+from mpi4py import MPI
 
 df2d.wrapping.m_mpi.init_mpi()
 
 # store main path
-dassflow_dir="/home/leo/DISTANT/dassflow2d"
+dassflow_dir= os.path.abspath(os.path.join(__file__ ,"../../.."))
 code_dir =  f"{dassflow_dir}/code"
 bin_dir = f"{code_dir}/bin_A"
 
@@ -27,6 +28,17 @@ if os.path.isfile(f"rm {bin_dir}/restart.bin"):
 	os.system(f"rm {bin_dir}/restart.bin")   # removes all in bin_dir/msh directory
 
 os.chdir(bin_dir)
+
+# ------------ Define Default values------------------
+
+df2d.wrapping.read_input(f"{bin_dir}/input.txt")
+
+model = df2d.dassflowmodel(bin_dir =  bin_dir, hdf5_path = f"{bin_dir}/res/simu.hdf5" , run_type = "direct", clean = True, custom_config = None)
+
+model.init_mesh()
+
+model.kernel.dof  = df2d.wrapping.m_model.unk(model.kernel.mesh)
+model.kernel.dof0 = model.kernel.dof     
 
 # ------------ Define Default values------------------
 

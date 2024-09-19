@@ -27,7 +27,7 @@ def gen_mesh(type: str,L: float,dx: float) :
     #       Définition des noeuds et des éléments
     #      ---------------------------------------
 
-    h = 20
+    h = 10
 
     types = ['channel','slope','bump','flat&slope','flat_square','box']
 
@@ -169,9 +169,9 @@ def gen_mesh(type: str,L: float,dx: float) :
     file = open(mesh_name,"w")
 
     file.write('# Generated mesh with my program gen_channel() ||| number of nodes | number of cells | mesh scale == 0 always\n')
-    file.write(f'{nnode} ')
-    file.write(f'{ncell} ')
-    file.write('0.\n')
+    file.write(f'{nnode:d} ')
+    file.write(f'{ncell:d} ')
+    file.write(f'{0.:4e} \n')
 
     # Ecriture des noeuds
 
@@ -179,10 +179,10 @@ def gen_mesh(type: str,L: float,dx: float) :
 
     for i in range(0,nnode) :
 
-        file.write(f'{i+1} ')
+        file.write(f'{i+1:6d} ')
         file.write(f'{nodes[i,0]:4e} ')
         file.write(f'{nodes[i,1]:4e} ')
-        file.write(f'{0.} \n')
+        file.write(f'{0.:4e} \n')
 
     # Ecriture des cellules
 
@@ -190,12 +190,12 @@ def gen_mesh(type: str,L: float,dx: float) :
 
     for i in range(0,ncell) :
 
-        file.write(f'{i+1} ')
-        file.write(f'{element[i,0]} ')
-        file.write(f'{element[i,1]} ')
-        file.write(f'{element[i,2]} ')
-        file.write(f'{element[i,3]} ')
-        file.write(f'{landtype} ')
+        file.write(f'{i+1:6d} ')
+        file.write(f'{element[i,0]:6d} ')
+        file.write(f'{element[i,1]:6d} ')
+        file.write(f'{element[i,2]:6d} ')
+        file.write(f'{element[i,3]:6d} ')
+        file.write(f'{landtype:6d} ')
         file.write(f'{bathy(type,nodes[element[i,0],0],nodes[element[i,1],1],L):4e} \n')
 
     # Ecriture des conditions de bords
@@ -203,22 +203,34 @@ def gen_mesh(type: str,L: float,dx: float) :
     file.write('# Boundaries\n')
 
     if ( n_bc_data == 0 ) :
-        file.write('INLET 0 0\n')
-        file.write('OUTLET 0 0\n')
+        file.write('INLET ')
+        file.write(f'{0:6d}')
+        file.write(f'{0:6d}\n')
+
+        file.write('OUTLET ')
+        file.write(f'{0:6d}')
+        file.write(f'{0:6d}\n')
 
     else :
-        file.write('INLET 1 1\n')
-        file.write(f'{1} ')
-        file.write(f'{1} ')
-        file.write(f'{1} ')
-        file.write(f'{0.} \n')
+        file.write('INLET ')
+        file.write(f'{1:6d}') 
+        file.write(f'{1:6d}\n')
 
-        file.write('OUTLET 1 1\n')
-        file.write(f'{ncell} ')
-        file.write(f'{3} ')
-        file.write(f'{2} ')
-        file.write(f'{0.} ')
+        file.write(f'{1:6d} ')
+        file.write(f'{1:6d} ')
+        file.write(f'{1:6d} ')
+        file.write(f'{0.:4e}')
+        file.write(f'{1:6d}\n')
 
+        file.write('OUTLET ')
+        file.write(f'{1:6d}') 
+        file.write(f'{1:6d}\n')
+
+        file.write(f'{ncell:6d} ')
+        file.write(f'{3:6d} ')
+        file.write(f'{1:6d} ')
+        file.write(f'{0.:4e} ')
+        file.write(f'{1:6d}\n')
 
     file.close()
 

@@ -965,8 +965,8 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  manning( land(i) )     , &
                                  !infil%GA( infil%land(i)  )%Ks,&
                                  dof%u(i)               , &
-                                 dof%v(i)               , &
-                                 SPorosity%Phi(SPorosity%land(i))
+                                 dof%v(i)               !, &
+                                 !SPorosity%Phi(SPorosity%land(i))
          end do
 
 
@@ -1304,7 +1304,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
       rec_index = rec_index + 5
 
       do i = 1,mesh%nc
-         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(SPorosity%land(i)) , char(10)
+         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi( SPorosity%land(i) ) , char(10)
       end do
 
       rec_index = rec_index + mesh%nc

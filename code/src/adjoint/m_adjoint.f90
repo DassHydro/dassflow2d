@@ -133,6 +133,9 @@ MODULE m_adjoint
     real(rp)     ::  x4_lbound
     real(rp)     ::  x4_ubound
 
+    real(rp)     ::  hydrograph_lbound
+    real(rp)     ::  hydrograph_ubound
+
     real(rp)     ::  Ks_lbound
     real(rp)     ::  Ks_ubound
     real(rp)     ::  PsiF_lbound
@@ -140,12 +143,25 @@ MODULE m_adjoint
     real(rp)     ::  DeltaTheta_lbound
     real(rp)     ::  DeltaTheta_ubound
 
+    real(rp)     ::  shape_s_lbound
+    real(rp)     ::  shape_s_ubound
+    real(rp)     ::  hmax_lbound
+    real(rp)     ::  hmax_ubound
+    real(rp)     ::  xcenter_ubound
+    real(rp)     ::  xcenter_lbound
+
     real(rp)     ::  Kappa7_lbound                      !< Lower bound for pedotransfer coefficient for Ks
     real(rp)     ::  Kappa7_ubound                      !< Upper bound for pedotransfer coefficient for Ks
     real(rp)     ::  Kappa8_lbound
     real(rp)     ::  Kappa8_ubound
     real(rp)     ::  Kappa9_lbound
     real(rp)     ::  Kappa9_ubound
+
+    real(rp)     ::  Porosity_lbound
+    real(rp)     ::  Porosity_ubound
+
+    real(rp)     :: manning_lbound
+    real(rp)     :: manning_ubound
 
 
 
@@ -1119,11 +1135,12 @@ CONTAINS
          do k = 1,bc%nb_in
 
             do i = 1,size( bc_back%hyd( k )%q(:) )
-!             write(*,*) "k, i , bc_back%hyd( k )%q(:)", k, i , bc_back%hyd( k )%q(:)
+!               write(*,*) "k, i , bc_back%hyd( k )%q(:)", k, i , bc_back%hyd( k )%q(:)
                call mpi_sum_r( bc_back%hyd( k )%q(i) )
             end do
 
          end do
+
 
          do k = 1,bc%nb_out
 
@@ -1160,7 +1177,7 @@ CONTAINS
          if ( c_manning_beta == 1 ) call var_2_control_back( manning_beta_back    , nland   , manning_data_glob )
          if ( c_bathy   == 1 ) call var_2_control_back( bathy_cell_back, mesh%nc , 0                 )
 
-         if ( c_porosity == 1 ) call var_2_control_back( SPorosity%Phi(:), SPorosity%nland, 0 )
+         if ( c_porosity == 1 ) call var_2_control_back( SPorosity_back%Phi(:), SPorosity%nland, 0 )
          if ( c_slope_y == 1 ) call var_2_control_back( slope_y , size(slope_y) , 0                 )
          if ( c_slope_x == 1 ) call var_2_control_back( slope_x , size(slope_x) , 0                 )
 
@@ -1330,19 +1347,36 @@ Kappa9_ubound = 50_rp
 Ks_lbound = 0.0000001_rp
 Ks_ubound = 0.00001_rp
 
-!       if ( c_shape_s == 1 ) then
-!          call var_2_control_bounds( shape_s_lbound, shape_s_ubound, size(XSshape), 1 )
-!       endif
-!       if ( c_hmax == 1 ) then
-!          call var_2_control_bounds( hmax_lbound, hmax_ubound, size(XSshape), 1 )
-!       endif
-!       if ( c_xcenter == 1 ) then
-!          call var_2_control_bounds( xcenter_lbound, xcenter_ubound, size(XSshape), 1 )
-!       endif
+shape_s_lbound = 0.1_rp
+shape_s_ubound = 2_rp
+hmax_lbound = 1.5_rp
+hmax_ubound = 3.5_rp
+xcenter_lbound = 20_rp
+xcenter_ubound = 40_rp
 
-!       if ( c_manning == 1 ) then
-!          call var_2_control_bounds( manning_lbound, manning_ubound, nland, 1 )
-!       endif
+hydrograph_lbound = 7.65_rp
+hydrograph_ubound = 9.35_rp
+
+Porosity_lbound = 0.1_rp
+Porosity_ubound = 1._rp
+
+manning_lbound = 0._rp
+manning_ubound = 1._rp
+
+
+      if ( c_shape_s == 1 ) then
+         call var_2_control_bounds( shape_s_lbound, shape_s_ubound, size(XSshape), 1 )
+      endif
+      if ( c_hmax == 1 ) then
+         call var_2_control_bounds( hmax_lbound, hmax_ubound, size(XSshape), 1 )
+      endif
+      if ( c_xcenter == 1 ) then
+         call var_2_control_bounds( xcenter_lbound, xcenter_ubound, size(XSshape), 1 )
+      endif
+
+       if ( c_manning == 1 ) then
+          call var_2_control_bounds( manning_lbound, manning_ubound, nland, 1 )
+       endif
 !       if ( c_manning_beta == 1 ) then
 !          call var_2_control_bounds( manning_beta_lbound, manning_beta_ubound, nland, 1 )
 !       endif
@@ -1388,11 +1422,15 @@ Ks_ubound = 0.00001_rp
 
 !
 !
-!          if ( c_hydrograph == 1 ) then
-!             do k = 1,bc%nb_in
-!                call var_2_control_bounds( hydrograph_lbound, hydrograph_ubound , size( bc%hyd( k )%q(:) ) , 1 )
-!             end do
-!          end if
+         if ( c_hydrograph == 1 ) then
+            do k = 1,bc%nb_in
+               call var_2_control_bounds( hydrograph_lbound, hydrograph_ubound , size( bc%hyd( k )%q(:) ) , 1 )
+            end do
+         end if
+
+         if ( c_porosity == 1 ) then
+            call var_2_control_bounds(Porosity_lbound, Porosity_ubound, SPorosity%nland, 1)
+         end if
 !
 !          if      ( c_ratcurve == 1 ) then
 !             do k = 1,bc%nb_out

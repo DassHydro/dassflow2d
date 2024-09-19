@@ -199,18 +199,17 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
       end do
 
-  enddo
+   enddo
 
  do i = 1, mesh%ne
 
-!  WRITE(*,*) "check mesh%edge(i)%boundary"
 
       if ( mesh%edge(i)%boundary ) then
 
 ! WRITE(*,*) "i=", i
-! WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
+! WRITE(*,*) "mesh%edge(i)%lim = ", mesh%edge(i)%lim
 ! WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
-! WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
+!WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim = ", mesh%edgeb(mesh%edge(i)%lim)%typlim
 
         if ( mesh%edgeb(mesh%edge(i)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
                 read(bc%typ (mesh%edgeb(mesh%edge(i)%lim)%group, 3 ),'(i3)') connected_num_bc !Get connectivity to 1D-like cell from bc.txt
@@ -257,9 +256,6 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
    end do
 
 
-
-
-!  WRITE(*,*) "NODES OK"
 !======================================================================================================================!
 !
 !  Edges geometrical properties :
@@ -374,6 +370,7 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 ! WRITE(*,*) "   connected_to_node( :)  ",  connected_to_node( :)
    end do
 
+
 ! WRITE(*,*) "edge2-----"
    do ib = 1,size(mesh%edgeb)
 ! WRITE(*,*) "mesh%edgeb(ib)%typlim "
@@ -414,9 +411,9 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 !~ 	print *, ie, "/", size(mesh%edge)
    end do
 
+
 !~    print *, proc, "finishing edges info"
 
-!  WRITE(*,*) "OUT Mesh_Geometric_Properties"
 END SUBROUTINE Mesh_Geometric_Properties
 
 

@@ -72,15 +72,15 @@ type = 'channel'
 
 mesh_name = gen_mesh(type,L,dx)
 
-# Remark : If you choose type = 'box' or 'flat_square' you must comment the call to the function plot_dat
+# Remark : If you choose type = 'box' or 'flat_square' you must comment the call to the function plot_dat and add '_box' to the name function plot_vtk
 
 
 ##########
 # Model
 ##########
 
-ts = 3600
-dtw = ts*0.25
+ts = 1000
+dtw = ts*0.2
 
 # REMARK : In this test-case, you must set nland equal to the number of cells in your mesh
 
@@ -215,7 +215,7 @@ h = my_model.kernel.dof.h[:nc]
 u = my_model.kernel.dof.u[:nc]
 v = my_model.kernel.dof.v[:nc]
 
-#plot_dat(graphe,display_ref,mesh_name,ts,h,u,v,h0,u0,v0)
+plot_dat(graphe,display_ref,mesh_name,ts,h,u,v,h0,u0,v0)
 
 # To save pictures : save = 1
 
@@ -225,10 +225,11 @@ save = 0
 
 time = 'final'
 
-plot_vtk(code_dir,'h',time,ts,save)
+#plot_vtk(code_dir,'h',time,ts,save)
 #plot_vtk(code_dir,'u',time,ts,save)
 #plot_vtk(code_dir,'v',time,ts,save)
-#plot_vtk(code_dir,'zs',time,ts,save)
+plot_vtk(code_dir,'zs','initial',ts,save)
+plot_vtk(code_dir,'zs',time,ts,save)
 #plot_vtk(code_dir,'porosity',time,ts,save)
 
 

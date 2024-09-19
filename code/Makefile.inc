@@ -78,7 +78,7 @@ CASEDIR	= ./bin_A
 #Fortran compiler: 	'0' for GNU, '1' for Intel
 COMPILO	= 0
 #Debug mode: 		'1' to activate. Not activating when computing adjoint model may cause errors.
-OPTIM		= 1
+OPTIM		= 0
 #SW model: 		'0' to not compile, '1' to compile SW_MONO, '2' to compile SW_HB, '3' to compile SW_MULTI
 MODEL		= 1
 #Hydrological model: 	'0' to not compile, '1' to compile
@@ -86,7 +86,7 @@ HYDRO		= 0
 #Adjoint model: 	'0' to not compile, '1' to compile
 ADJOINT	= 1
 #Minimization method: 	'1' to compile M1QN3, '2' to compile LBFGSB3
-MINMETHOD	= 1
+MINMETHOD	= 2
 #Solver: 		'1' for MUMPS (recommended), '2' for AGMG, '0' for no recompilation of external libraries
 SOLVER		= 0
 

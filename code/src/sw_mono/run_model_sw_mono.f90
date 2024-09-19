@@ -112,7 +112,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
             min( 0._rp, - abs(XSshape(1)%hmax) *&
             (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
             (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-            ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+            ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**abs(XSshape(1)%s))) &
             + bathy_temp &
             + slope_y(1) * mesh%cell(ie)%grav%y &
             + slope_x(1) * mesh%cell(ie)%grav%x
@@ -123,11 +123,11 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
             min( 0._rp, - abs(XSshape(1)%hmax) *&
             (1 - ( abs((mesh%cell(ie)%grav%x - XSshape(1)%xleft) -&
             (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-            ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+            ((XSshape(1)%xright-XSshape(1)%xcenter)) )**abs(XSshape(1)%s))) &
             + bathy_temp &
             + slope_y(1) * mesh%cell(ie)%grav%y &
             + slope_x(1) * mesh%cell(ie)%grav%x
-
+!write(*,*) ie, bathy_cell( ie ), bathy_temp, abs(XSshape(1)%hmax)
             endif
             
         enddo
@@ -144,7 +144,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
             min( 0._rp, - abs(XSshape(1)%hmax) *&
             (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
             (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-            ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**XSshape(1)%s)) &
+            ((XSshape(1)%xcenter-XSshape(1)%xleft)) )**abs(XSshape(1)%s))) &
             + bathy_temp &
             + slope_y(1) * mesh%cell(ie)%grav%y &
             + slope_x(1) * mesh%cell(ie)%grav%x
@@ -155,7 +155,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
             min( 0._rp, - abs(XSshape(1)%hmax) *&
             (1 - ( abs((mesh%cell(ie)%grav%y - XSshape(1)%xleft) -&
             (XSshape(1)%xcenter-XSshape(1)%xleft))/&
-            ((XSshape(1)%xright-XSshape(1)%xcenter)) )**XSshape(1)%s)) &
+            ((XSshape(1)%xright-XSshape(1)%xcenter)) )**abs(XSshape(1)%s))) &
             + bathy_temp &
             + slope_y(1) * mesh%cell(ie)%grav%y &
             + slope_x(1) * mesh%cell(ie)%grav%x
@@ -248,13 +248,13 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
     inquire( file = 'zs_init.txt' , exist = file_exist(1) )
 
     if ( file_exist(1) ) then
+    write(*,*) "Using zs_init.txt to initialize water depth"
         do i = 1, mesh%nc
             dof0%h(i) = max(0._rp, dof0%h(i) - bathy_cell(i) &
                      + slope_y(1) * mesh%cell(i)%grav%y &
                      + slope_x(1) * mesh%cell(i)%grav%x)
         enddo
     endif
-
 
     !======================================================================================================================!
    !  Run the GR4 scheme for all hourly time steps
@@ -334,7 +334,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !===================================================================================================================!
    !  Cost Function Calculation using Innovation Vector
    !===================================================================================================================!
-write(*,*) "call calc_cost_function( cost , mesh )"
+! write(*,*) "call calc_cost_function( cost , mesh )"
    call calc_cost_function( cost , mesh )
 
 CONTAINS

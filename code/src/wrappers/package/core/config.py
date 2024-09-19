@@ -323,7 +323,6 @@ class Config(dict):
                             df2d.wrapping.m_model.set_c_psif(input_param[k])
                      elif k == 'c_DeltaTheta':
                             df2d.wrapping.m_model.set_c_deltatheta(input_param[k])
-
                      elif k == 'c_ptf':
                             df2d.wrapping.m_model.set_c_ptf(input_param[k])
 

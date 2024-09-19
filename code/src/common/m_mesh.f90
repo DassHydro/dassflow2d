@@ -287,7 +287,7 @@ CONTAINS
       implicit none
       type(msh), intent(in) :: mesh
       open(10, file = 'XYcells.txt')
-      write(10,*) "index ", "x ", "y ", "invsurf ", "surf ", "boundary"
+      write(10,*) "# index ", "x ", "y ", "invsurf ", "surf ", "boundary"
       do i=1,mesh%nc
          write(10,*) i, mesh%cell(i)%grav%x, mesh%cell(i)%grav%y, mesh%cell(i)%invsurf, mesh%cell(i)%surf, mesh%cell(i)%boundary
       end do
