@@ -241,6 +241,14 @@ ifeq ($(HYDRO),1)
   CPP_HYD = -DUSE_HYDRO
 endif
 
+ifeq ($(INFILTRATION),1)
+  CPP_INFIL = -DUSE_INFIL
+endif
+
+ifeq ($(POROSITY),1)
+  CPP_PORO = -DUSE_PORO
+endif
+
 ifeq ($(MPI),1)
 
   CPP_MPI = -DUSE_MPI
@@ -265,9 +273,9 @@ ifeq ($(VALID),1)
   CPP_VAL = -DUSE_VALID
 endif
 
-CPP_FLAGS		=  $(CPP_COMP) $(CPP_MODEL)  $(CPP_HYD) $(CPP_ADJ) $(CPP_MPI) $(CPP_SOL) $(CPP_VAL) $(CPP_MIN)
-CPP_FLAGS_WRAP		=  $(CPP_COMP) $(CPP_MODEL) -DCPP_PASS  $(CPP_HYD) $(CPP_ADJ) $(CPP_MPI) $(CPP_SOL) $(CPP_VAL)
-CPP_FLAGS_ADJ  		=  $(CPP_COMP) $(CPP_MODEL) $(CPP_HYD) $(CPP_MPI_ADJ)
+CPP_FLAGS		=  $(CPP_COMP) $(CPP_MODEL) $(CPP_HYD) $(CPP_INFIL) $(CPP_PORO) $(CPP_ADJ) $(CPP_MPI) $(CPP_SOL) $(CPP_VAL) $(CPP_MIN)
+CPP_FLAGS_WRAP		=  $(CPP_COMP) $(CPP_MODEL) -DCPP_PASS  $(CPP_HYD) $(CPP_INFIL) $(CPP_PORO) $(CPP_ADJ) $(CPP_MPI) $(CPP_SOL) $(CPP_VAL)
+CPP_FLAGS_ADJ  		=  $(CPP_COMP) $(CPP_MODEL) $(CPP_HYD) $(CPP_INFIL) $(CPP_PORO) $(CPP_MPI_ADJ)
 
 #======================================================================================================================#
 #

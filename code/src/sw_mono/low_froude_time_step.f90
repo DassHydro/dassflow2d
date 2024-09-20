@@ -178,8 +178,8 @@ SUBROUTINE low_froude_time_step( dof , mesh )
    alpha_lf = demi
    gamma_lf = demi
 
-  write(*,*) "starting loop on edges "
-  write(*,*) "mesh%ne", mesh%ne
+!   write(*,*) "starting loop on edges "
+!   write(*,*) "mesh%ne", mesh%ne
    open(20,file="flux_edge.txt",status='replace',form='formatted')
    write(20,*) "ie, iL, iR, mesh%edge(ie)%boundary, mesh%edge(ie)%subdomain, Ftot_edge(:), hL * (( 1 - weight_rusanov) * phi_lf + weight_rusanov * phi_rusanov)"
    open(30,file="phi.txt",status='replace',form='formatted')

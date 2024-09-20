@@ -266,7 +266,7 @@ SUBROUTINE calc_innovQ( dof,mesh )
          innovQ ( iobs )%diff( searched_time )    = bc%sum_mass_flux( 1 ) - stationQ( iobs )%Q( searched_time )
          innovQ ( iobs )%ind_t  =  innovQ ( iobs )%ind_t + 1
 
-write(*,*) proc, tc, innovQ ( iobs )%diff( searched_time ), bc%sum_mass_flux( stationQ( iobs )%ind_bc ), stationQ( iobs )%Q( searched_time )!NOADJ
+! write(*,*) proc, tc, innovQ ( iobs )%diff( searched_time ), bc%sum_mass_flux( stationQ( iobs )%ind_bc ), stationQ( iobs )%Q( searched_time )!NOADJ
 !          endif
       end if
 

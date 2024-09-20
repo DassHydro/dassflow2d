@@ -747,9 +747,14 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    !  Global Variables
    type(msh), intent(in)  ::  mesh
    type(porosity_data), intent(inout) :: my_porosity
+   !  Local Variables
+   integer(ip) :: mesh_total_cells
+
+   mesh_total_cells = mesh%nc
+     call mpi_sum_i( mesh_total_cells )
 
     allocate ( my_porosity%Phi  ( my_porosity%nland ) )
-    allocate ( my_porosity%land ( mesh%nc ) )
+    allocate ( my_porosity%land ( mesh_total_cells ) )
 
     allocate ( my_porosity%PhiW ( my_porosity%nland ) )
     allocate ( my_porosity%PhiG ( my_porosity%nland ) )

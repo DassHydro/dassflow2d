@@ -81,17 +81,21 @@ COMPILO	= 0
 OPTIM		= 1
 #SW model: 		'0' to not compile, '1' to compile SW_MONO, '2' to compile SW_HB, '3' to compile SW_MULTI
 MODEL		= 1
-#Hydrological model: 	'0' to not compile, '1' to compile
+#Hydrological model: 	'0' to not compile, '1' to compile hydrological model (currently unmaintained)
 HYDRO		= 0
+#Infiltration model: 	'0' to not compile, '1' to compile rain module and both Green-Ampt and SCS-CN infiltration options
+INFILTRATION	= 1
+#Porosity model: 	'0' to not compile, '1' to compile Single Porosity
+POROSITY	= 1
 #Adjoint model: 	'0' to not compile, '1' to compile
 ADJOINT	= 1
 #Minimization method: 	'1' to compile M1QN3, '2' to compile LBFGSB3
-MINMETHOD	= 2
+MINMETHOD	= 1
 #Solver: 		'1' for MUMPS (recommended), '2' for AGMG, '0' for no recompilation of external libraries
 SOLVER		= 0
 
 #Parallel computing: 	'1' to use
-MPI		= 0
+MPI		= 1
 #If MPI=1, number of processors to use
 NB_PROC	= 2
 

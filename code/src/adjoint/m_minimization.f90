@@ -606,11 +606,6 @@ CONTAINS
 
             call adjoint_model( mesh , dof0 , dof )
 
-            if (size(control) <= 10) then
-               write(*,*) "write control", control
-            else
-               write(*,*) "Size of control > 10"
-            end if
             ! make plots !
             if ( c_gr4params == 1 ) then
             open(1234,file="min/gr4_params_states_current",form='formatted')

@@ -2504,7 +2504,7 @@ manning_ubound = 1._rp
             end do
          end if
 #endif
-write(*,*) c_hydrograph, c_manning, c_bathy, size(control)
+! write(*,*) c_hydrograph, c_manning, c_bathy, size(control)
 
             open(1234,file="grad/control_back_current",form='formatted')
             do i=1, size(control)

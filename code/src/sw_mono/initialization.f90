@@ -137,7 +137,9 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !      endif
      
 #ifdef USE_MPI
-
+write(*,*) proc, "land", size(land),minval(land),maxval(land)
+write(*,*) proc, "SPorosity%land", size(SPorosity%land),minval(SPorosity%land),maxval(SPorosity%land)
+! write(*,*) proc, "infil%land", size(infil%land),minval(infil%land),maxval(infil%land)
    call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
    call reallocate_i( land ,                 mesh%nc   )
 
@@ -146,7 +148,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !          call reallocate_i( bc%rain_land ,                 mesh%nc   )
 !    endif
 #ifdef USE_PORO
-   if (allocated(my_porosity%Phi)) then
+   if (use_porosity .ne. 0) then
          call swap_vec_i  ( SPorosity%land , swap_index( 1 : mesh%nc ) )
          call reallocate_i( SPorosity%land ,                 mesh%nc   )
    endif
@@ -165,8 +167,11 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !             call swap_vec_i  ( phys_desc%ptf_land , swap_index( 1 : mesh%nc ) )
 !             call reallocate_i( phys_desc%ptf_land ,                 mesh%nc   )
 !          endif
-
    endif
+
+write(*,*) proc, "land", size(land),minval(land),maxval(land)
+write(*,*) proc, "SPorosity%land", size(SPorosity%land),minval(SPorosity%land),maxval(SPorosity%land)
+! write(*,*) proc, "infil%land", size(infil%land),minval(infil%land),maxval(infil%land)
 #endif
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
 
@@ -1802,7 +1807,7 @@ allocate( manning( size ( my_friction%manning ) ) )
 allocate( manning_beta( size ( my_friction%manning_beta ) ) )
 
 ! loop on all cells to define patch correspondance
-do i = 1,mesh%nc
+do i = 1,size(my_friction%land)
    land( i )  =  my_friction%land( i )
 end do
 
@@ -1894,11 +1899,11 @@ type( porosity_data ), intent(in   )  ::  my_porosity
 
 SPorosity%nland = my_porosity%nland
 
-allocate( SPorosity%land( mesh%nc ) )
-allocate( SPorosity%Phi ( SPorosity%nland ) )
+allocate( SPorosity%land( size( my_porosity%land ) ) )
+allocate( SPorosity%Phi ( size( my_porosity%Phi ) ) )
 
 ! loop on all cells to define patch correspondance
-do i = 1,mesh%nc
+do i = 1,size(my_porosity%land)
    SPorosity%land( i )  =  my_porosity%land( i )
 end do
    
