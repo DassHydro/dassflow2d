@@ -72,7 +72,7 @@ mesh = 'channel_dx=0.1000_L=100.geo' # Maillage classique du canal, à utiliser 
 
 mesh = 'mesh_grossier_dx=0.1_L=100.geo' # Maillage avec rétrécissements, à utiliser sans valeur de porosité (1D avec rectangle)
 
-mesh = 'mesh_raffine.geo' # Maillage avec rétrécissements plus précis, à utiliser sans valeur de porosité (2D avec triangles)
+#mesh = 'mesh_raffine.geo' # Maillage avec rétrécissements plus précis, à utiliser sans valeur de porosité (2D avec triangles)
 
 
 ts = 1000
@@ -217,8 +217,8 @@ save = 0
 
 time = 'final'
 
-plot_vtk(code_dir,'h',time,ts,save)
-plot_vtk(code_dir,'u',time,ts,save)
+#plot_vtk(code_dir,'h',time,ts,save)
+#plot_vtk(code_dir,'u',time,ts,save)
 #plot_vtk(code_dir,'v',time,ts,save)
 #plot_vtk(code_dir,'zs',time,ts,save)
 #plot_vtk(code_dir,'porosity',time,ts,save)
