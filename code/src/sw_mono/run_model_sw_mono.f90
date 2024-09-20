@@ -379,15 +379,15 @@ CONTAINS
 
 						case( 'first_b1' )
 
-                           if (use_porosity == 1) then
+                         !  if (use_porosity == 1) then
 
-                              call euler_time_step_first_b1_porosity( dof , mesh )
+                         !    call euler_time_step_first_b1_porosity( dof , mesh )
                      
-                           else
+                         !  else
 
-                              call euler_time_step_first_b1( dof , mesh )
+                              call euler_time_step_first_b1( dof , mesh ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
                      
-                           end if
+                         !  end if
 
 						case default
 							call Stopping_Program_Sub( 'Unknow spatial scheme' )
