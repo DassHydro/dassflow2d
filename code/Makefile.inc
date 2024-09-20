@@ -86,7 +86,7 @@ HYDRO		= 0
 #Adjoint model: 	'0' to not compile, '1' to compile
 ADJOINT	= 1
 #Minimization method: 	'1' to compile M1QN3, '2' to compile LBFGSB3
-MINMETHOD	= 1
+MINMETHOD	= 2
 #Solver: 		'1' for MUMPS (recommended), '2' for AGMG, '0' for no recompilation of external libraries
 SOLVER		= 0
 
