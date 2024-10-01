@@ -114,13 +114,14 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 
    if (allocated(my_friction%manning)) call my_friction_2_fortran(my_friction) ! propagate definition of friction from fortran to manning,
-
+#ifdef USE_PORO
    if (allocated(my_porosity%Phi) ) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
-
+#endif
+#ifdef USE_INFIL
    if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
 
    if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
-
+#endif
 
 !
 !      if (allocated(my_bc%rain)) then
@@ -137,8 +138,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 !      endif
      
 #ifdef USE_MPI
-write(*,*) proc, "land", size(land),minval(land),maxval(land)
-write(*,*) proc, "SPorosity%land", size(SPorosity%land),minval(SPorosity%land),maxval(SPorosity%land)
 ! write(*,*) proc, "infil%land", size(infil%land),minval(infil%land),maxval(infil%land)
    call swap_vec_i  ( land , swap_index( 1 : mesh%nc ) )
    call reallocate_i( land ,                 mesh%nc   )
@@ -169,8 +168,6 @@ write(*,*) proc, "SPorosity%land", size(SPorosity%land),minval(SPorosity%land),m
 !          endif
    endif
 
-write(*,*) proc, "land", size(land),minval(land),maxval(land)
-write(*,*) proc, "SPorosity%land", size(SPorosity%land),minval(SPorosity%land),maxval(SPorosity%land)
 ! write(*,*) proc, "infil%land", size(infil%land),minval(infil%land),maxval(infil%land)
 #endif
    call swap_vec_r  ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )

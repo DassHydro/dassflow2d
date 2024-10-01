@@ -131,17 +131,17 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
           zL = bathy_cell( iL )
 
             !================= Temporary modifications for some Andromede cases
-!             if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
-!                zR = bathy_cell( iL ) !&
-!                      !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
-!                      !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
-!             else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
-!                zR = bathy_cell( iL ) &
-!                + slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
-!                + slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
-!             else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
-!                zR = bathy_cell( iL )
-!             endif
+            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
+               zR = bathy_cell( iL ) !&
+                     !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+                     !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
+               zR = bathy_cell( iL ) &
+               + slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+               + slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
+               zR = bathy_cell( iL )
+            endif
             !================= Temporary modifications for some Andromede cases
 
              if (.not. ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' )) then !do not call boundary calculations for internal BCs

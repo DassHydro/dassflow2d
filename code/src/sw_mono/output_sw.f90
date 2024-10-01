@@ -2333,7 +2333,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 !
 !     endif
 #endif
-write(*,*) "AFTER INFIL PART"
+
    !===================================================================================================================!
    ! Writing VTK file manning_land cell data
    !===================================================================================================================!
@@ -2378,7 +2378,7 @@ write(*,*) "AFTER INFIL PART"
       end if
       call mpi_wait_all
    enddo
-write(*,*) "BEFORE PORO PART"
+
 #ifdef USE_PORO
 !===================================================================================================================!
 !   Writing VTK file porosity cell data
@@ -2422,7 +2422,7 @@ write(*,*) "BEFORE PORO PART"
    end if
 
 #endif
-write(*,*) "AFTER PORO PART"
+
 #ifdef USE_INFIL
    !===================================================================================================================!
    ! Writing VTK file rain_land cell data
