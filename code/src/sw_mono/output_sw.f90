@@ -2387,22 +2387,32 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
    if ( use_porosity == 1 ) then
 ! write(*,*) proc, SPorosity%land
 ! write(*,*) proc, SPorosity%Phi
-        do k = 0,np-1
 
-         if ( proc == k ) then
+   do k = 0,np-1
+      if ( proc == k ) then
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+       if ( proc == 0 ) write(10) 'SCALARS '//'porosity_land'//' integer 1'//char(10)
+         if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                             write(10) SPorosity%land(1:mesh%nc)
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+      end if
+      call mpi_wait_all
+   enddo
 
-            open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
-
-            if ( proc == 0    ) write(10) 'SCALARS '//'porosity_land'//' double 1'//char(10)
-            if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-                                write(10) SPorosity%land(1:mesh%nc)
-            if ( proc == np-1 ) write(10) char(10)
-
-            close(10)
-
-        endif
-        call mpi_wait_all
-     enddo
+   do k = 0,np-1
+      if ( proc == k ) then
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+       if ( proc == 0 ) write(10) 'SCALARS '//'Phi'//' double 1'//char(10)
+         if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                             write(10) SPorosity%Phi( SPorosity%land(i) )
+                        enddo
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+      end if
+      call mpi_wait_all
+   enddo
 
 !     do k = 0,np-1
 !         if ( proc == k ) then
