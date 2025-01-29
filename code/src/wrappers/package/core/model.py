@@ -216,18 +216,18 @@ class dassflowmodel(object):
         dassflow2d.wrapping.call_model.init_fortran(self.kernel)
 
 
-    def init_param(self, **kwargs):       
-        """
-        Get parameters values from fortran kernel and put them in dassflowmodel class
+    #def init_param(self, **kwargs):       
+     #   """
+     #   Get parameters values from fortran kernel and put them in dassflowmodel class
 
-        it accounts for:
-        - friction.manning
+     #   it accounts for:
+     #   - friction.manning
 
-        return:
-        self.param: dassflow2d.core.param object
-        """
-        self.param = Param()
-        self.param.get()
+     #   return:
+     #   self.param: dassflow2d.core.param object
+     #   """
+     #   self.param = Param()
+     #   self.param.get()
 
     def init_all(self):
         """
@@ -240,7 +240,7 @@ class dassflowmodel(object):
         # initialise remaining structures
         self.init_fortran()
         # source param kernel data to python
-        self.init_param()
+        # self.init_param()
 #=================================================================#
 # RUN                                                              #
 #=================================================================#
@@ -278,24 +278,24 @@ class dassflowmodel(object):
             self.min = Min(bin_dir = self.bin_dir)
             self.min.source_all()
 
-        # if hydrograph infered, replace the hydrograph.txt file, so that we can perform direct simulation with infered parameter
-        if dassflow2d.wrapping.m_model.get_c_hydrograph() ==1:
-            os.chdir(self.bin_dir)
-            os.system('cp ./hydrograph.txt ./hydrograph_prior.txt')
-            key_last_ite = len(self.min.param["hydrograph"])
-            with open('./hydrograph.txt', 'w') as f:
-                f.write("#comment\n")
-                f.write("#comment\n")
-                f.write("#comment\n")
-                f.write(f"{len(self.min.param['hydrograph'][key_last_ite])}\n")
-                for key_id_hydrograph, hyd in  self.min.param["hydrograph"][key_last_ite].items():
-                    nb_timstep = np.shape(hyd)[0]
+            # if hydrograph infered, replace the hydrograph.txt file, so that we can perform direct simulation with infered parameter
+            if dassflow2d.wrapping.m_model.get_c_hydrograph() ==1:
+                os.chdir(self.bin_dir)
+                os.system('cp ./hydrograph.txt ./hydrograph_prior.txt')
+                key_last_ite = len(self.min.param["hydrograph"])
+                with open('./hydrograph.txt', 'w') as f:
                     f.write("#comment\n")
                     f.write("#comment\n")
                     f.write("#comment\n")
-                    f.write(f"{str(nb_timstep)}\n")
-                    for id_timestep in range(nb_timstep):
-                        f.write(f"{hyd[id_timestep, 0]} {hyd[id_timestep, 1]}\n")
+                    f.write(f"{len(self.min.param['hydrograph'][key_last_ite])}\n")
+                    for key_id_hydrograph, hyd in  self.min.param["hydrograph"][key_last_ite].items():
+                        nb_timstep = np.shape(hyd)[0]
+                        f.write("#comment\n")
+                        f.write("#comment\n")
+                        f.write("#comment\n")
+                        f.write(f"{str(nb_timstep)}\n")
+                        for id_timestep in range(nb_timstep):
+                            f.write(f"{hyd[id_timestep, 0]} {hyd[id_timestep, 1]}\n")
                     
             # hydrograph.txt file has been rewriten, lets clean the kernel, reinitilize the model, and perform direct simulation with appropriate parameter                
         #                dassflow2d.wrapping.call_model.clean_model(self.kernel)
@@ -334,7 +334,7 @@ class dassflowmodel(object):
         self.config.save(hdf5_path=self.hdf5_path)
         self.meshing.save(hdf5_path=self.hdf5_path)
         self.boundary.save(hdf5_path=self.hdf5_path) 
-        self.param.save(hdf5_path=self.hdf5_path) 
+        #self.param.save(hdf5_path=self.hdf5_path) 
 
 
 
