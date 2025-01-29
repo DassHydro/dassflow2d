@@ -45,6 +45,10 @@ class Config(dict):
                                                  "heps":0,
                                                  "friction":0,
                                                  "g":10,
+                                                 "rho": 1000,
+                                                 "tau_c": 0,
+                                                 "K_index": 0.001,
+                                                 "m_powerlaw_index": 1,
                                                  "w_tecplot":0,
                                                  "w_vtk":0,
                                                  "w_gnuplot":1,
@@ -87,6 +91,10 @@ class Config(dict):
                                                  "heps":0,
                                                  "friction":0,
                                                  "g":10,
+                                                 "rho": 1000,
+                                                 "tau_c": 0,
+                                                 "K_index": 0.001,
+                                                 "m_powerlaw_index": 1,
                                                  "w_tecplot":0,
                                                  "w_vtk":0,
                                                  "w_gnuplot":0,
@@ -151,6 +159,14 @@ class Config(dict):
                             res[k] = df2d.wrapping.m_model.get_friction()
                      elif k == 'g':
                             res[k] = df2d.wrapping.m_model.get_g()
+                     elif k == 'rho':
+                            res[k] = df2d.wrapping.m_model.get_rho()
+                     elif k == 'tau_c':
+                            res[k] = df2d.wrapping.m_model.get_tau_c()
+                     elif k == 'K_index':
+                            res[k] = df2d.wrapping.m_model.get_k_index()
+                     elif k == 'm_powerlaw_index':
+                            res[k] = df2d.wrapping.m_model.get_m_powerlaw_index()
                      elif k == 'c_manning':
                             res[k] =  df2d.wrapping.m_model.get_c_manning()
                      elif k == 'c_manning_beta':
@@ -270,6 +286,14 @@ class Config(dict):
                             df2d.wrapping.m_model.set_friction(input_param[k])
                      elif k == 'g':
                             df2d.wrapping.m_model.set_g(input_param[k])
+                     elif k == 'rho':
+                            df2d.wrapping.m_model.set_rho(input_param[k])
+                     elif k == 'tau_c':
+                            df2d.wrapping.m_model.set_tau_c(input_param[k])
+                     elif k == 'K_index':
+                            df2d.wrapping.m_model.set_k_index(input_param[k])
+                     elif k == 'm_powerlaw_index':
+                            df2d.wrapping.m_model.set_m_powerlaw_index(input_param[k])
                      elif k == 'c_manning':
                             df2d.wrapping.m_model.set_c_manning(input_param[k])
                      elif k == 'c_manning_beta':
@@ -364,6 +388,10 @@ class Config(dict):
                                                  "heps":0,
                                                  "friction":0,
                                                  "g":10,
+                                                 "rho": 1000,
+                                                 "tau_c": 0,
+                                                 "K_index": 0.001,
+                                                 "m_powerlaw_index": 1,
                                                  "w_tecplot":0,
                                                  "w_vtk":0,
                                                  "w_gnuplot":0,
