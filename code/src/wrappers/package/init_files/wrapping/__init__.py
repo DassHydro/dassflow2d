@@ -8,7 +8,7 @@ enable the fortran subroutines calls
 """
 
 
-from dassflow2d.wrapping import _wrapping, m_mesh, m_common, m_linear_algebra, m_model, m_mpi,call_model, m_adjoint
+from dassflow2d.wrapping import _wrapping, m_mesh, m_common, m_linear_algebra, m_model, m_mpi,call_model
 
 
 def read_input(filename):
