@@ -61,6 +61,9 @@
 !**********************************************************************************************************************!
 
 !> brief friction calculation for imex case 
+
+#if defined USE_SW_MONO || USE_HB
+
 SUBROUTINE friction_imex( dof_imp , dof_exp , rk1 , rk2 , mesh )
 
    USE m_common
@@ -167,3 +170,82 @@ SUBROUTINE friction_imex( dof_imp , dof_exp , rk1 , rk2 , mesh )
    call com_dof( dof_imp , mesh )
 
 END SUBROUTINE friction_imex
+
+#endif
+
+#if defined USE_HB
+
+SUBROUTINE friction_euler_HB( dof , mesh , local_slopes   )! WS_gradient
+
+   USE m_common
+   USE m_mesh
+   USE m_mpi
+   USE m_time_screen
+   USE m_model
+
+   implicit none
+
+   !===================================================================================================================!
+   !  Interface Variables
+   !===================================================================================================================!
+   TYPE( msh ), intent(in   )  ::  mesh
+   type( unk ), intent(inout)  ::  dof
+   double precision, intent(in), dimension(mesh%nc,2) :: local_slopes
+
+   !===================================================================================================================!
+   !  Local Variables
+   !===================================================================================================================!
+   real(rp)  ::  h , u , v                               ! Temporal primitive variables
+
+   real(rp)  ::  ft_x, ft_y                                      ! Friction term as Sf expression
+   real(rp)  ::  ft_D
+
+   real(rp)  ::  m1 , m2 , m3, gg_x, gg_y, alpha, h_c, sgn, C_star
+
+   !===================================================================================================================!
+   !  Begin Subroutine
+   !===================================================================================================================!
+
+     	if      ( friction == 1 ) then
+      
+            m1 = 1._rp / (m_powerlaw_index + 2._rp)
+	    	   m2 = 1._rp / ((m_powerlaw_index + 1._rp) * (m_powerlaw_index + 2._rp))
+            m3 = 1._rp / (m_powerlaw_index + 1._rp)
+
+            S_theta_m = sqrt(sin(local_slopes(i,1))**2 + sin(local_slopes(i,2))**2)
+
+            S_theta_x =  sqrt(sin(local_slopes(i,1))**2)
+
+            ! sqrt((sin(local_slopes(i,1)) - 0*cos(local_slopes(i,1))*WS_gradient(i,1))**2)!
+
+            S_theta_y = 0.000001 !sqrt(sin(local_slopes(i,2))**2)
+
+            !S_theta_y = sqrt((sin(local_slopes(i,2)) - 0*cos(local_slopes(i,2))*WS_gradient(i,2))**2) !
+
+	    	   gg_x = rho * g * S_theta_x! + epsilo !Gravity term
+            gg_y = rho * g * S_theta_y! + epsilo !Gravity term
+
+            h_c = max( 0.0_rp , dof%h(i) - (tau_c/ (rho * g * S_theta_m)))
+
+
+	   !Denominator D(h)
+            ft_D = (h_c**(m_powerlaw_index+1)) * (m3 * dof%h(i) - m2* h_c)
+
+      !Denominator
+
+            ft_x = rho * ft_D + dt * K_index * (tau_c/(rho * g * S_theta_m) + h_c) * (K_index / gg_x)**(m_powerlaw_index-1)
+
+            ft_y = rho * ft_D + dt * K_index * (tau_c/(rho * g * S_theta_m) + h_c) * (K_index / gg_y)**(m_powerlaw_index-1)
+
+		!Num/Denom
+            ft_x = (rho *  ft_D) / ft_x
+            ft_y = (rho *  ft_D) / ft_y
+
+            dof%u(i)  =  dof%u(i) * ft_x
+            dof%v(i)  =  dof%v(i) * ft_y
+
+        end if
+
+END SUBROUTINE friction_euler_HB
+
+#endif
