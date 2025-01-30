@@ -68,7 +68,7 @@ MODULE m_obs
    USE m_common
    USE m_mpi
 
-   #if defined USE_SW_MONO || USE_SW_MULTI || USE_NS_MULTIFLUID
+   #if defined USE_SW_MONO || USE_SW_MULTI || USE_NS_MULTIFLUID || USE_HB
 
       USE m_model
 
