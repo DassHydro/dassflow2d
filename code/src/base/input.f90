@@ -64,7 +64,7 @@
 !! \details Reading input.txt file and Filling namelist
 SUBROUTINE Read_Input(filename)
 
-   #if defined USE_SW_MONO || USE_SW_MULTI || USE_NS_MULTIFLUID
+   #if defined USE_SW_MONO || USE_SW_MULTI || USE_NS_MULTIFLUID || USE_HB
       USE m_model
    #else
       USE m_user_test
@@ -164,7 +164,7 @@ SUBROUTINE Mesh_Input(mesh)
 
          call Create_Cartesian_Mesh( mesh )
 
-      #if defined USE_SW_MONO
+      #if defined USE_SW_MONO || USE_HB
 
          case( 'dassflow' )
             call Read_Dass_Mesh( mesh )
@@ -532,7 +532,7 @@ END SUBROUTINE Create_Cartesian_Mesh
 !!      - if bc == ratcurve  or bc == discharge, bc%xxx are defined and mesh boundary types are also defined
 !!      - ghost cells corresponding are defined
 
-#if defined USE_SW_MONO
+#if defined USE_SW_MONO || USE_HB
 SUBROUTINE Read_Dass_Mesh( mesh )
 
    USE m_common
