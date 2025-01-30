@@ -212,7 +212,25 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
         read(10,rec=1, err=100) tc0
         line_read = line_read + 1
         if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
+	
+#if defined USE_HB
 
+     !!!! initial condition !!!!
+
+      do i = 1,mesh%nc    ! for each cell in the mesh
+
+         !if ( mesh%cell(i)%grav%x <= 0.5 ) then !.and. mesh%cell(i)%grav%y >= 1.25 .and. mesh%cell(i)%grav%y <= 1.75  )  then   ! if the gravity center is behind the gate located at 0.317, the height "h" in each cell is given by
+
+            !dof0%h(i) = max(0._rp, (0.12 + (mesh%cell(i)%grav%x - 0.25)*tan(0.436))) !0.03_rp !max(0._rp, (0.12 + (mesh%cell(i)%grav%x - 0.25)*tan(0.06981))) ! - bathy_cell(i)  !bathy_user(x,y) + h_g + ( lx - l_r ) * tan (angle_theta)
+
+         !else   ! after the gate, the height "h" is zero (dry)
+
+            dof0%h(i) = 0.005_rp!-100.0_rp
+
+         !end if
+
+      end do
+#endif
      end if
 
    call com_dof( dof0 , mesh )
