@@ -62,7 +62,7 @@
 
 !> \brief  Perform Euler Time Step dedicated to Shallow-Water Equations
 !! \return dof updated after this new timestep
-SUBROUTINE euler_time_step_first_b1( dof , mesh )
+SUBROUTINE euler_time_step_first_b1( dof , mesh , local_slopes )
 
    USE m_common
    USE m_mesh
@@ -104,13 +104,24 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    real(rp)  ::  vel                                     ! Velocity norm
    real(rp)  ::  sfl                                     ! Manning
    real(rp)  :: madd                                     ! mass rain >TGADJ
+   
+   ! Non-Newtonian variables
+   real(rp) :: n_powerlaw
+   real(rp) :: SxL(2), SyL(2), SxR(2), SyR(2)
+   real(rp) :: corrective_term_x_L(2), corrective_term_y_L(2), &
+   	       corrective_term_x_R(2), corrective_term_y_R(2)
+   real(rp) :: coeff_x_L(2), coeff_y_L(2), &
+   	       coeff_x_R(2), coeff_y_R(2)
+   
    !===================================================================================================================!
    !  Begin Subroutine
    !===================================================================================================================!
 
 
    tflux(:,:)  =  0._rp
-
+   n_powerlaw = 1/m_powerlaw_index
+   C_m =  1._rp / ((2._rp * m_powerlaw_index + 3._rp) * (m_powerlaw_index + 2._rp)**2) ! expression involving Power law index
+   
    do ie = 1,mesh%ne
 
       !================================================================================================================!
@@ -141,6 +152,9 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
 
          uL(1)  =  dof%u( iL )
          vL(1)  =  dof%v( iL )
+
+  	 SxL(1) = local_slopes( iL, 1)    ! x-slope of the current cell
+         SyL(1) = 0.000001    ! y-slope of the current cell, very low value for flat plane in y-direction
 
          uL(2)  =  mesh%edge(ie)%normal%x * uL(1) + mesh%edge(ie)%normal%y * vL(1)
          vL(2)  =  mesh%edge(ie)%normal%x * vL(1) - mesh%edge(ie)%normal%y * uL(1)
@@ -175,6 +189,9 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
                 uR(1)  =  dof%u( iR )
                 vR(1)  =  dof%v( iR )
 
+  		SxR(1)  =  local_slopes( iR, 1 ) ! x-slope of neighbor cell
+            	SyR(1)  =  0.000001 ! y-slope of neighbor cell
+
                 uR(2)  =  mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
                 vR(2)  =  mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
 
@@ -200,6 +217,89 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
          hL(2)  =  max( 0._rp , hL(1) + zL - max( zL , zR ) )
          hR(2)  =  max( 0._rp , hR(1) + zR - max( zL , zR ) )
 
+	 !=============================================================================================================!
+  	 !  Calculating corrective terms and boussinesq coefficient for Non-Newtonian flows
+  	 !=============================================================================================================!
+
+	 corrective_term_x_L(1) = C_m * ((rho*g/K_index)**2 * sin(ABS(SxL(1))) * &
+                           sin(ABS(SxL(1))))** m_powerlaw_index * &
+                           hL(2)**(2 * m_powerlaw_index + 3)
+
+         corrective_term_y_L(1) = C_m * ((rho*g/K_index)**2 * sin(ABS(SyL(1))) * &
+                           sin(ABS(SyL(1))))** m_powerlaw_index * &
+                           hL(2)**(2 * m_powerlaw_index + 3)
+
+         corrective_term_x_L(2)  =  mesh%edge(ie)%normal%x * corrective_term_x_L(1) + &
+                     mesh%edge(ie)%normal%y * corrective_term_y_L(1)
+
+         corrective_term_y_L(2)  =  mesh%edge(ie)%normal%x * corrective_term_y_L(1) - &
+                     mesh%edge(ie)%normal%y * corrective_term_x_L(1)
+
+         !===================================================================!
+
+         corrective_term_x_R(1) = C_m * ((rho*g/K_index)**2 * sin(ABS(SxR(1))) * &
+                           sin(ABS(SxR(1))))** m_powerlaw_index * &
+                           hR(2)**(2 * m_powerlaw_index + 3)
+
+         corrective_term_y_R(1) = C_m * ((rho*g/K_index)**2 * sin(ABS(SyR(1))) * &
+                           sin(ABS(SyR(1))))** m_powerlaw_index * &
+                           hR(2)**(2 * m_powerlaw_index + 3)
+
+         corrective_term_x_R(2)  =  mesh%edge(ie)%normal%x * corrective_term_x_R(1) + &
+                     mesh%edge(ie)%normal%y * corrective_term_y_R(1)
+
+         corrective_term_y_R(2)  =  mesh%edge(ie)%normal%x * corrective_term_y_R(1) - &
+                     mesh%edge(ie)%normal%y * corrective_term_x_R(1)
+
+         !===================================================================!
+
+         coeff_x_L(1) = ((2*n_powerlaw+1)/(3*n_powerlaw+2)) * &
+         ((2*rho*g*(hL(2))*sin(ABS(SxL(1)))*(n_powerlaw+1)**2 + &
+         tau_c*n_powerlaw*(4*n_powerlaw + 3)) / &
+         (rho*g*(hL(2))*sin(ABS(SxL(1)))*(n_powerlaw+1)**2 + &
+         2*n_powerlaw*tau_c*(n_powerlaw+1) + &
+         (n_powerlaw**2*tau_c**2)/(rho*g*(hL(2))*sin(ABS(SxL(1))))))
+
+         coeff_y_L(1) = ((2*n_powerlaw+1)/(3*n_powerlaw+2)) * &
+         ((2*rho*g*(hL(2))*sin(ABS(SyL(1)))*(n_powerlaw+1)**2 + &
+         tau_c*n_powerlaw*(4*n_powerlaw + 3)) / &
+         (rho*g*(hL(2))*sin(ABS(SyL(1)))*(n_powerlaw+1)**2 + &
+         2*n_powerlaw*tau_c*(n_powerlaw+1) + &
+         (n_powerlaw**2*tau_c**2)/(rho*g*(hL(2))*sin(ABS(SyL(1))))))
+
+         coeff_x_L(2)  =  mesh%edge(ie)%normal%x * coeff_x_L(1) + &
+                     mesh%edge(ie)%normal%y * coeff_y_L(1)
+
+         coeff_y_L(2)  =  mesh%edge(ie)%normal%x * coeff_y_L(1) - &
+                     mesh%edge(ie)%normal%y * coeff_x_L(1)
+
+         !===================================================================!
+
+         coeff_x_R(1) = ((2*n_powerlaw+1)/(3*n_powerlaw+2)) * &
+            ((2*rho*g*(hR(2))*sin(ABS(SxR(1)))*(n_powerlaw+1)**2 + &
+            tau_c*n_powerlaw*(4*n_powerlaw + 3)) / &
+            (rho*g*(hR(2))*sin(ABS(SxR(1)))*(n_powerlaw+1)**2 + &
+            2*n_powerlaw*tau_c*(n_powerlaw+1) + &
+            (n_powerlaw**2*tau_c**2)/(rho*g*(hR(2))*sin(ABS(SxR(1))))))
+
+         coeff_y_R(1) = ((2*n_powerlaw+1)/(3*n_powerlaw+2)) * &
+            ((2*rho*g*(hR(2))*sin(ABS(SyR(1)))*(n_powerlaw+1)**2 + &
+            tau_c*n_powerlaw*(4*n_powerlaw + 3)) / &
+            (rho*g*(hR(2))*sin(ABS(SyR(1)))*(n_powerlaw+1)**2 + &
+            2*n_powerlaw*tau_c*(n_powerlaw+1) + &
+            (n_powerlaw**2*tau_c**2)/(rho*g*(hR(2))*sin(ABS(SyR(1))))))
+
+         coeff_x_R(2)  =  mesh%edge(ie)%normal%x * coeff_x_R(1) + &
+                     mesh%edge(ie)%normal%y * coeff_y_R(1)
+
+         coeff_y_R(2)  =  mesh%edge(ie)%normal%x * coeff_y_R(1) - &
+                     mesh%edge(ie)%normal%y * coeff_x_R(1)
+
+	 !===================================================================!
+       	 
+	 dbdx_L = local_slopes(iL, 1) ! local slope of the current cell, already in rad
+         dbdy_L = 0.000001 !local_slopes(iL, 2) ! already in rad
+    
          !=============================================================================================================!
          !  Calling the balanced HLLC Solver dedicated to Shallow-Water Equations
          !=============================================================================================================!
