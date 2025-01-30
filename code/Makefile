@@ -226,7 +226,7 @@ ifeq ($(COMPILO),1)
 endif
 
 ifeq ($(MODEL),1)
-  CPP_MODEL = -DUSE_SW_MONO
+  CPP_MODEL = -DUSE_HB
 endif
 
 ifeq ($(MODEL),2)
