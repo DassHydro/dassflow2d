@@ -130,6 +130,13 @@ MODULE m_model
    real(rp), dimension(:), allocatable :: slope_y !Added for Andromede, to expand
    real(rp), dimension(:), allocatable :: slope_x !Added for Andromede, to expand
 
+#if defined USE_HB
+   real(rp)     		 ::  C_m                                        ! Power law term in the fluxes
+   real(rp)     		 ::  S_theta_m
+   real(rp)     		 ::  S_theta_x                                    ! slope term in x direction/ y - direction
+   real(rp)     		 ::  S_theta_y                                  ! modulus of  slope terms
+#endif
+
    TYPE xsshp
 
     real(rp) :: xleft
@@ -446,6 +453,13 @@ MODULE m_model
    !  Input variables specific to model (in addition to m_common)
    !===================================================================================================================!
 
+#if defined USE_HB
+   real(rp)     ::  rho
+   real(rp)     ::  tau_c                             !> yield stress
+   real(rp)     ::  K_index                           !> consistency index
+   real(rp)     ::  m_powerlaw_index                  !> inverse of powerlaw index
+#endif
+
    real(rp)     ::  g                                 !> Gravity constant
    real(rp)     ::  heps                              !> Cut-off of water depth to stabilize numerical scheme (if h<heps --> h=0)
    integer(ip)  ::  friction                          !> Activation of a Friction Law in Model
@@ -561,6 +575,12 @@ MODULE m_model
       eps_min, &
 
       g, &
+#if defined USE_HB
+      rho, &
+      tau_c, &
+      K_index, &
+      m_powerlaw_index, &
+#endif
       heps, &
       friction, &
       feedback_inflow, &
@@ -672,8 +692,14 @@ MODULE m_model
  		integer(ip)  ::  max_nt_for_direct                          !> Maximum iterations to perform the direct model
  		integer(ip)  ::  max_nt_for_adjoint                         !> Maximum iterations to perform the direct model in view
  																   !! to bound the memory of the adjoint model
-
- 		real(rp)     ::  g                                 !> Gravity constant
+#if defined USE_HB
+ 		real(rp)     ::  rho
+ 		real(rp)     ::  tau_c                             !> yield stress
+        	real(rp)     ::  K_index                           !> consistency index
+        	real(rp)     ::  m_powerlaw_index                  !> inverse of powerlaw index
+#endif
+ 		
+   		real(rp)     ::  g                                 !> Gravity constant
  		real(rp)     ::  heps                              !> Cut-off of water depth to stabilize numerical scheme
  		integer(ip)  ::  friction                          !> Activation of a Friction Law in Model
 
@@ -770,6 +796,13 @@ CONTAINS
 
       max_nt_for_direct   =  100000000_ip
       max_nt_for_adjoint  =  2500_ip
+
+#if defined USE_HB
+      rho       =  1000._rp
+      tau_c     =  0._rp
+      K_index   =  0.0001_rp
+      m_powerlaw_index = 1._rp
+#endif
 
       g         =  9.81_rp
       heps      =  0.00000001
@@ -1307,7 +1340,113 @@ CONTAINS
 
    END SUBROUTINE spatial_index_fromxy
 
+subroutine local_slopes_calculation(mesh, local_slopes)
 
+   USE m_mesh
+
+   implicit none
+
+   TYPE( msh ), intent(in)  ::  mesh
+
+   double precision, allocatable, dimension(:,:) :: properties_for_gradient
+   double precision, dimension(mesh%nc,2), intent(out) :: local_slopes
+   integer(ip)  ::  index_edge, index_neighbour, index_current, valid_point_count, aux, i_cell
+   double precision :: dbdx, dbdy
+   double precision :: c_coef, d_coef
+
+  !write(*,'("START TEST BATHYMETRY")')
+
+   do i_cell = 1,mesh%nc ! for each cell
+
+      ! Determine the number of points (3 for corner, 4 for boundary, 5 for internal) -> quadrangles only, triangles need to be flagged
+      ! mesh%cell(i)%nbed   ! number of edges / nodes -> information
+
+      valid_point_count = 0  ! Initialize valid point count
+
+      do ie = 1, 4  ! check all edges
+
+         index_edge = mesh%cell(i_cell)%edge(ie)  ! Get the index of the edge
+
+         ! if the edge is a boundary, it means that we don't have another point
+         ! so, if the edge is not a boundary, we add a point count
+
+         if (.not. mesh%edge(index_edge)%boundary) then
+               valid_point_count = valid_point_count + 1
+         endif
+
+      end do
+
+      !write(*,'(I5)') valid_point_count
+
+      ! array "properties_for_gradient" needs to be dynamically allocated: that means
+      ! it adapts to the number of points considered in the current cell
+
+      ! since it is a loop, we need to check if the array is already allocated
+
+      if (allocated(properties_for_gradient)) deallocate(properties_for_gradient)
+
+      ! we allocate the number of points detected by the edges + the point of the
+      ! current cell
+
+      allocate(properties_for_gradient(valid_point_count+1, 3))
+
+      ! now, we get the edge indices for each cell
+
+      index_current = i_cell ! get index of current cell
+
+      aux = 1
+
+      do ie = 1,4    ! loop for each edge of the mesh
+
+         index_edge = mesh%cell(index_current)%edge(ie)  ! get the index of the edge
+
+         if (.not. mesh%edge(index_edge)%boundary) then
+
+            if (mesh%edge(index_edge)%cell(1) == index_current) then
+               index_neighbour = mesh%edge(index_edge)%cell(2)
+            else
+               index_neighbour = mesh%edge(index_edge)%cell(1)
+            endif
+            !write(*,'(I5, " ", I5, " ", I5)') i, index_neighbour, index_edge
+
+            ! now, we append the values (x,y,b) of the neighbour cell to the
+            ! array "properties_for_gradient"
+
+            properties_for_gradient(aux, 1) = mesh%cell(index_neighbour)%grav%x
+            properties_for_gradient(aux, 2) = mesh%cell(index_neighbour)%grav%y
+            properties_for_gradient(aux, 3) = bathy_cell(index_neighbour)
+            !write(*, '(3F0.5)') properties_for_gradient(aux,:)
+            aux=aux+1
+         else
+            cycle
+         end if
+
+      end do
+
+      ! indexing the properties of current cell
+
+      properties_for_gradient(valid_point_count+1, 1) = mesh%cell(index_current)%grav%x
+      properties_for_gradient(valid_point_count+1, 2) = mesh%cell(index_current)%grav%y
+      properties_for_gradient(valid_point_count+1, 3) = bathy_cell(index_current)
+      !write(*, '(3F0.5)') properties_for_gradient(valid_point_count+1,:)
+
+
+      ! with the array "properties_for_gradient" correctly organized, we call the
+      ! function "least_square_plane" to obtain a_coef and b_coef
+
+      call least_square_plane(properties_for_gradient, dbdx, dbdy, c_coef, d_coef)
+
+      ! Populate the local_slopes matrix
+
+      local_slopes(i_cell, 1) = -atan(dbdx) ! angle theta_x in rad
+      local_slopes(i_cell, 2) = -atan(dbdy) ! angle theta_y in rad
+      !print *, i_cell, local_slopes(i_cell, 1), local_slopes(i_cell, 2)
+
+   end do
+
+   !write(*,'("FINISH TEST BATHYMETRY")')
+
+end subroutine
 																													!>NOADJ
 
 END MODULE m_model
