@@ -83,6 +83,7 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    type( msh ), intent(inout)  ::  mesh
    type( unk ), intent(inout)  ::  dof0
    type( unk ), intent(inout)  ::  dof
+   double precision, dimension(mesh%nc,2) :: local_slopes
 
    real(rp), intent(out)  ::  cost
 
@@ -326,6 +327,10 @@ CONTAINS
 
       sub_nt = 0
 
+#if defined USE_HB
+      call local_slopes_calculation(mesh, local_slopes)
+#endif
+
       do while ( .not. end_time_loop .and. sub_nt < max_nt_for_adjoint )
 
          !=============================================================================================================!
@@ -360,7 +365,11 @@ CONTAINS
 						case( 'first_b1' )
 
 							call euler_time_step_first_b1( dof , mesh )
+						
+      						case( 'first_b1_HB' )
 
+							call euler_time_step_first_b1_HB( dof , mesh , local_slopes )
+       
 						case default
 							call Stopping_Program_Sub( 'Unknow spatial scheme' )
 
