@@ -372,6 +372,120 @@ SUBROUTINE sw_hllc( hL , uL , vL , hR , uR , vR , flux )
 
 END SUBROUTINE sw_hllc
 
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+!
+!  "Basic" HLLC Solver dedicated to Shallow-Water Equations of Non-Newtonian fluids
+!  OBS: for 2D problems, still need to include the boussinesq coefficient for tangential flux
+!
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+
+SUBROUTINE sw_hllc_HB( hL , uL , vL , hR , uR , vR , &
+                    dHdx_L, dHdy_L, dbdx_L, dbdy_L, &
+                    coeff_x_L , coeff_y_L , &
+                    coeff_x_R , coeff_y_R , &
+                    corrective_term_x_L, corrective_term_y_L, &
+                    corrective_term_x_R, corrective_term_y_R, flux )
+
+   USE m_common
+   USE m_model
+
+   implicit none
+
+!======================================================================================================================!
+!  Interface Variables
+!======================================================================================================================!
+
+   real(rp), intent(in)  ::  hL , uL , vL
+   real(rp), intent(in)  ::  hR , uR , vR
+
+   real(rp), dimension(3), intent(out)  ::  flux
+
+   real(rp)  ::  sL , sR , sM , cL , cR
+
+   real(rp), dimension(3)  ::  fL , fR
+
+   double precision, intent(in) :: dHdx_L, dHdy_L, dbdx_L, dbdy_L
+
+   real(rp), intent(in)  ::  coeff_x_L , coeff_y_L, &
+                             corrective_term_x_L, corrective_term_y_L
+
+   real(rp), intent(in)  ::  coeff_x_R , coeff_y_R, &
+                             corrective_term_x_R, corrective_term_y_R
+
+   real(rp) :: n_powerlaw
+
+!======================================================================================================================!
+!  Begin Subroutine
+!======================================================================================================================!
+
+   !===================================================================================================================!
+   !   Wave speed computation
+   !===================================================================================================================!
+
+   cL  =  sqrt( g * hL )
+   cR  =  sqrt( g * hR )
+
+   sL  =  min( 0._rp , uL - cL , uR - 2._rp * cR + cL )
+   sR  =  max( 0._rp , uR + cR , uL + 2._rp * cL - cR )
+
+   if ( ( sL > - zerom .and. sR < zerom ) .or. &
+        ( hL <   zerom .and. hR < zerom ) ) then
+
+      flux(1:3) = 0._rp ; return
+
+   end if
+
+   !===================================================================================================================!
+   !   Left and Right flux computation
+   !===================================================================================================================!
+
+!coeff_x_L
+
+   fL(1)  =  hL * uL
+   fL(2)  =  coeff_x_L * hL * uL * uL + 0.5_rp * g * hL * hL * cos(dbdx_L) !+ &
+            !corrective_term_x_L
+
+!coeff_x_R
+
+   fR(1)  =  hR * uR
+   fR(2)  =  coeff_x_R * hR * uR * uR  +  0.5_rp * g * hR * hR * cos(dbdx_L) !+ &
+            !corrective_term_x_R
+
+   !===================================================================================================================!
+   !   hll flux computation
+   !===================================================================================================================!
+
+   flux(1)  =  sR * fL(1) - sL * fR(1) + sL * sR * ( hR    - hL    )
+   flux(2)  =  sR * fL(2) - sL * fR(2) + sL * sR * ( fR(1) - fL(1) )
+
+   flux(1:2)  =  flux(1:2) / ( sR - sL )
+
+   !===================================================================================================================!
+   !   hllC flux computation
+   !===================================================================================================================!
+
+   sM  =  ( sL * hR * uR - sR * hL * uL - sL * sR * ( hR - hL ) ) / ( hR * ( uR - sR ) - hL * ( uL - sL ) )
+
+
+   if      ( sM < 0._rp ) then
+
+      flux(3)  = flux(1) * vR
+
+   else if ( sM > 0._rp ) then
+
+
+      flux(3)  =  flux(1) * vL
+
+   else
+
+      flux(3)  =  flux(1) * demi * ( vL + vR )
+
+   end if
+
+END SUBROUTINE sw_hllc_HB
+
 
 !**********************************************************************************************************************!
 !**********************************************************************************************************************!
