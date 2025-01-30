@@ -1265,7 +1265,92 @@ CONTAINS
 
    END FUNCTION
    
-   
+ subroutine least_square_plane(properties_for_gradient, a_coef, b_coef, c_coef, d_coef)
+
+    implicit none
+
+    double precision, allocatable, dimension(:,:) :: properties_for_gradient
+    double precision, intent(out) :: a_coef, b_coef, c_coef, d_coef
+    double precision, dimension(3,3) :: coefficientsmatrix
+    double precision, dimension(3) :: B_vector, X_vector
+
+    ! Print properties_for_gradient at the beginning of the subroutine
+    !print *, 'properties_for_gradient in subroutine:'
+    !print *, properties_for_gradient
+
+    ! Compute the elements of the matrix coefficientsmatrix and the vector B
+    coefficientsmatrix = 0.0
+    B_vector = 0.0
+    do i = 1, size(properties_for_gradient, 1)
+        coefficientsmatrix(1,1) = coefficientsmatrix(1,1) + properties_for_gradient(i,1)**2
+        coefficientsmatrix(1,2) = coefficientsmatrix(1,2) + properties_for_gradient(i,1)*properties_for_gradient(i,2)
+        coefficientsmatrix(1,3) = coefficientsmatrix(1,3) + properties_for_gradient(i,1)
+        coefficientsmatrix(2,2) = coefficientsmatrix(2,2) + properties_for_gradient(i,2)**2
+        coefficientsmatrix(2,3) = coefficientsmatrix(2,3) + properties_for_gradient(i,2)
+        coefficientsmatrix(3,3) = coefficientsmatrix(3,3) + 1.0
+        B_vector(1) = B_vector(1) + properties_for_gradient(i,1)*(properties_for_gradient(i,3))
+        B_vector(2) = B_vector(2) + properties_for_gradient(i,2)*(properties_for_gradient(i,3))
+        B_vector(3) = B_vector(3) + (properties_for_gradient(i,3))
+    end do
+    coefficientsmatrix(2,1) = coefficientsmatrix(1,2)
+    coefficientsmatrix(3,1) = coefficientsmatrix(1,3)
+    coefficientsmatrix(3,2) = coefficientsmatrix(2,3)
+
+    ! Print the matrix and vector for debugging
+    !print *, 'coefficientsmatrix:'
+    !print *, coefficientsmatrix
+    !print *, 'B_vector:'
+    !print *, B_vector
+
+    ! Solve the system AX = B to find the coefficients a, b, and d
+    call solve_system(coefficientsmatrix, B_vector, X_vector)
+
+    ! Assign the coefficients
+    a_coef = X_vector(1)
+    b_coef = X_vector(2)
+    d_coef = X_vector(3)
+    c_coef = -1
+
+end subroutine least_square_plane
+
+subroutine solve_system(coefficientsmatrix, B_vector, X_vector)
+    implicit none
+    double precision, dimension(3,3), intent(in) :: coefficientsmatrix
+    double precision, dimension(3), intent(in) :: B_vector
+    double precision, dimension(3), intent(out) :: X_vector
+    integer :: i, j, k
+    double precision :: factor
+
+    ! Temporary variables
+    double precision, dimension(3) :: L_temp
+
+    ! Copy coefficients matrix to avoid modification
+    double precision, dimension(3,3) :: A_matrix
+    A_matrix = coefficientsmatrix
+
+    X_vector = B_vector
+
+    ! Gaussian elimination
+    do k = 1, 3
+        do i = k+1, 3
+            factor = A_matrix(i,k) / A_matrix(k,k)
+            do j = k+1, 3
+                A_matrix(i,j) = A_matrix(i,j) - factor * A_matrix(k,j)
+            end do
+            X_vector(i) = X_vector(i) - factor * X_vector(k)
+        end do
+    end do
+
+    ! Back substitution
+    X_vector(3) = X_vector(3) / A_matrix(3,3)
+    do i = 2, 1, -1
+        L_temp(i) = A_matrix(i,i)
+        do j = i+1, 3
+            X_vector(i) = X_vector(i) - A_matrix(i,j) * X_vector(j)
+        end do
+        X_vector(i) = X_vector(i) / L_temp(i)
+    end do
+end subroutine solve_system  
    
 
 END MODULE m_common
