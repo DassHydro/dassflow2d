@@ -212,7 +212,8 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
         read(10,rec=1, err=100) tc0
         line_read = line_read + 1
         if ( abs( ts - tc0 ) < zerom ) call Stopping_Program_Sub( 'End of simulation time reached' )
-	
+     else
+     
 #if defined USE_HB
 
      !!!! initial condition !!!!
