@@ -220,15 +220,15 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
 
       do i = 1,mesh%nc    ! for each cell in the mesh
 
-         !if ( mesh%cell(i)%grav%x <= 0.5 ) then !.and. mesh%cell(i)%grav%y >= 1.25 .and. mesh%cell(i)%grav%y <= 1.75  )  then   ! if the gravity center is behind the gate located at 0.317, the height "h" in each cell is given by
+         if ( mesh%cell(i)%grav%x <= l_gate ) then ! if the gravity center is behind the gate located at l_gate, the height "h" in each cell is given by
 
-            !dof0%h(i) = max(0._rp, (0.12 + (mesh%cell(i)%grav%x - 0.25)*tan(0.436))) !0.03_rp !max(0._rp, (0.12 + (mesh%cell(i)%grav%x - 0.25)*tan(0.06981))) ! - bathy_cell(i)  !bathy_user(x,y) + h_g + ( lx - l_r ) * tan (angle_theta)
+            dof0%h(i) = max(0._rp, (h_gate + (mesh%cell(i)%grav%x - d_gate)*tan(mean_slope))) 
 
-         !else   ! after the gate, the height "h" is zero (dry)
+         else   ! after the gate, the height "h" equals the initial condition
 
-            dof0%h(i) = 0.005_rp!-100.0_rp
-
-         !end if
+            dof0%h(i) = h0_initial_condition 
+	    
+         end if
 
       end do
 #endif
