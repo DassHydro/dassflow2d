@@ -460,6 +460,12 @@ MODULE m_model
    real(rp)     ::  m_powerlaw_index                  !> inverse of powerlaw index
 #endif
 
+   real(rp)     ::  h0_initial_condition
+   real(rp)     ::  h_gate
+   real(rp)     ::  l_gate
+   real(rp)     ::  d_gate
+   real(rp)     ::  mean_slope
+   
    real(rp)     ::  g                                 !> Gravity constant
    real(rp)     ::  heps                              !> Cut-off of water depth to stabilize numerical scheme (if h<heps --> h=0)
    integer(ip)  ::  friction                          !> Activation of a Friction Law in Model
@@ -581,6 +587,11 @@ MODULE m_model
       K_index, &
       m_powerlaw_index, &
 #endif
+      h0_initial_condition, &
+      h_gate, &
+      l_gate, &
+      d_gate, &
+      mean_slope, &
       heps, &
       friction, &
       feedback_inflow, &
@@ -698,7 +709,12 @@ MODULE m_model
         	real(rp)     ::  K_index                           !> consistency index
         	real(rp)     ::  m_powerlaw_index                  !> inverse of powerlaw index
 #endif
- 		
+ 		real(rp)     ::  h0_initial_condition
+ 		real(rp)     ::  h_gate
+   		real(rp)     ::  l_gate
+   		real(rp)     ::  d_gate
+   		real(rp)     ::  mean_slope
+     
    		real(rp)     ::  g                                 !> Gravity constant
  		real(rp)     ::  heps                              !> Cut-off of water depth to stabilize numerical scheme
  		integer(ip)  ::  friction                          !> Activation of a Friction Law in Model
@@ -803,7 +819,11 @@ CONTAINS
       K_index   =  0.0001_rp
       m_powerlaw_index = 1._rp
 #endif
-
+      h0_initial_condition = 0.00_rp
+      h_gate = 0.00_rp
+      l_gate = 0.00_rp
+      d_gate = 0.00_rp
+      mean_slope = 0.001_rp
       g         =  9.81_rp
       heps      =  0.00000001
       friction  =  1_ip
