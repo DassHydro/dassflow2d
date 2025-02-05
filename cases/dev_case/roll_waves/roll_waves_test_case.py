@@ -1,13 +1,3 @@
-####################################################################################################################
-####################################################################################################################
-# PERFORM A DIRECT SIMULATION WITH  DASSFLOW2D AND GENERATE OBSERVED RESULTS
-# Q in
-#
-# In addition, compared to the "lake at rest" test case, here we generate observed data to perform a twin experiment
-# ----> w_obs=1  in input.txt and obs.txt file is provided
-####################################################################################################################
-####################################################################################################################
-
 #=======================================================#
 # Source librairies
 #=======================================================#
@@ -30,7 +20,7 @@ print("DassFlow directory is: ", dassflow_dir)
 run_dir = f"{dassflow_dir}/code/bin_A/" 
 
 # Define directory containing case data
-case_data_dir = f"{dassflow_dir}/cases_HB/roll_waves/bin_A/"
+case_data_dir = f"{dassflow_dir}/cases/dev_case/roll_waves/bin_A/"
 
 # Clean run directory
 os.system(f"rm -r {run_dir}*") 
