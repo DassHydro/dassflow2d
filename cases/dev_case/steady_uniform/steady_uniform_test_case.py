@@ -25,7 +25,7 @@ print("DassFlow directory is: ", dassflow_dir)
 run_dir = f"{dassflow_dir}/code/bin_A/" 
 
 # Define directory containing case data
-case_data_dir = f"{dassflow_dir}/cases_HB/steady_uniform/bin_A/"
+case_data_dir = f"{dassflow_dir}/cases/dev_case/steady_uniform/bin_A/"
 
 # Clean run directory
 os.system(f"rm -r {run_dir}*") 
