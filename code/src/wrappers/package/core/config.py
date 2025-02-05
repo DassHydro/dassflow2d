@@ -49,6 +49,11 @@ class Config(dict):
                                                  "tau_c": 0,
                                                  "K_index": 0.001,
                                                  "m_powerlaw_index": 1,
+                                                 "h0_initial_condition": 0,
+                                                 "h_gate":0,
+                                                 "l_gate":0,
+                                                 "d_gate":0,
+                                                 "mean_slope":0,
                                                  "w_tecplot":0,
                                                  "w_vtk":0,
                                                  "w_gnuplot":1,
@@ -95,6 +100,11 @@ class Config(dict):
                                                  "tau_c": 0,
                                                  "K_index": 0.001,
                                                  "m_powerlaw_index": 1,
+                                                 "h0_initial_condition": 0,
+                                                 "h_gate":0,
+                                                 "l_gate":0,
+                                                 "d_gate":0,
+                                                 "mean_slope":0,
                                                  "w_tecplot":0,
                                                  "w_vtk":0,
                                                  "w_gnuplot":0,
@@ -167,6 +177,16 @@ class Config(dict):
                             res[k] = df2d.wrapping.m_model.get_k_index()
                      elif k == 'm_powerlaw_index':
                             res[k] = df2d.wrapping.m_model.get_m_powerlaw_index()
+                     elif k == 'h0_initial_condition':
+                            res[k] = df2d.wrapping.m_model.get_h0_initial_condition()
+                     elif k == 'h_gate':
+                            res[k] = df2d.wrapping.m_model.get_h_gate()       
+                     elif k == 'l_gate':
+                            res[k] = df2d.wrapping.m_model.get_l_gate()           
+                     elif k == 'd_gate':
+                            res[k] = df2d.wrapping.m_model.get_d_gate()
+                     elif k == 'mean_slope':
+                            res[k] = df2d.wrapping.m_model.get_mean_slope() 
                      elif k == 'c_manning':
                             res[k] =  df2d.wrapping.m_model.get_c_manning()
                      elif k == 'c_manning_beta':
@@ -294,6 +314,16 @@ class Config(dict):
                             df2d.wrapping.m_model.set_k_index(input_param[k])
                      elif k == 'm_powerlaw_index':
                             df2d.wrapping.m_model.set_m_powerlaw_index(input_param[k])
+                     elif k == 'h0_initial_condition':
+                            df2d.wrapping.m_model.set_h0_initial_condition(input_param[k])
+                     elif k == 'h_gate':
+                            df2d.wrapping.m_model.set_h_gate(input_param[k])       
+                     elif k == 'l_gate':
+                            df2d.wrapping.m_model.set_L_gate(input_param[k])           
+                     elif k == 'd_gate':
+                            df2d.wrapping.m_model.set_d_gate(input_param[k])
+                     elif k == 'mean_slope':
+                            df2d.wrapping.m_model.set_mean_slope(input_param[k])
                      elif k == 'c_manning':
                             df2d.wrapping.m_model.set_c_manning(input_param[k])
                      elif k == 'c_manning_beta':
@@ -392,6 +422,11 @@ class Config(dict):
                                                  "tau_c": 0,
                                                  "K_index": 0.001,
                                                  "m_powerlaw_index": 1,
+                                                 "h0_initial_condition": 0,
+                                                 "h_gate":0,
+                                                 "l_gate":0,
+                                                 "d_gate":0,
+                                                 "mean_slope":0,
                                                  "w_tecplot":0,
                                                  "w_vtk":0,
                                                  "w_gnuplot":0,
