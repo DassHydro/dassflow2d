@@ -784,7 +784,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
   END SUBROUTINE bc_finalise
 
- 	subroutine func(mdl,ctrl_in, cost_func, grad_func)
+ 	!subroutine func(mdl,ctrl_in, cost_func, grad_func)
    !>++++++++++++++++++++++++++++++++++++++++++++++++
    !>FORTRAN DOCUMENTATION
    !>++++++++++++++++++++++++++++++++++++++++++++++++
@@ -800,28 +800,28 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
     !> \param[out] cost_func : real(rp),dimension(1), the curent value of cost funtion (cost in fortran, cost_func in python)
     !> \param[out] grad_func : real(rp),dimension(control),the curent value of gradient of cost funtion  (control_back in fortran, grad_func in python)
 
- 		implicit none
- 		type(Model), intent(inout) :: mdl
- 		real(rp), dimension(dim_all), intent(in) :: ctrl_in
+ 		!implicit none
+ 		!type(Model), intent(inout) :: mdl
+ 		!real(rp), dimension(dim_all), intent(in) :: ctrl_in
 
- 		real(rp), intent(out) :: cost_func
- 		real(rp), dimension(dim_all), intent(out) :: grad_func
+ 		!real(rp), intent(out) :: cost_func
+ 		!real(rp), dimension(dim_all), intent(out) :: grad_func
 
  		! set the input control vector
 
- 		control(:) = ctrl_in(:)
+ 		!control(:) = ctrl_in(:)
 
- 		cost_back = one
- 		verbose = -1
+ 		!cost_back = one
+ 		!verbose = -1
 
  		! call adjoint model to compute cost function and gradient of cost function
- 		call adjoint_model(mdl%mesh, mdl%dof0, mdl%dof)
+ 		!call adjoint_model(mdl%mesh, mdl%dof0, mdl%dof)
 
  		! save the current value of cost function and the gradient as outputs
- 		cost_func = cost
- 		grad_func(:) = control_back(:)
+ 		!cost_func = cost
+ 		!grad_func(:) = control_back(:)
 
- 	end subroutine func
+ 	!end subroutine func
 
 
 !=============================================!
