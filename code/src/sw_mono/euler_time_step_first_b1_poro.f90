@@ -52,7 +52,25 @@
 !! \brief This file includes euler_time_step_first_b1 routine.
 !! \details The file includes only euler_time_step_first_b1 routine (see doc euler_time_step_first_b1 routine).
 
-SUBROUTINE list_x() 
+SUBROUTINE list_x(data, x_filtered) RESULT(filtered)
+	IMPLICIT NONE
+	REAL, INTENT(IN) :: data(:,:)
+	REAL, INTENT(IN) :: x_filtered
+	REAL, ALLOCATABLE :: filtered(:,:)
+	INTEGER :: n, count, i
+
+	n = SIZE(data,1)			!number of lines in data
+	count = COUNT(data(:,1) == x_filtered)	!number of lines where x=x_filtered
+	ALLOCATE(filtered(count,2))
+	count = 0
+	DO i = 1,n
+		IF(data(i,1) == x_filtered) THEN
+			count = count + 1
+			filtered(count) = data(i,2:3)
+		END IF
+	END DO
+END FUNCTION list_x
+	 
 
 
 SUBROUINE list_xy()
