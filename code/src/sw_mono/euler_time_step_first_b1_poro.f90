@@ -52,24 +52,46 @@
 !! \brief This file includes euler_time_step_first_b1 routine.
 !! \details The file includes only euler_time_step_first_b1 routine (see doc euler_time_step_first_b1 routine).
 
-SUBROUTINE list_x(data, x_filtered) RESULT(filtered)
-	IMPLICIT NONE
-	REAL, INTENT(IN) :: data(:,:)
-	REAL, INTENT(IN) :: x_filtered
-	REAL, ALLOCATABLE :: filtered(:,:)
-	INTEGER :: n, count, i
+SUBROUTINE list_x(data, target_x, filtered)
+    !=======================================================================
+    ! Extrait un profil (y,b) pour un x donné depuis un tableau de données.
+    ! Utilise SIZE et COUNT pour une allocation en une seule passe.
+    !=======================================================================
+    IMPLICIT NONE
 
-	n = SIZE(data,1)			!number of lines in data
-	count = COUNT(data(:,1) == x_filtered)	!number of lines where x=x_filtered
-	ALLOCATE(filtered(count,2))
-	count = 0
-	DO i = 1,n
-		IF(data(i,1) == x_filtered) THEN
-			count = count + 1
-			filtered(count) = data(i,2:3)
-		END IF
-	END DO
-END FUNCTION list_x
+    ! --- Arguments ---
+    REAL(rp), DIMENSION(:,:), INTENT(IN) :: data         ! Tableau d'entrée (col 1:x, 2:y, 3:b)
+    REAL(rp), INTENT(IN)                :: target_x     ! Coordonnée x à extraire
+    REAL(rp), DIMENSION(:,:), ALLOCATABLE, INTENT(OUT) :: filtered ! Tableau de sortie (col 1:y, 2:b)
+
+    ! --- Variables Locales ---
+    INTEGER  :: i, count
+    REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp ! Tolérance pour la comparaison
+
+    ! Compter le nombre de lignes où x correspond, en utilisant une tolérance
+    count = COUNT(ABS(data(:,1) - target_x) < tolerance)
+
+    ! Si aucun point n'est trouvé, on s'arrête
+    IF (count == 0) THEN
+        ! Allouer un tableau vide pour éviter les erreurs plus tard
+        ALLOCATE(filtered(0,2))
+        RETURN
+    END IF
+
+    ! Allouer le tableau de sortie à la taille exacte
+    ALLOCATE(filtered(count,2))
+
+    ! Remplir le tableau de sortie
+    count = 0 ! Réutiliser comme index pour le tableau "filtered"
+    DO i = 1, SIZE(data, 1)
+        IF (ABS(data(i,1) - target_x) < tolerance) THEN
+            count = count + 1
+            ! Assigner la tranche (y,b) à la ligne "count" du tableau de sortie
+            filtered(count, :) = data(i, 2:3)
+        END IF
+    END DO
+
+END SUBROUTINE list_x
 	 
 
 
