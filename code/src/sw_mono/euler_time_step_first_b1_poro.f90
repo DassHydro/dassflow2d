@@ -52,50 +52,114 @@
 !! \brief This file includes euler_time_step_first_b1 routine.
 !! \details The file includes only euler_time_step_first_b1 routine (see doc euler_time_step_first_b1 routine).
 
-SUBROUTINE list_x(data, target_x, filtered)
+FUNCTION list_x(data, target_x) RESULT(filtered)
     !=======================================================================
-    ! Extrait un profil (y,b) pour un x donné depuis un tableau de données.
-    ! Utilise SIZE et COUNT pour une allocation en une seule passe.
+    ! Extracts a profile (y,b) for a given x from a data array.
+    ! Uses SIZE and COUNT for a single-pass allocation.
+    ! Returns an allocatable 2D array.
     !=======================================================================
     IMPLICIT NONE
 
-    ! --- Arguments ---
-    REAL(rp), DIMENSION(:,:), INTENT(IN) :: data         ! Tableau d'entrée (col 1:x, 2:y, 3:b)
-    REAL(rp), INTENT(IN)                :: target_x     ! Coordonnée x à extraire
-    REAL(rp), DIMENSION(:,:), ALLOCATABLE, INTENT(OUT) :: filtered ! Tableau de sortie (col 1:y, 2:b)
+    ! --- Arguments (Inputs) ---
+    REAL(rp), DIMENSION(:,:), INTENT(IN) :: data         ! Input array (col 1:x, 2:y, 3:b)
+    REAL(rp), INTENT(IN)                :: target_x     ! The x-coordinate to extract
 
-    ! --- Variables Locales ---
+    ! --- Result (Output) ---
+    REAL(rp), DIMENSION(:,:), ALLOCATABLE :: filtered     ! Output array (col 1:y, 2:b)
+
+    ! --- Local Variables ---
     INTEGER  :: i, count
-    REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp ! Tolérance pour la comparaison
+    REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp ! Tolerance for float comparison
 
-    ! Compter le nombre de lignes où x correspond, en utilisant une tolérance
+    ! Count the number of matching rows using a tolerance
     count = COUNT(ABS(data(:,1) - target_x) < tolerance)
 
-    ! Si aucun point n'est trouvé, on s'arrête
+    ! If no points are found, allocate an empty array and exit
     IF (count == 0) THEN
-        ! Allouer un tableau vide pour éviter les erreurs plus tard
         ALLOCATE(filtered(0,2))
         RETURN
     END IF
 
-    ! Allouer le tableau de sortie à la taille exacte
+    ! Allocate the output array to the exact size
     ALLOCATE(filtered(count,2))
 
-    ! Remplir le tableau de sortie
-    count = 0 ! Réutiliser comme index pour le tableau "filtered"
+    ! Fill the output array
+    count = 0 ! Reuse as an index for the "filtered" array
     DO i = 1, SIZE(data, 1)
         IF (ABS(data(i,1) - target_x) < tolerance) THEN
             count = count + 1
-            ! Assigner la tranche (y,b) à la ligne "count" du tableau de sortie
+            ! Assign the (y,b) slice to the 'count'-th row of the output array
             filtered(count, :) = data(i, 2:3)
         END IF
     END DO
 
-END SUBROUTINE list_x
+END FUNCTION list_x
 	 
 
 
-SUBROUINE list_xy()
+FUNCTION list_xy(mesh, cell_id_K, full_profile) RESULT(cell_profile)
+    !=======================================================================
+    ! EXTRACTION SIMPLE SANS INTERPOLATION (Version Fonction)
+    ! Extrait uniquement les points du profil complet qui sont contenus
+    ! à l'intérieur des limites de la cellule K.
+    ! ATTENTION : Moins précis que la version avec interpolation.
+    !
+    ! INPUTS:
+    !   mesh          : TYPE(type_mesh), INTENT(IN) :: The full mesh data structure
+    !   cell_id_K     : INTEGER, INTENT(IN)         :: The ID of the cell to process
+    !   full_profile  : TYPE(type_point_profil), DIMENSION(:), INTENT(IN) :: The full (y,b) profile
+    !
+    ! OUTPUT (RESULT):
+    !   cell_profile  : TYPE(type_point_profil), DIMENSION(:), ALLOCATABLE :: The (y,b) sub-profile
+    !=======================================================================
+    IMPLICIT NONE
+
+    ! --- Arguments ---
+    TYPE(type_mesh), INTENT(IN) :: mesh
+    INTEGER, INTENT(IN)         :: cell_id_K
+    TYPE(type_point_profil), DIMENSION(:), INTENT(IN) :: full_profile
+
+    ! --- Result ---
+    TYPE(type_point_profil), DIMENSION(:), ALLOCATABLE :: cell_profile
+
+    ! --- Local Variables ---
+    INTEGER  :: i, n_full, n_cell_points, current_idx
+    INTEGER, DIMENSION(:), POINTER :: node_ids_ptr
+    REAL(rp) :: y_min, y_max
+
+    ! --- STEP 1: FIND THE TRANSVERSE BOUNDARIES (y_min, y_max) OF CELL K ---
+    node_ids_ptr => mesh%cell(cell_id_K)%nodes 
+    y_min = mesh%node(node_ids_ptr(1))%y
+    y_max = y_min
+    DO i = 2, SIZE(node_ids_ptr)
+        y_min = MIN(y_min, mesh%node(node_ids_ptr(i))%y)
+        y_max = MAX(y_max, mesh%node(node_ids_ptr(i))%y)
+    END DO
+
+    ! --- STEP 2: COUNT POINTS INSIDE THE BOUNDARIES (PASS 1) ---
+    n_full = SIZE(full_profile)
+    ! Count points from the full profile that are within the boundaries (inclusive)
+    n_cell_points = COUNT(full_profile(:)%y >= y_min .AND. full_profile(:)%y <= y_max)
+    
+    ! If no points are found, return an empty profile
+    IF (n_cell_points == 0) THEN
+        ALLOCATE(cell_profile(0))
+        RETURN
+    END IF
+    
+    ALLOCATE(cell_profile(n_cell_points))
+
+    ! --- STEP 3: FILL THE NEW PROFILE (PASS 2) ---
+    current_idx = 0
+    DO i = 1, n_full
+        IF (full_profile(i)%y >= y_min .AND. full_profile(i)%y <= y_max) THEN
+            current_idx = current_idx + 1
+            ! Copy the entire point structure (y and b) at once
+            cell_profile(current_idx) = full_profile(i)
+        END IF
+    END DO
+
+END FUNCTION list_xy
 
 
 
