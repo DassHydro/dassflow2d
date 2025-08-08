@@ -53,6 +53,105 @@
 !! \details The file includes only euler_time_step_first_b1 routine (see doc euler_time_step_first_b1 routine).
 
 
+
+SUBROUTINE find_section(mesh, target_x, y1, yN)
+    !=======================================================================
+    ! Analyse une section pour trouver les positions y des berges (y1, yN).
+    !=======================================================================
+    IMPLICIT NONE
+
+    ! --- Arguments ---
+    TYPE(type_mesh), INTENT(IN) :: mesh
+    REAL(rp), INTENT(IN)       :: target_x
+    REAL(rp), INTENT(OUT)      :: y1, yN
+
+    ! --- Variables Locales ---
+    INTEGER  :: i
+    LOGICAL  :: first_point_found = .FALSE.
+    REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp
+
+    ! --- Boucle unique sur tous les nœuds du maillage ---
+    DO i = 1, mesh%nn
+        ! On ne considère que les nœuds qui appartiennent à la section
+        IF (ABS(mesh%node(i)%coord%x - target_x) < tolerance) THEN
+
+            ! Si c'est le premier point qu'on trouve pour cette section
+            IF (.NOT. first_point_found) THEN
+                y1 = mesh%node(i)%coord%y
+                yN = y1
+                first_point_found = .TRUE.
+            END IF
+
+            ! Mettre à jour les limites y des berges
+            y1 = MIN(y1, mesh%node(i)%coord%y)
+            yN = MAX(yN, mesh%node(i)%coord%y)
+        END IF
+    END DO
+
+END SUBROUTINE find_section
+
+
+SUBROUTINE update_all_porosities(dof, mesh, SPorosity)
+    !=======================================================================
+    ! Orchestre la mise à jour de la porosité pour toutes les cellules 1D-like.
+    !=======================================================================
+    IMPLICIT NONE
+
+    ! --- Arguments ---
+    TYPE(unk), INTENT(IN)    :: dof
+    TYPE(type_mesh), INTENT(IN) :: mesh
+    TYPE(type_porosity), INTENT(INOUT) :: SPorosity
+
+    ! --- Variables Locales ---
+    INTEGER  :: i, K
+    REAL(rp) :: h_b, b_min, H_k, phi_K_new, wetted_area
+    REAL(rp) :: y1, y_min, yN, total_width, macro_area
+    REAL(rp) :: min_dist_to_b_min
+    REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp
+
+    ! --- Boucle principale sur toutes les cellules/sections ---
+    DO K = 1, mesh%nc
+
+        ! 1. Récupérer les données macroscopiques et DÉFINIR b_min
+        h_b = dof%h(K)
+        b_min = mesh%cell(K)%bathy 
+        H_k = h_b + b_min
+
+        ! 2. Trouver y1, yN, et le y_min correspondant à b_min pour cette section
+        CALL find_section(mesh, mesh%cell(K)%grav%x, y1, yN)
+
+        ! Boucle supplémentaire pour trouver le y_min associé à b_min
+        min_dist_to_b_min = HUGE(0.0_rp)
+        y_min = (y1 + yN) / 2.0_rp ! Valeur par défaut au centre
+        DO i = 1, mesh%nn
+            IF (ABS(mesh%node(i)%coord%x - mesh%cell(K)%grav%x) < tolerance) THEN
+                IF (ABS(mesh%node(i)%bathy - b_min) < min_dist_to_b_min) THEN
+                    min_dist_to_b_min = ABS(mesh%node(i)%bathy - b_min)
+                    y_min = mesh%node(i)%coord%y
+                END IF
+            END IF
+        END DO
+
+        ! 3. Calculer l'aire mouillée avec le modèle parabolique
+        wetted_area = calculate_wetted_area_parabolic(H_k, y1, y_min, yN, b_min)
+
+        ! 4. Calculer la porosité finale
+        total_width = yN - y1
+        macro_area = total_width * h_b
+
+        IF (macro_area > 1.0E-9_rp) THEN
+            phi_K_new = wetted_area / macro_area
+        ELSE
+            phi_K_new = 1.0_rp 
+        END IF
+
+        ! 5. Stocker la nouvelle porosité dans le tableau global
+        SPorosity%phi(K) = phi_K_new
+
+    END DO
+
+END SUBROUTINE update_all_porosities
+
 SUBROUTINE euler_time_step_first_b1( dof , mesh )
    USE m_common
    USE m_mesh
