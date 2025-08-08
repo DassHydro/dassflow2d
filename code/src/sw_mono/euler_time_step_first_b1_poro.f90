@@ -52,9 +52,84 @@
 !! \brief This file includes euler_time_step_first_b1 routine.
 !! \details The file includes only euler_time_step_first_b1 routine (see doc euler_time_step_first_b1 routine).
 
+FUNCTION calculate_wetted_area_parabolic(H_k, y1, y_min, yN, b_min) RESULT(area_k)
+    !=======================================================================
+    ! Calcule l'aire mouillée en utilisant une parabole DÉPENDANTE DU NIVEAU D'EAU,
+    ! selon les équations fournies.
+    ! ATTENTION : Cette méthode a des incohérences physiques.
+    !
+    ! ENTRÉES:
+    !   H_k        : REAL(rp), INTENT(IN) :: Cote de la surface libre
+    !   y1         : REAL(rp), INTENT(IN) :: Coordonnée y de la rive gauche
+    !   y_min      : REAL(rp), INTENT(IN) :: Coordonnée y du point le plus bas
+    !   yN         : REAL(rp), INTENT(IN) :: Coordonnée y de la rive droite
+    !   b_min      : REAL(rp), INTENT(IN) :: Altitude du fond au point le plus bas
+    !
+    ! SORTIE:
+    !   area_k     : REAL(rp) :: L'aire mouillée calculée
+    !=======================================================================
+    IMPLICIT NONE
+
+    ! --- Arguments ---
+    REAL(rp), INTENT(IN) :: H_k, y1, y_min, yN, b_min
+    
+    ! --- Résultat ---
+    REAL(rp) :: area_k
+
+    ! --- Variables Locales ---
+    REAL(rp) :: a, b, c, den
+    REAL(rp) :: y_start, y_end
+
+    ! Si le niveau d'eau est sous le fond, l'aire est nulle.
+    IF (H_k <= b_min) THEN
+        area_k = 0.0_rp
+        RETURN
+    END IF
+
+    ! ======================================================================
+    ! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
+    ! ======================================================================
+    
+    ! Dénominateur commun
+    den = (y1 - y_min) * (yN - y_min)
+    IF (ABS(den) < 1.0E-9_rp) THEN ! Évite la division par zéro
+        area_k = 0.0_rp
+        RETURN
+    END IF
+    
+    ! Coefficient 'a'
+    a = (b_min - H_k) / den
+    
+    ! Coefficient 'b' (en supposant la symétrie, comme dans votre formule)
+    b = -a * (y1 + yN)
+    
+    ! Coefficient 'c'
+    c = H_k - a * y1**2 - b * y1
+
+    ! ======================================================================
+    ! PARTIE 2 : CALCULER L'AIRE MOUILLÉE
+    ! ======================================================================
+
+    ! Dans ce modèle, par définition, la parabole coupe la surface de l'eau
+    ! aux points y1 et yN. Ce sont donc les bornes de l'intégration.
+    y_start = MIN(y1, yN)
+    y_end   = MAX(y1, yN)
+
+    ! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
+    area_k = (H_k - c) * (y_end - y_start) - &
+             (b / 2.0_rp) * (y_end**2 - y_start**2) - &
+             (a / 3.0_rp) * (y_end**3 - y_start**3)
+    
+    area_k = MAX(0.0_rp, area_k) ! Assurer que l'aire est positive
+
+END FUNCTION calculate_wetted_area_parabolic 
 
 
 SUBROUTINE find_section(mesh, target_x, y1, yN)
+    USE m_common
+    USE m_msh
+    USE m_mpi
+    USE m_model
     !=======================================================================
     ! Analyse une section pour trouver les positions y des berges (y1, yN).
     !=======================================================================
@@ -91,7 +166,11 @@ SUBROUTINE find_section(mesh, target_x, y1, yN)
 END SUBROUTINE find_section
 
 
-SUBROUTINE update_all_porosities(dof, mesh, SPorosity)
+SUBROUTINE update_all_porosities(dof, mesh)
+    USE m_common
+    USE m_mesh
+    USE m_mpi
+    USE m_model
     !=======================================================================
     ! Orchestre la mise à jour de la porosité pour toutes les cellules 1D-like.
     !=======================================================================
@@ -99,8 +178,7 @@ SUBROUTINE update_all_porosities(dof, mesh, SPorosity)
 
     ! --- Arguments ---
     TYPE(unk), INTENT(IN)    :: dof
-    TYPE(type_mesh), INTENT(IN) :: mesh
-    TYPE(type_porosity), INTENT(INOUT) :: SPorosity
+    TYPE(msh), INTENT(IN) :: mesh
 
     ! --- Variables Locales ---
     INTEGER  :: i, K
