@@ -274,7 +274,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    ! Begin Subroutine
    !===================================================================================================================!
    tflux(:,:) = 0._rp
-
+   call update_all_porosities(dof, mesh)
+   
    do ie = 1,mesh%ne
       !================================================================================================================!
       ! Calculate Left and Right States
