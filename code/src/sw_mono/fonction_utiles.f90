@@ -71,7 +71,7 @@ FUNCTION calculate_wetted_area_parabolic(H_k, y1, y_min, yN, b_min) RESULT(area_
 END FUNCTION calculate_wetted_area_parabolic 
 
 
-FUNCTION calculate_porosity(h_b, y1, b1, y_min, b_min, yN, bN) RESULT(poro)
+FUNCTION calculate_porosity(h_b, y1, y_min, b_min, yN) RESULT(poro)
     !=======================================================================
     ! Computes the porosity phi for a given cell based on its asymmetric
     ! parabolic sub-grid cross-section.
@@ -79,9 +79,9 @@ FUNCTION calculate_porosity(h_b, y1, b1, y_min, b_min, yN, bN) RESULT(poro)
     !
     ! INPUTS:
     !   h_b        : REAL(rp), INTENT(IN) :: Macroscopic water depth in the cell
-    !   y1, b1     : REAL(rp), INTENT(IN) :: Left bank point coordinates
+    !   y1     : REAL(rp), INTENT(IN) :: Left bank point coordinate
     !   y_min, b_min : REAL(rp), INTENT(IN) :: Lowest point coordinates (b_min is also used as b_K)
-    !   yN, bN     : REAL(rp), INTENT(IN) :: Right bank point coordinates
+    !   yN    : REAL(rp), INTENT(IN) :: Right bank point coordinate
     !
     ! OUTPUT:
     !   poro       : REAL(rp) :: The computed porosity for the cell
@@ -90,7 +90,7 @@ FUNCTION calculate_porosity(h_b, y1, b1, y_min, b_min, yN, bN) RESULT(poro)
     IMPLICIT NONE
 
     ! --- Argument Declarations ---
-    REAL(rp), INTENT(IN) :: h_b, y1, b1, y_min, b_min, yN, bN
+    REAL(rp), INTENT(IN) :: h_b, y1, y_min, b_min, yN
 
     ! --- Result Declaration ---
     REAL(rp) :: poro
@@ -117,7 +117,7 @@ FUNCTION calculate_porosity(h_b, y1, b1, y_min, b_min, yN, bN) RESULT(poro)
     H_k = h_b + b_min
 
     ! 2. Calculate the real wetted area (the numerator)
-    wetted_area = calculate_wetted_area_parabolic(H_k, y1, b1, y_min, b_min, yN, bN)
+    wetted_area = calculate_wetted_area_parabolic(H_k, y1, y_min, yN, bmin)
 
     ! 3. Calculate the macroscopic rectangular area (the denominator)
     total_width = yN - y1
