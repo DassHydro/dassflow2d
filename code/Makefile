@@ -682,6 +682,7 @@ OBJ_TMP = 	./obj/m_common.o \
 	  ./obj/advance_time.o \
 	  ./obj/numeric_sw.o \
 	  ./obj/sw_flux.o \
+	  ./obj/functions_porosity.o \
 	  ./obj/euler_time_step_first_b1.o \
 	  ./obj/low_froude_time_step.o \
 	  ./obj/friction_imex.o \
