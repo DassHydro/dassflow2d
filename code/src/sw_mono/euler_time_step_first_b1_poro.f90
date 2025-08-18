@@ -230,7 +230,7 @@ SUBROUTINE update_all_porosities(dof, mesh)
 
 END SUBROUTINE update_all_porosities
 
-SUBROUTINE euler_time_step_first_b1( dof , mesh )
+SUBROUTINE euler_time_step_first_b1_poro( dof , mesh )
    USE m_common
    USE m_mesh
    USE m_mpi
@@ -593,7 +593,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    call com_dof( dof , mesh )
    call com_var_r( bathy_cell , mesh ) ! Required MPI Communication due to inverse variable dependency
 
-END SUBROUTINE euler_time_step_first_b1
+END SUBROUTINE euler_time_step_first_b1_poro
 
 
 
