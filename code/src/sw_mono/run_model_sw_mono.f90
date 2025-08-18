@@ -385,7 +385,7 @@ CONTAINS
                      
                          !  else
 
-                              call euler_time_step_first_b1_poro( dof , mesh ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
+                              call euler_time_step_first_b1( dof , mesh ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
                      
                          !  end if
 
