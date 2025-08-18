@@ -91,30 +91,30 @@ CONTAINS
 		IMPLICIT NONE
 
 		! --- Arguments ---
-		TYPE(type_mesh), INTENT(IN) :: mesh
+		TYPE(msh), INTENT(IN) :: mesh
 		REAL(rp), INTENT(IN)       :: target_x
 		REAL(rp), INTENT(OUT)      :: y1, yN
 
 		! --- Variables Locales ---
-		INTEGER  :: i
+		INTEGER  :: inode
 		LOGICAL  :: first_point_found = .FALSE.
 		REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp
 
 		! --- Boucle unique sur tous les nœuds du maillage ---
-		DO i = 1, mesh%nn
+		DO inode = 1, mesh%nn
 		    ! On ne considère que les nœuds qui appartiennent à la section
-		    IF (ABS(mesh%node(i)%coord%x - target_x) < tolerance) THEN
+		    IF (ABS(mesh%node(inode)%coord%x - target_x) < tolerance) THEN
 
 		        ! Si c'est le premier point qu'on trouve pour cette section
 		        IF (.NOT. first_point_found) THEN
-		            y1 = mesh%node(i)%coord%y
+		            y1 = mesh%node(inode)%coord%y
 		            yN = y1
 		            first_point_found = .TRUE.
 		        END IF
 
 		        ! Mettre à jour les limites y des berges
-		        y1 = MIN(y1, mesh%node(i)%coord%y)
-		        yN = MAX(yN, mesh%node(i)%coord%y)
+		        y1 = MIN(y1, mesh%node(inode)%coord%y)
+		        yN = MAX(yN, mesh%node(inode)%coord%y)
 		    END IF
 		END DO
 
@@ -134,31 +134,31 @@ CONTAINS
 		TYPE(msh), INTENT(IN) :: mesh
 
 		! --- Variables Locales ---
-		INTEGER  :: i, K
+		INTEGER  :: inode, icell
 		REAL(rp) :: h_b, b_min, H_k, phi_K_new, wetted_area
 		REAL(rp) :: y1, y_min, yN, total_width, macro_area
 		REAL(rp) :: min_dist_to_b_min
 		REAL(rp), PARAMETER :: tolerance = 1.0E-6_rp
 
 		! --- Boucle principale sur toutes les cellules/sections ---
-		DO K = 1, mesh%nc
+		DO icell = 1, mesh%nc
 
 		    ! 1. Récupérer les données macroscopiques et DÉFINIR b_min
-		    h_b = dof%h(K)
-		    b_min = mesh%cell(K)%bathy 
+		    h_b = dof%h(icell)
+		    b_min = mesh%cell(icell)%bathy 
 		    H_k = h_b + b_min
 
 		    ! 2. Trouver y1, yN, et le y_min correspondant à b_min pour cette section
-		    CALL find_section(mesh, mesh%cell(K)%grav%x, y1, yN)
+		    CALL find_section(mesh, mesh%cell(icell)%grav%x, y1, yN)
 
 		    ! Boucle supplémentaire pour trouver le y_min associé à b_min
 		    min_dist_to_b_min = HUGE(0.0_rp)
 		    y_min = (y1 + yN) / 2.0_rp ! Valeur par défaut au centre
-		    DO i = 1, mesh%nn
-		        IF (ABS(mesh%node(i)%coord%x - mesh%cell(K)%grav%x) < tolerance) THEN
-		            IF (ABS(mesh%node(i)%bathy - b_min) < min_dist_to_b_min) THEN
-		                min_dist_to_b_min = ABS(mesh%node(i)%bathy - b_min)
-		                y_min = mesh%node(i)%coord%y
+		    DO inode = 1, mesh%nn
+		        IF (ABS(mesh%node(inode)%coord%x - mesh%cell(icell)%grav%x) < tolerance) THEN
+		            IF (ABS(mesh%node(icell)%bathy - b_min) < min_dist_to_b_min) THEN
+		                min_dist_to_b_min = ABS(mesh%node(icell)%bathy - b_min)
+		                y_min = mesh%node(icell)%coord%y
 		            END IF
 		        END IF
 		    END DO
@@ -177,7 +177,7 @@ CONTAINS
 		    END IF
 
 		    ! 5. Stocker la nouvelle porosité dans le tableau global
-		    SPorosity%phi(K) = phi_K_new
+		    SPorosity%phi(icell) = phi_K_new
 
 		END DO
 
