@@ -68,6 +68,7 @@ FUNCTION calculate_wetted_area_parabolic(H_k, y1, y_min, yN, b_min) RESULT(area_
     ! SORTIE:
     !   area_k     : REAL(rp) :: L'aire mouillée calculée
     !=======================================================================
+    USE m_common
     IMPLICIT NONE
 
     ! --- Arguments ---
@@ -127,7 +128,7 @@ END FUNCTION calculate_wetted_area_parabolic
 
 SUBROUTINE find_section(mesh, target_x, y1, yN)
     USE m_common
-    USE m_msh
+    USE m_mesh
     USE m_mpi
     USE m_model
     !=======================================================================
