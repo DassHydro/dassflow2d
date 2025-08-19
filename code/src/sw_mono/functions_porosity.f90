@@ -152,14 +152,14 @@ CONTAINS
 		    ! Boucle supplémentaire pour trouver le y_min associé à b_min
 		    min_dist_to_b_min = HUGE(0.0_rp)
 		    y_min = (y1 + yN) / 2.0_rp ! Valeur par défaut au centre
-		    DO inode = 1, mesh%nn
-		        IF (ABS(mesh%node(inode)%coord%x - mesh%cell(icell)%grav%x) < tolerance) THEN
-		            IF (ABS(bathy_node(inode) - b_min) < min_dist_to_b_min) THEN
-		                min_dist_to_b_min = ABS(bathy_node(inode) - b_min)
-		                y_min = mesh%node(inode)%coord%y
-		            END IF
-		        END IF
-		    END DO
+!		    DO inode = 1, mesh%nn
+!		        IF (ABS(mesh%node(inode)%coord%x - mesh%cell(icell)%grav%x) < tolerance) THEN
+!		            IF (ABS(bathy_node(inode) - b_min) < min_dist_to_b_min) THEN
+!		                min_dist_to_b_min = ABS(bathy_node(inode) - b_min)
+!		                y_min = mesh%node(inode)%coord%y
+!		            END IF
+!		        END IF
+!		    END DO
 
 		    ! 3. Calculer l'aire mouillée avec le modèle parabolique
 		    wetted_area = calculate_wetted_area_parabolic(H_k, y1, y_min, yN, b_min)
