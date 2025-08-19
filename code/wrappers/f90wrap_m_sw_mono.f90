@@ -473,7 +473,7 @@ subroutine f90wrap_unk__array_len__grad_z(f90wrap_this, f90wrap_n)
 end subroutine f90wrap_unk__array_len__grad_z
 
 subroutine f90wrap_m_model__unk_initialise(dof, mesh)
-    use m_model, only: unk, unk_initialise
+    use m_model, only: unk_initialise, unk
     use m_mesh, only: msh
     implicit none
     
@@ -948,7 +948,7 @@ end subroutine f90wrap_infiltration_data__array__land
 
 subroutine f90wrap_infiltration_data__array_getitem__ga(f90wrap_this, f90wrap_i, gaitem)
     
-    use m_model, only: infiltration_data, greenampt
+    use m_model, only: greenampt, infiltration_data
     implicit none
     
     type infiltration_data_ptr_type
@@ -978,7 +978,7 @@ end subroutine f90wrap_infiltration_data__array_getitem__ga
 
 subroutine f90wrap_infiltration_data__array_setitem__ga(f90wrap_this, f90wrap_i, gaitem)
     
-    use m_model, only: infiltration_data, greenampt
+    use m_model, only: greenampt, infiltration_data
     implicit none
     
     type infiltration_data_ptr_type
@@ -1008,7 +1008,7 @@ end subroutine f90wrap_infiltration_data__array_setitem__ga
 
 subroutine f90wrap_infiltration_data__array_len__ga(f90wrap_this, f90wrap_n)
     
-    use m_model, only: infiltration_data, greenampt
+    use m_model, only: greenampt, infiltration_data
     implicit none
     
     type infiltration_data_ptr_type
@@ -2887,7 +2887,7 @@ end subroutine f90wrap_bcs__array__outflow
 
 subroutine f90wrap_bcs__array_getitem__hyd(f90wrap_this, f90wrap_i, hyditem)
     
-    use m_model, only: hydrograph, bcs
+    use m_model, only: bcs, hydrograph
     implicit none
     
     type bcs_ptr_type
@@ -2917,7 +2917,7 @@ end subroutine f90wrap_bcs__array_getitem__hyd
 
 subroutine f90wrap_bcs__array_setitem__hyd(f90wrap_this, f90wrap_i, hyditem)
     
-    use m_model, only: hydrograph, bcs
+    use m_model, only: bcs, hydrograph
     implicit none
     
     type bcs_ptr_type
@@ -2947,7 +2947,7 @@ end subroutine f90wrap_bcs__array_setitem__hyd
 
 subroutine f90wrap_bcs__array_len__hyd(f90wrap_this, f90wrap_n)
     
-    use m_model, only: hydrograph, bcs
+    use m_model, only: bcs, hydrograph
     implicit none
     
     type bcs_ptr_type
@@ -2970,7 +2970,7 @@ end subroutine f90wrap_bcs__array_len__hyd
 
 subroutine f90wrap_bcs__array_getitem__gr4(f90wrap_this, f90wrap_i, gr4item)
     
-    use m_model, only: bcs, gr4
+    use m_model, only: gr4, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3000,7 +3000,7 @@ end subroutine f90wrap_bcs__array_getitem__gr4
 
 subroutine f90wrap_bcs__array_setitem__gr4(f90wrap_this, f90wrap_i, gr4item)
     
-    use m_model, only: bcs, gr4
+    use m_model, only: gr4, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3030,7 +3030,7 @@ end subroutine f90wrap_bcs__array_setitem__gr4
 
 subroutine f90wrap_bcs__array_len__gr4(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, gr4
+    use m_model, only: gr4, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3053,7 +3053,7 @@ end subroutine f90wrap_bcs__array_len__gr4
 
 subroutine f90wrap_bcs__array_getitem__rat(f90wrap_this, f90wrap_i, ratitem)
     
-    use m_model, only: bcs, ratcurve
+    use m_model, only: ratcurve, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3083,7 +3083,7 @@ end subroutine f90wrap_bcs__array_getitem__rat
 
 subroutine f90wrap_bcs__array_setitem__rat(f90wrap_this, f90wrap_i, ratitem)
     
-    use m_model, only: bcs, ratcurve
+    use m_model, only: ratcurve, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3113,7 +3113,7 @@ end subroutine f90wrap_bcs__array_setitem__rat
 
 subroutine f90wrap_bcs__array_len__rat(f90wrap_this, f90wrap_n)
     
-    use m_model, only: bcs, ratcurve
+    use m_model, only: ratcurve, bcs
     implicit none
     
     type bcs_ptr_type
@@ -3219,7 +3219,7 @@ end subroutine f90wrap_bcs__array_len__hpresc
 
 subroutine f90wrap_bcs__array_getitem__zspresc(f90wrap_this, f90wrap_i, zsprescitem)
     
-    use m_model, only: zspresc, bcs
+    use m_model, only: bcs, zspresc
     implicit none
     
     type bcs_ptr_type
@@ -3249,7 +3249,7 @@ end subroutine f90wrap_bcs__array_getitem__zspresc
 
 subroutine f90wrap_bcs__array_setitem__zspresc(f90wrap_this, f90wrap_i, zsprescitem)
     
-    use m_model, only: zspresc, bcs
+    use m_model, only: bcs, zspresc
     implicit none
     
     type bcs_ptr_type
@@ -3279,7 +3279,7 @@ end subroutine f90wrap_bcs__array_setitem__zspresc
 
 subroutine f90wrap_bcs__array_len__zspresc(f90wrap_this, f90wrap_n)
     
-    use m_model, only: zspresc, bcs
+    use m_model, only: bcs, zspresc
     implicit none
     
     type bcs_ptr_type
@@ -3302,7 +3302,7 @@ end subroutine f90wrap_bcs__array_len__zspresc
 
 subroutine f90wrap_bcs__array_getitem__rain(f90wrap_this, f90wrap_i, rainitem)
     
-    use m_model, only: rain, bcs
+    use m_model, only: bcs, rain
     implicit none
     
     type bcs_ptr_type
@@ -3332,7 +3332,7 @@ end subroutine f90wrap_bcs__array_getitem__rain
 
 subroutine f90wrap_bcs__array_setitem__rain(f90wrap_this, f90wrap_i, rainitem)
     
-    use m_model, only: rain, bcs
+    use m_model, only: bcs, rain
     implicit none
     
     type bcs_ptr_type
@@ -3362,7 +3362,7 @@ end subroutine f90wrap_bcs__array_setitem__rain
 
 subroutine f90wrap_bcs__array_len__rain(f90wrap_this, f90wrap_n)
     
-    use m_model, only: rain, bcs
+    use m_model, only: bcs, rain
     implicit none
     
     type bcs_ptr_type
@@ -5056,7 +5056,7 @@ end subroutine f90wrap_input_data__array__soil_land
 
 subroutine f90wrap_input_data__array_getitem__ptf(f90wrap_this, f90wrap_i, ptfitem)
     
-    use m_model, only: ptf_data, input_data
+    use m_model, only: input_data, ptf_data
     implicit none
     
     type input_data_ptr_type
@@ -5086,7 +5086,7 @@ end subroutine f90wrap_input_data__array_getitem__ptf
 
 subroutine f90wrap_input_data__array_setitem__ptf(f90wrap_this, f90wrap_i, ptfitem)
     
-    use m_model, only: ptf_data, input_data
+    use m_model, only: input_data, ptf_data
     implicit none
     
     type input_data_ptr_type
@@ -5116,7 +5116,7 @@ end subroutine f90wrap_input_data__array_setitem__ptf
 
 subroutine f90wrap_input_data__array_len__ptf(f90wrap_this, f90wrap_n)
     
-    use m_model, only: ptf_data, input_data
+    use m_model, only: input_data, ptf_data
     implicit none
     
     type input_data_ptr_type
@@ -8280,7 +8280,7 @@ subroutine f90wrap_m_model__set__sporosity(f90wrap_SPorosity)
 end subroutine f90wrap_m_model__set__sporosity
 
 subroutine f90wrap_m_model__get__iporosity(f90wrap_IPorosity)
-    use m_model, only: m_model_IPorosity => IPorosity, porosity_data
+    use m_model, only: porosity_data, m_model_IPorosity => IPorosity
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
@@ -8293,7 +8293,7 @@ subroutine f90wrap_m_model__get__iporosity(f90wrap_IPorosity)
 end subroutine f90wrap_m_model__get__iporosity
 
 subroutine f90wrap_m_model__set__iporosity(f90wrap_IPorosity)
-    use m_model, only: m_model_IPorosity => IPorosity, porosity_data
+    use m_model, only: porosity_data, m_model_IPorosity => IPorosity
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
@@ -8338,7 +8338,7 @@ subroutine f90wrap_m_model__set__coef_feedback(f90wrap_coef_feedback)
 end subroutine f90wrap_m_model__set__coef_feedback
 
 subroutine f90wrap_m_model__get__bc(f90wrap_bc)
-    use m_model, only: m_model_bc => bc, bcs
+    use m_model, only: bcs, m_model_bc => bc
     implicit none
     type bcs_ptr_type
         type(bcs), pointer :: p => NULL()
@@ -8351,7 +8351,7 @@ subroutine f90wrap_m_model__get__bc(f90wrap_bc)
 end subroutine f90wrap_m_model__get__bc
 
 subroutine f90wrap_m_model__set__bc(f90wrap_bc)
-    use m_model, only: m_model_bc => bc, bcs
+    use m_model, only: bcs, m_model_bc => bc
     implicit none
     type bcs_ptr_type
         type(bcs), pointer :: p => NULL()

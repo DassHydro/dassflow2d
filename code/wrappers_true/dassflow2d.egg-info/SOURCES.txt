@@ -21,6 +21,7 @@ dassflow2d/core/output.py
 dassflow2d/core/param.py
 dassflow2d/wrapping/__init__.py
 dassflow2d/wrapping/_wrapping.cpython-310-x86_64-linux-gnu.so
+dassflow2d/wrapping/fonctions_porosite_mod.py
 dassflow2d/wrapping/m_common.py
 dassflow2d/wrapping/m_linear_algebra.py
 dassflow2d/wrapping/m_mesh.py

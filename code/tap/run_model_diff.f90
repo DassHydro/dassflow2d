@@ -2,25 +2,31 @@
 !  Tapenade 3.16 (develop) - 25 Jun 2025 16:38
 !
 !  Differentiation of run_model in forward (tangent) mode (with options fixinterface):
-!   variations   of useful results: *(*innovation.diff) *(*innovuv.diff)
-!                *(dof.h) *(dof.u) *(dof.v) cost
-!   with respect to varying inputs: *(*(bc.hyd).q) *xsshape.xcenter
-!                *xsshape.s *xsshape.hmax *bathy_cell *(dof0.h)
+!   variations   of useful results: *(*innovation.diff) *(*innovq.diff)
+!                *(*innovuv.diff) *(dof.h) *(dof.u) *(dof.v) cost
+!   with respect to varying inputs: *(infil.ga).psif *(infil.ga).ks
+!                *(infil.ga).deltatheta *(infil.scs).lambdacn *(infil.scs).cn
+!                *manning *ptf.kappa *(*(bc.hyd).t) *(*(bc.hyd).q)
+!                *(*(bc.rat).h) *(*(bc.rat).q) *(*(bc.rain).t)
+!                *(*(bc.rain).q) *xsshape.xcenter *xsshape.s *xsshape.hmax
+!                *bathy_cell *manning_beta *(sporosity.phi) *(dof0.h)
 !                *(dof0.u) *(dof0.v)
-!   RW status of diff variables: *(infil.ga).psif:(loc) *(infil.ga).ks:(loc)
-!                *(infil.ga).deltatheta:(loc) *(infil.scs).lambdacn:(loc)
-!                *(infil.scs).cn:(loc) *manning:(loc) *ptf.kappa:(loc)
-!                *(*(bc.hyd).t):(loc) *(*(bc.hyd).q):in *(*(bc.rat).h):(loc)
-!                *(*(bc.rat).q):(loc) *(*(bc.rain).t):(loc) *(*(bc.rain).q):(loc)
+!   RW status of diff variables: tc:(loc) *(infil.ga).psif:in *(infil.ga).ks:in-killed
+!                *(infil.ga).deltatheta:in *(infil.scs).lambdacn:in
+!                *(infil.scs).cn:in *manning:in *ptf.kappa:in *(bc.inflow):(loc)
+!                *(bc.outflow):(loc) *(*(bc.hyd).t):in *(*(bc.hyd).q):in
+!                *(*(bc.rat).h):in *(*(bc.rat).q):in *(bc.rat).zout:(loc)
+!                *(*(bc.rain).t):in *(*(bc.rain).q):in *(bc.rain).qin:(loc)
+!                *(bc.rain).cumul:(loc) *(bc.sum_mass_flux):(loc)
 !                *xsshape.xcenter:in *xsshape.s:in *xsshape.hmax:in
-!                *bathy_cell:in-killed *manning_beta:(loc) *(sporosity.phi):(loc)
-!                *(*innovation.diff):out *(*innovq.diff):(loc)
-!                *(*innovw.diff):(loc) *(*innovuv.diff):out dof.h:(loc)
-!                *(dof.h):out dof.u:(loc) *(dof.u):out dof.v:(loc)
-!                *(dof.v):out *(dof.infil):(loc) dof.t_display:(loc)
-!                *(dof.grad_h).x:(loc) *(dof.grad_h).y:(loc) *(dof.grad_u).x:(loc)
-!                *(dof.grad_u).y:(loc) *(dof.grad_v).x:(loc) *(dof.grad_v).y:(loc)
-!                *(dof.grad_z).x:(loc) *(dof.grad_z).y:(loc) *(mesh.node).coord.x:(loc)
+!                *bathy_cell:in-killed *manning_beta:in *(sporosity.phi):in
+!                *(*innovation.diff):out *(*innovq.diff):out *(*innovw.diff):(loc)
+!                *(*innovuv.diff):out dof.h:(loc) *(dof.h):out
+!                dof.u:(loc) *(dof.u):out dof.v:(loc) *(dof.v):out
+!                *(dof.infil):(loc) dof.t_display:(loc) *(dof.grad_h).x:(loc)
+!                *(dof.grad_h).y:(loc) *(dof.grad_u).x:(loc) *(dof.grad_u).y:(loc)
+!                *(dof.grad_v).x:(loc) *(dof.grad_v).y:(loc) *(dof.grad_z).x:(loc)
+!                *(dof.grad_z).y:(loc) *(mesh.node).coord.x:(loc)
 !                *(mesh.node).coord.y:(loc) *(mesh.cell).surf:(loc)
 !                *(mesh.cell).invsurf:(loc) *(mesh.cell).peri:(loc)
 !                *(mesh.cell).grav.x:(loc) *(mesh.cell).grav.y:(loc)
@@ -33,8 +39,14 @@
 !                *(mesh.edge).v_edge_cell.y:(loc) mesh.scal:(loc)
 !                mesh.surf:(loc) cost:out dof0.h:(loc) *(dof0.h):in-killed
 !                dof0.u:(loc) *(dof0.u):in dof0.v:(loc) *(dof0.v):in
-!   Plus diff mem management of: bc.hyd:in *(bc.hyd).q:in xsshape:in
-!                bathy_cell:in innovation:in *innovation.diff:in
+!   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
+!                ptf:in bc.inflow:in bc.outflow:in bc.hyd:in *(bc.hyd).t:in
+!                *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in *(bc.rat).q:in
+!                bc.hpresc:in *(bc.hpresc).t:in *(bc.hpresc).h:in
+!                bc.zspresc:in *(bc.zspresc).t:in *(bc.zspresc).z:in
+!                bc.rain:in *(bc.rain).t:in *(bc.rain).q:in bc.sum_mass_flux:in
+!                xsshape:in bathy_cell:in manning_beta:in sporosity.phi:in
+!                innovation:in *innovation.diff:in innovq:in *innovq.diff:in
 !                innovuv:in *innovuv.diff:in dof.h:in-out dof.u:in-out
 !                dof.v:in-out dof.infil:in-out dof.grad_h:in-out
 !                dof.grad_u:in-out dof.grad_v:in-out dof.grad_z:in-out
@@ -42,7 +54,7 @@
 !                mesh.edge:in-out dof0.h:in dof0.u:in dof0.v:in
 SUBROUTINE RUN_MODEL_DIFF(mesh, mesh_diff, dof0, dof0_diff, dof, &
 & dof_diff, cost, cost_diff)
-  USE M_COMMON
+  USE M_COMMON ! Replaced by Perl Script
   USE M_LINEAR_ALGEBRA ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
@@ -51,6 +63,7 @@ SUBROUTINE RUN_MODEL_DIFF(mesh, mesh_diff, dof0, dof0_diff, dof, &
   USE M_MODEL ! Replaced by Perl Script
   USE M_OBS ! Replaced by Perl Script
   USE M_OBS_DIFF
+  USE FONCTIONS_POROSITE_MOD
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
@@ -338,11 +351,14 @@ SUBROUTINE RUN_MODEL_DIFF(mesh, mesh_diff, dof0, dof0_diff, dof, &
     IF (bc_infil .EQ. 1) THEN
       DO i=1,SIZE(phys_desc%soil)
 !kg/m2 to m
-        infil_diff%ga(i)%ks = 0.0_8
-        infil%ga(i)%ks = 25.4_rp/3600._rp*10._rp**(-ptf(phys_desc%&
-&         ptf_land(i))%kappa(7)-ptf(phys_desc%ptf_land(i))%kappa(8)*&
-&         phys_desc%soil(i)%clay+ptf(phys_desc%ptf_land(i))%kappa(9)*&
-&         phys_desc%soil(i)%sand)/1000._rp
+        temp0 = 10._rp**(phys_desc%soil(i)%sand*ptf(phys_desc%ptf_land(i&
+&         ))%kappa(9)-phys_desc%soil(i)%clay*ptf(phys_desc%ptf_land(i))%&
+&         kappa(8)-ptf(phys_desc%ptf_land(i))%kappa(7))
+        infil_diff%ga(i)%ks = 25.4_rp*temp0*LOG(10._rp)*(phys_desc%soil(&
+&         i)%sand*ptf_diff(phys_desc%ptf_land(i))%kappa(9)-phys_desc%&
+&         soil(i)%clay*ptf_diff(phys_desc%ptf_land(i))%kappa(8)-ptf_diff&
+&         (phys_desc%ptf_land(i))%kappa(7))/(3600._rp*1000._rp)
+        infil%ga(i)%ks = 25.4_rp*(temp0/(3600._rp*1000._rp))
       END DO
     ELSE IF (bc_infil .EQ. 2) THEN
       CALL STOPPING_PROGRAM_SUB('PTF for SCS-CN method not defined yet')
@@ -382,9 +398,20 @@ SUBROUTINE RUN_MODEL_DIFF(mesh, mesh_diff, dof0, dof0_diff, dof, &
   IF (use_qobs .EQ. 1 .OR. use_qobs_gr4 .EQ. 1) innovq(:)%ind_t = 1_ip
   cost = 0._rp
   end_time_loop = .false.
+  bc_diff%inflow = 0.0_8
+  bc_diff%outflow = 0.0_8
+  bc_diff%rat%zout = 0.0_8
+  bc_diff%rain%qin = 0.0_8
+  bc_diff%rain%cumul = 0.0_8
+  bc_diff%sum_mass_flux = 0.0_8
   IF (ALLOCATED(innovation_diff)) THEN
     DO ii1=1,size(innovation,1)
       innovation_diff(ii1)%diff = 0.0_8
+    END DO
+  END IF
+  IF (ALLOCATED(innovq_diff)) THEN
+    DO ii1=1,size(innovq,1)
+      innovq_diff(ii1)%diff = 0.0_8
     END DO
   END IF
   IF (ALLOCATED(innovuv_diff)) THEN
@@ -433,11 +460,6 @@ SUBROUTINE RUN_MODEL_DIFF(mesh, mesh_diff, dof0, dof0_diff, dof, &
     CALL SUB_RUN_MODEL_DIFF()
   END DO
   CALL CALC_COST_FUNCTION_DIFF(cost, cost_diff, mesh, mesh_diff)
-  IF (ALLOCATED(innovq_diff)) THEN
-    DO ii1=1,size(innovq,1)
-      innovq_diff(ii1)%diff = 0.0_8
-    END DO
-  END IF
   IF (ALLOCATED(innovw_diff)) THEN
     DO ii1=1,size(innovw,1)
       innovw_diff(ii1)%diff = 0.0_8
@@ -446,7 +468,11 @@ SUBROUTINE RUN_MODEL_DIFF(mesh, mesh_diff, dof0, dof0_diff, dof, &
 
 CONTAINS
 !  Differentiation of sub_run_model in forward (tangent) mode (with options fixinterface):
-!   variations   of useful results: *(*innovation.diff)[from module m_obs]
+!   variations   of useful results: *(bc.inflow)[from module m_model]
+!                *(bc.outflow)[from module m_model] *(bc.rat).zout[from module m_model]
+!                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
+!                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
 !                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
 !                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
 !                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
@@ -460,38 +486,61 @@ CONTAINS
 !                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
 !                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
 !                cost
-!   with respect to varying inputs: *bathy_cell[from module m_model]
-!                *(*innovation.diff)[from module m_obs] *(*innovuv.diff)[from module m_obs]
-!                *(dof.h) *(dof.u) *(dof.v) *(dof.infil) dof.t_display
-!                *(dof.grad_h).x *(dof.grad_h).y *(dof.grad_u).x
-!                *(dof.grad_u).y *(dof.grad_v).x *(dof.grad_v).y
-!                *(dof.grad_z).x *(dof.grad_z).y *(mesh.node).coord.x
-!                *(mesh.node).coord.y *(mesh.cell).surf *(mesh.cell).invsurf
-!                *(mesh.cell).peri *(mesh.cell).grav.x *(mesh.cell).grav.y
-!                *(mesh.cellb).grav.x *(mesh.cellb).grav.y *(mesh.edge).length
-!                *(mesh.edge).center.x *(mesh.edge).center.y *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y *(mesh.edge).tangent.x *(mesh.edge).tangent.y
+!   with respect to varying inputs: *(infil.ga).psif[from module m_model]
+!                *(infil.ga).ks[from module m_model] *(infil.ga).deltatheta[from module m_model]
+!                *(infil.scs).lambdacn[from module m_model] *(infil.scs).cn[from module m_model]
+!                *manning[from module m_model] *(bc.inflow)[from module m_model]
+!                *(bc.outflow)[from module m_model] *(*(bc.hyd).t)[from module m_model]
+!                *(*(bc.hyd).q)[from module m_model] *(*(bc.rat).h)[from module m_model]
+!                *(*(bc.rat).q)[from module m_model] *(bc.rat).zout[from module m_model]
+!                *(*(bc.rain).t)[from module m_model] *(*(bc.rain).q)[from module m_model]
+!                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
+!                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
+!                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
+!                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
+!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
+!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
+!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
+!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
+!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
+!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
+!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
+!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
 !                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
 !                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
 !                cost
-!   Plus diff mem management of: bathy_cell[from module m_model]:in
-!                innovation[from module m_obs]:in *innovation.diff[from module m_obs]:in
-!                innovuv[from module m_obs]:in *innovuv.diff[from module m_obs]:in
-!                dof.h:in-out dof.u:in-out dof.v:in-out dof.infil:in-out
-!                dof.grad_h:in-out dof.grad_u:in-out dof.grad_v:in-out
-!                dof.grad_z:in-out mesh.node:in-out mesh.cell:in-out
-!                mesh.cellb:in-out mesh.edge:in-out
+!   Plus diff mem management of: infil.ga[from module m_model]:in
+!                infil.scs[from module m_model]:in manning[from module m_model]:in
+!                bc.inflow[from module m_model]:in bc.outflow[from module m_model]:in
+!                bc.hyd[from module m_model]:in *(bc.hyd).t[from module m_model]:in
+!                *(bc.hyd).q[from module m_model]:in bc.rat[from module m_model]:in
+!                *(bc.rat).h[from module m_model]:in *(bc.rat).q[from module m_model]:in
+!                bc.hpresc[from module m_model]:in *(bc.hpresc).t[from module m_model]:in
+!                *(bc.hpresc).h[from module m_model]:in bc.zspresc[from module m_model]:in
+!                *(bc.zspresc).t[from module m_model]:in *(bc.zspresc).z[from module m_model]:in
+!                bc.rain[from module m_model]:in *(bc.rain).t[from module m_model]:in
+!                *(bc.rain).q[from module m_model]:in bc.sum_mass_flux[from module m_model]:in
+!                bathy_cell[from module m_model]:in manning_beta[from module m_model]:in
+!                sporosity.phi[from module m_model]:in innovation[from module m_obs]:in
+!                *innovation.diff[from module m_obs]:in innovq[from module m_obs]:in
+!                *innovq.diff[from module m_obs]:in innovuv[from module m_obs]:in
+!                *innovuv.diff[from module m_obs]:in dof.h:in-out
+!                dof.u:in-out dof.v:in-out dof.infil:in-out dof.grad_h:in-out
+!                dof.grad_u:in-out dof.grad_v:in-out dof.grad_z:in-out
+!                mesh.node:in-out mesh.cell:in-out mesh.cellb:in-out
+!                mesh.edge:in-out
   SUBROUTINE SUB_RUN_MODEL_DIFF()
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-    EXTERNAL EULER_TIME_STEP_FIRST_B1
-    EXTERNAL EULER_TIME_STEP_FIRST_B1_DIFF
     sub_nt = 0
     DO WHILE (.NOT.end_time_loop .AND. sub_nt .LT. max_nt_for_adjoint)
       CALL SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
       CALL ADVANCE_TIME(dof, mesh) ! Replaced by Perl Script
+      bc_diff%sum_mass_flux(:) = 0.0_8
       bc%sum_mass_flux(:) = 0._rp
       SELECT CASE (temp_scheme)
       CASE ('euler')
@@ -506,13 +555,13 @@ CONTAINS
       CASE DEFAULT
         CALL STOPPING_PROGRAM_SUB('Unknow temporal scheme')
       END SELECT
-      CALL SW_POST_TREATMENT(dof, mesh) ! Replaced by Perl Script
+      CALL SW_POST_TREATMENT_DIFF(dof, mesh)
       IF (use_obs .EQ. 1) THEN
         IF (use_zobs .EQ. 1) CALL CALC_INNOVATION_DIFF(dof, dof_diff, &
 &                                                mesh, mesh_diff)
         IF (use_uvobs .EQ. 1) CALL CALC_INNOVUV_DIFF(dof, dof_diff, mesh&
 &                                              , mesh_diff)
-        IF (use_qobs .EQ. 1) CALL CALC_INNOVQ(dof, mesh) ! Replaced by Perl Script
+        IF (use_qobs .EQ. 1) CALL CALC_INNOVQ_DIFF(dof, mesh)
         IF (.NOT.use_obs .EQ. 1) CALL UPDATE_COST_FUNCTION_DIFF(dof, &
 &                                                         dof_diff, cost&
 &                                                         , cost_diff)
@@ -526,7 +575,6 @@ CONTAINS
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-    EXTERNAL EULER_TIME_STEP_FIRST_B1
     sub_nt = 0
     DO WHILE (.NOT.end_time_loop .AND. sub_nt .LT. max_nt_for_adjoint)
       CALL SET_BC(dof, mesh) ! Replaced by Perl Script
@@ -537,7 +585,7 @@ CONTAINS
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh)
+          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT

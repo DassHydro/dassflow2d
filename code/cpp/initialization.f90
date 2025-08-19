@@ -35,21 +35,6 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    if (allocated(my_porosity%Phi) ) call my_porosity_2_fortran(my_porosity) ! propagate definition of porosity from fortran
    if (bc_infil .ne. 0) call my_infiltration_2_fortran(my_infiltration)
    if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
-   call swap_vec_i ( land , swap_index( 1 : mesh%nc ) )
-   call reallocate_i( land , mesh%nc )
-   if (use_porosity .ne. 0) then
-         call swap_vec_i ( SPorosity%land , swap_index( 1 : mesh%nc ) )
-         call reallocate_i( SPorosity%land , mesh%nc )
-   endif
-   if (bc_infil .ne. 0) then
-         call swap_vec_i ( infil%land , swap_index( 1 : mesh%nc ) )
-         call reallocate_i( infil%land , mesh%nc )
-   endif
-   if (allocated(phys_desc%soil_land)) then
-         call swap_vec_i ( phys_desc%soil_land , swap_index( 1 : mesh%nc ) )
-         call reallocate_i( phys_desc%soil_land , mesh%nc )
-   endif
-   call swap_vec_r ( bathy_cell , swap_index( 1 : mesh%nc + mesh%ncb ) )
    !===================================================================================================================!
    ! DOF Initialization --> dof pushed from python
    ! just keep parralel order com_dof

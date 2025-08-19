@@ -9,16 +9,17 @@ MODULE M_OBS_BACK
 
 CONTAINS
 !  Differentiation of calc_cost_function in reverse (adjoint) mode (with options fixinterface):
-!   gradient     of useful results: *(*innovation.diff) *(*innovuv.diff)
-!                cost
+!   gradient     of useful results: *(*innovation.diff) *(*innovq.diff)
+!                *(*innovuv.diff) cost
 !   with respect to varying inputs: *(*(bc.hyd).q) *xsshape.xcenter
 !                *xsshape.s *xsshape.hmax *bathy_cell *(*innovation.diff)
-!                *(*innovuv.diff) *(mesh.cell).invsurf *(mesh.cell).grav.x
-!                *(mesh.cell).grav.y *(mesh.edge).length *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y cost
+!                *(*innovq.diff) *(*innovuv.diff) *(mesh.cell).invsurf
+!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.edge).length
+!                *(mesh.edge).normal.x *(mesh.edge).normal.y cost
 !   Plus diff mem management of: bc.hyd:in *(bc.hyd).q:in xsshape:in
 !                bathy_cell:in innovation:in *innovation.diff:in
-!                innovuv:in *innovuv.diff:in mesh.cell:in mesh.edge:in
+!                innovq:in *innovq.diff:in innovuv:in *innovuv.diff:in
+!                mesh.cell:in mesh.edge:in
   SUBROUTINE CALC_COST_FUNCTION_BACK(cost, cost_back, mesh, mesh_back)
     USE M_NUMERIC_BACK
     IMPLICIT NONE
@@ -128,8 +129,10 @@ CONTAINS
     INTEGER*4 :: ad_to2
     INTEGER*4 :: ad_to3
     INTEGER*4 :: ad_to4
-    INTEGER*4 :: branch
     INTEGER*4 :: ad_to5
+    INTEGER*4 :: ad_to6
+    INTEGER*4 :: branch
+    INTEGER*4 :: ad_to7
     INTEGER :: ii1
     IF (use_obs .EQ. 1) THEN
       cost_part(:) = 0._rp
@@ -161,13 +164,15 @@ CONTAINS
       END IF
       IF (use_qobs .EQ. 1 .OR. use_qobs_gr4 .EQ. 1) THEN
         IF (use_nse .EQ. 0) THEN
-          CALL PUSHCONTROL2B(0)
           DO iobs=1,SIZE(stationq)
             DO idiff=1,SIZE(innovq(iobs)%diff)
               cost_part(1) = cost_part(1) + stationq(iobs)%weight*innovq&
 &               (iobs)%diff(idiff)**2
             END DO
+            CALL PUSHINTEGER4(idiff - 1)
           END DO
+          CALL PUSHINTEGER4(iobs - 1)
+          CALL PUSHCONTROL2B(0)
         ELSE
           sizeq = SIZE(stationq)
           DO iobs=1,SIZE(stationq)
@@ -654,8 +659,8 @@ CONTAINS
       END DO
       filtered_back = 0.0_8
       DO k=bc%nb_in,1,-1
-        CALL POPINTEGER4(ad_to5)
-        DO i=ad_to5,2,-1
+        CALL POPINTEGER4(ad_to7)
+        DO i=ad_to7,2,-1
           temp_back0 = 2*(bc%hyd(k)%q(i)-filtered(4))*cost_part_back(3)
           CALL POPREAL8(filtered(1))
           filtered_back(4) = filtered_back(4) + filtered_back(1) - &
@@ -1286,26 +1291,39 @@ CONTAINS
         mesh_back%edge%normal%y = 0.0_8
       END IF
       CALL POPCONTROL2B(branch)
-      IF (branch .NE. 0) THEN
-        IF (branch .EQ. 1) THEN
-          CALL POPINTEGER4(ad_to4)
-          DO iobs=ad_to4,1,-1
-            CALL POPREAL8(cost_part(1))
-            temp_back = cost_part_back(1)/cost_part(3)
-            cost_part_back(2) = cost_part_back(2) + temp_back
-            cost_part_back(3) = cost_part_back(3) - cost_part(2)*&
-&             temp_back/cost_part(3)
-            CALL POPINTEGER4(ad_to3)
-            DO idiff=ad_to3,1,-1
-              CALL POPREAL8(cost_part(3))
-              CALL POPREAL8(cost_part(2))
-            END DO
-            CALL POPREAL8(cost_part(2))
-            cost_part_back(2) = 0.0_8
-            CALL POPREAL8(cost_part(3))
-            cost_part_back(3) = 0.0_8
+      IF (branch .EQ. 0) THEN
+        CALL POPINTEGER4(ad_to4)
+        DO iobs=ad_to4,1,-1
+          CALL POPINTEGER4(ad_to3)
+          DO idiff=ad_to3,1,-1
+            innovq_back(iobs)%diff(idiff) = innovq_back(iobs)%diff(idiff&
+&             ) + 2*innovq(iobs)%diff(idiff)*stationq(iobs)%weight*&
+&             cost_part_back(1)
           END DO
-        END IF
+        END DO
+      ELSE IF (branch .EQ. 1) THEN
+        CALL POPINTEGER4(ad_to6)
+        DO iobs=ad_to6,1,-1
+          CALL POPREAL8(cost_part(1))
+          temp_back = cost_part_back(1)/cost_part(3)
+          cost_part_back(2) = cost_part_back(2) + temp_back
+          cost_part_back(3) = cost_part_back(3) - cost_part(2)*temp_back&
+&           /cost_part(3)
+          CALL POPINTEGER4(ad_to5)
+          DO idiff=ad_to5,1,-1
+            CALL POPREAL8(cost_part(3))
+            innovq_back(iobs+sizeq)%diff(idiff) = innovq_back(iobs+sizeq&
+&             )%diff(idiff) + 2*innovq(iobs+sizeq)%diff(idiff)*&
+&             cost_part_back(3)
+            CALL POPREAL8(cost_part(2))
+            innovq_back(iobs)%diff(idiff) = innovq_back(iobs)%diff(idiff&
+&             ) + 2*innovq(iobs)%diff(idiff)*cost_part_back(2)
+          END DO
+          CALL POPREAL8(cost_part(2))
+          cost_part_back(2) = 0.0_8
+          CALL POPREAL8(cost_part(3))
+          cost_part_back(3) = 0.0_8
+        END DO
       END IF
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN

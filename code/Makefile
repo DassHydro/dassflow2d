@@ -633,7 +633,8 @@ WRAPPERS_CPP 	=  wrappers/m_common.f90 \
 		   wrappers/m_mpi.f90 \
 		   wrappers/m_mesh.f90 \
 		   wrappers/m_sw_mono.f90 \
-		   wrappers/input.f90
+		   wrappers/input.f90 \
+		   wrappers/functions_porosity.f90 
 
  ifeq ($(HYDRO),1)
 OBJ_TMP = 	./obj/m_common.o \

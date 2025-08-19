@@ -12,12 +12,13 @@ CONTAINS
 !   variations   of useful results: cost
 !   with respect to varying inputs: *(*(bc.hyd).q) *xsshape.xcenter
 !                *xsshape.s *xsshape.hmax *bathy_cell *(*innovation.diff)
-!                *(*innovuv.diff) *(mesh.cell).invsurf *(mesh.cell).grav.x
-!                *(mesh.cell).grav.y *(mesh.edge).length *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y cost
+!                *(*innovq.diff) *(*innovuv.diff) *(mesh.cell).invsurf
+!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.edge).length
+!                *(mesh.edge).normal.x *(mesh.edge).normal.y cost
 !   Plus diff mem management of: bc.hyd:in *(bc.hyd).q:in xsshape:in
 !                bathy_cell:in innovation:in *innovation.diff:in
-!                innovuv:in *innovuv.diff:in mesh.cell:in mesh.edge:in
+!                innovq:in *innovq.diff:in innovuv:in *innovuv.diff:in
+!                mesh.cell:in mesh.edge:in
   SUBROUTINE CALC_COST_FUNCTION_DIFF(cost, cost_diff, mesh, mesh_diff)
     USE M_NUMERIC_DIFF
     IMPLICIT NONE
@@ -154,6 +155,9 @@ CONTAINS
         IF (use_nse .EQ. 0) THEN
           DO iobs=1,SIZE(stationq)
             DO idiff=1,SIZE(innovq(iobs)%diff)
+              cost_part_diff(1) = cost_part_diff(1) + stationq(iobs)%&
+&               weight*2*innovq(iobs)%diff(idiff)*innovq_diff(iobs)%diff&
+&               (idiff)
               cost_part(1) = cost_part(1) + stationq(iobs)%weight*innovq&
 &               (iobs)%diff(idiff)**2
             END DO
@@ -166,9 +170,13 @@ CONTAINS
             cost_part_diff(2) = 0.0_8
             cost_part(2) = 0._rp
             DO idiff=1,SIZE(innovq(iobs)%diff)
+              cost_part_diff(2) = cost_part_diff(2) + 2*innovq(iobs)%&
+&               diff(idiff)*innovq_diff(iobs)%diff(idiff)
               cost_part(2) = cost_part(2) + innovq(iobs)%diff(idiff)**2
-              cost_part(3) = cost_part(3) + innovq(iobs+sizeq)%diff(&
-&               idiff)**2
+              temp0 = innovq(iobs+sizeq)%diff(idiff)
+              cost_part_diff(3) = cost_part_diff(3) + 2*temp0*&
+&               innovq_diff(iobs+sizeq)%diff(idiff)
+              cost_part(3) = cost_part(3) + temp0*temp0
             END DO
             temp0 = cost_part(2)/cost_part(3)
             cost_part_diff(1) = cost_part_diff(1) + (cost_part_diff(2)-&

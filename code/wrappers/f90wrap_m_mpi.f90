@@ -15,8 +15,8 @@ subroutine f90wrap_m_mpi__end_mpi
 end subroutine f90wrap_m_mpi__end_mpi
 
 subroutine f90wrap_m_mpi__fill_swap_lists(mesh)
-    use m_mpi, only: fill_swap_lists
     use m_mesh, only: msh
+    use m_mpi, only: fill_swap_lists
     implicit none
     
     type msh_ptr_type
@@ -29,8 +29,8 @@ subroutine f90wrap_m_mpi__fill_swap_lists(mesh)
 end subroutine f90wrap_m_mpi__fill_swap_lists
 
 subroutine f90wrap_m_mpi__fill_swap_index(mesh)
-    use m_mesh, only: msh
     use m_mpi, only: fill_swap_index
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type
@@ -74,8 +74,8 @@ subroutine f90wrap_m_mpi__com_var_i(var, mesh, n0)
 end subroutine f90wrap_m_mpi__com_var_i
 
 subroutine f90wrap_m_mpi__com_var_r(var, mesh, n0)
-    use m_mesh, only: msh
     use m_mpi, only: com_var_r
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type
@@ -313,7 +313,6 @@ subroutine f90wrap_m_mpi__array__swap_index(dummy_this, nd, dtype, dshape, dloc)
     use m_common
     use m_linear_algebra
     use m_mesh
-    use mpi
     use m_mpi, only: m_mpi_swap_index => swap_index
     use, intrinsic :: iso_c_binding, only : c_int
     implicit none
@@ -337,7 +336,6 @@ subroutine f90wrap_m_mpi__array__inv_swap_index(dummy_this, nd, dtype, dshape, d
     use m_common
     use m_linear_algebra
     use m_mesh
-    use mpi
     use m_mpi, only: m_mpi_inv_swap_index => inv_swap_index
     use, intrinsic :: iso_c_binding, only : c_int
     implicit none
@@ -357,111 +355,10 @@ subroutine f90wrap_m_mpi__array__inv_swap_index(dummy_this, nd, dtype, dshape, d
     end if
 end subroutine f90wrap_m_mpi__array__inv_swap_index
 
-subroutine f90wrap_m_mpi__array__type_com(dummy_this, nd, dtype, dshape, dloc)
-    use m_common
-    use m_linear_algebra
-    use m_mesh
-    use mpi
-    use m_mpi, only: m_mpi_type_com => type_com
-    use, intrinsic :: iso_c_binding, only : c_int
-    implicit none
-    integer, intent(in) :: dummy_this(2)
-    integer(c_int), intent(out) :: nd
-    integer(c_int), intent(out) :: dtype
-    integer(c_int), dimension(10), intent(out) :: dshape
-    integer*8, intent(out) :: dloc
-    
-    nd = 1
-    dtype = 5
-    if (allocated(m_mpi_type_com)) then
-        dshape(1:1) = shape(m_mpi_type_com)
-        dloc = loc(m_mpi_type_com)
-    else
-        dloc = 0
-    end if
-end subroutine f90wrap_m_mpi__array__type_com
-
-subroutine f90wrap_m_mpi__get__realtype(f90wrap_realtype)
-    use m_mpi, only: m_mpi_realtype => realtype
-    implicit none
-    integer(4), intent(out) :: f90wrap_realtype
-    
-    f90wrap_realtype = m_mpi_realtype
-end subroutine f90wrap_m_mpi__get__realtype
-
-subroutine f90wrap_m_mpi__get__inttype(f90wrap_inttype)
-    use m_mpi, only: m_mpi_inttype => inttype
-    implicit none
-    integer(4), intent(out) :: f90wrap_inttype
-    
-    f90wrap_inttype = m_mpi_inttype
-end subroutine f90wrap_m_mpi__get__inttype
-
-subroutine f90wrap_m_mpi__array__stat(dummy_this, nd, dtype, dshape, dloc)
-    use m_common
-    use m_linear_algebra
-    use m_mesh
-    use mpi
-    use m_mpi, only: m_mpi_stat => stat
-    use, intrinsic :: iso_c_binding, only : c_int
-    implicit none
-    integer, intent(in) :: dummy_this(2)
-    integer(c_int), intent(out) :: nd
-    integer(c_int), intent(out) :: dtype
-    integer(c_int), dimension(10), intent(out) :: dshape
-    integer*8, intent(out) :: dloc
-    
-    nd = 1
-    dtype = 5
-    dshape(1:1) = shape(m_mpi_stat)
-    dloc = loc(m_mpi_stat)
-end subroutine f90wrap_m_mpi__array__stat
-
-subroutine f90wrap_m_mpi__array__scotchgraph(dummy_this, nd, dtype, dshape, dloc)
-    use m_common
-    use m_linear_algebra
-    use m_mesh
-    use mpi
-    use m_mpi, only: m_mpi_scotchgraph => Scotchgraph
-    use, intrinsic :: iso_c_binding, only : c_int
-    implicit none
-    integer, intent(in) :: dummy_this(2)
-    integer(c_int), intent(out) :: nd
-    integer(c_int), intent(out) :: dtype
-    integer(c_int), dimension(10), intent(out) :: dshape
-    integer*8, intent(out) :: dloc
-    
-    nd = 1
-    dtype = 12
-    dshape(1:1) = shape(m_mpi_scotchgraph)
-    dloc = loc(m_mpi_scotchgraph)
-end subroutine f90wrap_m_mpi__array__scotchgraph
-
-subroutine f90wrap_m_mpi__array__scotchstrat(dummy_this, nd, dtype, dshape, dloc)
-    use m_common
-    use m_linear_algebra
-    use m_mesh
-    use mpi
-    use m_mpi, only: m_mpi_scotchstrat => Scotchstrat
-    use, intrinsic :: iso_c_binding, only : c_int
-    implicit none
-    integer, intent(in) :: dummy_this(2)
-    integer(c_int), intent(out) :: nd
-    integer(c_int), intent(out) :: dtype
-    integer(c_int), dimension(10), intent(out) :: dshape
-    integer*8, intent(out) :: dloc
-    
-    nd = 1
-    dtype = 12
-    dshape(1:1) = shape(m_mpi_scotchstrat)
-    dloc = loc(m_mpi_scotchstrat)
-end subroutine f90wrap_m_mpi__array__scotchstrat
-
 subroutine f90wrap_m_mpi__array__part(dummy_this, nd, dtype, dshape, dloc)
     use m_common
     use m_linear_algebra
     use m_mesh
-    use mpi
     use m_mpi, only: m_mpi_part => part
     use, intrinsic :: iso_c_binding, only : c_int
     implicit none
@@ -485,7 +382,6 @@ subroutine f90wrap_m_mpi__array__part_size(dummy_this, nd, dtype, dshape, dloc)
     use m_common
     use m_linear_algebra
     use m_mesh
-    use mpi
     use m_mpi, only: m_mpi_part_size => part_size
     use, intrinsic :: iso_c_binding, only : c_int
     implicit none
@@ -509,7 +405,6 @@ subroutine f90wrap_m_mpi__array__part_neighbs(dummy_this, nd, dtype, dshape, dlo
     use m_common
     use m_linear_algebra
     use m_mesh
-    use mpi
     use m_mpi, only: m_mpi_part_neighbs => part_neighbs
     use, intrinsic :: iso_c_binding, only : c_int
     implicit none

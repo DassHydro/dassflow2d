@@ -14,7 +14,7 @@ SUBROUTINE imex_time_step( dof , mesh )
    call alloc_dof( dof_2 , mesh )
    call alloc_dof( dof_3 , mesh )
    call alloc_dof( dof_4 , mesh )
-      icopy = mesh%nc + part_neighbs( proc , np )
+      icopy = mesh%nc
    dof_1%h( 1 : icopy ) = dof%h( 1 : icopy )
    dof_1%u( 1 : icopy ) = dof%u( 1 : icopy )
    dof_1%v( 1 : icopy ) = dof%v( 1 : icopy )

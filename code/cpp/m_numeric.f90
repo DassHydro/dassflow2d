@@ -197,10 +197,6 @@ END SUBROUTINE dealloc_m_numeric
          var_slope(i)%x = sum( muscl(i)%weights(1 : k) * var_diff(1:k) )
          var_slope(i)%y = sum( muscl(i)%weights(1+k:2*k) * var_diff(1:k) )
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Least_Square_Slope
    !> \brief Least Square Cell Slope with Filter
    !! \details Least Square Cell Slope with Filter given mesh and var from which we calculate the slope + filter and cutoff
@@ -233,10 +229,6 @@ END SUBROUTINE dealloc_m_numeric
             var_slope(i)%y = 0._rp
          end if
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Least_Square_Slope_Filter
    !> \brief Least Square Cell Slope with Filter
    !! \details Least Square Cell Slope with DOUBLE Filter given mesh and var from which we calculate the slope + filter and cutoff
@@ -271,10 +263,6 @@ END SUBROUTINE dealloc_m_numeric
             var_slope(i)%y = 0._rp
          end if
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Least_Square_Slope_Double_Filter
    !> \brief Least Square Cell Slope with Filter
    !! \details Least Square Cell Slope with SUPER Filter given mesh and var from which we calculate the slope + filter and cutoff
@@ -307,10 +295,6 @@ END SUBROUTINE dealloc_m_numeric
             var_slope(i)%y = 0._rp
          end if
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Least_Square_Slope_Super_Filter
    !> \brief Dimensional Cell Slope for cartesian mesh
    !! \details ...
@@ -362,10 +346,6 @@ END SUBROUTINE dealloc_m_numeric
             var_slope(i)%y = ( var_p - var_c ) * Van_Leer_Limiter( r ) / dy
          end if
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Dimensional_Slope
    !> \brief Barth Slope Limiter
    !! \details ...
@@ -409,10 +389,6 @@ END SUBROUTINE dealloc_m_numeric
          var_slope(i)%x = cell_limiter * vec2d_loc%x
          var_slope(i)%y = cell_limiter * vec2d_loc%y
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Slope_Limiter_Barth
    !> \brief MP_property
    !! \details ...
@@ -519,10 +495,6 @@ END SUBROUTINE dealloc_m_numeric
             var_slope(i)%y = 0._rp
          end if
       end do
-         call Time_Init_Part(80)
-         call com_var_r( var_slope(:)%x , mesh )
-         call com_var_r( var_slope(:)%y , mesh )
-         call Time_End_Part(80)
    END SUBROUTINE Old_Least_Square_Slope_Filter
    !> \brief Calculate the Cell Gradient of a variable using Green Formula and basic interpolation at edge
    !! \details i don't know the difference with first one

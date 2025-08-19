@@ -13,33 +13,33 @@ CONTAINS
       intrinsic cpu_time
       integer(ip), intent(in) :: i
       time( i ) = 0._rp
-         t_ini( i ) = MPI_WTIME()
+         call CPU_TIME( t_ini( i ) )
    END SUBROUTINE Time_Init
    SUBROUTINE Time_End( i )
       implicit none
       intrinsic cpu_time
       integer(ip), intent(in) :: i
-         t_end( i ) = MPI_WTIME()
+         call CPU_TIME( t_end( i ) )
       time( i ) = t_end( i ) - t_ini( i )
    END SUBROUTINE Time_End
    SUBROUTINE Time_Init_Part( i )
       implicit none
       intrinsic cpu_time
       integer(ip), intent(in) :: i
-         t_ini( i ) = MPI_WTIME()
+         call CPU_TIME( t_ini( i ) )
    END SUBROUTINE Time_Init_Part
    SUBROUTINE Time_End_Part( i )
       implicit none
       intrinsic cpu_time
       integer(ip), intent(in) :: i
-         t_end( i ) = MPI_WTIME()
+         call CPU_TIME( t_end( i ) )
       time( i ) = time( i ) + t_end( i ) - t_ini( i )
    END SUBROUTINE Time_End_Part
    SUBROUTINE Time_Screen( mesh )
       implicit none
       TYPE( msh ), intent(in) :: mesh
       integer(ip) :: mesh_total_size
-         call MPI_ALLREDUCE( mesh%nc , mesh_total_size , 1 , inttype , MPI_SUM , MPI_COMM_WORLD , code )
+         mesh_total_size = mesh%nc
       if ( proc == 0 ) then
          write(6,'(A)' )
          write(6,'(A)' ) '********************************************************************************'
@@ -55,8 +55,6 @@ CONTAINS
             write(6,'(A,F5.2)' ) ' Variables update     in percent  =  ' , 100._rp * time(5) / time(1)
             write(6,'(A)' ) '********************************************************************************'
          end if ! end if ( spatial_scheme(1:5) == 'muscl' )
-            write(6,'(A,F5.2)') ' MPI communications   in percent  =  ' , 100._rp * time(80) / time(1)
-            write(6,'(A)' ) '********************************************************************************'
       end if ! end if proc==0
    END SUBROUTINE Time_Screen
    SUBROUTINE Print_Screen( screen_case , var )

@@ -2,19 +2,26 @@
 !  Tapenade 3.16 (develop) - 25 Jun 2025 16:38
 !
 !  Differentiation of run_model in reverse (adjoint) mode (with options fixinterface):
-!   gradient     of useful results: *(*innovation.diff) *(*innovuv.diff)
-!                *(dof.h) *(dof.u) *(dof.v) cost
-!   with respect to varying inputs: *(*(bc.hyd).q) *xsshape.xcenter
-!                *xsshape.s *xsshape.hmax *bathy_cell *(dof0.h)
+!   gradient     of useful results: *(*innovation.diff) *(*innovq.diff)
+!                *(*innovuv.diff) *(dof.h) *(dof.u) *(dof.v) cost
+!   with respect to varying inputs: *(infil.ga).psif *(infil.ga).ks
+!                *(infil.ga).deltatheta *(infil.scs).lambdacn *(infil.scs).cn
+!                *manning *ptf.kappa *(*(bc.hyd).t) *(*(bc.hyd).q)
+!                *(*(bc.rat).h) *(*(bc.rat).q) *(*(bc.rain).t)
+!                *(*(bc.rain).q) *xsshape.xcenter *xsshape.s *xsshape.hmax
+!                *bathy_cell *manning_beta *(sporosity.phi) *(dof0.h)
 !                *(dof0.u) *(dof0.v)
-!   RW status of diff variables: *(infil.ga).psif:(loc) *(infil.ga).ks:(loc)
-!                *(infil.ga).deltatheta:(loc) *(infil.scs).lambdacn:(loc)
-!                *(infil.scs).cn:(loc) *manning:(loc) *ptf.kappa:(loc)
-!                *(*(bc.hyd).t):(loc) *(*(bc.hyd).q):out *(*(bc.rat).h):(loc)
-!                *(*(bc.rat).q):(loc) *(*(bc.rain).t):(loc) *(*(bc.rain).q):(loc)
+!   RW status of diff variables: tc:(loc) *(infil.ga).psif:out
+!                *(infil.ga).ks:out *(infil.ga).deltatheta:out
+!                *(infil.scs).lambdacn:out *(infil.scs).cn:out
+!                *manning:out *ptf.kappa:out *(bc.inflow):(loc)
+!                *(bc.outflow):(loc) *(*(bc.hyd).t):out *(*(bc.hyd).q):out
+!                *(*(bc.rat).h):out *(*(bc.rat).q):out *(bc.rat).zout:(loc)
+!                *(*(bc.rain).t):out *(*(bc.rain).q):out *(bc.rain).qin:(loc)
+!                *(bc.rain).cumul:(loc) *(bc.sum_mass_flux):(loc)
 !                *xsshape.xcenter:out *xsshape.s:out *xsshape.hmax:out
-!                *bathy_cell:out *manning_beta:(loc) *(sporosity.phi):(loc)
-!                *(*innovation.diff):in-killed *(*innovq.diff):(loc)
+!                *bathy_cell:out *manning_beta:out *(sporosity.phi):out
+!                *(*innovation.diff):in-killed *(*innovq.diff):in-killed
 !                *(*innovw.diff):(loc) *(*innovuv.diff):in-killed
 !                dof.h:(loc) *(dof.h):in-killed dof.u:(loc) *(dof.u):in-killed
 !                dof.v:(loc) *(dof.v):in-killed *(dof.infil):(loc)
@@ -34,8 +41,14 @@
 !                mesh.scal:(loc) mesh.surf:(loc) cost:in-killed
 !                dof0.h:(loc) *(dof0.h):out dof0.u:(loc) *(dof0.u):out
 !                dof0.v:(loc) *(dof0.v):out
-!   Plus diff mem management of: bc.hyd:in *(bc.hyd).q:in xsshape:in
-!                bathy_cell:in innovation:in *innovation.diff:in
+!   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
+!                ptf:in bc.inflow:in bc.outflow:in bc.hyd:in *(bc.hyd).t:in
+!                *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in *(bc.rat).q:in
+!                bc.hpresc:in *(bc.hpresc).t:in *(bc.hpresc).h:in
+!                bc.zspresc:in *(bc.zspresc).t:in *(bc.zspresc).z:in
+!                bc.rain:in *(bc.rain).t:in *(bc.rain).q:in bc.sum_mass_flux:in
+!                xsshape:in bathy_cell:in manning_beta:in sporosity.phi:in
+!                innovation:in *innovation.diff:in innovq:in *innovq.diff:in
 !                innovuv:in *innovuv.diff:in dof.h:in-out dof.u:in-out
 !                dof.v:in-out dof.infil:in-out dof.grad_h:in-out
 !                dof.grad_u:in-out dof.grad_v:in-out dof.grad_z:in-out
@@ -43,7 +56,7 @@
 !                mesh.edge:in-out dof0.h:in dof0.u:in dof0.v:in
 SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
 & dof_back, cost, cost_back)
-  USE M_COMMON
+  USE M_COMMON ! Replaced by Perl Script
   USE M_LINEAR_ALGEBRA ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
@@ -52,6 +65,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   USE M_MODEL ! Replaced by Perl Script
   USE M_OBS ! Replaced by Perl Script
   USE M_OBS_BACK
+  USE FONCTIONS_POROSITE_MOD
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
@@ -121,6 +135,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   INTEGER*4 :: ad_to
   INTEGER*4 :: ad_to0
   INTEGER*4 :: ad_to1
+  INTEGER*4 :: ad_to2
   INTEGER :: ad_count
   INTEGER :: i0
   IF (use_xsshp .EQ. 1) THEN
@@ -318,6 +333,14 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   END IF
   IF (use_ptf .EQ. 1) THEN
     IF (bc_infil .EQ. 1) THEN
+      DO i=1,SIZE(phys_desc%soil)
+!kg/m2 to m
+        infil%ga(i)%ks = 25.4_rp/3600._rp*10._rp**(-ptf(phys_desc%&
+&         ptf_land(i))%kappa(7)-ptf(phys_desc%ptf_land(i))%kappa(8)*&
+&         phys_desc%soil(i)%clay+ptf(phys_desc%ptf_land(i))%kappa(9)*&
+&         phys_desc%soil(i)%sand)/1000._rp
+      END DO
+      CALL PUSHINTEGER4(i - 1)
       CALL PUSHCONTROL2B(0)
     ELSE IF (bc_infil .EQ. 2) THEN
       CALL PUSHCONTROL2B(1)
@@ -474,13 +497,27 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
     ELSE
       CALL PUSHCONTROL1B(0)
     END IF
+    IF (ALLOCATED(innovq)) THEN
+      CALL PUSHINTEGER4ARRAY(innovq%ind_t, size(innovq,1))
+      CALL PUSHCONTROL1B(1)
+    ELSE
+      CALL PUSHCONTROL1B(0)
+    END IF
     IF (ALLOCATED(innovation)) THEN
       CALL PUSHINTEGER4ARRAY(innovation%ind_t, size(innovation,1))
       CALL PUSHCONTROL1B(1)
     ELSE
       CALL PUSHCONTROL1B(0)
     END IF
+    IF (ALLOCATED(bathy_cell)) THEN
+      CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
+      CALL PUSHCONTROL1B(1)
+    ELSE
+      CALL PUSHCONTROL1B(0)
+    END IF
     CALL PUSHREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
+    CALL PUSHREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
+    CALL PUSHREAL8ARRAY(bc%rain%qin, size(bc%rain,1))
     CALL PUSHREAL8ARRAY(bc%rat%zout, size(bc%rat,1))
     CALL PUSHREAL8ARRAY(bc%outflow, size(bc%outflow,1))
     CALL PUSHREAL8ARRAY(bc%inflow, size(bc%inflow,1))
@@ -496,6 +533,35 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   CALL CALC_COST_FUNCTION(cost, mesh)
   CALL POPREAL8(cost)
   CALL CALC_COST_FUNCTION_BACK(cost, cost_back, mesh, mesh_back)
+  infil_back%ga%psif = 0.0_8
+  infil_back%ga%ks = 0.0_8
+  infil_back%ga%deltatheta = 0.0_8
+  infil_back%scs%lambdacn = 0.0_8
+  infil_back%scs%cn = 0.0_8
+  IF (ALLOCATED(manning_back)) manning_back = 0.0_8
+  bc_back%inflow = 0.0_8
+  bc_back%outflow = 0.0_8
+  DO ii1=1,size(bc%hyd,1)
+    bc_back%hyd(ii1)%t = 0.0_8
+  END DO
+  DO ii1=1,size(bc%rat,1)
+    bc_back%rat(ii1)%h = 0.0_8
+  END DO
+  DO ii1=1,size(bc%rat,1)
+    bc_back%rat(ii1)%q = 0.0_8
+  END DO
+  bc_back%rat%zout = 0.0_8
+  DO ii1=1,size(bc%rain,1)
+    bc_back%rain(ii1)%t = 0.0_8
+  END DO
+  DO ii1=1,size(bc%rain,1)
+    bc_back%rain(ii1)%q = 0.0_8
+  END DO
+  bc_back%rain%qin = 0.0_8
+  bc_back%rain%cumul = 0.0_8
+  bc_back%sum_mass_flux = 0.0_8
+  IF (ALLOCATED(manning_beta_back)) manning_beta_back = 0.0_8
+  sporosity_back%phi = 0.0_8
   dof_back%infil = 0.0_8
   dof_back%t_display = 0.0_8
   dof_back%grad_h%x = 0.0_8
@@ -535,10 +601,18 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
     CALL POPREAL8ARRAY(bc%inflow, size(bc%inflow,1))
     CALL POPREAL8ARRAY(bc%outflow, size(bc%outflow,1))
     CALL POPREAL8ARRAY(bc%rat%zout, size(bc%rat,1))
+    CALL POPREAL8ARRAY(bc%rain%qin, size(bc%rain,1))
+    CALL POPREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
     CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
+    CALL POPCONTROL1B(branch)
+    IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
+&                                   size(bathy_cell,1))
     CALL POPCONTROL1B(branch)
     IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovation%ind_t, &
 &                                      size(innovation,1))
+    CALL POPCONTROL1B(branch)
+    IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovq%ind_t, &
+&                                      size(innovq,1))
     CALL POPCONTROL1B(branch)
     IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovuv%ind_t, &
 &                                      size(innovuv,1))
@@ -652,8 +726,8 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   dof0_back%h = dof0_back%h + dof_back%h
   CALL POPCONTROL1B(branch)
   IF (branch .EQ. 0) THEN
-    CALL POPINTEGER4(ad_to1)
-    DO i=ad_to1,1,-1
+    CALL POPINTEGER4(ad_to2)
+    DO i=ad_to2,1,-1
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
         bathy_cell_back(i) = bathy_cell_back(i) - dof0_back%h(i)
@@ -663,6 +737,37 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
     END DO
   END IF
   CALL POPCONTROL2B(branch)
+  IF (branch .EQ. 0) THEN
+    IF (ALLOCATED(ptf_back)) THEN
+      DO ii1=1,size(ptf,1)
+        ptf_back(ii1)%kappa = 0.0_8
+      END DO
+    END IF
+    CALL POPINTEGER4(ad_to1)
+    DO i=ad_to1,1,-1
+      temp_back0 = 10._rp**(phys_desc%soil(i)%sand*ptf(phys_desc%&
+&       ptf_land(i))%kappa(9)-phys_desc%soil(i)%clay*ptf(phys_desc%&
+&       ptf_land(i))%kappa(8)-ptf(phys_desc%ptf_land(i))%kappa(7))*LOG(&
+&       10._rp)*25.4_rp*infil_back%ga(i)%ks/(3600._rp*1000._rp)
+      infil_back%ga(i)%ks = 0.0_8
+      ptf_back(phys_desc%ptf_land(i))%kappa(9) = ptf_back(phys_desc%&
+&       ptf_land(i))%kappa(9) + phys_desc%soil(i)%sand*temp_back0
+      ptf_back(phys_desc%ptf_land(i))%kappa(8) = ptf_back(phys_desc%&
+&       ptf_land(i))%kappa(8) - phys_desc%soil(i)%clay*temp_back0
+      ptf_back(phys_desc%ptf_land(i))%kappa(7) = ptf_back(phys_desc%&
+&       ptf_land(i))%kappa(7) - temp_back0
+    END DO
+  ELSE IF (branch .EQ. 1) THEN
+    IF (ALLOCATED(ptf_back)) THEN
+      DO ii1=1,size(ptf,1)
+        ptf_back(ii1)%kappa = 0.0_8
+      END DO
+    END IF
+  ELSE IF (ALLOCATED(ptf_back)) THEN
+    DO ii1=1,size(ptf,1)
+      ptf_back(ii1)%kappa = 0.0_8
+    END DO
+  END IF
   CALL POPCONTROL2B(branch)
   IF (branch .LT. 2) THEN
     IF (branch .EQ. 0) THEN
@@ -897,72 +1002,79 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
       END DO
     END IF
   END IF
-  infil_back%ga%psif = 0.0_8
-  infil_back%ga%ks = 0.0_8
-  infil_back%ga%deltatheta = 0.0_8
-  infil_back%scs%lambdacn = 0.0_8
-  infil_back%scs%cn = 0.0_8
-  IF (ALLOCATED(manning_back)) manning_back = 0.0_8
-  IF (ALLOCATED(ptf_back)) THEN
-    DO ii1=1,size(ptf,1)
-      ptf_back(ii1)%kappa = 0.0_8
-    END DO
-  END IF
-  DO ii1=1,size(bc%hyd,1)
-    bc_back%hyd(ii1)%t = 0.0_8
-  END DO
-  DO ii1=1,size(bc%rat,1)
-    bc_back%rat(ii1)%h = 0.0_8
-  END DO
-  DO ii1=1,size(bc%rat,1)
-    bc_back%rat(ii1)%q = 0.0_8
-  END DO
-  DO ii1=1,size(bc%rain,1)
-    bc_back%rain(ii1)%t = 0.0_8
-  END DO
-  DO ii1=1,size(bc%rain,1)
-    bc_back%rain(ii1)%q = 0.0_8
-  END DO
-  IF (ALLOCATED(manning_beta_back)) manning_beta_back = 0.0_8
-  sporosity_back%phi = 0.0_8
 
 CONTAINS
 !  Differentiation of sub_run_model in reverse (adjoint) mode (with options fixinterface):
-!   gradient     of useful results: *bathy_cell[from module m_model]
-!                *(*innovation.diff)[from module m_obs] *(*innovuv.diff)[from module m_obs]
-!                *(dof.h) *(dof.u) *(dof.v) *(dof.infil) dof.t_display
-!                *(dof.grad_h).x *(dof.grad_h).y *(dof.grad_u).x
-!                *(dof.grad_u).y *(dof.grad_v).x *(dof.grad_v).y
-!                *(dof.grad_z).x *(dof.grad_z).y *(mesh.node).coord.x
-!                *(mesh.node).coord.y *(mesh.cell).surf *(mesh.cell).invsurf
-!                *(mesh.cell).peri *(mesh.cell).grav.x *(mesh.cell).grav.y
-!                *(mesh.cellb).grav.x *(mesh.cellb).grav.y *(mesh.edge).length
-!                *(mesh.edge).center.x *(mesh.edge).center.y *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y *(mesh.edge).tangent.x *(mesh.edge).tangent.y
+!   gradient     of useful results: *(infil.ga).psif[from module m_model]
+!                *(infil.ga).ks[from module m_model] *(infil.ga).deltatheta[from module m_model]
+!                *(infil.scs).lambdacn[from module m_model] *(infil.scs).cn[from module m_model]
+!                *manning[from module m_model] *(bc.inflow)[from module m_model]
+!                *(bc.outflow)[from module m_model] *(*(bc.hyd).t)[from module m_model]
+!                *(*(bc.hyd).q)[from module m_model] *(*(bc.rat).h)[from module m_model]
+!                *(*(bc.rat).q)[from module m_model] *(bc.rat).zout[from module m_model]
+!                *(*(bc.rain).t)[from module m_model] *(*(bc.rain).q)[from module m_model]
+!                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
+!                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
+!                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
+!                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
+!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
+!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
+!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
+!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
+!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
+!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
+!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
+!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
 !                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
 !                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
 !                cost
-!   with respect to varying inputs: *bathy_cell[from module m_model]
-!                *(*innovation.diff)[from module m_obs] *(*innovuv.diff)[from module m_obs]
-!                *(dof.h) *(dof.u) *(dof.v) *(dof.infil) dof.t_display
-!                *(dof.grad_h).x *(dof.grad_h).y *(dof.grad_u).x
-!                *(dof.grad_u).y *(dof.grad_v).x *(dof.grad_v).y
-!                *(dof.grad_z).x *(dof.grad_z).y *(mesh.node).coord.x
-!                *(mesh.node).coord.y *(mesh.cell).surf *(mesh.cell).invsurf
-!                *(mesh.cell).peri *(mesh.cell).grav.x *(mesh.cell).grav.y
-!                *(mesh.cellb).grav.x *(mesh.cellb).grav.y *(mesh.edge).length
-!                *(mesh.edge).center.x *(mesh.edge).center.y *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y *(mesh.edge).tangent.x *(mesh.edge).tangent.y
+!   with respect to varying inputs: *(infil.ga).psif[from module m_model]
+!                *(infil.ga).ks[from module m_model] *(infil.ga).deltatheta[from module m_model]
+!                *(infil.scs).lambdacn[from module m_model] *(infil.scs).cn[from module m_model]
+!                *manning[from module m_model] *(bc.inflow)[from module m_model]
+!                *(bc.outflow)[from module m_model] *(*(bc.hyd).t)[from module m_model]
+!                *(*(bc.hyd).q)[from module m_model] *(*(bc.rat).h)[from module m_model]
+!                *(*(bc.rat).q)[from module m_model] *(bc.rat).zout[from module m_model]
+!                *(*(bc.rain).t)[from module m_model] *(*(bc.rain).q)[from module m_model]
+!                *(bc.rain).qin[from module m_model] *(bc.rain).cumul[from module m_model]
+!                *(bc.sum_mass_flux)[from module m_model] *bathy_cell[from module m_model]
+!                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
+!                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
+!                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
+!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
+!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
+!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
+!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
+!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
+!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
+!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
+!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
 !                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
 !                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
 !                cost
-!   Plus diff mem management of: bathy_cell[from module m_model]:in
-!                innovation[from module m_obs]:in *innovation.diff[from module m_obs]:in
-!                innovuv[from module m_obs]:in *innovuv.diff[from module m_obs]:in
-!                dof.h:in-out dof.u:in-out dof.v:in-out dof.infil:in-out
-!                dof.grad_h:in-out dof.grad_u:in-out dof.grad_v:in-out
-!                dof.grad_z:in-out mesh.node:in-out mesh.cell:in-out
-!                mesh.cellb:in-out mesh.edge:in-out
+!   Plus diff mem management of: infil.ga[from module m_model]:in
+!                infil.scs[from module m_model]:in manning[from module m_model]:in
+!                bc.inflow[from module m_model]:in bc.outflow[from module m_model]:in
+!                bc.hyd[from module m_model]:in *(bc.hyd).t[from module m_model]:in
+!                *(bc.hyd).q[from module m_model]:in bc.rat[from module m_model]:in
+!                *(bc.rat).h[from module m_model]:in *(bc.rat).q[from module m_model]:in
+!                bc.hpresc[from module m_model]:in *(bc.hpresc).t[from module m_model]:in
+!                *(bc.hpresc).h[from module m_model]:in bc.zspresc[from module m_model]:in
+!                *(bc.zspresc).t[from module m_model]:in *(bc.zspresc).z[from module m_model]:in
+!                bc.rain[from module m_model]:in *(bc.rain).t[from module m_model]:in
+!                *(bc.rain).q[from module m_model]:in bc.sum_mass_flux[from module m_model]:in
+!                bathy_cell[from module m_model]:in manning_beta[from module m_model]:in
+!                sporosity.phi[from module m_model]:in innovation[from module m_obs]:in
+!                *innovation.diff[from module m_obs]:in innovq[from module m_obs]:in
+!                *innovq.diff[from module m_obs]:in innovuv[from module m_obs]:in
+!                *innovuv.diff[from module m_obs]:in dof.h:in-out
+!                dof.u:in-out dof.v:in-out dof.infil:in-out dof.grad_h:in-out
+!                dof.grad_u:in-out dof.grad_v:in-out dof.grad_z:in-out
+!                mesh.node:in-out mesh.cell:in-out mesh.cellb:in-out
+!                mesh.edge:in-out
   SUBROUTINE SUB_RUN_MODEL_BACK()
     USE ISO_C_BINDING
     USE ADMM_TAPENADE_INTERFACE
@@ -970,8 +1082,6 @@ CONTAINS
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-    EXTERNAL EULER_TIME_STEP_FIRST_B1
-    EXTERNAL EULER_TIME_STEP_FIRST_B1_BACK
     INTEGER :: ii1
     INTEGER*4 :: branch
     INTEGER :: ad_count
@@ -979,39 +1089,38 @@ CONTAINS
     sub_nt = 0
     ad_count = 0
     DO WHILE (.NOT.end_time_loop .AND. sub_nt .LT. max_nt_for_adjoint)
+      CALL PUSHREAL8ARRAY(bc%rain%qin, size(bc%rain,1))
+      CALL PUSHREAL8ARRAY(bc%rat%zout, size(bc%rat,1))
+      CALL PUSHREAL8ARRAY(bc%outflow, size(bc%outflow,1))
+      CALL PUSHREAL8ARRAY(bc%inflow, size(bc%inflow,1))
       CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
       CALL SET_BC(dof, mesh) ! Replaced by Perl Script
       CALL PUSHREAL8(tc)
+      CALL PUSHINTEGER4(nt)
       CALL PUSHREAL8(dt)
       CALL ADVANCE_TIME(dof, mesh) ! Replaced by Perl Script
+      CALL PUSHREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       bc%sum_mass_flux(:) = 0._rp
       SELECT CASE (temp_scheme)
       CASE ('euler')
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
-          DO ii1=1,size(mesh%node,1)
-          END DO
-          DO ii1=1,size(mesh%node,1)
-          END DO
-          CALL PUSHREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-          DO ii1=1,size(mesh%edge,1)
-            CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edgeb,1))
-          DO ii1=1,size(mesh%edgeb,1)
-            CALL PUSHCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edgeb,1)&
-&                         )
-          CALL PUSHINTEGER4(mesh%neb)
-          CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
-          CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
+          IF (ALLOCATED(bathy_cell)) THEN
+            CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
+            CALL PUSHCONTROL1B(1)
+          ELSE
+            CALL PUSHCONTROL1B(0)
+          END IF
+          CALL PUSHREAL8ARRAY(bc%sum_mass_flux, &
+&                       size(bc%sum_mass_flux,1))
+          CALL PUSHREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
           CALL PUSHINTEGER4(mesh%nn)
           CALL PUSHINTEGER4(mesh%nnb)
           CALL PUSHINTEGER4(mesh%nc)
           CALL PUSHINTEGER4(mesh%ncb)
           CALL PUSHINTEGER4(mesh%ne)
+          CALL PUSHINTEGER4(mesh%neb)
           DO ii1=1,size(mesh%node,1)
             CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%cell, &
 &                            size(mesh%node%cell,1))
@@ -1107,6 +1216,8 @@ CONTAINS
           CALL PUSHINTEGER4ARRAY(mesh%inv_swap_index, &
 &                          size(mesh%inv_swap_index,1))
           CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
+          CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
+          CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
           CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
           CALL PUSHREAL8(dof%t_display)
           CALL PUSHREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
@@ -1117,7 +1228,7 @@ CONTAINS
           CALL PUSHREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
           CALL PUSHREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
           CALL PUSHREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh)
+          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
           CALL PUSHCONTROL2B(0)
         CASE DEFAULT
           CALL PUSHCONTROL2B(1)
@@ -1125,6 +1236,7 @@ CONTAINS
       CASE DEFAULT
         CALL PUSHCONTROL2B(2)
       END SELECT
+      CALL PUSHREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       CALL SW_POST_TREATMENT(dof, mesh) ! Replaced by Perl Script
       IF (use_obs .EQ. 1) THEN
         IF (use_zobs .EQ. 1) THEN
@@ -1152,6 +1264,18 @@ CONTAINS
         ELSE
           CALL PUSHCONTROL1B(1)
         END IF
+        IF (use_qobs .EQ. 1) THEN
+          IF (ALLOCATED(innovq)) THEN
+            CALL PUSHINTEGER4ARRAY(innovq%ind_t, size(innovq,1))
+            CALL PUSHCONTROL1B(1)
+          ELSE
+            CALL PUSHCONTROL1B(0)
+          END IF
+          CALL CALC_INNOVQ(dof, mesh) ! Replaced by Perl Script
+          CALL PUSHCONTROL1B(0)
+        ELSE
+          CALL PUSHCONTROL1B(1)
+        END IF
         IF (.NOT.use_obs .EQ. 1) THEN
           CALL PUSHCONTROL2B(1)
         ELSE
@@ -1171,6 +1295,13 @@ CONTAINS
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
           CALL POPCONTROL1B(branch)
+          IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovq%ind_t, &
+&                                            size(innovq,1))
+          CALL CALC_INNOVQ_BACK(dof, mesh)
+        END IF
+        CALL POPCONTROL1B(branch)
+        IF (branch .EQ. 0) THEN
+          CALL POPCONTROL1B(branch)
           IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovuv%ind_t, &
 &                                            size(innovuv,1))
           CALL CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
@@ -1183,6 +1314,8 @@ CONTAINS
           CALL CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
         END IF
       END IF
+      CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
+      CALL SW_POST_TREATMENT_BACK(dof, mesh)
       CALL POPCONTROL2B(branch)
       IF (branch .EQ. 0) THEN
         CALL POPREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
@@ -1195,6 +1328,8 @@ CONTAINS
         CALL POPREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
         CALL POPREAL8(dof%t_display)
         CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
+        CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
+        CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
         CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
         CALL POPINTEGER4ARRAY(mesh%inv_swap_index, &
 &                       size(mesh%inv_swap_index,1))
@@ -1281,39 +1416,31 @@ CONTAINS
           CALL POPINTEGER4ARRAY(mesh%node(ii1)%cell, &
 &                         size(mesh%node%cell,1))
         END DO
+        CALL POPINTEGER4(mesh%neb)
         CALL POPINTEGER4(mesh%ne)
         CALL POPINTEGER4(mesh%ncb)
         CALL POPINTEGER4(mesh%nc)
         CALL POPINTEGER4(mesh%nnb)
         CALL POPINTEGER4(mesh%nn)
-        CALL ADSTACK_STARTREPEAT()
-        CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
-        CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
-        CALL POPINTEGER4(mesh%neb)
-        CALL ADSTACK_RESETREPEAT()
-        CALL ADSTACK_ENDREPEAT()
+        CALL POPREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
+        CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1)&
+&                   )
+        CALL POPCONTROL1B(branch)
+        IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
+&                                       size(bathy_cell,1))
         CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, &
 &                                    mesh_back)
-        CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
-        CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
-        CALL POPINTEGER4(mesh%neb)
-        CALL POPINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edgeb,1))
-        DO ii1=size(mesh%edgeb,1),1,-1
-          CALL POPCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-        END DO
-        CALL POPINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edgeb,1))
-        DO ii1=size(mesh%edge,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-        END DO
-        CALL POPREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-        DO ii1=size(mesh%node,1),1,-1
-        END DO
-        DO ii1=size(mesh%node,1),1,-1
-        END DO
       END IF
+      CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
+      bc_back%sum_mass_flux = 0.0_8
       CALL POPREAL8(dt)
+      CALL POPINTEGER4(nt)
       CALL POPREAL8(tc)
       CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
+      CALL POPREAL8ARRAY(bc%inflow, size(bc%inflow,1))
+      CALL POPREAL8ARRAY(bc%outflow, size(bc%outflow,1))
+      CALL POPREAL8ARRAY(bc%rat%zout, size(bc%rat,1))
+      CALL POPREAL8ARRAY(bc%rain%qin, size(bc%rain,1))
       CALL SET_BC_BACK(dof, dof_back, mesh, mesh_back)
     END DO
   END SUBROUTINE SUB_RUN_MODEL_BACK
@@ -1323,7 +1450,6 @@ CONTAINS
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-    EXTERNAL EULER_TIME_STEP_FIRST_B1
     sub_nt = 0
     DO WHILE (.NOT.end_time_loop .AND. sub_nt .LT. max_nt_for_adjoint)
       CALL SET_BC(dof, mesh) ! Replaced by Perl Script
@@ -1334,7 +1460,7 @@ CONTAINS
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh)
+          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT

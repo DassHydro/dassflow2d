@@ -9,7 +9,7 @@
 !   Plus diff mem management of: bathy_cell:in innovation:in *innovation.diff:in
 !                dof.h:in mesh.cell:in
 SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
-  USE M_COMMON
+  USE M_COMMON ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
   USE M_OBS ! Replaced by Perl Script

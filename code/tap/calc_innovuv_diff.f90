@@ -8,7 +8,7 @@
 !   Plus diff mem management of: innovuv:in *innovuv.diff:in dof.u:in
 !                dof.v:in mesh.cell:in
 SUBROUTINE CALC_INNOVUV_DIFF(dof, dof_diff, mesh, mesh_diff)
-  USE M_COMMON
+  USE M_COMMON ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
   USE M_OBS ! Replaced by Perl Script

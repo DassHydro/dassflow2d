@@ -721,12 +721,6 @@ CONTAINS
       !================================================================================================================!
       !
       !================================================================================================================!
-         call Time_Init_Part(80) !NOADJ
-         call com_var_r( dof%h(:) , mesh )
-         call com_var_r( dof%u(:) , mesh )
-         call com_var_r( dof%v(:) , mesh )
-         if (bc_infil .ne. 0) call com_var_r( dof%infil(:) , mesh )
-         call Time_End_Part(80) !NOADJ
    END SUBROUTINE com_dof
    SUBROUTINE alloc_or_realloc_station( station_inout , new )
       implicit none
