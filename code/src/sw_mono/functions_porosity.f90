@@ -154,9 +154,9 @@ CONTAINS
 		    y_min = (y1 + yN) / 2.0_rp ! Valeur par défaut au centre
 		    DO inode = 1, mesh%nn
 		        IF (ABS(mesh%node(inode)%coord%x - mesh%cell(icell)%grav%x) < tolerance) THEN
-		            IF (ABS(mesh%node(icell)%bathy - b_min) < min_dist_to_b_min) THEN
-		                min_dist_to_b_min = ABS(mesh%node(icell)%bathy - b_min)
-		                y_min = mesh%node(icell)%coord%y
+		            IF (ABS(bathy_node(inode) - b_min) < min_dist_to_b_min) THEN
+		                min_dist_to_b_min = ABS(bathy_node(inode) - b_min)
+		                y_min = mesh%node(inode)%coord%y
 		            END IF
 		        END IF
 		    END DO
