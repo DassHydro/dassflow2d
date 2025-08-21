@@ -58,6 +58,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    USE m_mpi
    USE m_time_screen !NOADJ
    USE m_model
+   USE fonctions_porosite_mod
+
    implicit none
    !===================================================================================================================!
    ! Interface Variables
@@ -96,8 +98,11 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    ! Begin Subroutine
    !===================================================================================================================!
    tflux(:,:) = 0._rp
-   call update_all_porosities(dof, mesh)
    
+   #ifdef USE_PORO
+   call update_all_porosities(dof, mesh)
+   #endif
+
    do ie = 1,mesh%ne
       !================================================================================================================!
       ! Calculate Left and Right States
