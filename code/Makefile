@@ -635,9 +635,13 @@ WRAPPERS_CPP 	=  wrappers/m_common.f90 \
 		   wrappers/m_mpi.f90 \
 		   wrappers/m_mesh.f90 \
 		   wrappers/m_sw_mono.f90 \
-		   wrappers/input.f90
+		   wrappers/input.f90 
 
- ifeq ($(HYDRO),1)
+#ifeq ($(POROSITY),1)
+#WRAPPERS_CPP += wrappers/functions_porosity.f90
+#endif
+
+ifeq ($(HYDRO),1)
 OBJ_TMP = 	./obj/m_common.o \
 			./obj/m_random.o \
 			./obj/m_linear_algebra.o \
@@ -654,7 +658,7 @@ OBJ_TMP = 	./obj/m_common.o \
 	  ./obj/advance_time.o \
 	  ./obj/numeric_sw.o \
 	  ./obj/sw_flux.o \
-          ./obj/functions_porosity.o \
+          #./obj/functions_porosity.o \
 	  ./obj/euler_time_step_first_b1.o \
 	  ./obj/low_froude_time_step.o \
 	  ./obj/friction_imex.o \
@@ -684,7 +688,7 @@ OBJ_TMP = 	./obj/m_common.o \
 	  ./obj/advance_time.o \
 	  ./obj/numeric_sw.o \
 	  ./obj/sw_flux.o \
-          ./obj/functions_porosity.o \
+          #./obj/functions_porosity.o \
 	  ./obj/euler_time_step_first_b1.o \
 	  ./obj/low_froude_time_step.o \
 	  ./obj/friction_imex.o \
