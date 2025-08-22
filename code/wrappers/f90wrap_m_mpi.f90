@@ -57,8 +57,8 @@ subroutine f90wrap_m_mpi__fill_inv_swap_index(mesh)
 end subroutine f90wrap_m_mpi__fill_inv_swap_index
 
 subroutine f90wrap_m_mpi__com_var_i(var, mesh, n0)
-    use m_mesh, only: msh
     use m_mpi, only: com_var_i
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type

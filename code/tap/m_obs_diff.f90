@@ -12,18 +12,14 @@ CONTAINS
 !   variations   of useful results: cost
 !   with respect to varying inputs: *(*(bc.hyd).q) *xsshape.xcenter
 !                *xsshape.s *xsshape.hmax *bathy_cell *(*innovation.diff)
-!                *(*innovq.diff) *(*innovuv.diff) *(mesh.cell).invsurf
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.edge).length
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y cost
+!                *(*innovq.diff) *(*innovuv.diff) cost
 !   Plus diff mem management of: bc.hyd:in *(bc.hyd).q:in xsshape:in
 !                bathy_cell:in innovation:in *innovation.diff:in
 !                innovq:in *innovq.diff:in innovuv:in *innovuv.diff:in
-!                mesh.cell:in mesh.edge:in
-  SUBROUTINE CALC_COST_FUNCTION_DIFF(cost, cost_diff, mesh, mesh_diff)
+  SUBROUTINE CALC_COST_FUNCTION_DIFF(cost, cost_diff, mesh)
     USE M_NUMERIC_DIFF
     IMPLICIT NONE
     TYPE(MSH), INTENT(IN) :: mesh
-    TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
     REAL(rp), INTENT(INOUT) :: cost
     REAL(rp), INTENT(INOUT) :: cost_diff
     REAL(rp) :: cost_part(3), filtered(4)
@@ -190,7 +186,7 @@ CONTAINS
         grad_var_diff%y = 0.0_8
         grad_var_diff%x = 0.0_8
         CALL FV_CELL_GRAD_DIFF(grad_var, grad_var_diff, bathy_cell, &
-&                        bathy_cell_diff, mesh, mesh_diff)
+&                        bathy_cell_diff, mesh)
       ELSE IF (regul_bathy_grad .EQ. 2 .AND. use_xsshp .EQ. 1) THEN
         bathy_temp(:) = 0._rp
         IF (xsshp_along_y .EQ. 1) THEN
@@ -206,13 +202,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%x - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs8_diff = mesh_diff%cell(ie)%grav%x - xsshape_diff(1)%&
-&                 xcenter
+                abs8_diff = -xsshape_diff(1)%xcenter
                 abs8 = mesh%cell(ie)%grav%x - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs8_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie)&
-&                 %grav%x
+                abs8_diff = xsshape_diff(1)%xcenter
                 abs8 = -(mesh%cell(ie)%grav%x-xsshape(1)%xleft-(xsshape(&
 &                 1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -246,9 +240,7 @@ CONTAINS
                 min1 = 0._rp
                 min1_diff = 0.0_8
               END IF
-              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min1_diff - &
-&               slope_y(1)*mesh_diff%cell(ie)%grav%y - slope_x(1)*&
-&               mesh_diff%cell(ie)%grav%x
+              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min1_diff
               bathy_temp(ie) = bathy_cell(ie) - (xsshape(1)%topz+min1+&
 &               slope_y(1)*mesh%cell(ie)%grav%y+slope_x(1)*mesh%cell(ie)&
 &               %grav%x)
@@ -262,13 +254,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%x - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs9_diff = mesh_diff%cell(ie)%grav%x - xsshape_diff(1)%&
-&                 xcenter
+                abs9_diff = -xsshape_diff(1)%xcenter
                 abs9 = mesh%cell(ie)%grav%x - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs9_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie)&
-&                 %grav%x
+                abs9_diff = xsshape_diff(1)%xcenter
                 abs9 = -(mesh%cell(ie)%grav%x-xsshape(1)%xleft-(xsshape(&
 &                 1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -302,9 +292,7 @@ CONTAINS
                 min2 = 0._rp
                 min2_diff = 0.0_8
               END IF
-              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min2_diff - &
-&               slope_y(1)*mesh_diff%cell(ie)%grav%y - slope_x(1)*&
-&               mesh_diff%cell(ie)%grav%x
+              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min2_diff
               bathy_temp(ie) = bathy_cell(ie) - (xsshape(1)%topz+min2+&
 &               slope_y(1)*mesh%cell(ie)%grav%y+slope_x(1)*mesh%cell(ie)&
 &               %grav%x)
@@ -323,13 +311,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%y - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs10_diff = mesh_diff%cell(ie)%grav%y - xsshape_diff(1)&
-&                 %xcenter
+                abs10_diff = -xsshape_diff(1)%xcenter
                 abs10 = mesh%cell(ie)%grav%y - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs10_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie&
-&                 )%grav%y
+                abs10_diff = xsshape_diff(1)%xcenter
                 abs10 = -(mesh%cell(ie)%grav%y-xsshape(1)%xleft-(xsshape&
 &                 (1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -363,9 +349,7 @@ CONTAINS
                 min3 = 0._rp
                 min3_diff = 0.0_8
               END IF
-              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min3_diff - &
-&               slope_y(1)*mesh_diff%cell(ie)%grav%y - slope_x(1)*&
-&               mesh_diff%cell(ie)%grav%x
+              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min3_diff
               bathy_temp(ie) = bathy_cell(ie) - (xsshape(1)%topz+min3+&
 &               slope_y(1)*mesh%cell(ie)%grav%y+slope_x(1)*mesh%cell(ie)&
 &               %grav%x)
@@ -379,13 +363,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%y - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs11_diff = mesh_diff%cell(ie)%grav%y - xsshape_diff(1)&
-&                 %xcenter
+                abs11_diff = -xsshape_diff(1)%xcenter
                 abs11 = mesh%cell(ie)%grav%y - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs11_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie&
-&                 )%grav%y
+                abs11_diff = xsshape_diff(1)%xcenter
                 abs11 = -(mesh%cell(ie)%grav%y-xsshape(1)%xleft-(xsshape&
 &                 (1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -419,9 +401,7 @@ CONTAINS
                 min4 = 0._rp
                 min4_diff = 0.0_8
               END IF
-              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min4_diff - &
-&               slope_y(1)*mesh_diff%cell(ie)%grav%y - slope_x(1)*&
-&               mesh_diff%cell(ie)%grav%x
+              bathy_temp_diff(ie) = bathy_cell_diff(ie) - min4_diff
               bathy_temp(ie) = bathy_cell(ie) - (xsshape(1)%topz+min4+&
 &               slope_y(1)*mesh%cell(ie)%grav%y+slope_x(1)*mesh%cell(ie)&
 &               %grav%x)
@@ -433,7 +413,7 @@ CONTAINS
         grad_var_diff%y = 0.0_8
         grad_var_diff%x = 0.0_8
         CALL FV_CELL_GRAD_DIFF(grad_var, grad_var_diff, bathy_temp, &
-&                        bathy_temp_diff, mesh, mesh_diff)
+&                        bathy_temp_diff, mesh)
       ELSE
         grad_var_diff%x = 0.0_8
         grad_var_diff%y = 0.0_8
@@ -459,13 +439,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%x - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs12_diff = mesh_diff%cell(ie)%grav%x - xsshape_diff(1)&
-&                 %xcenter
+                abs12_diff = -xsshape_diff(1)%xcenter
                 abs12 = mesh%cell(ie)%grav%x - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs12_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie&
-&                 )%grav%x
+                abs12_diff = xsshape_diff(1)%xcenter
                 abs12 = -(mesh%cell(ie)%grav%x-xsshape(1)%xleft-(xsshape&
 &                 (1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -499,12 +477,10 @@ CONTAINS
                 min5 = 0._rp
                 min5_diff = 0.0_8
               END IF
-              temp1 = bathy_cell(ie) - xsshape(1)%topz - min5 - slope_y(&
-&               1)*mesh%cell(ie)%grav%y - slope_x(1)*mesh%cell(ie)%grav%&
-&               x
+              temp1 = bathy_cell(ie) - slope_y(1)*mesh%cell(ie)%grav%y -&
+&               slope_x(1)*mesh%cell(ie)%grav%x - xsshape(1)%topz - min5
               cost_part_diff(2) = cost_part_diff(2) + 2*temp1*(&
-&               bathy_cell_diff(ie)-min5_diff-slope_y(1)*mesh_diff%cell(&
-&               ie)%grav%y-slope_x(1)*mesh_diff%cell(ie)%grav%x)
+&               bathy_cell_diff(ie)-min5_diff)
               cost_part(2) = cost_part(2) + temp1*temp1
             ELSE
               IF (xsshape(1)%hmax .GE. 0.) THEN
@@ -516,13 +492,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%x - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs13_diff = mesh_diff%cell(ie)%grav%x - xsshape_diff(1)&
-&                 %xcenter
+                abs13_diff = -xsshape_diff(1)%xcenter
                 abs13 = mesh%cell(ie)%grav%x - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs13_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie&
-&                 )%grav%x
+                abs13_diff = xsshape_diff(1)%xcenter
                 abs13 = -(mesh%cell(ie)%grav%x-xsshape(1)%xleft-(xsshape&
 &                 (1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -556,12 +530,10 @@ CONTAINS
                 min6 = 0._rp
                 min6_diff = 0.0_8
               END IF
-              temp1 = bathy_cell(ie) - xsshape(1)%topz - min6 - slope_y(&
-&               1)*mesh%cell(ie)%grav%y - slope_x(1)*mesh%cell(ie)%grav%&
-&               x
+              temp1 = bathy_cell(ie) - slope_y(1)*mesh%cell(ie)%grav%y -&
+&               slope_x(1)*mesh%cell(ie)%grav%x - xsshape(1)%topz - min6
               cost_part_diff(2) = cost_part_diff(2) + 2*temp1*(&
-&               bathy_cell_diff(ie)-min6_diff-slope_y(1)*mesh_diff%cell(&
-&               ie)%grav%y-slope_x(1)*mesh_diff%cell(ie)%grav%x)
+&               bathy_cell_diff(ie)-min6_diff)
               cost_part(2) = cost_part(2) + temp1*temp1
             END IF
           END DO
@@ -578,13 +550,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%y - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs14_diff = mesh_diff%cell(ie)%grav%y - xsshape_diff(1)&
-&                 %xcenter
+                abs14_diff = -xsshape_diff(1)%xcenter
                 abs14 = mesh%cell(ie)%grav%y - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs14_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie&
-&                 )%grav%y
+                abs14_diff = xsshape_diff(1)%xcenter
                 abs14 = -(mesh%cell(ie)%grav%y-xsshape(1)%xleft-(xsshape&
 &                 (1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -618,12 +588,10 @@ CONTAINS
                 min7 = 0._rp
                 min7_diff = 0.0_8
               END IF
-              temp1 = bathy_cell(ie) - xsshape(1)%topz - min7 - slope_y(&
-&               1)*mesh%cell(ie)%grav%y - slope_x(1)*mesh%cell(ie)%grav%&
-&               x
+              temp1 = bathy_cell(ie) - slope_y(1)*mesh%cell(ie)%grav%y -&
+&               slope_x(1)*mesh%cell(ie)%grav%x - xsshape(1)%topz - min7
               cost_part_diff(2) = cost_part_diff(2) + 2*temp1*(&
-&               bathy_cell_diff(ie)-min7_diff-slope_y(1)*mesh_diff%cell(&
-&               ie)%grav%y-slope_x(1)*mesh_diff%cell(ie)%grav%x)
+&               bathy_cell_diff(ie)-min7_diff)
               cost_part(2) = cost_part(2) + temp1*temp1
             ELSE
               IF (xsshape(1)%hmax .GE. 0.) THEN
@@ -635,13 +603,11 @@ CONTAINS
               END IF
               IF (mesh%cell(ie)%grav%y - xsshape(1)%xleft - (xsshape(1)%&
 &                 xcenter-xsshape(1)%xleft) .GE. 0.) THEN
-                abs15_diff = mesh_diff%cell(ie)%grav%y - xsshape_diff(1)&
-&                 %xcenter
+                abs15_diff = -xsshape_diff(1)%xcenter
                 abs15 = mesh%cell(ie)%grav%y - xsshape(1)%xleft - (&
 &                 xsshape(1)%xcenter-xsshape(1)%xleft)
               ELSE
-                abs15_diff = xsshape_diff(1)%xcenter - mesh_diff%cell(ie&
-&                 )%grav%y
+                abs15_diff = xsshape_diff(1)%xcenter
                 abs15 = -(mesh%cell(ie)%grav%y-xsshape(1)%xleft-(xsshape&
 &                 (1)%xcenter-xsshape(1)%xleft))
               END IF
@@ -675,12 +641,10 @@ CONTAINS
                 min8 = 0._rp
                 min8_diff = 0.0_8
               END IF
-              temp1 = bathy_cell(ie) - xsshape(1)%topz - min8 - slope_y(&
-&               1)*mesh%cell(ie)%grav%y - slope_x(1)*mesh%cell(ie)%grav%&
-&               x
+              temp1 = bathy_cell(ie) - slope_y(1)*mesh%cell(ie)%grav%y -&
+&               slope_x(1)*mesh%cell(ie)%grav%x - xsshape(1)%topz - min8
               cost_part_diff(2) = cost_part_diff(2) + 2*temp1*(&
-&               bathy_cell_diff(ie)-min8_diff-slope_y(1)*mesh_diff%cell(&
-&               ie)%grav%y-slope_x(1)*mesh_diff%cell(ie)%grav%x)
+&               bathy_cell_diff(ie)-min8_diff)
               cost_part(2) = cost_part(2) + temp1*temp1
             END IF
           END DO
@@ -739,7 +703,7 @@ CONTAINS
   SUBROUTINE UPDATE_COST_FUNCTION_DIFF(dof, dof_diff, cost, cost_diff)
     IMPLICIT NONE
     TYPE(UNK), INTENT(IN) :: dof
-    TYPE(UNK), INTENT(IN) :: dof_diff
+    TYPE(UNK), INTENT(IN) :: dof_diff ! Replaced by Perl Script
     REAL(rp), INTENT(INOUT) :: cost
     REAL(rp), INTENT(INOUT) :: cost_diff
     INTEGER(ip) :: cell, pt

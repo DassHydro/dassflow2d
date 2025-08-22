@@ -4,11 +4,11 @@
 !  Differentiation of boundary_post in forward (tangent) mode (with options fixinterface):
 !   variations   of useful results: *(bc.sum_mass_flux) *bathy_cell
 !   with respect to varying inputs: *(bc.inflow) *(bc.sum_mass_flux)
-!                *bathy_cell *(mesh.edge).length mass_flux
+!                *bathy_cell mass_flux
 !   Plus diff mem management of: bc.inflow:in bc.sum_mass_flux:in
-!                bathy_cell:in mesh.edge:in
+!                bathy_cell:in
 SUBROUTINE BOUNDARY_POST_DIFF(mass_flux, mass_flux_diff, index_ghost, &
-& mesh, mesh_diff)
+& mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
@@ -17,7 +17,6 @@ SUBROUTINE BOUNDARY_POST_DIFF(mass_flux, mass_flux_diff, index_ghost, &
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
   REAL(rp), INTENT(IN) :: mass_flux
   REAL(rp), INTENT(IN) :: mass_flux_diff
   INTEGER(ip), INTENT(IN) :: index_ghost
@@ -28,8 +27,7 @@ SUBROUTINE BOUNDARY_POST_DIFF(mass_flux, mass_flux_diff, index_ghost, &
 &     typlim(1:3) .EQ. 'gr4') THEN
 !.or. &
     bc_diff%sum_mass_flux(group) = bc_diff%sum_mass_flux(group) - mesh%&
-&     edge(ie)%length*mass_flux_diff - mass_flux*mesh_diff%edge(ie)%&
-&     length
+&     edge(ie)%length*mass_flux_diff
     bc%sum_mass_flux(group) = bc%sum_mass_flux(group) - mass_flux*mesh%&
 &     edge(ie)%length
     IF (feedback_inflow .EQ. 1) THEN
@@ -44,15 +42,13 @@ SUBROUTINE BOUNDARY_POST_DIFF(mass_flux, mass_flux_diff, index_ghost, &
 &     'ratcurve') .OR. mesh%edgeb(ib)%typlim(1:7) .EQ. 'zspresc') .OR. &
 &     mesh%edgeb(ib)%typlim(1:6) .EQ. 'hpresc') THEN
     bc_diff%sum_mass_flux(group) = bc_diff%sum_mass_flux(group) + mesh%&
-&     edge(ie)%length*mass_flux_diff + mass_flux*mesh_diff%edge(ie)%&
-&     length
+&     edge(ie)%length*mass_flux_diff
     bc%sum_mass_flux(group) = bc%sum_mass_flux(group) + mass_flux*mesh%&
 &     edge(ie)%length
   END IF
   IF (mesh%edgeb(ib)%typlim(1:11) .EQ. 'internal_2D') THEN
     bc_diff%sum_mass_flux(group) = bc_diff%sum_mass_flux(group) + mesh%&
-&     edge(ie)%length*mass_flux_diff + mass_flux*mesh_diff%edge(ie)%&
-&     length
+&     edge(ie)%length*mass_flux_diff
     bc%sum_mass_flux(group) = bc%sum_mass_flux(group) + mass_flux*mesh%&
 &     edge(ie)%length
   END IF

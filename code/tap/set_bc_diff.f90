@@ -8,14 +8,13 @@
 !                *(*(bc.hyd).t) *(*(bc.hyd).q) *(*(bc.rat).h) *(*(bc.rat).q)
 !                *(bc.rat).zout *(*(bc.rain).t) *(*(bc.rain).q)
 !                *(bc.rain).qin *(bc.sum_mass_flux) *bathy_cell
-!                *(dof.h) *(dof.u) *(dof.v) *(mesh.edge).length
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y
+!                *(dof.h) *(dof.u) *(dof.v)
 !   Plus diff mem management of: bc.inflow:in bc.outflow:in bc.hyd:in
 !                *(bc.hyd).t:in *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in
 !                *(bc.rat).q:in bc.rain:in *(bc.rain).t:in *(bc.rain).q:in
 !                bc.sum_mass_flux:in bathy_cell:in dof.h:in dof.u:in
-!                dof.v:in mesh.edge:in
-SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
+!                dof.v:in
+SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh)
   USE M_NUMERIC ! Replaced by Perl Script
   USE M_NUMERIC_DIFF
   USE M_MODEL ! Replaced by Perl Script
@@ -25,9 +24,8 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
   TYPE(UNK), INTENT(INOUT) :: dof
-  TYPE(UNK), INTENT(INOUT) :: dof_diff
+  TYPE(UNK), INTENT(INOUT) :: dof_diff ! Replaced by Perl Script
   REAL(rp) :: sum_pow_h, zin, qin, qout
   REAL(rp) :: sum_pow_h_diff, zin_diff, qin_diff, qout_diff
   INTEGER(ip) :: num_bc, up_num_bc, down_num_bc, connected_num_bc
@@ -75,7 +73,6 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
             dof%h(i) = 0.0001
           END IF
           IF (dof%h(i) .GT. heps) THEN
-            temp = dof%h(i)**d5p3
             IF (dof%h(i) .LE. 0.0 .AND. (d5p3 .EQ. 0.0 .OR. d5p3 .NE. &
 &               INT(d5p3))) THEN
               temp_diff = 0.0_8
@@ -83,8 +80,8 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
               temp_diff = d5p3*dof%h(i)**(d5p3-1)*dof_diff%h(i)
             END IF
             sum_pow_h_diff = sum_pow_h_diff + mesh%edge(ie)%length*&
-&             temp_diff + temp*mesh_diff%edge(ie)%length
-            sum_pow_h = sum_pow_h + temp*mesh%edge(ie)%length
+&             temp_diff
+            sum_pow_h = sum_pow_h + dof%h(i)**d5p3*mesh%edge(ie)%length
           END IF
         END IF
       END DO
@@ -121,8 +118,8 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
 &         hyd(bc%grpf(num_bc))%q, tc, tc_diff, qin)
       END IF
 !write(*,*) " bc%typ(num_bc,2) == 'file'  must be fill to define qin bc"
-      CALL NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, mesh_diff&
-&                    , zin, zin_diff)
+      CALL NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, zin, &
+&                    zin_diff)
       DO ib=1,mesh%neb
         IF (mesh%edgeb(ib)%typlim .EQ. 'discharg2' .AND. mesh%edgeb(ib)%&
 &           group .EQ. num_bc) THEN
@@ -150,15 +147,12 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
 &             %group .EQ. num_bc) THEN
             ie = mesh%edgeb(ib)%ind
             i = mesh%edge(ie)%cell(1)
-            temp0 = dof%h(i)*mesh%edge(ie)%length
-            temp = dof%u(i)*mesh%edge(ie)%normal%x + dof%v(i)*mesh%edge(&
-&             ie)%normal%y
-            qout_diff = qout_diff + temp0*(mesh%edge(ie)%normal%x*&
-&             dof_diff%u(i)+dof%u(i)*mesh_diff%edge(ie)%normal%x+mesh%&
-&             edge(ie)%normal%y*dof_diff%v(i)+dof%v(i)*mesh_diff%edge(ie&
-&             )%normal%y) + temp*(mesh%edge(ie)%length*dof_diff%h(i)+dof&
-&             %h(i)*mesh_diff%edge(ie)%length)
-            qout = qout + temp*temp0
+            temp0 = mesh%edge(ie)%normal%x*dof%u(i) + mesh%edge(ie)%&
+&             normal%y*dof%v(i)
+            qout_diff = qout_diff + mesh%edge(ie)%length*(temp0*dof_diff&
+&             %h(i)+dof%h(i)*(mesh%edge(ie)%normal%x*dof_diff%u(i)+mesh%&
+&             edge(ie)%normal%y*dof_diff%v(i)))
+            qout = qout + mesh%edge(ie)%length*(dof%h(i)*temp0)
           END IF
         END DO
         CALL MPI_SUM_R(qout)
@@ -207,7 +201,6 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
             bc_diff%outflow(ib) = 0.0_8
             bc%outflow(ib) = 0._rp
           END IF
-          temp0 = bc%outflow(ib)**d5p3
           IF (bc%outflow(ib) .LE. 0.0 .AND. (d5p3 .EQ. 0.0 .OR. d5p3 &
 &             .NE. INT(d5p3))) THEN
             temp_diff0 = 0.0_8
@@ -216,8 +209,9 @@ SUBROUTINE SET_BC_DIFF(dof, dof_diff, mesh, mesh_diff)
 &             ib)
           END IF
           sum_pow_h_diff = sum_pow_h_diff + mesh%edge(ie)%length*&
-&           temp_diff0 + temp0*mesh_diff%edge(ie)%length
-          sum_pow_h = sum_pow_h + temp0*mesh%edge(ie)%length
+&           temp_diff0
+          sum_pow_h = sum_pow_h + bc%outflow(ib)**d5p3*mesh%edge(ie)%&
+&           length
         END IF
       END DO
       CALL MPI_SUM_R(sum_pow_h)

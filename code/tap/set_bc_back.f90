@@ -6,20 +6,18 @@
 !                *(*(bc.hyd).t) *(*(bc.hyd).q) *(*(bc.rat).h) *(*(bc.rat).q)
 !                *(bc.rat).zout *(*(bc.rain).t) *(*(bc.rain).q)
 !                *(bc.rain).qin *(bc.sum_mass_flux) *bathy_cell
-!                *(dof.h) *(dof.u) *(dof.v) *(mesh.edge).length
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y
+!                *(dof.h) *(dof.u) *(dof.v)
 !   with respect to varying inputs: *(bc.inflow) *(bc.outflow)
 !                *(*(bc.hyd).t) *(*(bc.hyd).q) *(*(bc.rat).h) *(*(bc.rat).q)
 !                *(bc.rat).zout *(*(bc.rain).t) *(*(bc.rain).q)
 !                *(bc.rain).qin *(bc.sum_mass_flux) *bathy_cell
-!                *(dof.h) *(dof.u) *(dof.v) *(mesh.edge).length
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y
+!                *(dof.h) *(dof.u) *(dof.v)
 !   Plus diff mem management of: bc.inflow:in bc.outflow:in bc.hyd:in
 !                *(bc.hyd).t:in *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in
 !                *(bc.rat).q:in bc.rain:in *(bc.rain).t:in *(bc.rain).q:in
 !                bc.sum_mass_flux:in bathy_cell:in dof.h:in dof.u:in
-!                dof.v:in mesh.edge:in
-SUBROUTINE SET_BC_BACK(dof, dof_back, mesh, mesh_back)
+!                dof.v:in
+SUBROUTINE SET_BC_BACK(dof, dof_back, mesh)
   USE M_NUMERIC ! Replaced by Perl Script
   USE M_NUMERIC_BACK
   USE M_MODEL ! Replaced by Perl Script
@@ -29,9 +27,8 @@ SUBROUTINE SET_BC_BACK(dof, dof_back, mesh, mesh_back)
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH) :: mesh_back ! Replaced by Perl Script
   TYPE(UNK), INTENT(INOUT) :: dof
-  TYPE(UNK), INTENT(INOUT) :: dof_back
+  TYPE(UNK), INTENT(INOUT) :: dof_back ! Replaced by Perl Script
   REAL(rp) :: sum_pow_h, zin, qin, qout
   REAL(rp) :: sum_pow_h_back, zin_back, qin_back, qout_back
   INTEGER(ip) :: num_bc, up_num_bc, down_num_bc, connected_num_bc
@@ -311,8 +308,6 @@ SUBROUTINE SET_BC_BACK(dof, dof_back, mesh, mesh_back)
 &             d5p3 .NE. INT(d5p3)))) bc_back%outflow(ib) = bc_back%&
 &             outflow(ib) + d5p3*bc%outflow(ib)**(d5p3-1)*mesh%edge(ie)%&
 &             length*sum_pow_h_back
-          mesh_back%edge(ie)%length = mesh_back%edge(ie)%length + bc%&
-&           outflow(ib)**d5p3*sum_pow_h_back
           CALL POPCONTROL1B(branch)
           IF (branch .EQ. 0) THEN
             j = mesh%edge(ie)%cell(2)
@@ -367,21 +362,14 @@ SUBROUTINE SET_BC_BACK(dof, dof_back, mesh, mesh_back)
           IF (branch .NE. 0) THEN
             ie = mesh%edgeb(ib)%ind
             i = mesh%edge(ie)%cell(1)
-            temp_back = dof%h(i)*mesh%edge(ie)%length*qout_back
-            temp_back0 = (dof%u(i)*mesh%edge(ie)%normal%x+dof%v(i)*mesh%&
-&             edge(ie)%normal%y)*qout_back
-            dof_back%h(i) = dof_back%h(i) + mesh%edge(ie)%length*&
-&             temp_back0
-            mesh_back%edge(ie)%length = mesh_back%edge(ie)%length + dof%&
-&             h(i)*temp_back0
+            temp_back = mesh%edge(ie)%length*qout_back
+            dof_back%h(i) = dof_back%h(i) + (mesh%edge(ie)%normal%x*dof%&
+&             u(i)+mesh%edge(ie)%normal%y*dof%v(i))*temp_back
+            temp_back0 = dof%h(i)*temp_back
             dof_back%u(i) = dof_back%u(i) + mesh%edge(ie)%normal%x*&
-&             temp_back
-            mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + &
-&             dof%u(i)*temp_back
+&             temp_back0
             dof_back%v(i) = dof_back%v(i) + mesh%edge(ie)%normal%y*&
-&             temp_back
-            mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + &
-&             dof%v(i)*temp_back
+&             temp_back0
             CALL POPINTEGER4(i)
             CALL POPINTEGER4(ie)
           END IF
@@ -410,8 +398,8 @@ SUBROUTINE SET_BC_BACK(dof, dof_back, mesh, mesh_back)
  100  CONTINUE
       CALL POPINTEGER4(i)
       CALL POPINTEGER4(ie)
-      CALL NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, mesh_back&
-&                    , zin, zin_back)
+      CALL NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, zin, &
+&                    zin_back)
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
         CALL POPREAL8(qin)
@@ -462,8 +450,6 @@ SUBROUTINE SET_BC_BACK(dof, dof_back, mesh, mesh_back)
             IF (.NOT.(dof%h(i) .LE. 0.0 .AND. (d5p3 .EQ. 0.0 .OR. d5p3 &
 &               .NE. INT(d5p3)))) dof_back%h(i) = dof_back%h(i) + d5p3*&
 &               dof%h(i)**(d5p3-1)*mesh%edge(ie)%length*sum_pow_h_back
-            mesh_back%edge(ie)%length = mesh_back%edge(ie)%length + dof%&
-&             h(i)**d5p3*sum_pow_h_back
           END IF
           CALL POPCONTROL1B(branch)
           IF (branch .EQ. 0) THEN

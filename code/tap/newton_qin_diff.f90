@@ -4,12 +4,11 @@
 !  Differentiation of newton_qin in forward (tangent) mode (with options fixinterface):
 !   variations   of useful results: zs
 !   with respect to varying inputs: *bathy_cell *(dof.h) *(dof.u)
-!                *(dof.v) *(mesh.edge).length *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y qin
+!                *(dof.v) qin
 !   Plus diff mem management of: bathy_cell:in dof.h:in dof.u:in
-!                dof.v:in mesh.edge:in
-SUBROUTINE NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, mesh_diff&
-& , zs, zs_diff)
+!                dof.v:in
+SUBROUTINE NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, zs, &
+& zs_diff)
   USE M_MODEL ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
 
@@ -17,9 +16,8 @@ SUBROUTINE NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, mesh_diff&
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
   TYPE(UNK), INTENT(IN) :: dof
-  TYPE(UNK), INTENT(IN) :: dof_diff
+  TYPE(UNK), INTENT(IN) :: dof_diff ! Replaced by Perl Script
   REAL(rp), INTENT(IN) :: qin
   REAL(rp), INTENT(IN) :: qin_diff
   REAL(rp), INTENT(OUT) :: zs
@@ -79,9 +77,7 @@ SUBROUTINE NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, mesh_diff&
           END IF
           result1 = temp
           r_diff = mesh%edge(mesh%edgeb(ie)%ind)%normal%x*dof_diff%u(i) &
-&           + dof%u(i)*mesh_diff%edge(mesh%edgeb(ie)%ind)%normal%x + &
-&           mesh%edge(mesh%edgeb(ie)%ind)%normal%y*dof_diff%v(i) + dof%v&
-&           (i)*mesh_diff%edge(mesh%edgeb(ie)%ind)%normal%y + c*&
+&           + mesh%edge(mesh%edgeb(ie)%ind)%normal%y*dof_diff%v(i) + c*&
 &           result1_diff
           r = dof%u(i)*mesh%edge(mesh%edgeb(ie)%ind)%normal%x + dof%v(i)&
 &           *mesh%edge(mesh%edgeb(ie)%ind)%normal%y + c*result1
@@ -99,11 +95,9 @@ SUBROUTINE NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, mesh_diff&
             result1_diff = z_diff/(2.0*temp)
           END IF
           result1 = temp
-          temp = mesh%edge(mesh%edgeb(ie)%ind)%length
-          s1_diff = s1_diff - z*temp*(r_diff-c*result1_diff) - (r-c*&
-&           result1)*(temp*z_diff+z*mesh_diff%edge(mesh%edgeb(ie)%ind)%&
-&           length)
-          s1 = s1 - (r-c*result1)*(z*temp)
+          s1_diff = s1_diff - mesh%edge(mesh%edgeb(ie)%ind)%length*((r-c&
+&           *result1)*z_diff+z*(r_diff-c*result1_diff))
+          s1 = s1 - z*(r-c*result1)*mesh%edge(mesh%edgeb(ie)%ind)%length
           temp = SQRT(z)
           IF (z .EQ. 0.0) THEN
             result1_diff = 0.0_8
@@ -111,11 +105,10 @@ SUBROUTINE NEWTON_QIN_DIFF(qin, qin_diff, dof, dof_diff, mesh, mesh_diff&
             result1_diff = z_diff/(2.0*temp)
           END IF
           result1 = temp
-          temp = r - d3p2*c*result1
           s2_diff = s2_diff - mesh%edge(mesh%edgeb(ie)%ind)%length*(&
-&           r_diff-d3p2*c*result1_diff) - temp*mesh_diff%edge(mesh%edgeb&
-&           (ie)%ind)%length
-          s2 = s2 - temp*mesh%edge(mesh%edgeb(ie)%ind)%length
+&           r_diff-d3p2*c*result1_diff)
+          s2 = s2 - (r-d3p2*c*result1)*mesh%edge(mesh%edgeb(ie)%ind)%&
+&           length
         END IF
       END IF
     END DO

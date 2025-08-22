@@ -3,13 +3,13 @@
 !
 !  Differentiation of boundary_post in reverse (adjoint) mode (with options fixinterface):
 !   gradient     of useful results: *(bc.inflow) *(bc.sum_mass_flux)
-!                *bathy_cell *(mesh.edge).length mass_flux
+!                *bathy_cell mass_flux
 !   with respect to varying inputs: *(bc.inflow) *(bc.sum_mass_flux)
-!                *bathy_cell *(mesh.edge).length mass_flux
+!                *bathy_cell mass_flux
 !   Plus diff mem management of: bc.inflow:in bc.sum_mass_flux:in
-!                bathy_cell:in mesh.edge:in
+!                bathy_cell:in
 SUBROUTINE BOUNDARY_POST_BACK(mass_flux, mass_flux_back, index_ghost, &
-& mesh, mesh_back)
+& mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
@@ -18,7 +18,6 @@ SUBROUTINE BOUNDARY_POST_BACK(mass_flux, mass_flux_back, index_ghost, &
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH) :: mesh_back ! Replaced by Perl Script
   REAL(rp), INTENT(IN) :: mass_flux
   REAL(rp) :: mass_flux_back
   INTEGER(ip), INTENT(IN) :: index_ghost
@@ -45,19 +44,11 @@ SUBROUTINE BOUNDARY_POST_BACK(mass_flux, mass_flux_back, index_ghost, &
   ELSE
     CALL PUSHCONTROL1B(1)
   END IF
-  IF (mesh%edgeb(ib)%typlim(1:11) .EQ. 'internal_2D') THEN
-    mass_flux_back = mass_flux_back + mesh%edge(ie)%length*bc_back%&
-&     sum_mass_flux(group)
-    mesh_back%edge(ie)%length = mesh_back%edge(ie)%length + mass_flux*&
-&     bc_back%sum_mass_flux(group)
-  END IF
+  IF (mesh%edgeb(ib)%typlim(1:11) .EQ. 'internal_2D') mass_flux_back = &
+&     mass_flux_back + mesh%edge(ie)%length*bc_back%sum_mass_flux(group)
   CALL POPCONTROL1B(branch)
-  IF (branch .EQ. 0) THEN
-    mass_flux_back = mass_flux_back + mesh%edge(ie)%length*bc_back%&
-&     sum_mass_flux(group)
-    mesh_back%edge(ie)%length = mesh_back%edge(ie)%length + mass_flux*&
-&     bc_back%sum_mass_flux(group)
-  END IF
+  IF (branch .EQ. 0) mass_flux_back = mass_flux_back + mesh%edge(ie)%&
+&     length*bc_back%sum_mass_flux(group)
   CALL POPCONTROL2B(branch)
   IF (branch .EQ. 0) THEN
     mass_flux_back = mass_flux_back + coef_feedback*bathy_cell_back(&
@@ -69,8 +60,6 @@ SUBROUTINE BOUNDARY_POST_BACK(mass_flux, mass_flux_back, index_ghost, &
   END IF
   mass_flux_back = mass_flux_back - mesh%edge(ie)%length*bc_back%&
 &   sum_mass_flux(group)
-  mesh_back%edge(ie)%length = mesh_back%edge(ie)%length - mass_flux*&
-&   bc_back%sum_mass_flux(group)
  100 CONTINUE
 END SUBROUTINE BOUNDARY_POST_BACK
 

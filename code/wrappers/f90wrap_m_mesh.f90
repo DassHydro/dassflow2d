@@ -147,7 +147,7 @@ subroutine f90wrap_nodetype__set__lim(this, f90wrap_lim)
 end subroutine f90wrap_nodetype__set__lim
 
 subroutine f90wrap_m_mesh__nodetype_initialise(node, dim1, dim2)
-    use m_mesh, only: nodetype_initialise, nodetype
+    use m_mesh, only: nodetype, nodetype_initialise
     implicit none
     
     type nodetype_ptr_type
@@ -260,7 +260,7 @@ subroutine f90wrap_nodetypelim__set__group(this, f90wrap_group)
 end subroutine f90wrap_nodetypelim__set__group
 
 subroutine f90wrap_m_mesh__nodetypelim_initialise(nodelim, ind, group)
-    use m_mesh, only: nodetypelim_initialise, nodetypelim
+    use m_mesh, only: nodetypelim, nodetypelim_initialise
     implicit none
     
     type nodetypelim_ptr_type
@@ -1541,7 +1541,7 @@ end subroutine f90wrap_msh__set__neb
 
 subroutine f90wrap_msh__array_getitem__node(f90wrap_this, f90wrap_i, nodeitem)
     
-    use m_mesh, only: msh, nodetype
+    use m_mesh, only: nodetype, msh
     implicit none
     
     type msh_ptr_type
@@ -1571,7 +1571,7 @@ end subroutine f90wrap_msh__array_getitem__node
 
 subroutine f90wrap_msh__array_setitem__node(f90wrap_this, f90wrap_i, nodeitem)
     
-    use m_mesh, only: msh, nodetype
+    use m_mesh, only: nodetype, msh
     implicit none
     
     type msh_ptr_type
@@ -1601,7 +1601,7 @@ end subroutine f90wrap_msh__array_setitem__node
 
 subroutine f90wrap_msh__array_len__node(f90wrap_this, f90wrap_n)
     
-    use m_mesh, only: msh, nodetype
+    use m_mesh, only: nodetype, msh
     implicit none
     
     type msh_ptr_type
@@ -1624,7 +1624,7 @@ end subroutine f90wrap_msh__array_len__node
 
 subroutine f90wrap_msh__array_getitem__nodeb(f90wrap_this, f90wrap_i, nodebitem)
     
-    use m_mesh, only: msh, nodetypelim
+    use m_mesh, only: nodetypelim, msh
     implicit none
     
     type msh_ptr_type
@@ -1654,7 +1654,7 @@ end subroutine f90wrap_msh__array_getitem__nodeb
 
 subroutine f90wrap_msh__array_setitem__nodeb(f90wrap_this, f90wrap_i, nodebitem)
     
-    use m_mesh, only: msh, nodetypelim
+    use m_mesh, only: nodetypelim, msh
     implicit none
     
     type msh_ptr_type
@@ -1684,7 +1684,7 @@ end subroutine f90wrap_msh__array_setitem__nodeb
 
 subroutine f90wrap_msh__array_len__nodeb(f90wrap_this, f90wrap_n)
     
-    use m_mesh, only: msh, nodetypelim
+    use m_mesh, only: nodetypelim, msh
     implicit none
     
     type msh_ptr_type
@@ -1707,7 +1707,7 @@ end subroutine f90wrap_msh__array_len__nodeb
 
 subroutine f90wrap_msh__array_getitem__cell(f90wrap_this, f90wrap_i, cellitem)
     
-    use m_mesh, only: celltype, msh
+    use m_mesh, only: msh, celltype
     implicit none
     
     type msh_ptr_type
@@ -1737,7 +1737,7 @@ end subroutine f90wrap_msh__array_getitem__cell
 
 subroutine f90wrap_msh__array_setitem__cell(f90wrap_this, f90wrap_i, cellitem)
     
-    use m_mesh, only: celltype, msh
+    use m_mesh, only: msh, celltype
     implicit none
     
     type msh_ptr_type
@@ -1767,7 +1767,7 @@ end subroutine f90wrap_msh__array_setitem__cell
 
 subroutine f90wrap_msh__array_len__cell(f90wrap_this, f90wrap_n)
     
-    use m_mesh, only: celltype, msh
+    use m_mesh, only: msh, celltype
     implicit none
     
     type msh_ptr_type
@@ -1790,7 +1790,7 @@ end subroutine f90wrap_msh__array_len__cell
 
 subroutine f90wrap_msh__array_getitem__cellb(f90wrap_this, f90wrap_i, cellbitem)
     
-    use m_mesh, only: msh, celltypelim
+    use m_mesh, only: celltypelim, msh
     implicit none
     
     type msh_ptr_type
@@ -1820,7 +1820,7 @@ end subroutine f90wrap_msh__array_getitem__cellb
 
 subroutine f90wrap_msh__array_setitem__cellb(f90wrap_this, f90wrap_i, cellbitem)
     
-    use m_mesh, only: msh, celltypelim
+    use m_mesh, only: celltypelim, msh
     implicit none
     
     type msh_ptr_type
@@ -1850,7 +1850,7 @@ end subroutine f90wrap_msh__array_setitem__cellb
 
 subroutine f90wrap_msh__array_len__cellb(f90wrap_this, f90wrap_n)
     
-    use m_mesh, only: msh, celltypelim
+    use m_mesh, only: celltypelim, msh
     implicit none
     
     type msh_ptr_type
@@ -1873,7 +1873,7 @@ end subroutine f90wrap_msh__array_len__cellb
 
 subroutine f90wrap_msh__array_getitem__edge(f90wrap_this, f90wrap_i, edgeitem)
     
-    use m_mesh, only: edgetype, msh
+    use m_mesh, only: msh, edgetype
     implicit none
     
     type msh_ptr_type
@@ -1903,7 +1903,7 @@ end subroutine f90wrap_msh__array_getitem__edge
 
 subroutine f90wrap_msh__array_setitem__edge(f90wrap_this, f90wrap_i, edgeitem)
     
-    use m_mesh, only: edgetype, msh
+    use m_mesh, only: msh, edgetype
     implicit none
     
     type msh_ptr_type
@@ -1933,7 +1933,7 @@ end subroutine f90wrap_msh__array_setitem__edge
 
 subroutine f90wrap_msh__array_len__edge(f90wrap_this, f90wrap_n)
     
-    use m_mesh, only: edgetype, msh
+    use m_mesh, only: msh, edgetype
     implicit none
     
     type msh_ptr_type
@@ -2172,7 +2172,7 @@ subroutine f90wrap_msh__array__inv_swap_index(this, nd, dtype, dshape, dloc)
 end subroutine f90wrap_msh__array__inv_swap_index
 
 subroutine f90wrap_m_mesh__msh_initialise(mesh)
-    use m_mesh, only: msh_initialise, msh
+    use m_mesh, only: msh, msh_initialise
     implicit none
     
     type msh_ptr_type
@@ -2186,7 +2186,7 @@ subroutine f90wrap_m_mesh__msh_initialise(mesh)
 end subroutine f90wrap_m_mesh__msh_initialise
 
 subroutine f90wrap_m_mesh__msh_finalise(mesh)
-    use m_mesh, only: msh, msh_finalise
+    use m_mesh, only: msh_finalise, msh
     implicit none
     
     type msh_ptr_type
@@ -2294,7 +2294,7 @@ subroutine f90wrap_m_mesh__point_in_mesh_finalise(this)
 end subroutine f90wrap_m_mesh__point_in_mesh_finalise
 
 subroutine f90wrap_m_mesh__display_mesh_cell(mesh)
-    use m_mesh, only: msh, display_mesh_cell
+    use m_mesh, only: display_mesh_cell, msh
     implicit none
     
     type msh_ptr_type

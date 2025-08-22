@@ -96,7 +96,6 @@ SUBROUTINE SW_HLLC_SP_BACK(hl, hl_back, ul, ul_back, vl, vl_back, zl, &
     fl(2) = hl*ul*ul + 0.5_rp*g*hl*hl
     fr(1) = hr*ur
     fr(2) = hr*ur*ur + 0.5_rp*g*hr*hr
-    CALL PUSHREAL8(flux(1))
     flux(1) = philr*(sr*fl(1)-sl*fr(1)+sl*sr*(hr+zr-(hl+zl)))
     IF (zerom .LT. sr - sl) THEN
       max1 = sr - sl
@@ -106,11 +105,8 @@ SUBROUTINE SW_HLLC_SP_BACK(hl, hl_back, ul, ul_back, vl, vl_back, zl, &
       max1 = zerom
     END IF
     s2 = (demi*(phir*hr*hr-phil*hl*hl)-fact*(hr+zr-(hl+zl)))*g/max1
-    CALL PUSHREAL8(s2l)
     s2l = -(sl*s2)
-    CALL PUSHREAL8(s2r)
     s2r = sr*s2
-    CALL PUSHREAL8(flux(2))
     flux(2) = sr*(phil*fl(2)+s2l) - sl*(phir*fr(2)-s2r) + sl*sr*(phir*fr&
 &     (1)-phil*fl(1))
     IF (zerom .LT. sr - sl) THEN
@@ -174,7 +170,6 @@ SUBROUTINE SW_HLLC_SP_BACK(hl, hl_back, ul, ul_back, vl, vl_back, zl, &
     s2r_back = s2r_back - temp_back0
     fl_back = 0.0_8
     fr_back = 0.0_8
-    CALL POPREAL8(flux(2))
     sr_back = sr_back + (phil*fl(2)+s2l)*flux_back(2) + sl*temp_back + &
 &     s2*s2r_back
     temp_back1 = sr*flux_back(2)
@@ -188,9 +183,7 @@ SUBROUTINE SW_HLLC_SP_BACK(hl, hl_back, ul, ul_back, vl, vl_back, zl, &
     sl_back = sl_back + sr*temp_back - (phir*fr(2)-s2r)*flux_back(2) - &
 &     s2*s2l_back
     flux_back(2) = 0.0_8
-    CALL POPREAL8(s2r)
     s2_back = sr*s2r_back - sl*s2l_back
-    CALL POPREAL8(s2l)
     temp_back0 = g*s2_back/max1
     temp_back = demi*temp_back0
     phil_back = phil_back + fl(2)*temp_back1 - fl(1)*temp_back2 - hl**2*&
@@ -216,7 +209,6 @@ SUBROUTINE SW_HLLC_SP_BACK(hl, hl_back, ul, ul_back, vl, vl_back, zl, &
     hl_back = hl_back - temp_back
     zl_back = zl_back - temp_back
     temp_back = demi*fact_back
-    CALL POPREAL8(flux(1))
     temp = hr + zr - hl - zl
     philr_back = (sr*fl(1)-sl*fr(1)+sl*sr*temp)*flux_back(1) + (hl+hr)*&
 &     temp_back

@@ -4,10 +4,9 @@
 !  Differentiation of calc_innovuv in forward (tangent) mode (with options fixinterface):
 !   variations   of useful results: *(*innovuv.diff)
 !   with respect to varying inputs: *(*innovuv.diff) *(dof.u) *(dof.v)
-!                *(mesh.cell).surf
 !   Plus diff mem management of: innovuv:in *innovuv.diff:in dof.u:in
-!                dof.v:in mesh.cell:in
-SUBROUTINE CALC_INNOVUV_DIFF(dof, dof_diff, mesh, mesh_diff)
+!                dof.v:in
+SUBROUTINE CALC_INNOVUV_DIFF(dof, dof_diff, mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
@@ -18,12 +17,11 @@ SUBROUTINE CALC_INNOVUV_DIFF(dof, dof_diff, mesh, mesh_diff)
 
   IMPLICIT NONE
   TYPE(UNK), INTENT(IN) :: dof
-  TYPE(UNK), INTENT(IN) :: dof_diff
+  TYPE(UNK), INTENT(IN) :: dof_diff ! Replaced by Perl Script
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
   INTEGER(ip) :: cell, searched_time, pt, n_average
   REAL(rp) :: h_mean, s_total, u_mean, v_mean
-  REAL(rp) :: s_total_diff, u_mean_diff, v_mean_diff
+  REAL(rp) :: u_mean_diff, v_mean_diff
   CHARACTER(len=50) :: filename
   INTRINSIC SIZE
   REAL(rp) :: temp
@@ -36,19 +34,17 @@ SUBROUTINE CALC_INNOVUV_DIFF(dof, dof_diff, mesh, mesh_diff)
         s_total = 0._rp
         v_mean_diff = 0.0_8
         u_mean_diff = 0.0_8
-        s_total_diff = 0.0_8
         DO pt=1,SIZE(station(iobs)%pt)
           cell = station(iobs)%pt(pt)%cell
           IF (cell .GE. 0) THEN
             IF (dof%h(cell) .GT. 0) THEN
 !test on water presence determining if cell is used for calculating h_average
               u_mean_diff = u_mean_diff + mesh%cell(cell)%surf*dof_diff%&
-&               u(cell) + dof%u(cell)*mesh_diff%cell(cell)%surf
+&               u(cell)
               u_mean = u_mean + dof%u(cell)*mesh%cell(cell)%surf
               v_mean_diff = v_mean_diff + mesh%cell(cell)%surf*dof_diff%&
-&               v(cell) + dof%v(cell)*mesh_diff%cell(cell)%surf
+&               v(cell)
               v_mean = v_mean + dof%v(cell)*mesh%cell(cell)%surf
-              s_total_diff = s_total_diff + mesh_diff%cell(cell)%surf
               s_total = s_total + mesh%cell(cell)%surf
             END IF
           END IF
@@ -56,11 +52,9 @@ SUBROUTINE CALC_INNOVUV_DIFF(dof, dof_diff, mesh, mesh_diff)
         CALL MPI_SUM_R(u_mean)
         CALL MPI_SUM_R(v_mean)
         IF (s_total .GT. 0) THEN
-          u_mean_diff = (u_mean_diff-u_mean*s_total_diff/s_total)/&
-&           s_total
+          u_mean_diff = u_mean_diff/s_total
           u_mean = u_mean/s_total
-          v_mean_diff = (v_mean_diff-v_mean*s_total_diff/s_total)/&
-&           s_total
+          v_mean_diff = v_mean_diff/s_total
           v_mean = v_mean/s_total
         END IF
         temp = u_mean**2_rp + v_mean**2_rp

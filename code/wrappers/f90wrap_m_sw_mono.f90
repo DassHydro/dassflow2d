@@ -477,12 +477,12 @@ subroutine f90wrap_m_model__unk_initialise(dof, mesh)
     use m_mesh, only: msh
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof_ptr
     integer, intent(out), dimension(2) :: dof
     type(msh_ptr_type) :: mesh_ptr
@@ -494,7 +494,7 @@ subroutine f90wrap_m_model__unk_initialise(dof, mesh)
 end subroutine f90wrap_m_model__unk_initialise
 
 subroutine f90wrap_m_model__unk_finalise(dof)
-    use m_model, only: unk_finalise, unk
+    use m_model, only: unk, unk_finalise
     implicit none
     
     type unk_ptr_type
@@ -1031,7 +1031,7 @@ end subroutine f90wrap_infiltration_data__array_len__ga
 
 subroutine f90wrap_infiltration_data__array_getitem__scs(f90wrap_this, f90wrap_i, scsitem)
     
-    use m_model, only: infiltration_data, scs_cn
+    use m_model, only: scs_cn, infiltration_data
     implicit none
     
     type infiltration_data_ptr_type
@@ -1061,7 +1061,7 @@ end subroutine f90wrap_infiltration_data__array_getitem__scs
 
 subroutine f90wrap_infiltration_data__array_setitem__scs(f90wrap_this, f90wrap_i, scsitem)
     
-    use m_model, only: infiltration_data, scs_cn
+    use m_model, only: scs_cn, infiltration_data
     implicit none
     
     type infiltration_data_ptr_type
@@ -1091,7 +1091,7 @@ end subroutine f90wrap_infiltration_data__array_setitem__scs
 
 subroutine f90wrap_infiltration_data__array_len__scs(f90wrap_this, f90wrap_n)
     
-    use m_model, only: infiltration_data, scs_cn
+    use m_model, only: scs_cn, infiltration_data
     implicit none
     
     type infiltration_data_ptr_type
@@ -2970,7 +2970,7 @@ end subroutine f90wrap_bcs__array_len__hyd
 
 subroutine f90wrap_bcs__array_getitem__gr4(f90wrap_this, f90wrap_i, gr4item)
     
-    use m_model, only: gr4, bcs
+    use m_model, only: bcs, gr4
     implicit none
     
     type bcs_ptr_type
@@ -3000,7 +3000,7 @@ end subroutine f90wrap_bcs__array_getitem__gr4
 
 subroutine f90wrap_bcs__array_setitem__gr4(f90wrap_this, f90wrap_i, gr4item)
     
-    use m_model, only: gr4, bcs
+    use m_model, only: bcs, gr4
     implicit none
     
     type bcs_ptr_type
@@ -3030,7 +3030,7 @@ end subroutine f90wrap_bcs__array_setitem__gr4
 
 subroutine f90wrap_bcs__array_len__gr4(f90wrap_this, f90wrap_n)
     
-    use m_model, only: gr4, bcs
+    use m_model, only: bcs, gr4
     implicit none
     
     type bcs_ptr_type
@@ -3053,7 +3053,7 @@ end subroutine f90wrap_bcs__array_len__gr4
 
 subroutine f90wrap_bcs__array_getitem__rat(f90wrap_this, f90wrap_i, ratitem)
     
-    use m_model, only: ratcurve, bcs
+    use m_model, only: bcs, ratcurve
     implicit none
     
     type bcs_ptr_type
@@ -3083,7 +3083,7 @@ end subroutine f90wrap_bcs__array_getitem__rat
 
 subroutine f90wrap_bcs__array_setitem__rat(f90wrap_this, f90wrap_i, ratitem)
     
-    use m_model, only: ratcurve, bcs
+    use m_model, only: bcs, ratcurve
     implicit none
     
     type bcs_ptr_type
@@ -3113,7 +3113,7 @@ end subroutine f90wrap_bcs__array_setitem__rat
 
 subroutine f90wrap_bcs__array_len__rat(f90wrap_this, f90wrap_n)
     
-    use m_model, only: ratcurve, bcs
+    use m_model, only: bcs, ratcurve
     implicit none
     
     type bcs_ptr_type
@@ -4920,7 +4920,7 @@ end subroutine f90wrap_m_model__structure_data_finalise
 
 subroutine f90wrap_input_data__array_getitem__soil(f90wrap_this, f90wrap_i, soilitem)
     
-    use m_model, only: input_data, soil_data
+    use m_model, only: soil_data, input_data
     implicit none
     
     type input_data_ptr_type
@@ -4950,7 +4950,7 @@ end subroutine f90wrap_input_data__array_getitem__soil
 
 subroutine f90wrap_input_data__array_setitem__soil(f90wrap_this, f90wrap_i, soilitem)
     
-    use m_model, only: input_data, soil_data
+    use m_model, only: soil_data, input_data
     implicit none
     
     type input_data_ptr_type
@@ -4980,7 +4980,7 @@ end subroutine f90wrap_input_data__array_setitem__soil
 
 subroutine f90wrap_input_data__array_len__soil(f90wrap_this, f90wrap_n)
     
-    use m_model, only: input_data, soil_data
+    use m_model, only: soil_data, input_data
     implicit none
     
     type input_data_ptr_type
@@ -7955,16 +7955,16 @@ subroutine f90wrap_m_model__default_values
 end subroutine f90wrap_m_model__default_values
 
 subroutine f90wrap_m_model__alloc_dof(dof, mesh)
-    use m_model, only: alloc_dof, unk
     use m_mesh, only: msh
+    use m_model, only: unk, alloc_dof
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof_ptr
     integer, intent(out), dimension(2) :: dof
     type(msh_ptr_type) :: mesh_ptr
@@ -7976,7 +7976,7 @@ subroutine f90wrap_m_model__alloc_dof(dof, mesh)
 end subroutine f90wrap_m_model__alloc_dof
 
 subroutine f90wrap_m_model__dealloc_dof(dof)
-    use m_model, only: dealloc_dof, unk
+    use m_model, only: unk, dealloc_dof
     implicit none
     
     type unk_ptr_type
@@ -7996,8 +7996,8 @@ subroutine f90wrap_m_model__dealloc_model
 end subroutine f90wrap_m_model__dealloc_model
 
 subroutine f90wrap_m_model__spatial_index_fromxy(mesh, xmin, xmax, ymin, ymax, spatial_index)
-    use m_mesh, only: msh
     use m_model, only: spatial_index_fromxy
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type
@@ -8254,7 +8254,7 @@ subroutine f90wrap_m_model__array__slope_x(dummy_this, nd, dtype, dshape, dloc)
 end subroutine f90wrap_m_model__array__slope_x
 
 subroutine f90wrap_m_model__get__sporosity(f90wrap_SPorosity)
-    use m_model, only: m_model_SPorosity => SPorosity, porosity_data
+    use m_model, only: porosity_data, m_model_SPorosity => SPorosity
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
@@ -8267,7 +8267,7 @@ subroutine f90wrap_m_model__get__sporosity(f90wrap_SPorosity)
 end subroutine f90wrap_m_model__get__sporosity
 
 subroutine f90wrap_m_model__set__sporosity(f90wrap_SPorosity)
-    use m_model, only: m_model_SPorosity => SPorosity, porosity_data
+    use m_model, only: porosity_data, m_model_SPorosity => SPorosity
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
@@ -8280,7 +8280,7 @@ subroutine f90wrap_m_model__set__sporosity(f90wrap_SPorosity)
 end subroutine f90wrap_m_model__set__sporosity
 
 subroutine f90wrap_m_model__get__iporosity(f90wrap_IPorosity)
-    use m_model, only: porosity_data, m_model_IPorosity => IPorosity
+    use m_model, only: m_model_IPorosity => IPorosity, porosity_data
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()
@@ -8293,7 +8293,7 @@ subroutine f90wrap_m_model__get__iporosity(f90wrap_IPorosity)
 end subroutine f90wrap_m_model__get__iporosity
 
 subroutine f90wrap_m_model__set__iporosity(f90wrap_IPorosity)
-    use m_model, only: porosity_data, m_model_IPorosity => IPorosity
+    use m_model, only: m_model_IPorosity => IPorosity, porosity_data
     implicit none
     type porosity_data_ptr_type
         type(porosity_data), pointer :: p => NULL()

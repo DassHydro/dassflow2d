@@ -25,22 +25,8 @@
 !                *(*innovw.diff):(loc) *(*innovuv.diff):in-killed
 !                dof.h:(loc) *(dof.h):in-killed dof.u:(loc) *(dof.u):in-killed
 !                dof.v:(loc) *(dof.v):in-killed *(dof.infil):(loc)
-!                dof.t_display:(loc) *(dof.grad_h).x:(loc) *(dof.grad_h).y:(loc)
-!                *(dof.grad_u).x:(loc) *(dof.grad_u).y:(loc) *(dof.grad_v).x:(loc)
-!                *(dof.grad_v).y:(loc) *(dof.grad_z).x:(loc) *(dof.grad_z).y:(loc)
-!                *(mesh.node).coord.x:(loc) *(mesh.node).coord.y:(loc)
-!                *(mesh.cell).surf:(loc) *(mesh.cell).invsurf:(loc)
-!                *(mesh.cell).peri:(loc) *(mesh.cell).grav.x:(loc)
-!                *(mesh.cell).grav.y:(loc) *(mesh.cellb).grav.x:(loc)
-!                *(mesh.cellb).grav.y:(loc) *(mesh.edge).length:(loc)
-!                *(mesh.edge).center.x:(loc) *(mesh.edge).center.y:(loc)
-!                *(mesh.edge).normal.x:(loc) *(mesh.edge).normal.y:(loc)
-!                *(mesh.edge).tangent.x:(loc) *(mesh.edge).tangent.y:(loc)
-!                *(mesh.edge).vcell.x:(loc) *(mesh.edge).vcell.y:(loc)
-!                *(mesh.edge).v_edge_cell.x:(loc) *(mesh.edge).v_edge_cell.y:(loc)
-!                mesh.scal:(loc) mesh.surf:(loc) cost:in-killed
-!                dof0.h:(loc) *(dof0.h):out dof0.u:(loc) *(dof0.u):out
-!                dof0.v:(loc) *(dof0.v):out
+!                cost:in-killed dof0.h:(loc) *(dof0.h):out dof0.u:(loc)
+!                *(dof0.u):out dof0.v:(loc) *(dof0.v):out
 !   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
 !                ptf:in bc.inflow:in bc.outflow:in bc.hyd:in *(bc.hyd).t:in
 !                *(bc.hyd).q:in bc.rat:in *(bc.rat).h:in *(bc.rat).q:in
@@ -49,13 +35,10 @@
 !                bc.rain:in *(bc.rain).t:in *(bc.rain).q:in bc.sum_mass_flux:in
 !                xsshape:in bathy_cell:in manning_beta:in sporosity.phi:in
 !                innovation:in *innovation.diff:in innovq:in *innovq.diff:in
-!                innovuv:in *innovuv.diff:in dof.h:in-out dof.u:in-out
-!                dof.v:in-out dof.infil:in-out dof.grad_h:in-out
-!                dof.grad_u:in-out dof.grad_v:in-out dof.grad_z:in-out
-!                mesh.node:in-out mesh.cell:in-out mesh.cellb:in-out
-!                mesh.edge:in-out dof0.h:in dof0.u:in dof0.v:in
-SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
-& dof_back, cost, cost_back)
+!                innovuv:in *innovuv.diff:in dof.h:in dof.u:in
+!                dof.v:in dof.infil:in dof0.h:in dof0.u:in dof0.v:in
+SUBROUTINE RUN_MODEL_BACK(mesh, dof0, dof0_back, dof, dof_back, cost, &
+& cost_back)
   USE M_COMMON ! Replaced by Perl Script
   USE M_LINEAR_ALGEBRA ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
@@ -65,17 +48,15 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   USE M_MODEL ! Replaced by Perl Script
   USE M_OBS ! Replaced by Perl Script
   USE M_OBS_BACK
-  USE FONCTIONS_POROSITE_MOD
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(INOUT) :: mesh
-  TYPE(MSH), INTENT(INOUT) :: mesh_back ! Replaced by Perl Script
   TYPE(UNK), INTENT(INOUT) :: dof0
-  TYPE(UNK), INTENT(INOUT) :: dof0_back
+  TYPE(UNK), INTENT(INOUT) :: dof0_back ! Replaced by Perl Script
   TYPE(UNK), INTENT(INOUT) :: dof
-  TYPE(UNK), INTENT(INOUT) :: dof_back
+  TYPE(UNK), INTENT(INOUT) :: dof_back ! Replaced by Perl Script
   REAL(rp) :: cost
   REAL(rp) :: cost_back
   INTEGER(ip) :: sub_nt, ir, il
@@ -130,14 +111,11 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   REAL(rp) :: temp0
   REAL(rp) :: temp_back
   REAL(rp) :: temp_back0
-  INTEGER :: ii1
   INTEGER*4 :: branch
   INTEGER*4 :: ad_to
-  INTEGER*4 :: ad_to0
-  INTEGER*4 :: ad_to1
-  INTEGER*4 :: ad_to2
   INTEGER :: ad_count
   INTEGER :: i0
+  INTEGER :: ii1
   IF (use_xsshp .EQ. 1) THEN
     IF (xsshp_along_y .EQ. 1) THEN
       DO ie=1,mesh%nc
@@ -230,7 +208,6 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
           CALL PUSHCONTROL1B(0)
         END IF
       END DO
-      CALL PUSHINTEGER4(ie - 1)
       CALL PUSHCONTROL2B(0)
     ELSE IF (xsshp_along_x .EQ. 1) THEN
       DO ie=1,mesh%nc
@@ -323,7 +300,6 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
           CALL PUSHCONTROL1B(0)
         END IF
       END DO
-      CALL PUSHINTEGER4(ie - 1)
       CALL PUSHCONTROL2B(1)
     ELSE
       CALL PUSHCONTROL2B(2)
@@ -365,7 +341,6 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
         CALL PUSHCONTROL1B(1)
       END IF
     END DO
-    CALL PUSHINTEGER4(i - 1)
     CALL PUSHCONTROL1B(0)
   ELSE
     CALL PUSHCONTROL1B(1)
@@ -392,101 +367,6 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   end_time_loop = .false.
   ad_count = 0
   DO WHILE (.NOT.end_time_loop)
-    CALL PUSHINTEGER4ARRAY(mesh%inv_swap_index, &
-&                    size(mesh%inv_swap_index,1))
-    CALL PUSHINTEGER4ARRAY(mesh%swap_index, size(mesh%swap_index,1))
-    CALL PUSHREAL8(mesh%surf)
-    CALL PUSHREAL8(mesh%scal)
-    CALL PUSHCHARACTERARRAY(mesh%file_name, len=lchar)
-    CALL PUSHINTEGER4ARRAY(mesh%edgeb%perio, size(mesh%edgeb,1))
-    CALL PUSHINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edgeb,1))
-    DO ii1=1,size(mesh%edgeb,1)
-      CALL PUSHCHARACTERARRAY(mesh%edgeb(ii1)%typlim, len=lchar)
-    END DO
-    CALL PUSHINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edgeb,1))
-    DO ii1=1,size(mesh%edge,1)
-      CALL PUSHREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%y, 2)
-    END DO
-    DO ii1=1,size(mesh%edge,1)
-      CALL PUSHREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%x, 2)
-    END DO
-    CALL PUSHREAL8ARRAY(mesh%edge%vcell%y, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%vcell%x, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%tangent%y, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%tangent%x, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%center%y, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%center%x, size(mesh%edge,1))
-    CALL PUSHREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-    CALL PUSHINTEGER4ARRAY(mesh%edge%lim, size(mesh%edge,1))
-    CALL PUSHBOOLEANARRAY(mesh%edge%subdomain, size(mesh%edge,1))
-    CALL PUSHBOOLEANARRAY(mesh%edge%boundary, size(mesh%edge,1))
-    CALL PUSHINTEGER4ARRAY(mesh%edge%cell1d2d, size(mesh%edge,1))
-    DO ii1=1,size(mesh%edge,1)
-      CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-    END DO
-    DO ii1=1,size(mesh%edge,1)
-      CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%node, 2)
-    END DO
-    CALL PUSHREAL8ARRAY(mesh%cellb%grav%y, size(mesh%cellb,1))
-    CALL PUSHREAL8ARRAY(mesh%cellb%grav%x, size(mesh%cellb,1))
-    CALL PUSHINTEGER4ARRAY(mesh%cellb%cell, size(mesh%cellb,1))
-    CALL PUSHINTEGER4ARRAY(mesh%cellb%group, size(mesh%cellb,1))
-    DO ii1=1,size(mesh%cellb,1)
-      CALL PUSHCHARACTERARRAY(mesh%cellb(ii1)%typlim, len=lchar)
-    END DO
-    CALL PUSHINTEGER4ARRAY(mesh%cellb%ind, size(mesh%cellb,1))
-    CALL PUSHINTEGER4ARRAY(mesh%cell%rain, size(mesh%cell,1))
-    CALL PUSHREAL8ARRAY(mesh%cell%grav%y, size(mesh%cell,1))
-    CALL PUSHREAL8ARRAY(mesh%cell%grav%x, size(mesh%cell,1))
-    CALL PUSHREAL8ARRAY(mesh%cell%peri, size(mesh%cell,1))
-    CALL PUSHREAL8ARRAY(mesh%cell%invsurf, size(mesh%cell,1))
-    CALL PUSHREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-    CALL PUSHBOOLEANARRAY(mesh%cell%boundary, size(mesh%cell,1))
-    CALL PUSHINTEGER4ARRAY(mesh%cell%nbed, size(mesh%cell,1))
-    DO ii1=1,size(mesh%cell,1)
-      CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%edge, maxed)
-    END DO
-    DO ii1=1,size(mesh%cell,1)
-      CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%cell, maxed)
-    END DO
-    DO ii1=1,size(mesh%cell,1)
-      CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%node, maxed)
-    END DO
-    CALL PUSHINTEGER4ARRAY(mesh%cell%ind, size(mesh%cell,1))
-    CALL PUSHINTEGER4ARRAY(mesh%nodeb%group, size(mesh%nodeb,1))
-    DO ii1=1,size(mesh%nodeb,1)
-      CALL PUSHCHARACTERARRAY(mesh%nodeb(ii1)%typlim, len=lchar)
-    END DO
-    CALL PUSHINTEGER4ARRAY(mesh%nodeb%ind, size(mesh%nodeb,1))
-    CALL PUSHINTEGER4ARRAY(mesh%node%lim, size(mesh%node,1))
-    CALL PUSHBOOLEANARRAY(mesh%node%boundary, size(mesh%node,1))
-    CALL PUSHREAL8ARRAY(mesh%node%coord%y, size(mesh%node,1))
-    CALL PUSHREAL8ARRAY(mesh%node%coord%x, size(mesh%node,1))
-    DO ii1=1,size(mesh%node,1)
-      CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%edge, &
-&                      size(mesh%node%edge,1))
-    END DO
-    DO ii1=1,size(mesh%node,1)
-      CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%cell, &
-&                      size(mesh%node%cell,1))
-    END DO
-    CALL PUSHINTEGER4(mesh%neb)
-    CALL PUSHINTEGER4(mesh%ne)
-    CALL PUSHINTEGER4(mesh%ncb)
-    CALL PUSHINTEGER4(mesh%nc)
-    CALL PUSHINTEGER4(mesh%nnb)
-    CALL PUSHINTEGER4(mesh%nn)
-    CALL PUSHREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
-    CALL PUSHREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
-    CALL PUSHREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
-    CALL PUSHREAL8ARRAY(dof%grad_v%x, size(dof%grad_v,1))
-    CALL PUSHREAL8ARRAY(dof%grad_u%y, size(dof%grad_u,1))
-    CALL PUSHREAL8ARRAY(dof%grad_u%x, size(dof%grad_u,1))
-    CALL PUSHREAL8ARRAY(dof%grad_h%y, size(dof%grad_h,1))
-    CALL PUSHREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
-    CALL PUSHREAL8(dof%t_display)
     CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
     CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
     CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
@@ -509,6 +389,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
     ELSE
       CALL PUSHCONTROL1B(0)
     END IF
+    CALL PUSHREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
     IF (ALLOCATED(bathy_cell)) THEN
       CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
       CALL PUSHCONTROL1B(1)
@@ -532,7 +413,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   CALL PUSHREAL8(cost)
   CALL CALC_COST_FUNCTION(cost, mesh)
   CALL POPREAL8(cost)
-  CALL CALC_COST_FUNCTION_BACK(cost, cost_back, mesh, mesh_back)
+  CALL CALC_COST_FUNCTION_BACK(cost, cost_back, mesh)
   infil_back%ga%psif = 0.0_8
   infil_back%ga%ks = 0.0_8
   infil_back%ga%deltatheta = 0.0_8
@@ -563,35 +444,6 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   IF (ALLOCATED(manning_beta_back)) manning_beta_back = 0.0_8
   sporosity_back%phi = 0.0_8
   dof_back%infil = 0.0_8
-  dof_back%t_display = 0.0_8
-  dof_back%grad_h%x = 0.0_8
-  dof_back%grad_h%y = 0.0_8
-  dof_back%grad_u%x = 0.0_8
-  dof_back%grad_u%y = 0.0_8
-  dof_back%grad_v%x = 0.0_8
-  dof_back%grad_v%y = 0.0_8
-  dof_back%grad_z%x = 0.0_8
-  dof_back%grad_z%y = 0.0_8
-  mesh_back%node%coord%x = 0.0_8
-  mesh_back%node%coord%y = 0.0_8
-  mesh_back%cell%surf = 0.0_8
-  mesh_back%cell%peri = 0.0_8
-  mesh_back%cellb%grav%x = 0.0_8
-  mesh_back%cellb%grav%y = 0.0_8
-  mesh_back%edge%center%x = 0.0_8
-  mesh_back%edge%center%y = 0.0_8
-  mesh_back%edge%tangent%x = 0.0_8
-  mesh_back%edge%tangent%y = 0.0_8
-  mesh_back%edge%vcell%x = 0.0_8
-  mesh_back%edge%vcell%y = 0.0_8
-  DO ii1=1,size(mesh%edge,1)
-    mesh_back%edge(ii1)%v_edge_cell%x = 0.0_8
-  END DO
-  DO ii1=1,size(mesh%edge,1)
-    mesh_back%edge(ii1)%v_edge_cell%y = 0.0_8
-  END DO
-  mesh_back%scal = 0.0_8
-  mesh_back%surf = 0.0_8
   CALL POPINTEGER4(ad_count)
   DO i0=1,ad_count
     CALL POPREAL8(dt)
@@ -607,6 +459,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
     CALL POPCONTROL1B(branch)
     IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
 &                                   size(bathy_cell,1))
+    CALL POPREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
     CALL POPCONTROL1B(branch)
     IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovation%ind_t, &
 &                                      size(innovation,1))
@@ -620,101 +473,6 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
     CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
     CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
     CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
-    CALL POPREAL8(dof%t_display)
-    CALL POPREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
-    CALL POPREAL8ARRAY(dof%grad_h%y, size(dof%grad_h,1))
-    CALL POPREAL8ARRAY(dof%grad_u%x, size(dof%grad_u,1))
-    CALL POPREAL8ARRAY(dof%grad_u%y, size(dof%grad_u,1))
-    CALL POPREAL8ARRAY(dof%grad_v%x, size(dof%grad_v,1))
-    CALL POPREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
-    CALL POPREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
-    CALL POPREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
-    CALL POPINTEGER4(mesh%nn)
-    CALL POPINTEGER4(mesh%nnb)
-    CALL POPINTEGER4(mesh%nc)
-    CALL POPINTEGER4(mesh%ncb)
-    CALL POPINTEGER4(mesh%ne)
-    CALL POPINTEGER4(mesh%neb)
-    DO ii1=size(mesh%node,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%node(ii1)%cell, &
-&                     size(mesh%node%cell,1))
-    END DO
-    DO ii1=size(mesh%node,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%node(ii1)%edge, &
-&                     size(mesh%node%edge,1))
-    END DO
-    CALL POPREAL8ARRAY(mesh%node%coord%x, size(mesh%node,1))
-    CALL POPREAL8ARRAY(mesh%node%coord%y, size(mesh%node,1))
-    CALL POPBOOLEANARRAY(mesh%node%boundary, size(mesh%node,1))
-    CALL POPINTEGER4ARRAY(mesh%node%lim, size(mesh%node,1))
-    CALL POPINTEGER4ARRAY(mesh%nodeb%ind, size(mesh%nodeb,1))
-    DO ii1=size(mesh%nodeb,1),1,-1
-      CALL POPCHARACTERARRAY(mesh%nodeb(ii1)%typlim, len=lchar)
-    END DO
-    CALL POPINTEGER4ARRAY(mesh%nodeb%group, size(mesh%nodeb,1))
-    CALL POPINTEGER4ARRAY(mesh%cell%ind, size(mesh%cell,1))
-    DO ii1=size(mesh%cell,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%cell(ii1)%node, maxed)
-    END DO
-    DO ii1=size(mesh%cell,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%cell(ii1)%cell, maxed)
-    END DO
-    DO ii1=size(mesh%cell,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%cell(ii1)%edge, maxed)
-    END DO
-    CALL POPINTEGER4ARRAY(mesh%cell%nbed, size(mesh%cell,1))
-    CALL POPBOOLEANARRAY(mesh%cell%boundary, size(mesh%cell,1))
-    CALL POPREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-    CALL POPREAL8ARRAY(mesh%cell%invsurf, size(mesh%cell,1))
-    CALL POPREAL8ARRAY(mesh%cell%peri, size(mesh%cell,1))
-    CALL POPREAL8ARRAY(mesh%cell%grav%x, size(mesh%cell,1))
-    CALL POPREAL8ARRAY(mesh%cell%grav%y, size(mesh%cell,1))
-    CALL POPINTEGER4ARRAY(mesh%cell%rain, size(mesh%cell,1))
-    CALL POPINTEGER4ARRAY(mesh%cellb%ind, size(mesh%cellb,1))
-    DO ii1=size(mesh%cellb,1),1,-1
-      CALL POPCHARACTERARRAY(mesh%cellb(ii1)%typlim, len=lchar)
-    END DO
-    CALL POPINTEGER4ARRAY(mesh%cellb%group, size(mesh%cellb,1))
-    CALL POPINTEGER4ARRAY(mesh%cellb%cell, size(mesh%cellb,1))
-    CALL POPREAL8ARRAY(mesh%cellb%grav%x, size(mesh%cellb,1))
-    CALL POPREAL8ARRAY(mesh%cellb%grav%y, size(mesh%cellb,1))
-    DO ii1=size(mesh%edge,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%edge(ii1)%node, 2)
-    END DO
-    DO ii1=size(mesh%edge,1),1,-1
-      CALL POPINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-    END DO
-    CALL POPINTEGER4ARRAY(mesh%edge%cell1d2d, size(mesh%edge,1))
-    CALL POPBOOLEANARRAY(mesh%edge%boundary, size(mesh%edge,1))
-    CALL POPBOOLEANARRAY(mesh%edge%subdomain, size(mesh%edge,1))
-    CALL POPINTEGER4ARRAY(mesh%edge%lim, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%center%x, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%center%y, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%tangent%x, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%tangent%y, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%vcell%x, size(mesh%edge,1))
-    CALL POPREAL8ARRAY(mesh%edge%vcell%y, size(mesh%edge,1))
-    DO ii1=size(mesh%edge,1),1,-1
-      CALL POPREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%x, 2)
-    END DO
-    DO ii1=size(mesh%edge,1),1,-1
-      CALL POPREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%y, 2)
-    END DO
-    CALL POPINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edgeb,1))
-    DO ii1=size(mesh%edgeb,1),1,-1
-      CALL POPCHARACTERARRAY(mesh%edgeb(ii1)%typlim, len=lchar)
-    END DO
-    CALL POPINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edgeb,1))
-    CALL POPINTEGER4ARRAY(mesh%edgeb%perio, size(mesh%edgeb,1))
-    CALL POPCHARACTERARRAY(mesh%file_name, len=lchar)
-    CALL POPREAL8(mesh%scal)
-    CALL POPREAL8(mesh%surf)
-    CALL POPINTEGER4ARRAY(mesh%swap_index, size(mesh%swap_index,1))
-    CALL POPINTEGER4ARRAY(mesh%inv_swap_index, &
-&                   size(mesh%inv_swap_index,1))
     CALL SUB_RUN_MODEL_BACK()
   END DO
   CALL POPCONTROL1B(branch)
@@ -726,8 +484,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   dof0_back%h = dof0_back%h + dof_back%h
   CALL POPCONTROL1B(branch)
   IF (branch .EQ. 0) THEN
-    CALL POPINTEGER4(ad_to2)
-    DO i=ad_to2,1,-1
+    DO i=mesh%nc,1,-1
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
         bathy_cell_back(i) = bathy_cell_back(i) - dof0_back%h(i)
@@ -743,8 +500,8 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
         ptf_back(ii1)%kappa = 0.0_8
       END DO
     END IF
-    CALL POPINTEGER4(ad_to1)
-    DO i=ad_to1,1,-1
+    CALL POPINTEGER4(ad_to)
+    DO i=ad_to,1,-1
       temp_back0 = 10._rp**(phys_desc%soil(i)%sand*ptf(phys_desc%&
 &       ptf_land(i))%kappa(9)-phys_desc%soil(i)%clay*ptf(phys_desc%&
 &       ptf_land(i))%kappa(8)-ptf(phys_desc%ptf_land(i))%kappa(7))*LOG(&
@@ -771,8 +528,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
   CALL POPCONTROL2B(branch)
   IF (branch .LT. 2) THEN
     IF (branch .EQ. 0) THEN
-      CALL POPINTEGER4(ad_to)
-      DO ie=ad_to,1,-1
+      DO ie=mesh%nc,1,-1
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
           min2_back = bathy_cell_back(ie)
@@ -886,8 +642,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, mesh_back, dof0, dof0_back, dof, &
         bathy_cell_back(ie) = bathy_cell_back(ie) + bathy_temp_back
       END DO
     ELSE
-      CALL POPINTEGER4(ad_to0)
-      DO ie=ad_to0,1,-1
+      DO ie=mesh%nc,1,-1
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
           min4_back = bathy_cell_back(ie)
@@ -1018,18 +773,7 @@ CONTAINS
 !                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
 !                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
 !                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
-!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
-!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
-!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
-!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
-!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
-!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
-!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
-!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
-!                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
-!                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
-!                cost
+!                *(dof.v) *(dof.infil) cost
 !   with respect to varying inputs: *(infil.ga).psif[from module m_model]
 !                *(infil.ga).ks[from module m_model] *(infil.ga).deltatheta[from module m_model]
 !                *(infil.scs).lambdacn[from module m_model] *(infil.scs).cn[from module m_model]
@@ -1043,18 +787,7 @@ CONTAINS
 !                *manning_beta[from module m_model] *(sporosity.phi)[from module m_model]
 !                *(*innovation.diff)[from module m_obs] *(*innovq.diff)[from module m_obs]
 !                *(*innovuv.diff)[from module m_obs] *(dof.h) *(dof.u)
-!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
-!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
-!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
-!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
-!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
-!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
-!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
-!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
-!                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
-!                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
-!                cost
+!                *(dof.v) *(dof.infil) cost
 !   Plus diff mem management of: infil.ga[from module m_model]:in
 !                infil.scs[from module m_model]:in manning[from module m_model]:in
 !                bc.inflow[from module m_model]:in bc.outflow[from module m_model]:in
@@ -1070,19 +803,13 @@ CONTAINS
 !                sporosity.phi[from module m_model]:in innovation[from module m_obs]:in
 !                *innovation.diff[from module m_obs]:in innovq[from module m_obs]:in
 !                *innovq.diff[from module m_obs]:in innovuv[from module m_obs]:in
-!                *innovuv.diff[from module m_obs]:in dof.h:in-out
-!                dof.u:in-out dof.v:in-out dof.infil:in-out dof.grad_h:in-out
-!                dof.grad_u:in-out dof.grad_v:in-out dof.grad_z:in-out
-!                mesh.node:in-out mesh.cell:in-out mesh.cellb:in-out
-!                mesh.edge:in-out
+!                *innovuv.diff[from module m_obs]:in dof.h:in dof.u:in
+!                dof.v:in dof.infil:in
   SUBROUTINE SUB_RUN_MODEL_BACK()
-    USE ISO_C_BINDING
-    USE ADMM_TAPENADE_INTERFACE
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-    INTEGER :: ii1
     INTEGER*4 :: branch
     INTEGER :: ad_count
     INTEGER :: i0
@@ -1106,6 +833,7 @@ CONTAINS
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
+          CALL PUSHREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
           IF (ALLOCATED(bathy_cell)) THEN
             CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
             CALL PUSHCONTROL1B(1)
@@ -1115,119 +843,10 @@ CONTAINS
           CALL PUSHREAL8ARRAY(bc%sum_mass_flux, &
 &                       size(bc%sum_mass_flux,1))
           CALL PUSHREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
-          CALL PUSHINTEGER4(mesh%nn)
-          CALL PUSHINTEGER4(mesh%nnb)
-          CALL PUSHINTEGER4(mesh%nc)
-          CALL PUSHINTEGER4(mesh%ncb)
-          CALL PUSHINTEGER4(mesh%ne)
-          CALL PUSHINTEGER4(mesh%neb)
-          DO ii1=1,size(mesh%node,1)
-            CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%cell, &
-&                            size(mesh%node%cell,1))
-          END DO
-          DO ii1=1,size(mesh%node,1)
-          END DO
-          DO ii1=1,size(mesh%node,1)
-            CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%edge, &
-&                            size(mesh%node%edge,1))
-          END DO
-          DO ii1=1,size(mesh%node,1)
-          END DO
-          CALL PUSHREAL8ARRAY(mesh%node%coord%x, size(mesh%node,1))
-          CALL PUSHREAL8ARRAY(mesh%node%coord%y, size(mesh%node,1))
-          CALL PUSHBOOLEANARRAY(mesh%node%boundary, size(mesh%node,1)&
-&                        )
-          CALL PUSHINTEGER4ARRAY(mesh%node%lim, size(mesh%node,1))
-          CALL PUSHINTEGER4ARRAY(mesh%nodeb%ind, size(mesh%nodeb,1))
-          DO ii1=1,size(mesh%nodeb,1)
-            CALL PUSHCHARACTERARRAY(mesh%nodeb(ii1)%typlim, 128)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%nodeb%group, size(mesh%nodeb,1)&
-&                         )
-          CALL PUSHINTEGER4ARRAY(mesh%cell%ind, size(mesh%cell,1))
-          DO ii1=1,size(mesh%cell,1)
-            CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%node, 4)
-          END DO
-          DO ii1=1,size(mesh%cell,1)
-            CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%cell, 4)
-          END DO
-          DO ii1=1,size(mesh%cell,1)
-            CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%edge, 4)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%cell%nbed, size(mesh%cell,1))
-          CALL PUSHBOOLEANARRAY(mesh%cell%boundary, size(mesh%cell,1)&
-&                        )
-          CALL PUSHREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-          CALL PUSHREAL8ARRAY(mesh%cell%invsurf, size(mesh%cell,1))
-          CALL PUSHREAL8ARRAY(mesh%cell%peri, size(mesh%cell,1))
-          CALL PUSHREAL8ARRAY(mesh%cell%grav%x, size(mesh%cell,1))
-          CALL PUSHREAL8ARRAY(mesh%cell%grav%y, size(mesh%cell,1))
-          CALL PUSHINTEGER4ARRAY(mesh%cell%rain, size(mesh%cell,1))
-          CALL PUSHINTEGER4ARRAY(mesh%cellb%ind, size(mesh%cellb,1))
-          DO ii1=1,size(mesh%cellb,1)
-            CALL PUSHCHARACTERARRAY(mesh%cellb(ii1)%typlim, 128)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%cellb%group, size(mesh%cellb,1)&
-&                         )
-          CALL PUSHINTEGER4ARRAY(mesh%cellb%cell, size(mesh%cellb,1))
-          CALL PUSHREAL8ARRAY(mesh%cellb%grav%x, size(mesh%cellb,1))
-          CALL PUSHREAL8ARRAY(mesh%cellb%grav%y, size(mesh%cellb,1))
-          DO ii1=1,size(mesh%edge,1)
-            CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%node, 2)
-          END DO
-          DO ii1=1,size(mesh%edge,1)
-            CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%edge%cell1d2d, &
-&                          size(mesh%edge,1))
-          CALL PUSHBOOLEANARRAY(mesh%edge%boundary, size(mesh%edge,1)&
-&                        )
-          CALL PUSHBOOLEANARRAY(mesh%edge%subdomain, &
-&                         size(mesh%edge,1))
-          CALL PUSHINTEGER4ARRAY(mesh%edge%lim, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%center%x, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%center%y, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%tangent%x, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%tangent%y, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%vcell%x, size(mesh%edge,1))
-          CALL PUSHREAL8ARRAY(mesh%edge%vcell%y, size(mesh%edge,1))
-          DO ii1=1,size(mesh%edge,1)
-            CALL PUSHREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%x, 2)
-          END DO
-          DO ii1=1,size(mesh%edge,1)
-            CALL PUSHREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%y, 2)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edgeb,1))
-          DO ii1=1,size(mesh%edgeb,1)
-            CALL PUSHCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-          END DO
-          CALL PUSHINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edgeb,1)&
-&                         )
-          CALL PUSHINTEGER4ARRAY(mesh%edgeb%perio, size(mesh%edgeb,1)&
-&                         )
-          CALL PUSHCHARACTERARRAY(mesh%file_name, 128)
-          CALL PUSHREAL8(mesh%scal)
-          CALL PUSHREAL8(mesh%surf)
-          CALL PUSHINTEGER4ARRAY(mesh%swap_index, &
-&                          size(mesh%swap_index,1))
-          CALL PUSHINTEGER4ARRAY(mesh%inv_swap_index, &
-&                          size(mesh%inv_swap_index,1))
           CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
           CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
           CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
           CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
-          CALL PUSHREAL8(dof%t_display)
-          CALL PUSHREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
-          CALL PUSHREAL8ARRAY(dof%grad_h%y, size(dof%grad_h,1))
-          CALL PUSHREAL8ARRAY(dof%grad_u%x, size(dof%grad_u,1))
-          CALL PUSHREAL8ARRAY(dof%grad_u%y, size(dof%grad_u,1))
-          CALL PUSHREAL8ARRAY(dof%grad_v%x, size(dof%grad_v,1))
-          CALL PUSHREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
-          CALL PUSHREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
-          CALL PUSHREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
           CALL EULER_TIME_STEP_FIRST_B1(dof, mesh) ! Replaced by Perl Script
           CALL PUSHCONTROL2B(0)
         CASE DEFAULT
@@ -1304,132 +923,32 @@ CONTAINS
           CALL POPCONTROL1B(branch)
           IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovuv%ind_t, &
 &                                            size(innovuv,1))
-          CALL CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
+          CALL CALC_INNOVUV_BACK(dof, dof_back, mesh)
         END IF
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
           CALL POPCONTROL1B(branch)
           IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovation%ind_t, &
 &                                            size(innovation,1))
-          CALL CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
+          CALL CALC_INNOVATION_BACK(dof, dof_back, mesh)
         END IF
       END IF
       CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       CALL SW_POST_TREATMENT_BACK(dof, mesh)
       CALL POPCONTROL2B(branch)
       IF (branch .EQ. 0) THEN
-        CALL POPREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
-        CALL POPREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
-        CALL POPREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
-        CALL POPREAL8ARRAY(dof%grad_v%x, size(dof%grad_v,1))
-        CALL POPREAL8ARRAY(dof%grad_u%y, size(dof%grad_u,1))
-        CALL POPREAL8ARRAY(dof%grad_u%x, size(dof%grad_u,1))
-        CALL POPREAL8ARRAY(dof%grad_h%y, size(dof%grad_h,1))
-        CALL POPREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
-        CALL POPREAL8(dof%t_display)
         CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
         CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
         CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
         CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
-        CALL POPINTEGER4ARRAY(mesh%inv_swap_index, &
-&                       size(mesh%inv_swap_index,1))
-        CALL POPINTEGER4ARRAY(mesh%swap_index, &
-&                       size(mesh%swap_index,1))
-        CALL POPREAL8(mesh%surf)
-        CALL POPREAL8(mesh%scal)
-        CALL POPCHARACTERARRAY(mesh%file_name, 128)
-        CALL POPINTEGER4ARRAY(mesh%edgeb%perio, size(mesh%edgeb,1))
-        CALL POPINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edgeb,1))
-        DO ii1=size(mesh%edgeb,1),1,-1
-          CALL POPCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-        END DO
-        CALL POPINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edgeb,1))
-        DO ii1=size(mesh%edge,1),1,-1
-          CALL POPREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%y, 2)
-        END DO
-        DO ii1=size(mesh%edge,1),1,-1
-          CALL POPREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%x, 2)
-        END DO
-        CALL POPREAL8ARRAY(mesh%edge%vcell%y, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%vcell%x, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%tangent%y, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%tangent%x, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%center%y, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%center%x, size(mesh%edge,1))
-        CALL POPREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-        CALL POPINTEGER4ARRAY(mesh%edge%lim, size(mesh%edge,1))
-        CALL POPBOOLEANARRAY(mesh%edge%subdomain, size(mesh%edge,1))
-        CALL POPBOOLEANARRAY(mesh%edge%boundary, size(mesh%edge,1))
-        CALL POPINTEGER4ARRAY(mesh%edge%cell1d2d, size(mesh%edge,1))
-        DO ii1=size(mesh%edge,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-        END DO
-        DO ii1=size(mesh%edge,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%edge(ii1)%node, 2)
-        END DO
-        CALL POPREAL8ARRAY(mesh%cellb%grav%y, size(mesh%cellb,1))
-        CALL POPREAL8ARRAY(mesh%cellb%grav%x, size(mesh%cellb,1))
-        CALL POPINTEGER4ARRAY(mesh%cellb%cell, size(mesh%cellb,1))
-        CALL POPINTEGER4ARRAY(mesh%cellb%group, size(mesh%cellb,1))
-        DO ii1=size(mesh%cellb,1),1,-1
-          CALL POPCHARACTERARRAY(mesh%cellb(ii1)%typlim, 128)
-        END DO
-        CALL POPINTEGER4ARRAY(mesh%cellb%ind, size(mesh%cellb,1))
-        CALL POPINTEGER4ARRAY(mesh%cell%rain, size(mesh%cell,1))
-        CALL POPREAL8ARRAY(mesh%cell%grav%y, size(mesh%cell,1))
-        CALL POPREAL8ARRAY(mesh%cell%grav%x, size(mesh%cell,1))
-        CALL POPREAL8ARRAY(mesh%cell%peri, size(mesh%cell,1))
-        CALL POPREAL8ARRAY(mesh%cell%invsurf, size(mesh%cell,1))
-        CALL POPREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-        CALL POPBOOLEANARRAY(mesh%cell%boundary, size(mesh%cell,1))
-        CALL POPINTEGER4ARRAY(mesh%cell%nbed, size(mesh%cell,1))
-        DO ii1=size(mesh%cell,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%cell(ii1)%edge, 4)
-        END DO
-        DO ii1=size(mesh%cell,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%cell(ii1)%cell, 4)
-        END DO
-        DO ii1=size(mesh%cell,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%cell(ii1)%node, 4)
-        END DO
-        CALL POPINTEGER4ARRAY(mesh%cell%ind, size(mesh%cell,1))
-        CALL POPINTEGER4ARRAY(mesh%nodeb%group, size(mesh%nodeb,1))
-        DO ii1=size(mesh%nodeb,1),1,-1
-          CALL POPCHARACTERARRAY(mesh%nodeb(ii1)%typlim, 128)
-        END DO
-        CALL POPINTEGER4ARRAY(mesh%nodeb%ind, size(mesh%nodeb,1))
-        CALL POPINTEGER4ARRAY(mesh%node%lim, size(mesh%node,1))
-        CALL POPBOOLEANARRAY(mesh%node%boundary, size(mesh%node,1))
-        CALL POPREAL8ARRAY(mesh%node%coord%y, size(mesh%node,1))
-        CALL POPREAL8ARRAY(mesh%node%coord%x, size(mesh%node,1))
-        DO ii1=size(mesh%node,1),1,-1
-        END DO
-        DO ii1=size(mesh%node,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%node(ii1)%edge, &
-&                         size(mesh%node%edge,1))
-        END DO
-        DO ii1=size(mesh%node,1),1,-1
-        END DO
-        DO ii1=size(mesh%node,1),1,-1
-          CALL POPINTEGER4ARRAY(mesh%node(ii1)%cell, &
-&                         size(mesh%node%cell,1))
-        END DO
-        CALL POPINTEGER4(mesh%neb)
-        CALL POPINTEGER4(mesh%ne)
-        CALL POPINTEGER4(mesh%ncb)
-        CALL POPINTEGER4(mesh%nc)
-        CALL POPINTEGER4(mesh%nnb)
-        CALL POPINTEGER4(mesh%nn)
         CALL POPREAL8ARRAY(bc%rain%cumul, size(bc%rain,1))
         CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1)&
 &                   )
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
 &                                       size(bathy_cell,1))
-        CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, &
-&                                    mesh_back)
+        CALL POPREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
+        CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh)
       END IF
       CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       bc_back%sum_mass_flux = 0.0_8
@@ -1441,7 +960,7 @@ CONTAINS
       CALL POPREAL8ARRAY(bc%outflow, size(bc%outflow,1))
       CALL POPREAL8ARRAY(bc%rat%zout, size(bc%rat,1))
       CALL POPREAL8ARRAY(bc%rain%qin, size(bc%rain,1))
-      CALL SET_BC_BACK(dof, dof_back, mesh, mesh_back)
+      CALL SET_BC_BACK(dof, dof_back, mesh)
     END DO
   END SUBROUTINE SUB_RUN_MODEL_BACK
 

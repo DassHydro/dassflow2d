@@ -62,14 +62,11 @@ CONTAINS
 
 !  Differentiation of fv_cell_grad in forward (tangent) mode (with options fixinterface):
 !   variations   of useful results: grad_var.x grad_var.y
-!   with respect to varying inputs: var *(mesh.cell).invsurf *(mesh.edge).length
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y
-!   Plus diff mem management of: mesh.cell:in mesh.edge:in
+!   with respect to varying inputs: var
   SUBROUTINE FV_CELL_GRAD_DIFF(grad_var, grad_var_diff, var, var_diff, &
-&   mesh, mesh_diff)
+&   mesh)
     IMPLICIT NONE
     TYPE(MSH), INTENT(IN) :: mesh
-    TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
     REAL(rp), DIMENSION(mesh%nc+mesh%ncb), INTENT(IN) :: var
     REAL(rp), DIMENSION(mesh%nc+mesh%ncb), INTENT(IN) :: var_diff
     TYPE(VEC2D), DIMENSION(mesh%nc+mesh%ncb), INTENT(OUT) :: grad_var
@@ -85,40 +82,34 @@ CONTAINS
     DO ie=1,mesh%ne
       il = mesh%edge(ie)%cell(1)
       ir = mesh%edge(ie)%cell(2)
-      temp = mesh%edge(ie)%length*mesh%edge(ie)%normal%x
-      grad_var_diff(il)%x = grad_var_diff(il)%x + demi*((var(il)+var(ir)&
-&       )*(mesh%edge(ie)%normal%x*mesh_diff%edge(ie)%length+mesh%edge(ie&
-&       )%length*mesh_diff%edge(ie)%normal%x)+temp*(var_diff(il)+&
-&       var_diff(ir)))
-      grad_var(il)%x = grad_var(il)%x + demi*(temp*(var(il)+var(ir)))
-      temp = mesh%edge(ie)%length*mesh%edge(ie)%normal%y
-      grad_var_diff(il)%y = grad_var_diff(il)%y + demi*((var(il)+var(ir)&
-&       )*(mesh%edge(ie)%normal%y*mesh_diff%edge(ie)%length+mesh%edge(ie&
-&       )%length*mesh_diff%edge(ie)%normal%y)+temp*(var_diff(il)+&
-&       var_diff(ir)))
-      grad_var(il)%y = grad_var(il)%y + demi*(temp*(var(il)+var(ir)))
+      temp = mesh%edge(ie)%length*demi
+      grad_var_diff(il)%x = grad_var_diff(il)%x + temp*mesh%edge(ie)%&
+&       normal%x*(var_diff(il)+var_diff(ir))
+      grad_var(il)%x = grad_var(il)%x + temp*(mesh%edge(ie)%normal%x*(&
+&       var(il)+var(ir)))
+      temp = mesh%edge(ie)%length*demi
+      grad_var_diff(il)%y = grad_var_diff(il)%y + temp*mesh%edge(ie)%&
+&       normal%y*(var_diff(il)+var_diff(ir))
+      grad_var(il)%y = grad_var(il)%y + temp*(mesh%edge(ie)%normal%y*(&
+&       var(il)+var(ir)))
       IF (.NOT.mesh%edge(ie)%boundary .AND. (.NOT.mesh%edge(ie)%&
 &         subdomain)) THEN
-        temp = mesh%edge(ie)%length*mesh%edge(ie)%normal%x
-        grad_var_diff(ir)%x = grad_var_diff(ir)%x - demi*((var(il)+var(&
-&         ir))*(mesh%edge(ie)%normal%x*mesh_diff%edge(ie)%length+mesh%&
-&         edge(ie)%length*mesh_diff%edge(ie)%normal%x)+temp*(var_diff(il&
-&         )+var_diff(ir)))
-        grad_var(ir)%x = grad_var(ir)%x - demi*(temp*(var(il)+var(ir)))
-        temp = mesh%edge(ie)%length*mesh%edge(ie)%normal%y
-        grad_var_diff(ir)%y = grad_var_diff(ir)%y - demi*((var(il)+var(&
-&         ir))*(mesh%edge(ie)%normal%y*mesh_diff%edge(ie)%length+mesh%&
-&         edge(ie)%length*mesh_diff%edge(ie)%normal%y)+temp*(var_diff(il&
-&         )+var_diff(ir)))
-        grad_var(ir)%y = grad_var(ir)%y - demi*(temp*(var(il)+var(ir)))
+        temp = mesh%edge(ie)%length*demi
+        grad_var_diff(ir)%x = grad_var_diff(ir)%x - temp*mesh%edge(ie)%&
+&         normal%x*(var_diff(il)+var_diff(ir))
+        grad_var(ir)%x = grad_var(ir)%x - temp*(mesh%edge(ie)%normal%x*(&
+&         var(il)+var(ir)))
+        temp = mesh%edge(ie)%length*demi
+        grad_var_diff(ir)%y = grad_var_diff(ir)%y - temp*mesh%edge(ie)%&
+&         normal%y*(var_diff(il)+var_diff(ir))
+        grad_var(ir)%y = grad_var(ir)%y - temp*(mesh%edge(ie)%normal%y*(&
+&         var(il)+var(ir)))
       END IF
     END DO
     DO i=1,mesh%nc
-      grad_var_diff(i)%x = mesh%cell(i)%invsurf*grad_var_diff(i)%x + &
-&       grad_var(i)%x*mesh_diff%cell(i)%invsurf
+      grad_var_diff(i)%x = mesh%cell(i)%invsurf*grad_var_diff(i)%x
       grad_var(i)%x = grad_var(i)%x*mesh%cell(i)%invsurf
-      grad_var_diff(i)%y = mesh%cell(i)%invsurf*grad_var_diff(i)%y + &
-&       grad_var(i)%y*mesh_diff%cell(i)%invsurf
+      grad_var_diff(i)%y = mesh%cell(i)%invsurf*grad_var_diff(i)%y
       grad_var(i)%y = grad_var(i)%y*mesh%cell(i)%invsurf
     END DO
     CALL COM_VAR_R(grad_var(:)%x, mesh)

@@ -3,12 +3,12 @@
 !
 !  Differentiation of calc_innovation in reverse (adjoint) mode (with options fixinterface):
 !   gradient     of useful results: *bathy_cell *(*innovation.diff)
-!                *(dof.h) *(mesh.cell).surf
+!                *(dof.h)
 !   with respect to varying inputs: *bathy_cell *(*innovation.diff)
-!                *(dof.h) *(mesh.cell).surf
+!                *(dof.h)
 !   Plus diff mem management of: bathy_cell:in innovation:in *innovation.diff:in
-!                dof.h:in mesh.cell:in
-SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
+!                dof.h:in
+SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
@@ -19,12 +19,11 @@ SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
 
   IMPLICIT NONE
   TYPE(UNK), INTENT(IN) :: dof
-  TYPE(UNK) :: dof_back
+  TYPE(UNK) :: dof_back ! Replaced by Perl Script
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH) :: mesh_back ! Replaced by Perl Script
   INTEGER(ip) :: cell, searched_time, pt, n_average
   REAL(rp) :: h_mean, s_total, u_mean, v_mean
-  REAL(rp) :: h_mean_back, s_total_back
+  REAL(rp) :: h_mean_back
   INTRINSIC SIZE
   REAL(rp) :: temp_back
   INTEGER*4 :: ad_to
@@ -37,8 +36,6 @@ SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
       IF (searched_time .GT. innovation(iobs)%nb_dt) THEN
         CALL PUSHCONTROL2B(0)
       ELSE IF (tc .GE. station(iobs)%t(searched_time)) THEN
-        CALL PUSHREAL8(h_mean)
-        h_mean = 0._rp
         CALL PUSHREAL8(s_total)
         s_total = 0._rp
         DO pt=1,SIZE(station(iobs)%pt)
@@ -46,14 +43,11 @@ SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
           IF (cell .LT. 0) THEN
             CALL PUSHCONTROL3B(0)
           ELSE IF (use_hobs .EQ. 1) THEN
-            h_mean = h_mean + dof%h(cell)*mesh%cell(cell)%surf
             s_total = s_total + mesh%cell(cell)%surf
             CALL PUSHCONTROL3B(4)
           ELSE IF (use_zobs .EQ. 1) THEN
             IF (dof%h(cell) .GT. 0) THEN
 !test on water presence determining if cell is used for calculating h_average
-              h_mean = h_mean + (dof%h(cell)+bathy_cell(cell))*mesh%cell&
-&               (cell)%surf
               s_total = s_total + mesh%cell(cell)%surf
               CALL PUSHCONTROL3B(3)
             ELSE
@@ -86,12 +80,7 @@ SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
           h_mean_back = innovation_back(iobs)%diff(searched_time)
           innovation_back(iobs)%diff(searched_time) = 0.0_8
           CALL POPCONTROL1B(branch)
-          IF (branch .EQ. 0) THEN
-            s_total_back = -(h_mean*h_mean_back/s_total**2)
-            h_mean_back = h_mean_back/s_total
-          ELSE
-            s_total_back = 0.0_8
-          END IF
+          IF (branch .EQ. 0) h_mean_back = h_mean_back/s_total
           CALL POPINTEGER4(ad_to)
           DO pt=ad_to,1,-1
             CALL POPCONTROL3B(branch)
@@ -99,17 +88,12 @@ SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
               IF (branch .NE. 2) THEN
                 IF (branch .EQ. 3) THEN
                   cell = station(iobs)%pt(pt)%cell
-                  mesh_back%cell(cell)%surf = mesh_back%cell(cell)%surf &
-&                   + s_total_back + (dof%h(cell)+bathy_cell(cell))*&
-&                   h_mean_back
                   temp_back = mesh%cell(cell)%surf*h_mean_back
                   dof_back%h(cell) = dof_back%h(cell) + temp_back
                   bathy_cell_back(cell) = bathy_cell_back(cell) + &
 &                   temp_back
                 ELSE
                   cell = station(iobs)%pt(pt)%cell
-                  mesh_back%cell(cell)%surf = mesh_back%cell(cell)%surf &
-&                   + s_total_back + dof%h(cell)*h_mean_back
                   dof_back%h(cell) = dof_back%h(cell) + mesh%cell(cell)%&
 &                   surf*h_mean_back
                 END IF
@@ -117,7 +101,6 @@ SUBROUTINE CALC_INNOVATION_BACK(dof, dof_back, mesh, mesh_back)
             END IF
           END DO
           CALL POPREAL8(s_total)
-          CALL POPREAL8(h_mean)
         END IF
       END IF
       CALL POPINTEGER4(searched_time)

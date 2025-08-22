@@ -7,57 +7,31 @@
 !                *manning *(bc.inflow) *(bc.outflow) *(bc.rain).qin
 !                *(bc.rain).cumul *(bc.sum_mass_flux) *bathy_cell
 !                *manning_beta *(sporosity.phi) *(dof.h) *(dof.u)
-!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
-!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
-!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
-!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
-!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
-!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
-!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
-!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
-!                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
-!                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
+!                *(dof.v) *(dof.infil)
 !   with respect to varying inputs: *(infil.ga).psif *(infil.ga).ks
 !                *(infil.ga).deltatheta *(infil.scs).lambdacn *(infil.scs).cn
 !                *manning *(bc.inflow) *(bc.outflow) *(bc.rain).qin
 !                *(bc.rain).cumul *(bc.sum_mass_flux) *bathy_cell
 !                *manning_beta *(sporosity.phi) *(dof.h) *(dof.u)
-!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
-!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
-!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
-!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
-!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
-!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
-!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
-!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
-!                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
-!                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
+!                *(dof.v) *(dof.infil)
 !   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
 !                bc.inflow:in bc.outflow:in bc.hpresc:in *(bc.hpresc).t:in
 !                *(bc.hpresc).h:in bc.zspresc:in *(bc.zspresc).t:in
 !                *(bc.zspresc).z:in bc.rain:in bc.sum_mass_flux:in
 !                bathy_cell:in manning_beta:in sporosity.phi:in
-!                dof.h:in-out dof.u:in-out dof.v:in-out dof.infil:in-out
-!                dof.grad_h:in-out dof.grad_u:in-out dof.grad_v:in-out
-!                dof.grad_z:in-out mesh.node:in-out mesh.cell:in-out
-!                mesh.cellb:in-out mesh.edge:in-out
-SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
+!                dof.h:in dof.u:in dof.v:in dof.infil:in
+SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
-  USE ISO_C_BINDING
-  USE ADMM_TAPENADE_INTERFACE
 
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(INOUT) :: mesh
-  TYPE(MSH), INTENT(INOUT) :: mesh_back ! Replaced by Perl Script
   TYPE(UNK), INTENT(INOUT) :: dof
-  TYPE(UNK), INTENT(INOUT) :: dof_back
+  TYPE(UNK), INTENT(INOUT) :: dof_back ! Replaced by Perl Script
 ! Left and Right cells indexes to edge
   INTEGER(ip) :: il, ir
 ! Left State in edge cell normal coordinates
@@ -103,8 +77,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
 ! Left/Right term source
   REAL(rp) :: s2l, s2r
   REAL(rp) :: s2l_back, s2r_back
-  EXTERNAL UPDATE_ALL_POROSITIES
-  EXTERNAL UPDATE_ALL_POROSITIES_BACK
   INTRINSIC MAX
   INTRINSIC ABS
   INTRINSIC SQRT
@@ -125,12 +97,11 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
   REAL(rp) :: abs3_back
   REAL(rp) :: abs4
   REAL(rp) :: abs4_back
-  INTEGER :: ii1
+  INTEGER*4 :: branch
   REAL(rp) :: temp
   REAL(rp) :: temp_back
   REAL(rp) :: temp0
   REAL(rp) :: temp_back0
-  INTEGER*4 :: branch
   REAL(rp) :: temp1
   REAL(rp) :: temp_back1
   REAL(rp) :: temp2
@@ -139,125 +110,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
   REAL(rp) :: temp_back3
   REAL(rp) :: temp_back4
   tflux(:, :) = 0._rp
-  DO ii1=1,size(mesh%node,1)
-  END DO
-  DO ii1=1,size(mesh%node,1)
-  END DO
-  CALL PUSHREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-  DO ii1=1,size(mesh%edge,1)
-    CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-  END DO
-  CALL PUSHREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-  CALL PUSHINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edge,1)b)
-  DO ii1=1,size(mesh%edge,1)b
-    CALL PUSHCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edge,1)b)
-  CALL PUSHINTEGER4(mesh%neb)
-  CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
-  CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
-  CALL PUSHINTEGER4(mesh%nn)
-  CALL PUSHINTEGER4(mesh%nnb)
-  CALL PUSHINTEGER4(mesh%nc)
-  CALL PUSHINTEGER4(mesh%ncb)
-  CALL PUSHINTEGER4(mesh%ne)
-  DO ii1=1,size(mesh%node,1)
-    CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%cell, &
-&                    size(mesh%node%cell,1))
-  END DO
-  DO ii1=1,size(mesh%node,1)
-  END DO
-  DO ii1=1,size(mesh%node,1)
-    CALL PUSHINTEGER4ARRAY(mesh%node(ii1)%edge, &
-&                    size(mesh%node%edge,1))
-  END DO
-  DO ii1=1,size(mesh%node,1)
-  END DO
-  CALL PUSHREAL8ARRAY(mesh%node%coord%x, size(mesh%node,1))
-  CALL PUSHREAL8ARRAY(mesh%node%coord%y, size(mesh%node,1))
-  CALL PUSHBOOLEANARRAY(mesh%node%boundary, size(mesh%node,1))
-  CALL PUSHINTEGER4ARRAY(mesh%node%lim, size(mesh%node,1))
-  CALL PUSHINTEGER4ARRAY(mesh%nodeb%ind, size(mesh%node,1)b)
-  DO ii1=1,size(mesh%node,1)b
-    CALL PUSHCHARACTERARRAY(mesh%nodeb(ii1)%typlim, 128)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%nodeb%group, size(mesh%node,1)b)
-  CALL PUSHINTEGER4ARRAY(mesh%cell%ind, size(mesh%cell,1))
-  DO ii1=1,size(mesh%cell,1)
-    CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%node, 4)
-  END DO
-  DO ii1=1,size(mesh%cell,1)
-    CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%cell, 4)
-  END DO
-  DO ii1=1,size(mesh%cell,1)
-    CALL PUSHINTEGER4ARRAY(mesh%cell(ii1)%edge, 4)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%cell%nbed, size(mesh%cell,1))
-  CALL PUSHBOOLEANARRAY(mesh%cell%boundary, size(mesh%cell,1))
-  CALL PUSHREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-  CALL PUSHREAL8ARRAY(mesh%cell%invsurf, size(mesh%cell,1))
-  CALL PUSHREAL8ARRAY(mesh%cell%peri, size(mesh%cell,1))
-  CALL PUSHREAL8ARRAY(mesh%cell%grav%x, size(mesh%cell,1))
-  CALL PUSHREAL8ARRAY(mesh%cell%grav%y, size(mesh%cell,1))
-  CALL PUSHINTEGER4ARRAY(mesh%cell%rain, size(mesh%cell,1))
-  CALL PUSHINTEGER4ARRAY(mesh%cellb%ind, size(mesh%cell,1)b)
-  DO ii1=1,size(mesh%cell,1)b
-    CALL PUSHCHARACTERARRAY(mesh%cellb(ii1)%typlim, 128)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%cellb%group, size(mesh%cell,1)b)
-  CALL PUSHINTEGER4ARRAY(mesh%cellb%cell, size(mesh%cell,1)b)
-  CALL PUSHREAL8ARRAY(mesh%cellb%grav%x, size(mesh%cell,1)b)
-  CALL PUSHREAL8ARRAY(mesh%cellb%grav%y, size(mesh%cell,1)b)
-  DO ii1=1,size(mesh%edge,1)
-    CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%node, 2)
-  END DO
-  DO ii1=1,size(mesh%edge,1)
-    CALL PUSHINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%edge%cell1d2d, size(mesh%edge,1))
-  CALL PUSHBOOLEANARRAY(mesh%edge%boundary, size(mesh%edge,1))
-  CALL PUSHBOOLEANARRAY(mesh%edge%subdomain, size(mesh%edge,1))
-  CALL PUSHINTEGER4ARRAY(mesh%edge%lim, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%center%x, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%center%y, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%tangent%x, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%tangent%y, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%vcell%x, size(mesh%edge,1))
-  CALL PUSHREAL8ARRAY(mesh%edge%vcell%y, size(mesh%edge,1))
-  DO ii1=1,size(mesh%edge,1)
-    CALL PUSHREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%x, 2)
-  END DO
-  DO ii1=1,size(mesh%edge,1)
-    CALL PUSHREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%y, 2)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edge,1)b)
-  DO ii1=1,size(mesh%edge,1)b
-    CALL PUSHCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-  END DO
-  CALL PUSHINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edge,1)b)
-  CALL PUSHINTEGER4ARRAY(mesh%edgeb%perio, size(mesh%edge,1)b)
-  CALL PUSHCHARACTERARRAY(mesh%file_name, 128)
-  CALL PUSHREAL8(mesh%scal)
-  CALL PUSHREAL8(mesh%surf)
-  CALL PUSHINTEGER4ARRAY(mesh%swap_index, size(mesh%swap_index,1))
-  CALL PUSHINTEGER4ARRAY(mesh%inv_swap_index, &
-&                  size(mesh%inv_swap_index,1))
-  CALL PUSHREAL8ARRAY(dof%h, size(dof%h,1))
-  CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
-  CALL PUSHREAL8(dof%t_display)
-  CALL PUSHREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
-  CALL PUSHREAL8ARRAY(dof%grad_h%y, size(dof%grad_h,1))
-  CALL PUSHREAL8ARRAY(dof%grad_u%x, size(dof%grad_u,1))
-  CALL PUSHREAL8ARRAY(dof%grad_u%y, size(dof%grad_u,1))
-  CALL PUSHREAL8ARRAY(dof%grad_v%x, size(dof%grad_v,1))
-  CALL PUSHREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
-  CALL PUSHREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
-  CALL PUSHREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
   CALL UPDATE_ALL_POROSITIES(dof, mesh)
   DO 100 ie=1,mesh%ne
     CALL PUSHINTEGER4(il)
@@ -403,15 +255,10 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
       END IF
       IF (phil .GT. zerom .OR. phir .GT. zerom) THEN
         CALL PUSHREAL8ARRAY(nflux, sw_nb)
-        CALL PUSHREAL8(s2r)
-        CALL PUSHREAL8(s2l)
         CALL SW_HLLC_SP(hl(1), ul(2), vl(2), zl, phil, s2l, hr(1)& ! Replaced by Perl Script
 &                        , ur(2), vr(2), zr, phir, s2r, nflux)
         CALL PUSHCONTROL1B(0)
       ELSE
-        CALL PUSHREAL8ARRAY(nflux, sw_nb)
-        CALL PUSHREAL8(s2r)
-        CALL PUSHREAL8(s2l)
         CALL SW_HLLC_IMPERVIOUS_SP(hl(2), ul(2), vl(2), zl, phil& ! Replaced by Perl Script
 &                                   , s2l, hr(2), ur(2), vr(2), zr, phir&
 &                                   , s2r, nflux)
@@ -431,15 +278,11 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
       ELSE
         CALL PUSHCONTROL1B(1)
       END IF
-      CALL PUSHREAL8(lflux(1))
       lflux(1) = nflux(1)
-      CALL PUSHREAL8(lflux(2))
       lflux(2) = mesh%edge(ie)%normal%x*nflux(2) - mesh%edge(ie)%normal%&
 &       y*nflux(3)
-      CALL PUSHREAL8(lflux(3))
       lflux(3) = mesh%edge(ie)%normal%y*nflux(2) + mesh%edge(ie)%normal%&
 &       x*nflux(3)
-      CALL PUSHREAL8ARRAY(lflux(1:3), 3)
       lflux(1:3) = lflux(1:3)*mesh%edge(ie)%length
       tflux(1, il) = tflux(1, il) + lflux(1)
       tflux(2, il) = tflux(2, il) + lflux(2) - mesh%edge(ie)%normal%x*&
@@ -712,35 +555,31 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
         CALL POPREAL8(sfl)
       END IF
       CALL POPREAL8(dof%v(i))
-      temp0 = tflux(3, i)*mesh%cell(i)%invsurf/sporosity%phi(sporosity%&
-&       land(i))
+      temp0 = dt*mesh%cell(i)%invsurf
+      temp = tflux(3, i)/sporosity%phi(sporosity%land(i))
       temp_back1 = dof_back%v(i)/dof%h(i)
       dof_back%v(i) = 0.0_8
       h_back = v*temp_back1
       v_back = h*temp_back1
-      temp_back0 = -(dt*temp_back1/sporosity%phi(sporosity%land(i)))
-      dof_back%h(i) = dof_back%h(i) - (h*v-dt*temp0)*temp_back1/dof%h(i)
-      tflux_back(3, i) = tflux_back(3, i) + mesh%cell(i)%invsurf*&
-&       temp_back0
-      mesh_back%cell(i)%invsurf = mesh_back%cell(i)%invsurf + tflux(3, i&
-&       )*temp_back0
+      temp_back = -(temp0*temp_back1/sporosity%phi(sporosity%land(i)))
+      dof_back%h(i) = dof_back%h(i) - (h*v-temp0*temp)*temp_back1/dof%h(&
+&       i)
+      tflux_back(3, i) = tflux_back(3, i) + temp_back
       sporosity_back%phi(sporosity%land(i)) = sporosity_back%phi(&
-&       sporosity%land(i)) - temp0*temp_back0
+&       sporosity%land(i)) - temp*temp_back
       CALL POPREAL8(dof%u(i))
-      temp0 = tflux(2, i)*mesh%cell(i)%invsurf/sporosity%phi(sporosity%&
-&       land(i))
+      temp0 = dt*mesh%cell(i)%invsurf
+      temp = tflux(2, i)/sporosity%phi(sporosity%land(i))
       temp_back1 = dof_back%u(i)/dof%h(i)
       dof_back%u(i) = 0.0_8
       h_back = h_back + u*temp_back1
       u_back = h*temp_back1
-      temp_back0 = -(dt*temp_back1/sporosity%phi(sporosity%land(i)))
-      dof_back%h(i) = dof_back%h(i) - (h*u-dt*temp0)*temp_back1/dof%h(i)
-      tflux_back(2, i) = tflux_back(2, i) + mesh%cell(i)%invsurf*&
-&       temp_back0
-      mesh_back%cell(i)%invsurf = mesh_back%cell(i)%invsurf + tflux(2, i&
-&       )*temp_back0
+      temp_back = -(temp0*temp_back1/sporosity%phi(sporosity%land(i)))
+      dof_back%h(i) = dof_back%h(i) - (h*u-temp0*temp)*temp_back1/dof%h(&
+&       i)
+      tflux_back(2, i) = tflux_back(2, i) + temp_back
       sporosity_back%phi(sporosity%land(i)) = sporosity_back%phi(&
-&       sporosity%land(i)) - temp0*temp_back0
+&       sporosity%land(i)) - temp*temp_back
     ELSE
       CALL POPREAL8(dof%v(i))
       dof_back%v(i) = 0.0_8
@@ -805,17 +644,17 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
           s = 25.4_rp*(1000._rp/abs0-10._rp)/1000._rp
-          temp0 = bc%rain(k)%cumul + (-abs4+1)*s
+          temp = bc%rain(k)%cumul + (-abs4+1)*s
           temp1 = bc%rain(k)%cumul - abs3*s
           abs2_back = s*fn1_back
-          temp_back = fn1_back/temp0
-          temp_back1 = s*temp_back
-          temp_back0 = -(s*temp1*temp_back/temp0)
-          s_back = abs2*fn1_back + temp1*temp_back + (1-abs4)*temp_back0&
+          temp_back0 = fn1_back/temp
+          temp_back1 = s*temp_back0
+          temp_back = -(s*temp1*temp_back0/temp)
+          s_back = abs2*fn1_back + temp1*temp_back0 + (1-abs4)*temp_back&
 &           - abs3*temp_back1
-          bc_back%rain(k)%cumul = bc_back%rain(k)%cumul + temp_back0 + &
+          bc_back%rain(k)%cumul = bc_back%rain(k)%cumul + temp_back + &
 &           temp_back1
-          abs4_back = -(s*temp_back0)
+          abs4_back = -(s*temp_back)
           abs3_back = -(s*temp_back1)
           CALL POPCONTROL1B(branch)
           IF (branch .EQ. 0) THEN
@@ -873,15 +712,13 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
     IF (branch .EQ. 0) THEN
       CALL POPREAL8(dof%h(i))
       h_back = h_back + dof_back%h(i)
-      temp_back0 = -(dt*dof_back%h(i)/sporosity%phi(sporosity%land(i)))
+      temp_back = -(dt*mesh%cell(i)%invsurf*dof_back%h(i)/sporosity%phi(&
+&       sporosity%land(i)))
       dof_back%h(i) = 0.0_8
-      tflux_back(1, i) = tflux_back(1, i) + mesh%cell(i)%invsurf*&
-&       temp_back0
-      mesh_back%cell(i)%invsurf = mesh_back%cell(i)%invsurf + tflux(1, i&
-&       )*temp_back0
+      tflux_back(1, i) = tflux_back(1, i) + temp_back
       sporosity_back%phi(sporosity%land(i)) = sporosity_back%phi(&
-&       sporosity%land(i)) - tflux(1, i)*mesh%cell(i)%invsurf*temp_back0&
-&       /sporosity%phi(sporosity%land(i))
+&       sporosity%land(i)) - tflux(1, i)*temp_back/sporosity%phi(&
+&       sporosity%land(i))
     ELSE
       CALL POPREAL8(dof%h(i))
       dof_back%h(i) = 0.0_8
@@ -915,64 +752,36 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
       IF (branch .NE. 2) THEN
         IF (branch .NE. 3) THEN
           lflux_back(3) = lflux_back(3) - tflux_back(3, ir)
-          temp_back0 = -(mesh%edge(ie)%length*tflux_back(3, ir))
-          mesh_back%edge(ie)%length = mesh_back%edge(ie)%length - mesh%&
-&           edge(ie)%normal%y*s2r*tflux_back(3, ir) - mesh%edge(ie)%&
-&           normal%x*s2r*tflux_back(2, ir)
-          mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + &
-&           s2r*temp_back0
-          s2r_back = s2r_back + mesh%edge(ie)%normal%y*temp_back0
+          s2r_back = s2r_back - mesh%edge(ie)%normal%y*mesh%edge(ie)%&
+&           length*tflux_back(3, ir) - mesh%edge(ie)%normal%x*mesh%edge(&
+&           ie)%length*tflux_back(2, ir)
           lflux_back(2) = lflux_back(2) - tflux_back(2, ir)
-          temp_back0 = -(mesh%edge(ie)%length*tflux_back(2, ir))
-          mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + &
-&           s2r*temp_back0
-          s2r_back = s2r_back + mesh%edge(ie)%normal%x*temp_back0
           lflux_back(1) = lflux_back(1) - tflux_back(1, ir)
         END IF
       END IF
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
         lflux_back(3) = lflux_back(3) - tflux_back(3, ir)
-        temp_back0 = -(mesh%edge(ie)%length*tflux_back(3, ir))
-        mesh_back%edge(ie)%length = mesh_back%edge(ie)%length - mesh%&
-&         edge(ie)%normal%y*s2r*tflux_back(3, ir) - mesh%edge(ie)%normal&
-&         %x*s2r*tflux_back(2, ir)
-        mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + s2r*&
-&         temp_back0
-        s2r_back = s2r_back + mesh%edge(ie)%normal%y*temp_back0
+        s2r_back = s2r_back - mesh%edge(ie)%normal%y*mesh%edge(ie)%&
+&         length*tflux_back(3, ir) - mesh%edge(ie)%normal%x*mesh%edge(ie&
+&         )%length*tflux_back(2, ir)
         lflux_back(2) = lflux_back(2) - tflux_back(2, ir)
-        temp_back0 = -(mesh%edge(ie)%length*tflux_back(2, ir))
-        mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + s2r*&
-&         temp_back0
-        s2r_back = s2r_back + mesh%edge(ie)%normal%x*temp_back0
         lflux_back(1) = lflux_back(1) - tflux_back(1, ir)
       END IF
-      CALL POPREAL8ARRAY(lflux(1:3), 3)
       il = mesh%edge(ie)%cell(1)
       lflux_back(3) = lflux_back(3) + tflux_back(3, il)
-      temp_back0 = -(mesh%edge(ie)%length*tflux_back(3, il))
-      s2l_back = s2l_back + mesh%edge(ie)%normal%y*temp_back0
+      s2l_back = s2l_back - mesh%edge(ie)%normal%y*mesh%edge(ie)%length*&
+&       tflux_back(3, il) - mesh%edge(ie)%normal%x*mesh%edge(ie)%length*&
+&       tflux_back(2, il)
       lflux_back(2) = lflux_back(2) + tflux_back(2, il)
       lflux_back(1) = lflux_back(1) + tflux_back(1, il)
-      mesh_back%edge(ie)%length = mesh_back%edge(ie)%length + SUM(lflux(&
-&       1:3)*lflux_back(1:3)) - mesh%edge(ie)%normal%y*s2l*tflux_back(3&
-&       , il) - mesh%edge(ie)%normal%x*s2l*tflux_back(2, il)
       lflux_back(1:3) = mesh%edge(ie)%length*lflux_back(1:3)
-      mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + s2l*&
-&       temp_back0 + nflux(2)*lflux_back(3) - nflux(3)*lflux_back(2)
-      temp_back0 = -(mesh%edge(ie)%length*tflux_back(2, il))
-      mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + s2l*&
-&       temp_back0 + nflux(3)*lflux_back(3) + nflux(2)*lflux_back(2)
-      s2l_back = s2l_back + mesh%edge(ie)%normal%x*temp_back0
-      CALL POPREAL8(lflux(3))
       nflux_back(2) = nflux_back(2) + mesh%edge(ie)%normal%y*lflux_back(&
 &       3) + mesh%edge(ie)%normal%x*lflux_back(2)
       nflux_back(3) = nflux_back(3) + mesh%edge(ie)%normal%x*lflux_back(&
 &       3) - mesh%edge(ie)%normal%y*lflux_back(2)
       lflux_back(3) = 0.0_8
-      CALL POPREAL8(lflux(2))
       lflux_back(2) = 0.0_8
-      CALL POPREAL8(lflux(1))
       nflux_back(1) = nflux_back(1) + lflux_back(1)
       lflux_back(1) = 0.0_8
       CALL POPCONTROL1B(branch)
@@ -982,13 +791,10 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
 &                                       size(bathy_cell,1))
-        CALL BOUNDARY_POST_BACK(nflux(1), nflux_back(1), ir, mesh, &
-&                         mesh_back)
+        CALL BOUNDARY_POST_BACK(nflux(1), nflux_back(1), ir, mesh)
       END IF
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
-        CALL POPREAL8(s2l)
-        CALL POPREAL8(s2r)
         CALL POPREAL8ARRAY(nflux, sw_nb)
         CALL SW_HLLC_SP_BACK(hl(1), hl_back(1), ul(2), ul_back(2), vl(2)&
 &                      , vl_back(2), zl, zl_back, phil, phil_back, s2l, &
@@ -996,9 +802,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
 &                      vr(2), vr_back(2), zr, zr_back, phir, phir_back, &
 &                      s2r, s2r_back, nflux, nflux_back)
       ELSE
-        CALL POPREAL8(s2l)
-        CALL POPREAL8(s2r)
-        CALL POPREAL8ARRAY(nflux, sw_nb)
         CALL SW_HLLC_IMPERVIOUS_SP_BACK(hl(2), hl_back(2), ul(2), &
 &                                 ul_back(2), vl(2), zl, phil, phil_back&
 &                                 , s2l, s2l_back, hr(2), hr_back(2), ur&
@@ -1059,22 +862,18 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
           CALL POPREAL8(hr(1))
           CALL POPREAL8(ur(2))
           CALL POPREAL8(vr(2))
-          CALL CALC_BOUNDARY_STATE_BACK(mesh, mesh_back, hl(1), hl_back(&
-&                                 1), zl, zl_back, ul(2), ul_back(2), vl&
-&                                 (2), vl_back(2), hr(1), hr_back(1), zr&
-&                                 , zr_back, ur(2), ur_back(2), vr(2), &
+          CALL CALC_BOUNDARY_STATE_BACK(mesh, hl(1), hl_back(1), zl, &
+&                                 zl_back, ul(2), ul_back(2), vl(2), &
+&                                 vl_back(2), hr(1), hr_back(1), zr, &
+&                                 zr_back, ur(2), ur_back(2), vr(2), &
 &                                 vr_back(2))
           hr_back(1) = 0.0_8
           ur_back(2) = 0.0_8
           vr_back(2) = 0.0_8
         ELSE
           CALL POPREAL8(vr(2))
-          mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + vr&
-&           (1)*vr_back(2) + ur(1)*ur_back(2)
           vr_back(1) = vr_back(1) + mesh%edge(ie)%normal%x*vr_back(2) + &
 &           mesh%edge(ie)%normal%y*ur_back(2)
-          mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + vr&
-&           (1)*ur_back(2) - ur(1)*vr_back(2)
           ur_back(1) = ur_back(1) + mesh%edge(ie)%normal%x*ur_back(2) - &
 &           mesh%edge(ie)%normal%y*vr_back(2)
           vr_back(2) = 0.0_8
@@ -1096,14 +895,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
           ELSE
             CALL POPREAL8(zr)
             bathy_cell_back(il) = bathy_cell_back(il) + zr_back
-            temp_back = slope_y(1)*zr_back/mesh%edge(il)%length
-            temp_back0 = slope_x(1)*zr_back/mesh%edge(il)%length
-            mesh_back%cell(mesh%edge(il)%cell(1))%surf = mesh_back%cell(&
-&             mesh%edge(il)%cell(1))%surf + temp_back0 + temp_back
-            mesh_back%edge(il)%length = mesh_back%edge(il)%length - mesh&
-&             %cell(mesh%edge(il)%cell(1))%surf*temp_back0/mesh%edge(il)&
-&             %length - mesh%cell(mesh%edge(il)%cell(1))%surf*temp_back/&
-&             mesh%edge(il)%length
             zr_back = 0.0_8
           END IF
         ELSE IF (branch .EQ. 2) THEN
@@ -1121,12 +912,8 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
         sporosity_back%phi(sporosity%land(il)) = sporosity_back%phi(&
 &         sporosity%land(il)) + phil_back
         CALL POPREAL8(vr(2))
-        mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + vr(1&
-&         )*vr_back(2) + ur(1)*ur_back(2)
         vr_back(1) = vr_back(1) + mesh%edge(ie)%normal%x*vr_back(2) + &
 &         mesh%edge(ie)%normal%y*ur_back(2)
-        mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + vr(1&
-&         )*ur_back(2) - ur(1)*vr_back(2)
         ur_back(1) = ur_back(1) + mesh%edge(ie)%normal%x*ur_back(2) - &
 &         mesh%edge(ie)%normal%y*vr_back(2)
         vr_back(2) = 0.0_8
@@ -1145,12 +932,8 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
         zr_back = 0.0_8
       END IF
       CALL POPREAL8(vl(2))
-      mesh_back%edge(ie)%normal%x = mesh_back%edge(ie)%normal%x + vl(1)*&
-&       vl_back(2) + ul(1)*ul_back(2)
       vl_back(1) = vl_back(1) + mesh%edge(ie)%normal%x*vl_back(2) + mesh&
 &       %edge(ie)%normal%y*ul_back(2)
-      mesh_back%edge(ie)%normal%y = mesh_back%edge(ie)%normal%y + vl(1)*&
-&       ul_back(2) - ul(1)*vl_back(2)
       ul_back(1) = ul_back(1) + mesh%edge(ie)%normal%x*ul_back(2) - mesh&
 &       %edge(ie)%normal%y*vl_back(2)
       vl_back(2) = 0.0_8
@@ -1173,131 +956,334 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, mesh_back)
  110 CALL POPINTEGER4(ir)
     CALL POPINTEGER4(il)
   END DO
-  CALL POPREAL8ARRAY(dof%grad_z%y, size(dof%grad_z,1))
-  CALL POPREAL8ARRAY(dof%grad_z%x, size(dof%grad_z,1))
-  CALL POPREAL8ARRAY(dof%grad_v%y, size(dof%grad_v,1))
-  CALL POPREAL8ARRAY(dof%grad_v%x, size(dof%grad_v,1))
-  CALL POPREAL8ARRAY(dof%grad_u%y, size(dof%grad_u,1))
-  CALL POPREAL8ARRAY(dof%grad_u%x, size(dof%grad_u,1))
-  CALL POPREAL8ARRAY(dof%grad_h%y, size(dof%grad_h,1))
-  CALL POPREAL8ARRAY(dof%grad_h%x, size(dof%grad_h,1))
-  CALL POPREAL8(dof%t_display)
-  CALL POPREAL8ARRAY(dof%infil, size(dof%infil,1))
-  CALL POPREAL8ARRAY(dof%h, size(dof%h,1))
-  CALL POPINTEGER4ARRAY(mesh%inv_swap_index, &
-&                 size(mesh%inv_swap_index,1))
-  CALL POPINTEGER4ARRAY(mesh%swap_index, size(mesh%swap_index,1))
-  CALL POPREAL8(mesh%surf)
-  CALL POPREAL8(mesh%scal)
-  CALL POPCHARACTERARRAY(mesh%file_name, 128)
-  CALL POPINTEGER4ARRAY(mesh%edgeb%perio, size(mesh%edge,1)b)
-  CALL POPINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edge,1)b)
-  DO ii1=size(mesh%edge,1)b,1,-1
-    CALL POPCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-  END DO
-  CALL POPINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edge,1)b)
-  DO ii1=size(mesh%edge,1),1,-1
-    CALL POPREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%y, 2)
-  END DO
-  DO ii1=size(mesh%edge,1),1,-1
-    CALL POPREAL8ARRAY(mesh%edge(ii1)%v_edge_cell%x, 2)
-  END DO
-  CALL POPREAL8ARRAY(mesh%edge%vcell%y, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%vcell%x, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%tangent%y, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%tangent%x, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%center%y, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%center%x, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-  CALL POPINTEGER4ARRAY(mesh%edge%lim, size(mesh%edge,1))
-  CALL POPBOOLEANARRAY(mesh%edge%subdomain, size(mesh%edge,1))
-  CALL POPBOOLEANARRAY(mesh%edge%boundary, size(mesh%edge,1))
-  CALL POPINTEGER4ARRAY(mesh%edge%cell1d2d, size(mesh%edge,1))
-  DO ii1=size(mesh%edge,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-  END DO
-  DO ii1=size(mesh%edge,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%edge(ii1)%node, 2)
-  END DO
-  CALL POPREAL8ARRAY(mesh%cellb%grav%y, size(mesh%cell,1)b)
-  CALL POPREAL8ARRAY(mesh%cellb%grav%x, size(mesh%cell,1)b)
-  CALL POPINTEGER4ARRAY(mesh%cellb%cell, size(mesh%cell,1)b)
-  CALL POPINTEGER4ARRAY(mesh%cellb%group, size(mesh%cell,1)b)
-  DO ii1=size(mesh%cell,1)b,1,-1
-    CALL POPCHARACTERARRAY(mesh%cellb(ii1)%typlim, 128)
-  END DO
-  CALL POPINTEGER4ARRAY(mesh%cellb%ind, size(mesh%cell,1)b)
-  CALL POPINTEGER4ARRAY(mesh%cell%rain, size(mesh%cell,1))
-  CALL POPREAL8ARRAY(mesh%cell%grav%y, size(mesh%cell,1))
-  CALL POPREAL8ARRAY(mesh%cell%grav%x, size(mesh%cell,1))
-  CALL POPREAL8ARRAY(mesh%cell%peri, size(mesh%cell,1))
-  CALL POPREAL8ARRAY(mesh%cell%invsurf, size(mesh%cell,1))
-  CALL POPREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-  CALL POPBOOLEANARRAY(mesh%cell%boundary, size(mesh%cell,1))
-  CALL POPINTEGER4ARRAY(mesh%cell%nbed, size(mesh%cell,1))
-  DO ii1=size(mesh%cell,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%cell(ii1)%edge, 4)
-  END DO
-  DO ii1=size(mesh%cell,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%cell(ii1)%cell, 4)
-  END DO
-  DO ii1=size(mesh%cell,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%cell(ii1)%node, 4)
-  END DO
-  CALL POPINTEGER4ARRAY(mesh%cell%ind, size(mesh%cell,1))
-  CALL POPINTEGER4ARRAY(mesh%nodeb%group, size(mesh%node,1)b)
-  DO ii1=size(mesh%node,1)b,1,-1
-    CALL POPCHARACTERARRAY(mesh%nodeb(ii1)%typlim, 128)
-  END DO
-  CALL POPINTEGER4ARRAY(mesh%nodeb%ind, size(mesh%node,1)b)
-  CALL POPINTEGER4ARRAY(mesh%node%lim, size(mesh%node,1))
-  CALL POPBOOLEANARRAY(mesh%node%boundary, size(mesh%node,1))
-  CALL POPREAL8ARRAY(mesh%node%coord%y, size(mesh%node,1))
-  CALL POPREAL8ARRAY(mesh%node%coord%x, size(mesh%node,1))
-  DO ii1=size(mesh%node,1),1,-1
-  END DO
-  DO ii1=size(mesh%node,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%node(ii1)%edge, &
-&                   size(mesh%node%edge,1))
-  END DO
-  DO ii1=size(mesh%node,1),1,-1
-  END DO
-  DO ii1=size(mesh%node,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%node(ii1)%cell, &
-&                   size(mesh%node%cell,1))
-  END DO
-  CALL POPINTEGER4(mesh%ne)
-  CALL POPINTEGER4(mesh%ncb)
-  CALL POPINTEGER4(mesh%nc)
-  CALL POPINTEGER4(mesh%nnb)
-  CALL POPINTEGER4(mesh%nn)
-  CALL ADSTACK_STARTREPEAT()
-  CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
-  CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
-  CALL POPINTEGER4(mesh%neb)
-  CALL ADSTACK_RESETREPEAT()
-  CALL ADSTACK_ENDREPEAT()
-  CALL UPDATE_ALL_POROSITIES_BACK(dof, dof_back, mesh, mesh_back)
-  CALL POPREAL8ARRAY(dof%v, size(dof%v,1))
-  CALL POPREAL8ARRAY(dof%u, size(dof%u,1))
-  CALL POPINTEGER4(mesh%neb)
-  CALL POPINTEGER4ARRAY(mesh%edgeb%group, size(mesh%edge,1)b)
-  DO ii1=size(mesh%edge,1)b,1,-1
-    CALL POPCHARACTERARRAY(mesh%edgeb(ii1)%typlim, 128)
-  END DO
-  CALL POPINTEGER4ARRAY(mesh%edgeb%ind, size(mesh%edge,1)b)
-  CALL POPREAL8ARRAY(mesh%edge%normal%y, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%normal%x, size(mesh%edge,1))
-  CALL POPREAL8ARRAY(mesh%edge%length, size(mesh%edge,1))
-  DO ii1=size(mesh%edge,1),1,-1
-    CALL POPINTEGER4ARRAY(mesh%edge(ii1)%cell, 2)
-  END DO
-  CALL POPREAL8ARRAY(mesh%cell%surf, size(mesh%cell,1))
-  DO ii1=size(mesh%node,1),1,-1
-  END DO
-  DO ii1=size(mesh%node,1),1,-1
-  END DO
+  CALL UPDATE_ALL_POROSITIES_BACK(dof, dof_back, mesh)
+
+CONTAINS
+!  Differentiation of calculate_wetted_area_parabolic in reverse (adjoint) mode (with options fixinterface):
+!   gradient     of useful results: area_k
+!   with respect to varying inputs: b_min h_k
+  SUBROUTINE CALCULATE_WETTED_AREA_PARABOLIC_BACK(h_k, h_k_back, y1, &
+&   y_min, yn, b_min, b_min_back, area_k_back)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+! --- Arguments ---
+    REAL(rp), INTENT(IN) :: h_k, y1, y_min, yn, b_min
+    REAL(rp) :: h_k_back, b_min_back
+! --- R\U000000e9sultat ---
+    REAL(rp) :: area_k
+    REAL(rp) :: area_k_back
+! --- Variables Locales ---
+    REAL(rp) :: a, b, c, den
+    REAL(rp) :: a_back, b_back, c_back
+    REAL(rp) :: y_start, y_end
+    INTRINSIC ABS
+    INTRINSIC MIN
+    INTRINSIC MAX
+    REAL(rp) :: abs5
+! Si le niveau d'eau est sous le fond, l'aire est nulle.
+    IF (h_k .LE. b_min) THEN
+      b_min_back = 0.0_8
+      h_k_back = 0.0_8
+    ELSE
+! ======================================================================
+! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
+! ======================================================================
+! D\U000000e9nominateur commun
+      den = (y1-y_min)*(yn-y_min)
+      IF (den .GE. 0.) THEN
+        abs5 = den
+      ELSE
+        abs5 = -den
+      END IF
+      IF (abs5 .LT. 1.0e-9_rp) THEN
+        b_min_back = 0.0_8
+        h_k_back = 0.0_8
+      ELSE
+! Coefficient 'a'
+        a = (b_min-h_k)/den
+! Coefficient 'b' (en supposant la sym\U000000e9trie, comme dans votre formule)
+        b = -(a*(y1+yn))
+! Coefficient 'c'
+        c = h_k - a*y1**2 - b*y1
+        IF (y1 .GT. yn) THEN
+          y_start = yn
+        ELSE
+          y_start = y1
+        END IF
+        IF (y1 .LT. yn) THEN
+          y_end = yn
+        ELSE
+          y_end = y1
+        END IF
+! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
+        area_k = (h_k-c)*(y_end-y_start) - b/2.0_rp*(y_end**2-y_start**2&
+&         ) - a/3.0_rp*(y_end**3-y_start**3)
+        IF (0.0_rp .GE. area_k) area_k_back = 0.0_8
+        h_k_back = (y_end-y_start)*area_k_back
+        c_back = -((y_end-y_start)*area_k_back)
+        b_back = -((y_end**2-y_start**2)*area_k_back/2.0_rp)
+        a_back = -((y_end**3-y_start**3)*area_k_back/3.0_rp)
+        b_back = b_back - y1*c_back
+        a_back = a_back - y1**2*c_back - (y1+yn)*b_back
+        h_k_back = h_k_back + c_back - a_back/den
+        b_min_back = a_back/den
+      END IF
+    END IF
+  END SUBROUTINE CALCULATE_WETTED_AREA_PARABOLIC_BACK
+
+  FUNCTION CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, b_min) &
+& RESULT (area_k)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+! --- Arguments ---
+    REAL(rp), INTENT(IN) :: h_k, y1, y_min, yn, b_min
+! --- R\U000000e9sultat ---
+    REAL(rp) :: area_k
+! --- Variables Locales ---
+    REAL(rp) :: a, b, c, den
+    REAL(rp) :: y_start, y_end
+    INTRINSIC ABS
+    INTRINSIC MIN
+    INTRINSIC MAX
+    REAL(rp) :: abs5
+! Si le niveau d'eau est sous le fond, l'aire est nulle.
+    IF (h_k .LE. b_min) THEN
+      area_k = 0.0_rp
+      RETURN
+    ELSE
+! ======================================================================
+! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
+! ======================================================================
+! D\U000000e9nominateur commun
+      den = (y1-y_min)*(yn-y_min)
+      IF (den .GE. 0.) THEN
+        abs5 = den
+      ELSE
+        abs5 = -den
+      END IF
+      IF (abs5 .LT. 1.0e-9_rp) THEN
+! \U000000c9vite la division par z\U000000e9ro
+        area_k = 0.0_rp
+        RETURN
+      ELSE
+! Coefficient 'a'
+        a = (b_min-h_k)/den
+! Coefficient 'b' (en supposant la sym\U000000e9trie, comme dans votre formule)
+        b = -(a*(y1+yn))
+! Coefficient 'c'
+        c = h_k - a*y1**2 - b*y1
+        IF (y1 .GT. yn) THEN
+          y_start = yn
+        ELSE
+          y_start = y1
+        END IF
+        IF (y1 .LT. yn) THEN
+          y_end = yn
+        ELSE
+          y_end = y1
+        END IF
+! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
+        area_k = (h_k-c)*(y_end-y_start) - b/2.0_rp*(y_end**2-y_start**2&
+&         ) - a/3.0_rp*(y_end**3-y_start**3)
+        IF (0.0_rp .LT. area_k) THEN
+          area_k = area_k
+        ELSE
+          area_k = 0.0_rp
+        END IF
+      END IF
+    END IF
+  END FUNCTION CALCULATE_WETTED_AREA_PARABOLIC
+
+  SUBROUTINE FIND_SECTION(mesh, target_x, y1, yn)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+!=======================================================================
+! Analyse une section pour trouver les positions y des berges (y1, yN).
+!=======================================================================
+! --- Arguments ---
+    TYPE(MSH), INTENT(IN) :: mesh
+    REAL(rp), INTENT(IN) :: target_x
+    REAL(rp), INTENT(OUT) :: y1, yn
+! --- Variables Locales ---
+    INTEGER :: inode
+    LOGICAL, SAVE :: first_point_found=.false.
+    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
+    INTRINSIC ABS
+    INTRINSIC MIN
+    INTRINSIC MAX
+    REAL(rp) :: abs5
+! --- Boucle unique sur tous les n\U00000153uds du maillage ---
+    DO inode=1,mesh%nn
+      IF (mesh%node(inode)%coord%x - target_x .GE. 0.) THEN
+        abs5 = mesh%node(inode)%coord%x - target_x
+      ELSE
+        abs5 = -(mesh%node(inode)%coord%x-target_x)
+      END IF
+! On ne consid\U000000e8re que les n\U00000153uds qui appartiennent \U000000e0 la section
+      IF (abs5 .LT. tolerance) THEN
+! Si c'est le premier point qu'on trouve pour cette section
+        IF (.NOT.first_point_found) THEN
+          y1 = mesh%node(inode)%coord%y
+          yn = y1
+          first_point_found = .true.
+        END IF
+        IF (y1 .GT. mesh%node(inode)%coord%y) THEN
+          y1 = mesh%node(inode)%coord%y
+        ELSE
+          y1 = y1
+        END IF
+        IF (yn .LT. mesh%node(inode)%coord%y) THEN
+          yn = mesh%node(inode)%coord%y
+        ELSE
+          yn = yn
+        END IF
+      END IF
+    END DO
+  END SUBROUTINE FIND_SECTION
+
+!  Differentiation of update_all_porosities in reverse (adjoint) mode (with options fixinterface):
+!   gradient     of useful results: *bathy_cell[from module m_model]
+!                *(sporosity.phi)[from module m_model] *(dof.h)
+!   with respect to varying inputs: *bathy_cell[from module m_model]
+!                *(sporosity.phi)[from module m_model] *(dof.h)
+!   Plus diff mem management of: bathy_cell[from module m_model]:in
+!                sporosity.phi[from module m_model]:in dof.h:in
+  SUBROUTINE UPDATE_ALL_POROSITIES_BACK(dof, dof_back, mesh)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+!=======================================================================
+! Orchestre la mise \U000000e0 jour de la porosit\U000000e9 pour toutes les cellules 1D-like.
+!=======================================================================
+! --- Arguments ---
+    TYPE(UNK), INTENT(IN) :: dof
+    TYPE(UNK) :: dof_back ! Replaced by Perl Script
+    TYPE(MSH), INTENT(IN) :: mesh
+! --- Variables Locales ---
+    INTEGER :: inode, icell
+    REAL(rp) :: h_b, b_min, h_k, phi_k_new, wetted_area
+    REAL(rp) :: h_b_back, b_min_back, h_k_back, phi_k_new_back, &
+&   wetted_area_back
+    REAL(rp) :: y1, y_min, yn, total_width, macro_area
+    REAL(rp) :: macro_area_back
+    REAL(rp) :: min_dist_to_b_min
+    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
+    INTRINSIC HUGE
+    INTEGER*4 :: branch
+! --- Boucle principale sur toutes les cellules/sections ---
+    DO icell=1,mesh%nc
+! 1. R\U000000e9cup\U000000e9rer les donn\U000000e9es macroscopiques et D\U000000c9FINIR b_min
+      CALL PUSHREAL8(h_b)
+      h_b = dof%h(icell)
+      b_min = bathy_cell(icell)
+      h_k = h_b + b_min
+! 2. Trouver y1, yN, et le y_min correspondant \U000000e0 b_min pour cette section
+      CALL PUSHREAL8(yn)
+      CALL PUSHREAL8(y1)
+      CALL FIND_SECTION(mesh, mesh%cell(icell)%grav%x, y1, yn)
+! Boucle suppl\U000000e9mentaire pour trouver le y_min associ\U000000e9 \U000000e0 b_min
+! Valeur par d\U000000e9faut au centre
+      CALL PUSHREAL8(y_min)
+      y_min = (y1+yn)/2.0_rp
+! 3. Calculer l'aire mouillée avec le modèle parabolique
+      CALL PUSHREAL8(wetted_area)
+      wetted_area = CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, &
+&       b_min)
+! 4. Calculer la porosit\U000000e9 finale
+      CALL PUSHREAL8(total_width)
+      total_width = yn - y1
+      macro_area = total_width*h_b
+      IF (macro_area .GT. 1.0e-9_rp) THEN
+        CALL PUSHCONTROL1B(0)
+      ELSE
+        CALL PUSHCONTROL1B(1)
+      END IF
+    END DO
+    DO icell=mesh%nc,1,-1
+      phi_k_new_back = sporosity_back%phi(icell)
+      sporosity_back%phi(icell) = 0.0_8
+      CALL POPCONTROL1B(branch)
+      IF (branch .EQ. 0) THEN
+        total_width = yn - y1
+        h_b = dof%h(icell)
+        macro_area = total_width*h_b
+        wetted_area_back = phi_k_new_back/macro_area
+        macro_area_back = -(wetted_area*phi_k_new_back/macro_area**2)
+      ELSE
+        wetted_area_back = 0.0_8
+        macro_area_back = 0.0_8
+      END IF
+      h_b_back = total_width*macro_area_back
+      CALL POPREAL8(total_width)
+      b_min = bathy_cell(icell)
+      h_k = h_b + b_min
+      CALL POPREAL8(wetted_area)
+      CALL CALCULATE_WETTED_AREA_PARABOLIC_BACK(h_k, h_k_back, y1, y_min&
+&                                         , yn, b_min, b_min_back, &
+&                                         wetted_area_back)
+      CALL POPREAL8(y_min)
+      CALL POPREAL8(y1)
+      CALL POPREAL8(yn)
+      h_b_back = h_b_back + h_k_back
+      b_min_back = b_min_back + h_k_back
+      bathy_cell_back(icell) = bathy_cell_back(icell) + b_min_back
+      CALL POPREAL8(h_b)
+      dof_back%h(icell) = dof_back%h(icell) + h_b_back
+    END DO
+  END SUBROUTINE UPDATE_ALL_POROSITIES_BACK
+
+  SUBROUTINE UPDATE_ALL_POROSITIES(dof, mesh)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+!=======================================================================
+! Orchestre la mise \U000000e0 jour de la porosit\U000000e9 pour toutes les cellules 1D-like.
+!=======================================================================
+! --- Arguments ---
+    TYPE(UNK), INTENT(IN) :: dof
+    TYPE(MSH), INTENT(IN) :: mesh
+! --- Variables Locales ---
+    INTEGER :: inode, icell
+    REAL(rp) :: h_b, b_min, h_k, phi_k_new, wetted_area
+    REAL(rp) :: y1, y_min, yn, total_width, macro_area
+    REAL(rp) :: min_dist_to_b_min
+    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
+    INTRINSIC HUGE
+! --- Boucle principale sur toutes les cellules/sections ---
+    DO icell=1,mesh%nc
+! 1. R\U000000e9cup\U000000e9rer les donn\U000000e9es macroscopiques et D\U000000c9FINIR b_min
+      h_b = dof%h(icell)
+      b_min = bathy_cell(icell)
+      h_k = h_b + b_min
+! 2. Trouver y1, yN, et le y_min correspondant \U000000e0 b_min pour cette section
+      CALL FIND_SECTION(mesh, mesh%cell(icell)%grav%x, y1, yn)
+! Boucle suppl\U000000e9mentaire pour trouver le y_min associ\U000000e9 \U000000e0 b_min
+      min_dist_to_b_min = HUGE(0.0_rp)
+! Valeur par d\U000000e9faut au centre
+      y_min = (y1+yn)/2.0_rp
+! 3. Calculer l'aire mouillée avec le modèle parabolique
+      wetted_area = CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, &
+&       b_min)
+! 4. Calculer la porosit\U000000e9 finale
+      total_width = yn - y1
+      macro_area = total_width*h_b
+      IF (macro_area .GT. 1.0e-9_rp) THEN
+        phi_k_new = wetted_area/macro_area
+      ELSE
+        phi_k_new = 1.0_rp
+      END IF
+! 5. Stocker la nouvelle porosit\U000000e9 dans le tableau global
+      sporosity%phi(icell) = phi_k_new
+    END DO
+  END SUBROUTINE UPDATE_ALL_POROSITIES
+
 END SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK
 

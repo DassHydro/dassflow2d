@@ -3,12 +3,11 @@ import _wrapping
 import f90wrap.runtime
 import logging
 import numpy
-import wrapping.m_common
-import wrapping.m_linear_algebra
 import wrapping.m_model
-import wrapping.m_mpi
-import wrapping.fonctions_porosite_mod
 import wrapping.m_mesh
+import wrapping.m_linear_algebra
+import wrapping.m_mpi
+import wrapping.m_common
 
 def read_input(filename):
     """

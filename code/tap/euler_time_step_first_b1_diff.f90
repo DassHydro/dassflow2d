@@ -3,44 +3,21 @@
 !
 !  Differentiation of euler_time_step_first_b1 in forward (tangent) mode (with options fixinterface):
 !   variations   of useful results: *(bc.rain).cumul *(bc.sum_mass_flux)
-!                *bathy_cell *(dof.h) *(dof.u) *(dof.v) *(dof.infil)
-!                dof.t_display *(dof.grad_h).x *(dof.grad_h).y
-!                *(dof.grad_u).x *(dof.grad_u).y *(dof.grad_v).x
-!                *(dof.grad_v).y *(dof.grad_z).x *(dof.grad_z).y
-!                *(mesh.node).coord.x *(mesh.node).coord.y *(mesh.cell).surf
-!                *(mesh.cell).invsurf *(mesh.cell).peri *(mesh.cell).grav.x
-!                *(mesh.cell).grav.y *(mesh.cellb).grav.x *(mesh.cellb).grav.y
-!                *(mesh.edge).length *(mesh.edge).center.x *(mesh.edge).center.y
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y *(mesh.edge).tangent.x
-!                *(mesh.edge).tangent.y *(mesh.edge).vcell.x *(mesh.edge).vcell.y
-!                *(mesh.edge).v_edge_cell.x *(mesh.edge).v_edge_cell.y
-!                mesh.scal mesh.surf
+!                *bathy_cell *(sporosity.phi) *(dof.h) *(dof.u)
+!                *(dof.v) *(dof.infil)
 !   with respect to varying inputs: *(infil.ga).psif *(infil.ga).ks
 !                *(infil.ga).deltatheta *(infil.scs).lambdacn *(infil.scs).cn
 !                *manning *(bc.inflow) *(bc.outflow) *(bc.rain).qin
 !                *(bc.rain).cumul *(bc.sum_mass_flux) *bathy_cell
 !                *manning_beta *(sporosity.phi) *(dof.h) *(dof.u)
-!                *(dof.v) *(dof.infil) dof.t_display *(dof.grad_h).x
-!                *(dof.grad_h).y *(dof.grad_u).x *(dof.grad_u).y
-!                *(dof.grad_v).x *(dof.grad_v).y *(dof.grad_z).x
-!                *(dof.grad_z).y *(mesh.node).coord.x *(mesh.node).coord.y
-!                *(mesh.cell).surf *(mesh.cell).invsurf *(mesh.cell).peri
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.cellb).grav.x
-!                *(mesh.cellb).grav.y *(mesh.edge).length *(mesh.edge).center.x
-!                *(mesh.edge).center.y *(mesh.edge).normal.x *(mesh.edge).normal.y
-!                *(mesh.edge).tangent.x *(mesh.edge).tangent.y
-!                *(mesh.edge).vcell.x *(mesh.edge).vcell.y *(mesh.edge).v_edge_cell.x
-!                *(mesh.edge).v_edge_cell.y mesh.scal mesh.surf
+!                *(dof.v) *(dof.infil)
 !   Plus diff mem management of: infil.ga:in infil.scs:in manning:in
 !                bc.inflow:in bc.outflow:in bc.hpresc:in *(bc.hpresc).t:in
 !                *(bc.hpresc).h:in bc.zspresc:in *(bc.zspresc).t:in
 !                *(bc.zspresc).z:in bc.rain:in bc.sum_mass_flux:in
 !                bathy_cell:in manning_beta:in sporosity.phi:in
-!                dof.h:in-out dof.u:in-out dof.v:in-out dof.infil:in-out
-!                dof.grad_h:in-out dof.grad_u:in-out dof.grad_v:in-out
-!                dof.grad_z:in-out mesh.node:in-out mesh.cell:in-out
-!                mesh.cellb:in-out mesh.edge:in-out
-SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
+!                dof.h:in dof.u:in dof.v:in dof.infil:in
+SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
@@ -50,9 +27,8 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(INOUT) :: mesh
-  TYPE(MSH), INTENT(INOUT) :: mesh_diff ! Replaced by Perl Script
   TYPE(UNK), INTENT(INOUT) :: dof
-  TYPE(UNK), INTENT(INOUT) :: dof_diff
+  TYPE(UNK), INTENT(INOUT) :: dof_diff ! Replaced by Perl Script
 ! Left and Right cells indexes to edge
   INTEGER(ip) :: il, ir
 ! Left State in edge cell normal coordinates
@@ -98,8 +74,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
 ! Left/Right term source
   REAL(rp) :: s2l, s2r
   REAL(rp) :: s2l_diff, s2r_diff
-  EXTERNAL UPDATE_ALL_POROSITIES
-  EXTERNAL UPDATE_ALL_POROSITIES_DIFF
   INTRINSIC MAX
   INTRINSIC ABS
   INTRINSIC SQRT
@@ -132,7 +106,7 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
   REAL(rp) :: temp_diff
   REAL(rp) :: temp_diff0
   tflux(:, :) = 0._rp
-  CALL UPDATE_ALL_POROSITIES_DIFF(dof, dof_diff, mesh, mesh_diff)
+  CALL UPDATE_ALL_POROSITIES_DIFF(dof, dof_diff, mesh)
   nflux_diff = 0.0_8
   hl_diff = 0.0_8
   ul_diff = 0.0_8
@@ -169,14 +143,12 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
       ul(1) = dof%u(il)
       vl_diff(1) = dof_diff%v(il)
       vl(1) = dof%v(il)
-      ul_diff(2) = ul(1)*mesh_diff%edge(ie)%normal%x + mesh%edge(ie)%&
-&       normal%x*ul_diff(1) + vl(1)*mesh_diff%edge(ie)%normal%y + mesh%&
-&       edge(ie)%normal%y*vl_diff(1)
+      ul_diff(2) = mesh%edge(ie)%normal%x*ul_diff(1) + mesh%edge(ie)%&
+&       normal%y*vl_diff(1)
       ul(2) = mesh%edge(ie)%normal%x*ul(1) + mesh%edge(ie)%normal%y*vl(1&
 &       )
-      vl_diff(2) = vl(1)*mesh_diff%edge(ie)%normal%x + mesh%edge(ie)%&
-&       normal%x*vl_diff(1) - ul(1)*mesh_diff%edge(ie)%normal%y - mesh%&
-&       edge(ie)%normal%y*ul_diff(1)
+      vl_diff(2) = mesh%edge(ie)%normal%x*vl_diff(1) - mesh%edge(ie)%&
+&       normal%y*ul_diff(1)
       vl(2) = mesh%edge(ie)%normal%x*vl(1) - mesh%edge(ie)%normal%y*ul(1&
 &       )
       IF (mesh%edge(ie)%boundary) THEN
@@ -188,16 +160,10 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
           zr = bathy_cell(il)
         ELSE IF (mesh%edgeb(mesh%edge(ie)%lim)%typlim .EQ. 'discharg1') &
 &       THEN
-          temp = mesh%cell(mesh%edge(il)%cell(1))%surf/mesh%edge(il)%&
-&           length
-          temp0 = mesh%cell(mesh%edge(il)%cell(1))%surf/mesh%edge(il)%&
-&           length
-          zr_diff = bathy_cell_diff(il) + slope_y(1)*(mesh_diff%cell(&
-&           mesh%edge(il)%cell(1))%surf-temp*mesh_diff%edge(il)%length)/&
-&           mesh%edge(il)%length + slope_x(1)*(mesh_diff%cell(mesh%edge(&
-&           il)%cell(1))%surf-temp0*mesh_diff%edge(il)%length)/mesh%edge&
-&           (il)%length
-          zr = bathy_cell(il) + slope_y(1)*temp + slope_x(1)*temp0
+          zr_diff = bathy_cell_diff(il)
+          zr = bathy_cell(il) + slope_y(1)*mesh%cell(mesh%edge(il)%cell(&
+&           1))%surf/mesh%edge(il)%length + slope_x(1)*mesh%cell(mesh%&
+&           edge(il)%cell(1))%surf/mesh%edge(il)%length
         ELSE IF (mesh%edgeb(mesh%edge(ie)%lim)%typlim .EQ. 'wall') THEN
           zr_diff = bathy_cell_diff(il)
           zr = bathy_cell(il)
@@ -205,24 +171,22 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
         IF (.NOT.mesh%edgeb(mesh%edge(ie)%lim)%typlim .EQ. 'internal_2D'&
 &       ) THEN
 !do not call boundary calculations for internal BCs
-          CALL CALC_BOUNDARY_STATE_DIFF(mesh, mesh_diff, hl(1), hl_diff(&
-&                                 1), zl, zl_diff, ul(2), ul_diff(2), vl&
-&                                 (2), vl_diff(2), hr(1), hr_diff(1), zr&
-&                                 , zr_diff, ur(2), ur_diff(2), vr(2), &
+          CALL CALC_BOUNDARY_STATE_DIFF(mesh, hl(1), hl_diff(1), zl, &
+&                                 zl_diff, ul(2), ul_diff(2), vl(2), &
+&                                 vl_diff(2), hr(1), hr_diff(1), zr, &
+&                                 zr_diff, ur(2), ur_diff(2), vr(2), &
 &                                 vr_diff(2))
         ELSE
           ur_diff(1) = dof_diff%u(ir)
           ur(1) = dof%u(ir)
           vr_diff(1) = dof_diff%v(ir)
           vr(1) = dof%v(ir)
-          ur_diff(2) = ur(1)*mesh_diff%edge(ie)%normal%x + mesh%edge(ie)&
-&           %normal%x*ur_diff(1) + vr(1)*mesh_diff%edge(ie)%normal%y + &
-&           mesh%edge(ie)%normal%y*vr_diff(1)
+          ur_diff(2) = mesh%edge(ie)%normal%x*ur_diff(1) + mesh%edge(ie)&
+&           %normal%y*vr_diff(1)
           ur(2) = mesh%edge(ie)%normal%x*ur(1) + mesh%edge(ie)%normal%y*&
 &           vr(1)
-          vr_diff(2) = vr(1)*mesh_diff%edge(ie)%normal%x + mesh%edge(ie)&
-&           %normal%x*vr_diff(1) - ur(1)*mesh_diff%edge(ie)%normal%y - &
-&           mesh%edge(ie)%normal%y*ur_diff(1)
+          vr_diff(2) = mesh%edge(ie)%normal%x*vr_diff(1) - mesh%edge(ie)&
+&           %normal%y*ur_diff(1)
           vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*&
 &           ur(1)
         END IF
@@ -239,14 +203,12 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
         ur(1) = dof%u(ir)
         vr_diff(1) = dof_diff%v(ir)
         vr(1) = dof%v(ir)
-        ur_diff(2) = ur(1)*mesh_diff%edge(ie)%normal%x + mesh%edge(ie)%&
-&         normal%x*ur_diff(1) + vr(1)*mesh_diff%edge(ie)%normal%y + mesh&
-&         %edge(ie)%normal%y*vr_diff(1)
+        ur_diff(2) = mesh%edge(ie)%normal%x*ur_diff(1) + mesh%edge(ie)%&
+&         normal%y*vr_diff(1)
         ur(2) = mesh%edge(ie)%normal%x*ur(1) + mesh%edge(ie)%normal%y*vr&
 &         (1)
-        vr_diff(2) = vr(1)*mesh_diff%edge(ie)%normal%x + mesh%edge(ie)%&
-&         normal%x*vr_diff(1) - ur(1)*mesh_diff%edge(ie)%normal%y - mesh&
-&         %edge(ie)%normal%y*ur_diff(1)
+        vr_diff(2) = mesh%edge(ie)%normal%x*vr_diff(1) - mesh%edge(ie)%&
+&         normal%y*ur_diff(1)
         vr(2) = mesh%edge(ie)%normal%x*vr(1) - mesh%edge(ie)%normal%y*ur&
 &         (1)
         phil_diff = sporosity_diff%phi(sporosity%land(il))
@@ -302,70 +264,55 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
       END IF
       IF (mesh%edge(ie)%boundary) CALL BOUNDARY_POST_DIFF(nflux(1), &
 &                                                   nflux_diff(1), ir, &
-&                                                   mesh, mesh_diff)
+&                                                   mesh)
       lflux_diff(1) = nflux_diff(1)
       lflux(1) = nflux(1)
-      lflux_diff(2) = nflux(2)*mesh_diff%edge(ie)%normal%x + mesh%edge(&
-&       ie)%normal%x*nflux_diff(2) - nflux(3)*mesh_diff%edge(ie)%normal%&
-&       y - mesh%edge(ie)%normal%y*nflux_diff(3)
+      lflux_diff(2) = mesh%edge(ie)%normal%x*nflux_diff(2) - mesh%edge(&
+&       ie)%normal%y*nflux_diff(3)
       lflux(2) = mesh%edge(ie)%normal%x*nflux(2) - mesh%edge(ie)%normal%&
 &       y*nflux(3)
-      lflux_diff(3) = nflux(2)*mesh_diff%edge(ie)%normal%y + mesh%edge(&
-&       ie)%normal%y*nflux_diff(2) + nflux(3)*mesh_diff%edge(ie)%normal%&
-&       x + mesh%edge(ie)%normal%x*nflux_diff(3)
+      lflux_diff(3) = mesh%edge(ie)%normal%y*nflux_diff(2) + mesh%edge(&
+&       ie)%normal%x*nflux_diff(3)
       lflux(3) = mesh%edge(ie)%normal%y*nflux(2) + mesh%edge(ie)%normal%&
 &       x*nflux(3)
-      lflux_diff(1:3) = mesh%edge(ie)%length*lflux_diff(1:3) + lflux(1:3&
-&       )*mesh_diff%edge(ie)%length
+      lflux_diff(1:3) = mesh%edge(ie)%length*lflux_diff(1:3)
       lflux(1:3) = lflux(1:3)*mesh%edge(ie)%length
       tflux_diff(1, il) = tflux_diff(1, il) + lflux_diff(1)
       tflux(1, il) = tflux(1, il) + lflux(1)
-      temp0 = mesh%edge(ie)%normal%x*s2l
       tflux_diff(2, il) = tflux_diff(2, il) + lflux_diff(2) - mesh%edge(&
-&       ie)%length*(s2l*mesh_diff%edge(ie)%normal%x+mesh%edge(ie)%normal&
-&       %x*s2l_diff) - temp0*mesh_diff%edge(ie)%length
-      tflux(2, il) = tflux(2, il) + lflux(2) - temp0*mesh%edge(ie)%&
-&       length
-      temp0 = mesh%edge(ie)%normal%y*s2l
+&       ie)%length*mesh%edge(ie)%normal%x*s2l_diff
+      tflux(2, il) = tflux(2, il) + lflux(2) - mesh%edge(ie)%normal%x*&
+&       s2l*mesh%edge(ie)%length
       tflux_diff(3, il) = tflux_diff(3, il) + lflux_diff(3) - mesh%edge(&
-&       ie)%length*(s2l*mesh_diff%edge(ie)%normal%y+mesh%edge(ie)%normal&
-&       %y*s2l_diff) - temp0*mesh_diff%edge(ie)%length
-      tflux(3, il) = tflux(3, il) + lflux(3) - temp0*mesh%edge(ie)%&
-&       length
+&       ie)%length*mesh%edge(ie)%normal%y*s2l_diff
+      tflux(3, il) = tflux(3, il) + lflux(3) - mesh%edge(ie)%normal%y*&
+&       s2l*mesh%edge(ie)%length
       IF (.NOT.mesh%edge(ie)%boundary .AND. (.NOT.mesh%edge(ie)%&
 &         subdomain)) THEN
         tflux_diff(1, ir) = tflux_diff(1, ir) - lflux_diff(1)
         tflux(1, ir) = tflux(1, ir) - lflux(1)
-        temp0 = mesh%edge(ie)%normal%x*s2r
         tflux_diff(2, ir) = tflux_diff(2, ir) - lflux_diff(2) - mesh%&
-&         edge(ie)%length*(s2r*mesh_diff%edge(ie)%normal%x+mesh%edge(ie)&
-&         %normal%x*s2r_diff) - temp0*mesh_diff%edge(ie)%length
-        tflux(2, ir) = tflux(2, ir) - lflux(2) - temp0*mesh%edge(ie)%&
-&         length
-        temp0 = mesh%edge(ie)%normal%y*s2r
+&         edge(ie)%length*mesh%edge(ie)%normal%x*s2r_diff
+        tflux(2, ir) = tflux(2, ir) - lflux(2) - mesh%edge(ie)%normal%x*&
+&         s2r*mesh%edge(ie)%length
         tflux_diff(3, ir) = tflux_diff(3, ir) - lflux_diff(3) - mesh%&
-&         edge(ie)%length*(s2r*mesh_diff%edge(ie)%normal%y+mesh%edge(ie)&
-&         %normal%y*s2r_diff) - temp0*mesh_diff%edge(ie)%length
-        tflux(3, ir) = tflux(3, ir) - lflux(3) - temp0*mesh%edge(ie)%&
-&         length
+&         edge(ie)%length*mesh%edge(ie)%normal%y*s2r_diff
+        tflux(3, ir) = tflux(3, ir) - lflux(3) - mesh%edge(ie)%normal%y*&
+&         s2r*mesh%edge(ie)%length
       END IF
       IF (mesh%edge(ie)%boundary) THEN
         IF (mesh%edgeb(mesh%edge(ie)%lim)%typlim .EQ. 'internal_2D') &
 &       THEN
           tflux_diff(1, ir) = tflux_diff(1, ir) - lflux_diff(1)
           tflux(1, ir) = tflux(1, ir) - lflux(1)
-          temp0 = mesh%edge(ie)%normal%x*s2r
           tflux_diff(2, ir) = tflux_diff(2, ir) - lflux_diff(2) - mesh%&
-&           edge(ie)%length*(s2r*mesh_diff%edge(ie)%normal%x+mesh%edge(&
-&           ie)%normal%x*s2r_diff) - temp0*mesh_diff%edge(ie)%length
-          tflux(2, ir) = tflux(2, ir) - lflux(2) - temp0*mesh%edge(ie)%&
-&           length
-          temp0 = mesh%edge(ie)%normal%y*s2r
+&           edge(ie)%length*mesh%edge(ie)%normal%x*s2r_diff
+          tflux(2, ir) = tflux(2, ir) - lflux(2) - mesh%edge(ie)%normal%&
+&           x*s2r*mesh%edge(ie)%length
           tflux_diff(3, ir) = tflux_diff(3, ir) - lflux_diff(3) - mesh%&
-&           edge(ie)%length*(s2r*mesh_diff%edge(ie)%normal%y+mesh%edge(&
-&           ie)%normal%y*s2r_diff) - temp0*mesh_diff%edge(ie)%length
-          tflux(3, ir) = tflux(3, ir) - lflux(3) - temp0*mesh%edge(ie)%&
-&           length
+&           edge(ie)%length*mesh%edge(ie)%normal%y*s2r_diff
+          tflux(3, ir) = tflux(3, ir) - lflux(3) - mesh%edge(ie)%normal%&
+&           y*s2r*mesh%edge(ie)%length
         END IF
       END IF
     END IF
@@ -384,12 +331,12 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
     v = dof%v(i)
     IF (0._rp .LT. h - dt/sporosity%phi(sporosity%land(i))*tflux(1, i)*&
 &       mesh%cell(i)%invsurf) THEN
-      temp0 = tflux(1, i)*mesh%cell(i)%invsurf/sporosity%phi(sporosity%&
+      temp = dt*mesh%cell(i)%invsurf
+      temp0 = tflux(1, i)/sporosity%phi(sporosity%land(i))
+      dof_diff%h(i) = h_diff - temp*(tflux_diff(1, i)-temp0*&
+&       sporosity_diff%phi(sporosity%land(i)))/sporosity%phi(sporosity%&
 &       land(i))
-      dof_diff%h(i) = h_diff - dt*(mesh%cell(i)%invsurf*tflux_diff(1, i)&
-&       +tflux(1, i)*mesh_diff%cell(i)%invsurf-temp0*sporosity_diff%phi(&
-&       sporosity%land(i)))/sporosity%phi(sporosity%land(i))
-      dof%h(i) = h - dt*temp0
+      dof%h(i) = h - temp*temp0
     ELSE
       dof_diff%h(i) = 0.0_8
       dof%h(i) = 0._rp
@@ -517,22 +464,20 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
       dof_diff%v(i) = 0.0_8
       dof%v(i) = 0._rp
     ELSE
-      temp1 = tflux(2, i)*mesh%cell(i)%invsurf/sporosity%phi(sporosity%&
-&       land(i))
-      temp0 = (h*u-dt*temp1)/dof%h(i)
-      dof_diff%u(i) = (u*h_diff+h*u_diff-dt*(mesh%cell(i)%invsurf*&
-&       tflux_diff(2, i)+tflux(2, i)*mesh_diff%cell(i)%invsurf-temp1*&
+      temp1 = dt*mesh%cell(i)%invsurf
+      temp0 = tflux(2, i)/sporosity%phi(sporosity%land(i))
+      temp = (h*u-temp1*temp0)/dof%h(i)
+      dof_diff%u(i) = (u*h_diff+h*u_diff-temp1*(tflux_diff(2, i)-temp0*&
 &       sporosity_diff%phi(sporosity%land(i)))/sporosity%phi(sporosity%&
-&       land(i))-temp0*dof_diff%h(i))/dof%h(i)
-      dof%u(i) = temp0
-      temp1 = tflux(3, i)*mesh%cell(i)%invsurf/sporosity%phi(sporosity%&
-&       land(i))
-      temp0 = (h*v-dt*temp1)/dof%h(i)
-      dof_diff%v(i) = (v*h_diff+h*v_diff-dt*(mesh%cell(i)%invsurf*&
-&       tflux_diff(3, i)+tflux(3, i)*mesh_diff%cell(i)%invsurf-temp1*&
+&       land(i))-temp*dof_diff%h(i))/dof%h(i)
+      dof%u(i) = temp
+      temp1 = dt*mesh%cell(i)%invsurf
+      temp0 = tflux(3, i)/sporosity%phi(sporosity%land(i))
+      temp = (h*v-temp1*temp0)/dof%h(i)
+      dof_diff%v(i) = (v*h_diff+h*v_diff-temp1*(tflux_diff(3, i)-temp0*&
 &       sporosity_diff%phi(sporosity%land(i)))/sporosity%phi(sporosity%&
-&       land(i))-temp0*dof_diff%h(i))/dof%h(i)
-      dof%v(i) = temp0
+&       land(i))-temp*dof_diff%h(i))/dof%h(i)
+      dof%v(i) = temp
       IF (friction .EQ. 1) THEN
         arg1_diff = 2*dof%u(i)*dof_diff%u(i) + 2*dof%v(i)*dof_diff%v(i)
         arg1 = dof%u(i)**2 + dof%v(i)**2
@@ -608,5 +553,313 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, mesh_diff)
   CALL COM_DOF(dof, mesh)
 ! Required MPI Communication due to inverse variable dependency
   CALL COM_VAR_R(bathy_cell, mesh)
+
+CONTAINS
+!  Differentiation of calculate_wetted_area_parabolic in forward (tangent) mode (with options fixinterface):
+!   variations   of useful results: area_k
+!   with respect to varying inputs: b_min h_k
+  REAL(rp) FUNCTION CALCULATE_WETTED_AREA_PARABOLIC_DIFF(h_k, h_k_diff, &
+&   y1, y_min, yn, b_min, b_min_diff, area_k) RESULT (area_k_diff)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+! --- Arguments ---
+    REAL(rp), INTENT(IN) :: h_k, y1, y_min, yn, b_min
+    REAL(rp), INTENT(IN) :: h_k_diff, b_min_diff
+! --- R\U000000e9sultat ---
+    REAL(rp), INTENT(OUT) :: area_k
+! --- Variables Locales ---
+    REAL(rp) :: a, b, c, den
+    REAL(rp) :: a_diff, b_diff, c_diff
+    REAL(rp) :: y_start, y_end
+    INTRINSIC ABS
+    INTRINSIC MIN
+    INTRINSIC MAX
+    REAL(rp) :: abs5
+    REAL(rp) :: temp
+    REAL(rp) :: temp0
+! Si le niveau d'eau est sous le fond, l'aire est nulle.
+    IF (h_k .LE. b_min) THEN
+      area_k = 0.0_rp
+      area_k_diff = 0.0_8
+      RETURN
+    ELSE
+! ======================================================================
+! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
+! ======================================================================
+! D\U000000e9nominateur commun
+      den = (y1-y_min)*(yn-y_min)
+      IF (den .GE. 0.) THEN
+        abs5 = den
+      ELSE
+        abs5 = -den
+      END IF
+      IF (abs5 .LT. 1.0e-9_rp) THEN
+! \U000000c9vite la division par z\U000000e9ro
+        area_k = 0.0_rp
+        area_k_diff = 0.0_8
+        RETURN
+      ELSE
+! Coefficient 'a'
+        a_diff = (b_min_diff-h_k_diff)/den
+        a = (b_min-h_k)/den
+! Coefficient 'b' (en supposant la sym\U000000e9trie, comme dans votre formule)
+        b_diff = -((y1+yn)*a_diff)
+        b = -(a*(y1+yn))
+! Coefficient 'c'
+        c_diff = h_k_diff - y1**2*a_diff - y1*b_diff
+        c = h_k - a*y1**2 - b*y1
+        IF (y1 .GT. yn) THEN
+          y_start = yn
+        ELSE
+          y_start = y1
+        END IF
+        IF (y1 .LT. yn) THEN
+          y_end = yn
+        ELSE
+          y_end = y1
+        END IF
+! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
+        temp = y_end*y_end - y_start*y_start
+        temp0 = y_end*y_end*y_end - y_start*y_start*y_start
+        area_k_diff = (y_end-y_start)*(h_k_diff-c_diff) - temp*b_diff/&
+&         2.0_rp - temp0*a_diff/3.0_rp
+        area_k = (y_end-y_start)*(h_k-c) - temp*(b/2.0_rp) - temp0*(a/&
+&         3.0_rp)
+        IF (0.0_rp .LT. area_k) THEN
+          area_k = area_k
+        ELSE
+          area_k = 0.0_rp
+          area_k_diff = 0.0_8
+        END IF
+      END IF
+    END IF
+  END FUNCTION CALCULATE_WETTED_AREA_PARABOLIC_DIFF
+
+  FUNCTION CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, b_min) &
+& RESULT (area_k)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+! --- Arguments ---
+    REAL(rp), INTENT(IN) :: h_k, y1, y_min, yn, b_min
+! --- R\U000000e9sultat ---
+    REAL(rp) :: area_k
+! --- Variables Locales ---
+    REAL(rp) :: a, b, c, den
+    REAL(rp) :: y_start, y_end
+    INTRINSIC ABS
+    INTRINSIC MIN
+    INTRINSIC MAX
+    REAL(rp) :: abs5
+! Si le niveau d'eau est sous le fond, l'aire est nulle.
+    IF (h_k .LE. b_min) THEN
+      area_k = 0.0_rp
+      RETURN
+    ELSE
+! ======================================================================
+! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
+! ======================================================================
+! D\U000000e9nominateur commun
+      den = (y1-y_min)*(yn-y_min)
+      IF (den .GE. 0.) THEN
+        abs5 = den
+      ELSE
+        abs5 = -den
+      END IF
+      IF (abs5 .LT. 1.0e-9_rp) THEN
+! \U000000c9vite la division par z\U000000e9ro
+        area_k = 0.0_rp
+        RETURN
+      ELSE
+! Coefficient 'a'
+        a = (b_min-h_k)/den
+! Coefficient 'b' (en supposant la sym\U000000e9trie, comme dans votre formule)
+        b = -(a*(y1+yn))
+! Coefficient 'c'
+        c = h_k - a*y1**2 - b*y1
+        IF (y1 .GT. yn) THEN
+          y_start = yn
+        ELSE
+          y_start = y1
+        END IF
+        IF (y1 .LT. yn) THEN
+          y_end = yn
+        ELSE
+          y_end = y1
+        END IF
+! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
+        area_k = (h_k-c)*(y_end-y_start) - b/2.0_rp*(y_end**2-y_start**2&
+&         ) - a/3.0_rp*(y_end**3-y_start**3)
+        IF (0.0_rp .LT. area_k) THEN
+          area_k = area_k
+        ELSE
+          area_k = 0.0_rp
+        END IF
+      END IF
+    END IF
+  END FUNCTION CALCULATE_WETTED_AREA_PARABOLIC
+
+  SUBROUTINE FIND_SECTION(mesh, target_x, y1, yn)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+!=======================================================================
+! Analyse une section pour trouver les positions y des berges (y1, yN).
+!=======================================================================
+! --- Arguments ---
+    TYPE(MSH), INTENT(IN) :: mesh
+    REAL(rp), INTENT(IN) :: target_x
+    REAL(rp), INTENT(OUT) :: y1, yn
+! --- Variables Locales ---
+    INTEGER :: inode
+    LOGICAL, SAVE :: first_point_found=.false.
+    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
+    INTRINSIC ABS
+    INTRINSIC MIN
+    INTRINSIC MAX
+    REAL(rp) :: abs5
+! --- Boucle unique sur tous les n\U00000153uds du maillage ---
+    DO inode=1,mesh%nn
+      IF (mesh%node(inode)%coord%x - target_x .GE. 0.) THEN
+        abs5 = mesh%node(inode)%coord%x - target_x
+      ELSE
+        abs5 = -(mesh%node(inode)%coord%x-target_x)
+      END IF
+! On ne consid\U000000e8re que les n\U00000153uds qui appartiennent \U000000e0 la section
+      IF (abs5 .LT. tolerance) THEN
+! Si c'est le premier point qu'on trouve pour cette section
+        IF (.NOT.first_point_found) THEN
+          y1 = mesh%node(inode)%coord%y
+          yn = y1
+          first_point_found = .true.
+        END IF
+        IF (y1 .GT. mesh%node(inode)%coord%y) THEN
+          y1 = mesh%node(inode)%coord%y
+        ELSE
+          y1 = y1
+        END IF
+        IF (yn .LT. mesh%node(inode)%coord%y) THEN
+          yn = mesh%node(inode)%coord%y
+        ELSE
+          yn = yn
+        END IF
+      END IF
+    END DO
+  END SUBROUTINE FIND_SECTION
+
+!  Differentiation of update_all_porosities in forward (tangent) mode (with options fixinterface):
+!   variations   of useful results: *(sporosity.phi)[from module m_model]
+!   with respect to varying inputs: *bathy_cell[from module m_model]
+!                *(sporosity.phi)[from module m_model] *(dof.h)
+!   Plus diff mem management of: bathy_cell[from module m_model]:in
+!                sporosity.phi[from module m_model]:in dof.h:in
+  SUBROUTINE UPDATE_ALL_POROSITIES_DIFF(dof, dof_diff, mesh)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+!=======================================================================
+! Orchestre la mise \U000000e0 jour de la porosit\U000000e9 pour toutes les cellules 1D-like.
+!=======================================================================
+! --- Arguments ---
+    TYPE(UNK), INTENT(IN) :: dof
+    TYPE(UNK), INTENT(IN) :: dof_diff ! Replaced by Perl Script
+    TYPE(MSH), INTENT(IN) :: mesh
+! --- Variables Locales ---
+    INTEGER :: inode, icell
+    REAL(rp) :: h_b, b_min, h_k, phi_k_new, wetted_area
+    REAL(rp) :: h_b_diff, b_min_diff, h_k_diff, phi_k_new_diff, &
+&   wetted_area_diff
+    REAL(rp) :: y1, y_min, yn, total_width, macro_area
+    REAL(rp) :: macro_area_diff
+    REAL(rp) :: min_dist_to_b_min
+    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
+    INTRINSIC HUGE
+! --- Boucle principale sur toutes les cellules/sections ---
+    DO icell=1,mesh%nc
+! 1. R\U000000e9cup\U000000e9rer les donn\U000000e9es macroscopiques et D\U000000c9FINIR b_min
+      h_b_diff = dof_diff%h(icell)
+      h_b = dof%h(icell)
+      b_min_diff = bathy_cell_diff(icell)
+      b_min = bathy_cell(icell)
+      h_k_diff = h_b_diff + b_min_diff
+      h_k = h_b + b_min
+! 2. Trouver y1, yN, et le y_min correspondant \U000000e0 b_min pour cette section
+      CALL FIND_SECTION(mesh, mesh%cell(icell)%grav%x, y1, yn)
+! Boucle suppl\U000000e9mentaire pour trouver le y_min associ\U000000e9 \U000000e0 b_min
+      min_dist_to_b_min = HUGE(0.0_rp)
+! Valeur par d\U000000e9faut au centre
+      y_min = (y1+yn)/2.0_rp
+! 3. Calculer l'aire mouillée avec le modèle parabolique
+      wetted_area_diff = CALCULATE_WETTED_AREA_PARABOLIC_DIFF(h_k, &
+&       h_k_diff, y1, y_min, yn, b_min, b_min_diff, wetted_area)
+! 4. Calculer la porosit\U000000e9 finale
+      total_width = yn - y1
+      macro_area_diff = total_width*h_b_diff
+      macro_area = total_width*h_b
+      IF (macro_area .GT. 1.0e-9_rp) THEN
+        phi_k_new_diff = (wetted_area_diff-wetted_area*macro_area_diff/&
+&         macro_area)/macro_area
+        phi_k_new = wetted_area/macro_area
+      ELSE
+        phi_k_new = 1.0_rp
+        phi_k_new_diff = 0.0_8
+      END IF
+! 5. Stocker la nouvelle porosit\U000000e9 dans le tableau global
+      sporosity_diff%phi(icell) = phi_k_new_diff
+      sporosity%phi(icell) = phi_k_new
+    END DO
+  END SUBROUTINE UPDATE_ALL_POROSITIES_DIFF
+
+  SUBROUTINE UPDATE_ALL_POROSITIES(dof, mesh)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+!=======================================================================
+! Orchestre la mise \U000000e0 jour de la porosit\U000000e9 pour toutes les cellules 1D-like.
+!=======================================================================
+! --- Arguments ---
+    TYPE(UNK), INTENT(IN) :: dof
+    TYPE(MSH), INTENT(IN) :: mesh
+! --- Variables Locales ---
+    INTEGER :: inode, icell
+    REAL(rp) :: h_b, b_min, h_k, phi_k_new, wetted_area
+    REAL(rp) :: y1, y_min, yn, total_width, macro_area
+    REAL(rp) :: min_dist_to_b_min
+    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
+    INTRINSIC HUGE
+! --- Boucle principale sur toutes les cellules/sections ---
+    DO icell=1,mesh%nc
+! 1. R\U000000e9cup\U000000e9rer les donn\U000000e9es macroscopiques et D\U000000c9FINIR b_min
+      h_b = dof%h(icell)
+      b_min = bathy_cell(icell)
+      h_k = h_b + b_min
+! 2. Trouver y1, yN, et le y_min correspondant \U000000e0 b_min pour cette section
+      CALL FIND_SECTION(mesh, mesh%cell(icell)%grav%x, y1, yn)
+! Boucle suppl\U000000e9mentaire pour trouver le y_min associ\U000000e9 \U000000e0 b_min
+      min_dist_to_b_min = HUGE(0.0_rp)
+! Valeur par d\U000000e9faut au centre
+      y_min = (y1+yn)/2.0_rp
+! 3. Calculer l'aire mouillée avec le modèle parabolique
+      wetted_area = CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, &
+&       b_min)
+! 4. Calculer la porosit\U000000e9 finale
+      total_width = yn - y1
+      macro_area = total_width*h_b
+      IF (macro_area .GT. 1.0e-9_rp) THEN
+        phi_k_new = wetted_area/macro_area
+      ELSE
+        phi_k_new = 1.0_rp
+      END IF
+! 5. Stocker la nouvelle porosit\U000000e9 dans le tableau global
+      sporosity%phi(icell) = phi_k_new
+    END DO
+  END SUBROUTINE UPDATE_ALL_POROSITIES
+
 END SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF
 

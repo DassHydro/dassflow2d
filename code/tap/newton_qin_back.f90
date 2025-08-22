@@ -3,15 +3,13 @@
 !
 !  Differentiation of newton_qin in reverse (adjoint) mode (with options fixinterface):
 !   gradient     of useful results: *bathy_cell *(dof.h) *(dof.u)
-!                *(dof.v) *(mesh.edge).length *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y qin zs
+!                *(dof.v) qin zs
 !   with respect to varying inputs: *bathy_cell *(dof.h) *(dof.u)
-!                *(dof.v) *(mesh.edge).length *(mesh.edge).normal.x
-!                *(mesh.edge).normal.y qin
+!                *(dof.v) qin
 !   Plus diff mem management of: bathy_cell:in dof.h:in dof.u:in
-!                dof.v:in mesh.edge:in
-SUBROUTINE NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, mesh_back&
-& , zs, zs_back)
+!                dof.v:in
+SUBROUTINE NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, zs, &
+& zs_back)
   USE M_MODEL ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
 
@@ -19,9 +17,8 @@ SUBROUTINE NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, mesh_back&
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH) :: mesh_back ! Replaced by Perl Script
   TYPE(UNK), INTENT(IN) :: dof
-  TYPE(UNK) :: dof_back
+  TYPE(UNK) :: dof_back ! Replaced by Perl Script
   REAL(rp), INTENT(IN) :: qin
   REAL(rp) :: qin_back
   REAL(rp) :: zs
@@ -126,28 +123,20 @@ SUBROUTINE NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, mesh_back&
       CALL POPCONTROL2B(branch)
       IF (branch .NE. 0) THEN
         IF (branch .NE. 1) THEN
-          temp_back = -(z*mesh%edge(mesh%edgeb(ie)%ind)%length*s1_back)
-          temp = SQRT(z)
+          temp_back = -(mesh%edge(mesh%edgeb(ie)%ind)%length*s1_back)
           temp_back0 = -(mesh%edge(mesh%edgeb(ie)%ind)%length*s2_back)
-          mesh_back%edge(mesh%edgeb(ie)%ind)%length = mesh_back%edge(&
-&           mesh%edgeb(ie)%ind)%length - (r-d3p2*c*temp)*s2_back
-          r_back = temp_back0 + temp_back
+          r_back = temp_back0 + z*temp_back
           IF (z .EQ. 0.0) THEN
             z_back = 0.0_8
           ELSE
-            z_back = -(d3p2*c*temp_back0/(2.0*temp))
+            z_back = -(d3p2*c*temp_back0/(2.0*SQRT(z)))
           END IF
           temp = SQRT(z)
-          temp_back0 = -((r-c*temp)*s1_back)
           IF (z .EQ. 0.0) THEN
-            z_back = z_back + mesh%edge(mesh%edgeb(ie)%ind)%length*&
-&             temp_back0
+            z_back = z_back + (r-c*temp)*temp_back
           ELSE
-            z_back = z_back + mesh%edge(mesh%edgeb(ie)%ind)%length*&
-&             temp_back0 - c*temp_back/(2.0*temp)
+            z_back = z_back + (r-c*temp-c*z/(2.0*temp))*temp_back
           END IF
-          mesh_back%edge(mesh%edgeb(ie)%ind)%length = mesh_back%edge(&
-&           mesh%edgeb(ie)%ind)%length + z*temp_back0
           CALL POPCONTROL1B(branch)
           IF (branch .EQ. 0) THEN
             i = mesh%edge(mesh%edgeb(ie)%ind)%cell(1)
@@ -161,12 +150,8 @@ SUBROUTINE NEWTON_QIN_BACK(qin, qin_back, dof, dof_back, mesh, mesh_back&
           CALL POPREAL8(r)
           dof_back%u(i) = dof_back%u(i) + mesh%edge(mesh%edgeb(ie)%ind)%&
 &           normal%x*r_back
-          mesh_back%edge(mesh%edgeb(ie)%ind)%normal%x = mesh_back%edge(&
-&           mesh%edgeb(ie)%ind)%normal%x + dof%u(i)*r_back
           dof_back%v(i) = dof_back%v(i) + mesh%edge(mesh%edgeb(ie)%ind)%&
 &           normal%y*r_back
-          mesh_back%edge(mesh%edgeb(ie)%ind)%normal%y = mesh_back%edge(&
-&           mesh%edgeb(ie)%ind)%normal%y + dof%v(i)*r_back
           IF (.NOT.dof%h(i) .EQ. 0.0) dof_back%h(i) = dof_back%h(i) + c*&
 &             r_back/(2.0*SQRT(dof%h(i)))
         END IF

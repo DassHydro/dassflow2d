@@ -8,10 +8,9 @@
 !   Plus diff mem management of: bc.inflow:in bc.outflow:in bc.hpresc:in
 !                *(bc.hpresc).t:in *(bc.hpresc).h:in bc.zspresc:in
 !                *(bc.zspresc).t:in *(bc.zspresc).z:in bathy_cell:in
-!                mesh.edge:in
-SUBROUTINE CALC_BOUNDARY_STATE_DIFF(mesh, mesh_diff, hl, hl_diff, zl, &
-& zl_diff, ul, ul_diff, vl, vl_diff, hr, hr_diff, zr, zr_diff, ur, &
-& ur_diff, vr, vr_diff)
+SUBROUTINE CALC_BOUNDARY_STATE_DIFF(mesh, hl, hl_diff, zl, zl_diff, ul, &
+& ul_diff, vl, vl_diff, hr, hr_diff, zr, zr_diff, ur, ur_diff, vr, &
+& vr_diff)
 ! add lilian for linear interp
   USE M_NUMERIC ! Replaced by Perl Script
   USE M_NUMERIC_DIFF
@@ -22,7 +21,6 @@ SUBROUTINE CALC_BOUNDARY_STATE_DIFF(mesh, mesh_diff, hl, hl_diff, zl, &
 
   IMPLICIT NONE
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH), INTENT(IN) :: mesh_diff ! Replaced by Perl Script
   REAL(rp), INTENT(IN) :: hl, ul, vl, zl, zr
   REAL(rp), INTENT(IN) :: hl_diff, ul_diff, vl_diff, zl_diff, zr_diff
   REAL(rp), INTENT(OUT) :: hr, ur, vr

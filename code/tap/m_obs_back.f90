@@ -13,18 +13,14 @@ CONTAINS
 !                *(*innovuv.diff) cost
 !   with respect to varying inputs: *(*(bc.hyd).q) *xsshape.xcenter
 !                *xsshape.s *xsshape.hmax *bathy_cell *(*innovation.diff)
-!                *(*innovq.diff) *(*innovuv.diff) *(mesh.cell).invsurf
-!                *(mesh.cell).grav.x *(mesh.cell).grav.y *(mesh.edge).length
-!                *(mesh.edge).normal.x *(mesh.edge).normal.y cost
+!                *(*innovq.diff) *(*innovuv.diff) cost
 !   Plus diff mem management of: bc.hyd:in *(bc.hyd).q:in xsshape:in
 !                bathy_cell:in innovation:in *innovation.diff:in
 !                innovq:in *innovq.diff:in innovuv:in *innovuv.diff:in
-!                mesh.cell:in mesh.edge:in
-  SUBROUTINE CALC_COST_FUNCTION_BACK(cost, cost_back, mesh, mesh_back)
+  SUBROUTINE CALC_COST_FUNCTION_BACK(cost, cost_back, mesh)
     USE M_NUMERIC_BACK
     IMPLICIT NONE
     TYPE(MSH), INTENT(IN) :: mesh
-    TYPE(MSH) :: mesh_back ! Replaced by Perl Script
     REAL(rp), INTENT(INOUT) :: cost
     REAL(rp), INTENT(INOUT) :: cost_back
     REAL(rp) :: cost_part(3), filtered(4)
@@ -696,21 +692,15 @@ CONTAINS
           IF (ALLOCATED(xsshape_back)) xsshape_back%s = 0.0_8
           IF (ALLOCATED(xsshape_back)) xsshape_back%hmax = 0.0_8
           IF (ALLOCATED(bathy_cell_back)) bathy_cell_back = 0.0_8
-          mesh_back%cell%grav%x = 0.0_8
-          mesh_back%cell%grav%y = 0.0_8
           DO ie=mesh%nc,1,-1
             CALL POPCONTROL1B(branch)
             IF (branch .EQ. 0) THEN
               CALL POPREAL8(cost_part(2))
-              temp_back0 = 2*(bathy_cell(ie)-xsshape(1)%topz-min6-&
-&               slope_y(1)*mesh%cell(ie)%grav%y-slope_x(1)*mesh%cell(ie)&
-&               %grav%x)*cost_part_back(2)
+              temp_back0 = 2*(bathy_cell(ie)-slope_y(1)*mesh%cell(ie)%&
+&               grav%y-slope_x(1)*mesh%cell(ie)%grav%x-xsshape(1)%topz-&
+&               min6)*cost_part_back(2)
               bathy_cell_back(ie) = bathy_cell_back(ie) + temp_back0
               min6_back = -temp_back0
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*temp_back0
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*temp_back0
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
                 CALL POPREAL8(min6)
@@ -750,12 +740,8 @@ CONTAINS
                 CALL POPREAL8(abs13)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs13_back
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&                 abs13_back
               ELSE
                 CALL POPREAL8(abs13)
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x + &
-&                 abs13_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs13_back
               END IF
@@ -769,15 +755,11 @@ CONTAINS
               END IF
             ELSE
               CALL POPREAL8(cost_part(2))
-              temp_back0 = 2*(bathy_cell(ie)-xsshape(1)%topz-min5-&
-&               slope_y(1)*mesh%cell(ie)%grav%y-slope_x(1)*mesh%cell(ie)&
-&               %grav%x)*cost_part_back(2)
+              temp_back0 = 2*(bathy_cell(ie)-slope_y(1)*mesh%cell(ie)%&
+&               grav%y-slope_x(1)*mesh%cell(ie)%grav%x-xsshape(1)%topz-&
+&               min5)*cost_part_back(2)
               bathy_cell_back(ie) = bathy_cell_back(ie) + temp_back0
               min5_back = -temp_back0
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*temp_back0
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*temp_back0
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
                 CALL POPREAL8(min5)
@@ -817,12 +799,8 @@ CONTAINS
                 CALL POPREAL8(abs12)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs12_back
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&                 abs12_back
               ELSE
                 CALL POPREAL8(abs12)
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x + &
-&                 abs12_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs12_back
               END IF
@@ -841,21 +819,15 @@ CONTAINS
           IF (ALLOCATED(xsshape_back)) xsshape_back%s = 0.0_8
           IF (ALLOCATED(xsshape_back)) xsshape_back%hmax = 0.0_8
           IF (ALLOCATED(bathy_cell_back)) bathy_cell_back = 0.0_8
-          mesh_back%cell%grav%x = 0.0_8
-          mesh_back%cell%grav%y = 0.0_8
           DO ie=mesh%nc,1,-1
             CALL POPCONTROL1B(branch)
             IF (branch .EQ. 0) THEN
               CALL POPREAL8(cost_part(2))
-              temp_back0 = 2*(bathy_cell(ie)-xsshape(1)%topz-min8-&
-&               slope_y(1)*mesh%cell(ie)%grav%y-slope_x(1)*mesh%cell(ie)&
-&               %grav%x)*cost_part_back(2)
+              temp_back0 = 2*(bathy_cell(ie)-slope_y(1)*mesh%cell(ie)%&
+&               grav%y-slope_x(1)*mesh%cell(ie)%grav%x-xsshape(1)%topz-&
+&               min8)*cost_part_back(2)
               bathy_cell_back(ie) = bathy_cell_back(ie) + temp_back0
               min8_back = -temp_back0
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*temp_back0
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*temp_back0
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
                 CALL POPREAL8(min8)
@@ -895,12 +867,8 @@ CONTAINS
                 CALL POPREAL8(abs15)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs15_back
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&                 abs15_back
               ELSE
                 CALL POPREAL8(abs15)
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y + &
-&                 abs15_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs15_back
               END IF
@@ -914,15 +882,11 @@ CONTAINS
               END IF
             ELSE
               CALL POPREAL8(cost_part(2))
-              temp_back0 = 2*(bathy_cell(ie)-xsshape(1)%topz-min7-&
-&               slope_y(1)*mesh%cell(ie)%grav%y-slope_x(1)*mesh%cell(ie)&
-&               %grav%x)*cost_part_back(2)
+              temp_back0 = 2*(bathy_cell(ie)-slope_y(1)*mesh%cell(ie)%&
+&               grav%y-slope_x(1)*mesh%cell(ie)%grav%x-xsshape(1)%topz-&
+&               min7)*cost_part_back(2)
               bathy_cell_back(ie) = bathy_cell_back(ie) + temp_back0
               min7_back = -temp_back0
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*temp_back0
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*temp_back0
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
                 CALL POPREAL8(min7)
@@ -962,12 +926,8 @@ CONTAINS
                 CALL POPREAL8(abs14)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs14_back
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&                 abs14_back
               ELSE
                 CALL POPREAL8(abs14)
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y + &
-&                 abs14_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs14_back
               END IF
@@ -987,15 +947,11 @@ CONTAINS
         IF (ALLOCATED(xsshape_back)) xsshape_back%s = 0.0_8
         IF (ALLOCATED(xsshape_back)) xsshape_back%hmax = 0.0_8
         IF (ALLOCATED(bathy_cell_back)) bathy_cell_back = 0.0_8
-        mesh_back%cell%grav%x = 0.0_8
-        mesh_back%cell%grav%y = 0.0_8
       ELSE
         IF (ALLOCATED(xsshape_back)) xsshape_back%xcenter = 0.0_8
         IF (ALLOCATED(xsshape_back)) xsshape_back%s = 0.0_8
         IF (ALLOCATED(xsshape_back)) xsshape_back%hmax = 0.0_8
         IF (ALLOCATED(bathy_cell_back)) bathy_cell_back = 0.0_8
-        mesh_back%cell%grav%x = 0.0_8
-        mesh_back%cell%grav%y = 0.0_8
       END IF
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
@@ -1015,11 +971,11 @@ CONTAINS
       CALL POPCONTROL2B(branch)
       IF (branch .EQ. 0) THEN
         CALL FV_CELL_GRAD_BACK(grad_var, grad_var_back, bathy_cell, &
-&                        bathy_cell_back, mesh, mesh_back)
+&                        bathy_cell_back, mesh)
       ELSE IF (branch .EQ. 1) THEN
         bathy_temp_back = 0.0_8
         CALL FV_CELL_GRAD_BACK(grad_var, grad_var_back, bathy_temp, &
-&                        bathy_temp_back, mesh, mesh_back)
+&                        bathy_temp_back, mesh)
         CALL POPCONTROL2B(branch)
         IF (branch .EQ. 0) THEN
           DO ie=mesh%nc,1,-1
@@ -1028,10 +984,6 @@ CONTAINS
               bathy_cell_back(ie) = bathy_cell_back(ie) + &
 &               bathy_temp_back(ie)
               min2_back = -bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*bathy_temp_back(ie)
               bathy_temp_back(ie) = 0.0_8
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
@@ -1070,12 +1022,8 @@ CONTAINS
                 CALL POPREAL8(abs9)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs9_back
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&                 abs9_back
               ELSE
                 CALL POPREAL8(abs9)
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x + &
-&                 abs9_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs9_back
               END IF
@@ -1091,10 +1039,6 @@ CONTAINS
               bathy_cell_back(ie) = bathy_cell_back(ie) + &
 &               bathy_temp_back(ie)
               min1_back = -bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*bathy_temp_back(ie)
               bathy_temp_back(ie) = 0.0_8
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
@@ -1133,12 +1077,8 @@ CONTAINS
                 CALL POPREAL8(abs8)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs8_back
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&                 abs8_back
               ELSE
                 CALL POPREAL8(abs8)
-                mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x + &
-&                 abs8_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs8_back
               END IF
@@ -1159,10 +1099,6 @@ CONTAINS
               bathy_cell_back(ie) = bathy_cell_back(ie) + &
 &               bathy_temp_back(ie)
               min4_back = -bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*bathy_temp_back(ie)
               bathy_temp_back(ie) = 0.0_8
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
@@ -1201,12 +1137,8 @@ CONTAINS
                 CALL POPREAL8(abs11)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs11_back
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&                 abs11_back
               ELSE
                 CALL POPREAL8(abs11)
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y + &
-&                 abs11_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs11_back
               END IF
@@ -1222,10 +1154,6 @@ CONTAINS
               bathy_cell_back(ie) = bathy_cell_back(ie) + &
 &               bathy_temp_back(ie)
               min3_back = -bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&               slope_y(1)*bathy_temp_back(ie)
-              mesh_back%cell(ie)%grav%x = mesh_back%cell(ie)%grav%x - &
-&               slope_x(1)*bathy_temp_back(ie)
               bathy_temp_back(ie) = 0.0_8
               CALL POPCONTROL1B(branch)
               IF (branch .EQ. 0) THEN
@@ -1264,12 +1192,8 @@ CONTAINS
                 CALL POPREAL8(abs10)
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter + &
 &                 abs10_back
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y - &
-&                 abs10_back
               ELSE
                 CALL POPREAL8(abs10)
-                mesh_back%cell(ie)%grav%y = mesh_back%cell(ie)%grav%y + &
-&                 abs10_back
                 xsshape_back(1)%xcenter = xsshape_back(1)%xcenter - &
 &                 abs10_back
               END IF
@@ -1284,11 +1208,6 @@ CONTAINS
             END IF
           END DO
         END IF
-      ELSE
-        mesh_back%cell%invsurf = 0.0_8
-        mesh_back%edge%length = 0.0_8
-        mesh_back%edge%normal%x = 0.0_8
-        mesh_back%edge%normal%y = 0.0_8
       END IF
       CALL POPCONTROL2B(branch)
       IF (branch .EQ. 0) THEN
@@ -1358,12 +1277,6 @@ CONTAINS
       IF (ALLOCATED(xsshape_back)) xsshape_back%s = 0.0_8
       IF (ALLOCATED(xsshape_back)) xsshape_back%hmax = 0.0_8
       IF (ALLOCATED(bathy_cell_back)) bathy_cell_back = 0.0_8
-      mesh_back%cell%invsurf = 0.0_8
-      mesh_back%cell%grav%x = 0.0_8
-      mesh_back%cell%grav%y = 0.0_8
-      mesh_back%edge%length = 0.0_8
-      mesh_back%edge%normal%x = 0.0_8
-      mesh_back%edge%normal%y = 0.0_8
     END IF
   END SUBROUTINE CALC_COST_FUNCTION_BACK
 
@@ -1375,7 +1288,7 @@ CONTAINS
   SUBROUTINE UPDATE_COST_FUNCTION_BACK(dof, dof_back, cost, cost_back)
     IMPLICIT NONE
     TYPE(UNK), INTENT(IN) :: dof
-    TYPE(UNK) :: dof_back
+    TYPE(UNK) :: dof_back ! Replaced by Perl Script
     REAL(rp), INTENT(INOUT) :: cost
     REAL(rp), INTENT(INOUT) :: cost_back
     INTEGER(ip) :: cell, pt

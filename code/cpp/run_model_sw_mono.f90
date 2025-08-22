@@ -7,7 +7,6 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    USE m_numeric
    USE m_model
    USE m_obs
-   USE fonctions_porosite_mod
    implicit none
    !===================================================================================================================!
    ! Interface Variables

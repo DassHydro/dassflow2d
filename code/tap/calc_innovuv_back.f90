@@ -3,12 +3,10 @@
 !
 !  Differentiation of calc_innovuv in reverse (adjoint) mode (with options fixinterface):
 !   gradient     of useful results: *(*innovuv.diff) *(dof.u) *(dof.v)
-!                *(mesh.cell).surf
 !   with respect to varying inputs: *(*innovuv.diff) *(dof.u) *(dof.v)
-!                *(mesh.cell).surf
 !   Plus diff mem management of: innovuv:in *innovuv.diff:in dof.u:in
-!                dof.v:in mesh.cell:in
-SUBROUTINE CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
+!                dof.v:in
+SUBROUTINE CALC_INNOVUV_BACK(dof, dof_back, mesh)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
   USE M_MODEL ! Replaced by Perl Script
@@ -19,12 +17,11 @@ SUBROUTINE CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
 
   IMPLICIT NONE
   TYPE(UNK), INTENT(IN) :: dof
-  TYPE(UNK) :: dof_back
+  TYPE(UNK) :: dof_back ! Replaced by Perl Script
   TYPE(MSH), INTENT(IN) :: mesh
-  TYPE(MSH) :: mesh_back ! Replaced by Perl Script
   INTEGER(ip) :: cell, searched_time, pt, n_average
   REAL(rp) :: h_mean, s_total, u_mean, v_mean
-  REAL(rp) :: s_total_back, u_mean_back, v_mean_back
+  REAL(rp) :: u_mean_back, v_mean_back
   CHARACTER(len=50) :: filename
   INTRINSIC SIZE
   REAL(rp) :: temp_back
@@ -61,9 +58,7 @@ SUBROUTINE CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
       CALL MPI_SUM_R(u_mean)
       CALL MPI_SUM_R(v_mean)
       IF (s_total .GT. 0) THEN
-        CALL PUSHREAL8(u_mean)
         u_mean = u_mean/s_total
-        CALL PUSHREAL8(v_mean)
         v_mean = v_mean/s_total
         CALL PUSHCONTROL1B(0)
       ELSE
@@ -87,14 +82,8 @@ SUBROUTINE CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
         v_mean_back = 2_rp*v_mean*temp_back
         CALL POPCONTROL1B(branch)
         IF (branch .EQ. 0) THEN
-          CALL POPREAL8(v_mean)
-          CALL POPREAL8(u_mean)
-          s_total_back = -(v_mean*v_mean_back/s_total**2) - u_mean*&
-&           u_mean_back/s_total**2
           v_mean_back = v_mean_back/s_total
           u_mean_back = u_mean_back/s_total
-        ELSE
-          s_total_back = 0.0_8
         END IF
         CALL POPINTEGER4(ad_to)
         DO pt=ad_to,1,-1
@@ -102,9 +91,6 @@ SUBROUTINE CALC_INNOVUV_BACK(dof, dof_back, mesh, mesh_back)
           IF (branch .NE. 0) THEN
             IF (branch .NE. 1) THEN
               cell = station(iobs)%pt(pt)%cell
-              mesh_back%cell(cell)%surf = mesh_back%cell(cell)%surf + &
-&               s_total_back + dof%v(cell)*v_mean_back + dof%u(cell)*&
-&               u_mean_back
               dof_back%v(cell) = dof_back%v(cell) + mesh%cell(cell)%surf&
 &               *v_mean_back
               dof_back%u(cell) = dof_back%u(cell) + mesh%cell(cell)%surf&
