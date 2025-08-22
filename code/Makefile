@@ -419,7 +419,7 @@ ifeq ($(MODEL),1)
                  tap/run_model_sw_mono.f90\
                  tap/advance_time.f90\
                  tap/boundary.f90\
-		 tap/euler_time_step_first_b1.f90\
+		  tap/euler_time_step_first_b1.f90\
                  tap/sw_flux.f90\
                  tap/read_write_obs.f90\
                  tap/numeric_sw.f90\
@@ -633,11 +633,9 @@ WRAPPERS_CPP 	=  wrappers/m_common.f90 \
 		   wrappers/m_mpi.f90 \
 		   wrappers/m_mesh.f90 \
 		   wrappers/m_sw_mono.f90 \
-		   wrappers/input.f90 
+		   wrappers/input.f90
 
-
-
-ifeq ($(HYDRO),1)
+ ifeq ($(HYDRO),1)
 OBJ_TMP = 	./obj/m_common.o \
 			./obj/m_random.o \
 			./obj/m_linear_algebra.o \
@@ -704,11 +702,10 @@ ifeq ($(ADJOINT),1)
 	WRAPPERS_CPP += wrappers/m_adjoint.f90 \
 					wrappers/m_tap_vars.f90
 	OBJ_TMP += $(OBJS_TAP)
-	WRAPPERS_CPP	+= 	 wrappers/call_run_model.f90
-	OBJ_TMP			+=	./obj/call_run_model.o
 endif
 
-
+WRAPPERS_CPP	+= 	 wrappers/call_run_model.f90
+OBJ_TMP			+=	./obj/call_run_model.o
 
 POST_PY  	= ./wrappers/${wrapping_name}/post/__init__.py \
            	  ./wrappers/${wrapping_name}/post/metrics.py \
@@ -963,35 +960,16 @@ package:
 		cp $(lilian_dir)/setup.py  $(true_wrapper_dir)
 
 		# change in wrapping dir the  imports of modules  /////
-		# --- BLOC CORRIGÉ ---
+		for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py  m_adjoint.py m_tap_vars.py; do \
+				echo $$file;\
+				sed -i -e "s/from wrapping/from dassflow2d.wrapping/g" 	$(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
+	  done
 
-# D'abord, on traite les fichiers qui sont toujours présents
-	for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py m_common.py; do \
-		echo $$file; \
-		sed -i -e "s/from wrapping/from dassflow2d.wrapping/g"     $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
-	done
+# replace  _wrappring by  dassflow2d.wrapping._wrapping   (absolute call)
+		for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py  m_adjoint.py m_tap_vars.py; do \
+				echo $$file;\
+				sed -i -e "s/import _wrapping/from dassflow2d.wrapping import _wrapping/g" 	$(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
+	  done
 
-# Ensuite, on ne traite les fichiers de l'adjoint que si l'option est activée
-ifeq ($(ADJOINT), 1)
-	for file in call_model.py m_adjoint.py m_tap_vars.py; do \
-		echo $$file; \
-		sed -i -e "s/from wrapping/from dassflow2d.wrapping/g"     $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
-	done
-endif
-
-# Répétez la même logique pour la deuxième boucle sed
-	for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py m_common.py; do \
-		echo $$file; \
-		sed -i -e "s/import _wrapping/from dassflow2d.wrapping import _wrapping/g"     $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
-	done
-
-ifeq ($(ADJOINT), 1)
-	for file in call_model.py m_adjoint.py m_tap_vars.py; do \
-		echo $$file; \
-		sed -i -e "s/import _wrapping/from dassflow2d.wrapping import _wrapping/g"     $(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
-	done
-endif
-
-# --- FIN DU BLOC CORRIGÉ ---
-# COMPILE package
-	pip install --no-compile $(true_wrapper_dir)/.
+			# COMPILE package
+		pip install --no-compile $(true_wrapper_dir)/.
