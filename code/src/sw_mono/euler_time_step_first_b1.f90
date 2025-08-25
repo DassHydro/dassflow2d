@@ -52,7 +52,7 @@
 !! \brief This file includes euler_time_step_first_b1 routine.
 !! \details The file includes only euler_time_step_first_b1 routine (see doc euler_time_step_first_b1 routine).
 
-SUBROUTINE euler_time_step_first_b1( dof , mesh )
+SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit)
    USE m_common
    USE m_mesh
    USE m_mpi
@@ -65,10 +65,12 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    !===================================================================================================================!
    type( msh ), intent(inout) :: mesh
    type( unk ), intent(inout) :: dof
+   INTEGER, INTENT(IN) :: poro_unit
+
    !===================================================================================================================!
    ! Local Variables
    !===================================================================================================================!
-
+   INTEGER, PARAMETER :: write_frequency = 1000
    integer(ip) :: iL , iR ! Left and Right cells indexes to edge
 
    real(rp) :: hL(2) , uL(2) , vL(2) , zL ! Left State in edge cell normal coordinates
@@ -98,9 +100,14 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh )
    !===================================================================================================================!
    tflux(:,:) = 0._rp
    
-   #ifdef USE_PORO
+#ifdef USE_PORO
    call update_all_porosities(dof, mesh)
-   #endif
+
+!IF (MOD(it, write_frequency) == 0 .OR. it == 1) THEN
+   WRITE(poro_unit, *) SPorosity%phi(:)
+!END IF
+#endif
+
 
    do ie = 1,mesh%ne
       !================================================================================================================!

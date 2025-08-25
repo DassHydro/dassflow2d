@@ -94,6 +94,11 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
     real(rp) :: bathy_temp
     real(rp) :: Ks_ubound, Ks_lbound, z, lambda, shift
 
+! >>> AJOUTEZ CES LIGNES (OUVRIR LE FICHIER) <<<
+INTEGER :: poro_unit
+#ifdef USE_PORO
+OPEN(NEWUNIT=poro_unit, FILE='res/porosity_history.dat', FORM='FORMATTED', STATUS='REPLACE')
+#endif
 
    !===================================================================================================================!
    !  Define parameterized bathymetry
@@ -281,6 +286,8 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
    tc  =  tc0
    nt  =  nt0
+   
+
 
     if ( use_obs == 1 ) then
 
@@ -337,6 +344,11 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 ! write(*,*) "call calc_cost_function( cost , mesh )"
    call calc_cost_function( cost , mesh )
 
+#ifdef USE_PORO
+CLOSE(poro_unit)
+#endif
+
+
 CONTAINS
 
 
@@ -385,7 +397,7 @@ CONTAINS
                      
                          !  else
 
-                              call euler_time_step_first_b1( dof , mesh ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
+                              call euler_time_step_first_b1( dof , mesh, poro_unit ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
                      
                          !  end if
 
@@ -463,6 +475,7 @@ CONTAINS
    end do
 
    END SUBROUTINE sub_run_model
+
 
 
 END SUBROUTINE run_model
