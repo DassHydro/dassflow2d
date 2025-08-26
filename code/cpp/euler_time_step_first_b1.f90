@@ -1,4 +1,4 @@
-SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit)
+SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    USE m_common
    USE m_mesh
    USE m_mpi
@@ -11,6 +11,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit)
    type( msh ), intent(inout) :: mesh
    type( unk ), intent(inout) :: dof
    INTEGER, INTENT(IN) :: poro_unit
+   INTEGER, INTENT(IN) :: it
    !===================================================================================================================!
    ! Local Variables
    !===================================================================================================================!
@@ -38,7 +39,9 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit)
    !===================================================================================================================!
    tflux(:,:) = 0._rp
    call update_all_porosities(dof, mesh)
-   WRITE(poro_unit, *) SPorosity%phi(:)
+IF (MOD(it, write_frequency) == 0 .OR. it == 1) THEN
+   WRITE(poro_unit, *) it, SPorosity%phi(:)
+END IF
    do ie = 1,mesh%ne
       !================================================================================================================!
       ! Calculate Left and Right States

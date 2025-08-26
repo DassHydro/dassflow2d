@@ -1,17 +1,17 @@
 ! Module m_tap_vars defined in file m_tap_vars.f90
 
 subroutine f90wrap_m_tap_vars__alloc_back_vars(dof0_back, dof_back, mesh)
-    use m_model, only: unk
     use m_tap_vars, only: alloc_back_vars
     use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof0_back_ptr
     integer, intent(in), dimension(2) :: dof0_back
     type(unk_ptr_type) :: dof_back_ptr
@@ -25,8 +25,8 @@ subroutine f90wrap_m_tap_vars__alloc_back_vars(dof0_back, dof_back, mesh)
 end subroutine f90wrap_m_tap_vars__alloc_back_vars
 
 subroutine f90wrap_m_tap_vars__dealloc_back_vars(dof0_back, dof_back)
-    use m_model, only: unk
     use m_tap_vars, only: dealloc_back_vars
+    use m_model, only: unk
     implicit none
     
     type unk_ptr_type

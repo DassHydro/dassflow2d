@@ -1,17 +1,17 @@
 ! Module m_adjoint defined in file m_adjoint.f90
 
 subroutine f90wrap_m_adjoint__model_direct(mesh, dof0, dof)
-    use m_model, only: unk
     use m_adjoint, only: model_direct
     use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(msh_ptr_type) :: mesh_ptr
     integer, intent(in), dimension(2) :: mesh
     type(unk_ptr_type) :: dof0_ptr
@@ -25,17 +25,17 @@ subroutine f90wrap_m_adjoint__model_direct(mesh, dof0, dof)
 end subroutine f90wrap_m_adjoint__model_direct
 
 subroutine f90wrap_m_adjoint__model_direct_perturb(mesh, dof0, dof)
-    use m_model, only: unk
-    use m_mesh, only: msh
     use m_adjoint, only: model_direct_perturb
+    use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(msh_ptr_type) :: mesh_ptr
     integer, intent(in), dimension(2) :: mesh
     type(unk_ptr_type) :: dof0_ptr
@@ -49,17 +49,17 @@ subroutine f90wrap_m_adjoint__model_direct_perturb(mesh, dof0, dof)
 end subroutine f90wrap_m_adjoint__model_direct_perturb
 
 subroutine f90wrap_m_adjoint__adjoint_model(mesh, dof0, dof)
-    use m_model, only: unk
-    use m_mesh, only: msh
     use m_adjoint, only: adjoint_model
+    use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(msh_ptr_type) :: mesh_ptr
     integer, intent(in), dimension(2) :: mesh
     type(unk_ptr_type) :: dof0_ptr
@@ -73,17 +73,17 @@ subroutine f90wrap_m_adjoint__adjoint_model(mesh, dof0, dof)
 end subroutine f90wrap_m_adjoint__adjoint_model
 
 subroutine f90wrap_m_adjoint__write_control(dof0, mesh)
+    use m_mesh, only: msh
     use m_adjoint, only: write_control
     use m_model, only: unk
-    use m_mesh, only: msh
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof0_ptr
     integer, intent(in), dimension(2) :: dof0
     type(msh_ptr_type) :: mesh_ptr
@@ -94,17 +94,17 @@ subroutine f90wrap_m_adjoint__write_control(dof0, mesh)
 end subroutine f90wrap_m_adjoint__write_control
 
 subroutine f90wrap_m_adjoint__write_control_back(dof0, mesh)
-    use m_model, only: unk
     use m_adjoint, only: write_control_back
     use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof0_ptr
     integer, intent(in), dimension(2) :: dof0
     type(msh_ptr_type) :: mesh_ptr
@@ -116,16 +116,16 @@ end subroutine f90wrap_m_adjoint__write_control_back
 
 subroutine f90wrap_m_adjoint__read_control(dof0, mesh)
     use m_adjoint, only: read_control
-    use m_model, only: unk
     use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof0_ptr
     integer, intent(in), dimension(2) :: dof0
     type(msh_ptr_type) :: mesh_ptr
@@ -136,17 +136,17 @@ subroutine f90wrap_m_adjoint__read_control(dof0, mesh)
 end subroutine f90wrap_m_adjoint__read_control
 
 subroutine f90wrap_m_adjoint__output_control(dof0, mesh)
-    use m_model, only: unk
-    use m_mesh, only: msh
     use m_adjoint, only: output_control
+    use m_mesh, only: msh
+    use m_model, only: unk
     implicit none
     
-    type msh_ptr_type
-        type(msh), pointer :: p => NULL()
-    end type msh_ptr_type
     type unk_ptr_type
         type(unk), pointer :: p => NULL()
     end type unk_ptr_type
+    type msh_ptr_type
+        type(msh), pointer :: p => NULL()
+    end type msh_ptr_type
     type(unk_ptr_type) :: dof0_ptr
     integer, intent(in), dimension(2) :: dof0
     type(msh_ptr_type) :: mesh_ptr
@@ -157,8 +157,8 @@ subroutine f90wrap_m_adjoint__output_control(dof0, mesh)
 end subroutine f90wrap_m_adjoint__output_control
 
 subroutine f90wrap_m_adjoint__output_control_back(mesh)
-    use m_mesh, only: msh
     use m_adjoint, only: output_control_back
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type

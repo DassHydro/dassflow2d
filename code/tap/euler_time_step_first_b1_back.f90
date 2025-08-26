@@ -20,7 +20,8 @@
 !                *(bc.zspresc).z:in bc.rain:in bc.sum_mass_flux:in
 !                bathy_cell:in manning_beta:in sporosity.phi:in
 !                dof.h:in dof.u:in dof.v:in dof.infil:in
-SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit)
+SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit&
+& , it)
   USE M_COMMON ! Replaced by Perl Script
   USE M_MESH ! Replaced by Perl Script
   USE M_MPI ! Replaced by Perl Script
@@ -33,6 +34,7 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit)
   TYPE(UNK), INTENT(INOUT) :: dof
   TYPE(UNK), INTENT(INOUT) :: dof_back ! Replaced by Perl Script
   INTEGER, INTENT(IN) :: poro_unit
+  INTEGER, INTENT(IN) :: it
   INTEGER, PARAMETER :: write_frequency=1000
 ! Left and Right cells indexes to edge
   INTEGER(ip) :: il, ir
@@ -79,6 +81,7 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit)
 ! Left/Right term source
   REAL(rp) :: s2l, s2r
   REAL(rp) :: s2l_back, s2r_back
+  INTRINSIC MOD
   INTRINSIC MAX
   INTRINSIC ABS
   INTRINSIC SQRT

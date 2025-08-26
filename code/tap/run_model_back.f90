@@ -851,7 +851,7 @@ CONTAINS
           CALL PUSHREAL8ARRAY(dof%u, size(dof%u,1))
           CALL PUSHREAL8ARRAY(dof%v, size(dof%v,1))
           CALL PUSHREAL8ARRAY(dof%infil, size(dof%infil,1))
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh, poro_unit) ! Replaced by Perl Script
+          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh, poro_unit, nt) ! Replaced by Perl Script
           CALL PUSHCONTROL2B(0)
         CASE DEFAULT
           CALL PUSHCONTROL2B(1)
@@ -953,7 +953,7 @@ CONTAINS
 &                                       size(bathy_cell,1))
         CALL POPREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
         CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, &
-&                                    poro_unit)
+&                                    poro_unit, nt)
       END IF
       CALL POPREAL8ARRAY(bc%sum_mass_flux, size(bc%sum_mass_flux,1))
       bc_back%sum_mass_flux = 0.0_8
@@ -984,7 +984,7 @@ CONTAINS
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh, poro_unit) ! Replaced by Perl Script
+          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh, poro_unit, nt) ! Replaced by Perl Script
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT

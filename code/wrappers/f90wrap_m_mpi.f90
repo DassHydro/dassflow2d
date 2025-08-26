@@ -15,8 +15,8 @@ subroutine f90wrap_m_mpi__end_mpi
 end subroutine f90wrap_m_mpi__end_mpi
 
 subroutine f90wrap_m_mpi__fill_swap_lists(mesh)
-    use m_mpi, only: fill_swap_lists
     use m_mesh, only: msh
+    use m_mpi, only: fill_swap_lists
     implicit none
     
     type msh_ptr_type
@@ -43,8 +43,8 @@ subroutine f90wrap_m_mpi__fill_swap_index(mesh)
 end subroutine f90wrap_m_mpi__fill_swap_index
 
 subroutine f90wrap_m_mpi__fill_inv_swap_index(mesh)
-    use m_mpi, only: fill_inv_swap_index
     use m_mesh, only: msh
+    use m_mpi, only: fill_inv_swap_index
     implicit none
     
     type msh_ptr_type
@@ -74,8 +74,8 @@ subroutine f90wrap_m_mpi__com_var_i(var, mesh, n0)
 end subroutine f90wrap_m_mpi__com_var_i
 
 subroutine f90wrap_m_mpi__com_var_r(var, mesh, n0)
-    use m_mesh, only: msh
     use m_mpi, only: com_var_r
+    use m_mesh, only: msh
     implicit none
     
     type msh_ptr_type

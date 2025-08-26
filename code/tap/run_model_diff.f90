@@ -473,7 +473,7 @@ CONTAINS
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
           CALL EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, &
-&                                      poro_unit)
+&                                      poro_unit, nt)
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT
@@ -510,7 +510,7 @@ CONTAINS
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
-          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh, poro_unit) ! Replaced by Perl Script
+          CALL EULER_TIME_STEP_FIRST_B1(dof, mesh, poro_unit, nt) ! Replaced by Perl Script
         CASE DEFAULT
           CALL STOPPING_PROGRAM_SUB('Unknow spatial scheme')
         END SELECT

@@ -10,10 +10,10 @@ import _wrapping
 import f90wrap.runtime
 import logging
 import numpy
-from wrapping.m_model import xsshp
-from wrapping.m_model import infiltration_data
 from wrapping.m_model import ptf_data
+from wrapping.m_model import infiltration_data
 from wrapping.m_model import bcs
+from wrapping.m_model import xsshp
 from wrapping.m_model import porosity_data
 
 _arrays = {}
