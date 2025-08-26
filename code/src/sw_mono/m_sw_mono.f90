@@ -228,7 +228,6 @@ MODULE m_model
    ! Parabole parameters
    real(rp) :: beta
    real(rp), dimension(:), allocatable :: a
-   real(rp), dimension(:), allocatable :: b
    real(rp), dimension(:), allocatable :: c
 
    END TYPE porosity_data
@@ -1036,14 +1035,14 @@ CONTAINS
       if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
       if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
       if ( allocated( SPorosity%a ) )    deallocate( SPorosity%a )
-      if ( allocated( SPorosity%b ) )    deallocate( SPorosity%b )
       if ( allocated( SPorosity%c ) )    deallocate( SPorosity%c )
       if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
       if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
       if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
       if ( allocated( IPorosity%a ) )    deallocate( IPorosity%a )
-      if ( allocated( IPorosity%b ) )    deallocate( IPorosity%b )
       if ( allocated( IPorosity%c ) )    deallocate( IPorosity%c )
+
+
 #endif
 !       if ( allocated( phys_desc%surf_land ) ) 		 deallocate( phys_desc%surf_land )
 !       if ( allocated( phys_desc%surf ) ) 		     deallocate( phys_desc%surf )

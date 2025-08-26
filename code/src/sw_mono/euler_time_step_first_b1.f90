@@ -106,7 +106,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    SPorosity%beta = 2
    do ie = 1,mesh%nc
       SPorosity%a(i) = 1
-      SPorosity%b(i) = 1
       SPorosity%c(i) = 1
    enddo
    !=====================================================
