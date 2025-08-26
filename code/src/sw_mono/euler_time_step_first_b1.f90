@@ -100,6 +100,17 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    !===================================================================================================================!
    tflux(:,:) = 0._rp
    
+
+   !=====================================================
+   ! A DEPLACER
+   SPorosity%beta = 2
+   do ie = 1,mesh%nc
+      SPorosity%a(i) = 1
+      SPorosity%b(i) = 1
+      SPorosity%c(i) = 1
+   enddo
+   !=====================================================
+
 #ifdef USE_PORO
    call update_all_porosities(dof, mesh)
 
