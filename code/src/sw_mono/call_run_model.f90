@@ -755,7 +755,9 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
     allocate ( my_porosity%Phi  ( my_porosity%nland ) )
     allocate ( my_porosity%land ( mesh_total_cells ) )
-
+    allocate ( my_porosity%a    ( my_porosity%nland ) )
+    allocate ( my_porosity%b    ( my_porosity%nland ) )
+    allocate ( my_porosity%c    ( my_porosity%nland ) )
     allocate ( my_porosity%PhiW ( my_porosity%nland ) )
     allocate ( my_porosity%PhiG ( my_porosity%nland ) )
   
@@ -773,7 +775,9 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
 
      if (allocated(my_porosity%land)) deallocate(my_porosity%land)
      if (allocated(my_porosity%Phi))  deallocate(my_porosity%Phi)
-
+     if (allocated(my_porosity%a))    deallocate(my_porosity%a)
+     if (allocated(my_porosity%b))    deallocate(my_porosity%b)
+     if (allocated(my_porosity%c))    deallocate(my_porosity%c)
      if (allocated(my_porosity%PhiW)) deallocate(my_porosity%PhiW)
      if (allocated(my_porosity%PhiG)) deallocate(my_porosity%PhiG)
 
