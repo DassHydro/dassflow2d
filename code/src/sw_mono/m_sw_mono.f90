@@ -225,6 +225,10 @@ MODULE m_model
    real(rp), dimension(:), allocatable :: PhiG
    real(rp), dimension(:), allocatable :: PhiW
 
+   ! Parabole parameters
+   real(rp), dimension(:), allocatable :: a
+   real(rp) :: b
+
    END TYPE porosity_data
 
    type(porosity_data), target :: SPorosity
@@ -1029,9 +1033,11 @@ CONTAINS
 #ifdef USE_PORO
       if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
       if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
+      if ( allocated( SPorosity%a ) )    deallocate( SPorosity%a)
       if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
       if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
       if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
+      if ( allocated( IPorosity%a ) )    deallocate( IPorosity%a )
 #endif
 !       if ( allocated( phys_desc%surf_land ) ) 		 deallocate( phys_desc%surf_land )
 !       if ( allocated( phys_desc%surf ) ) 		     deallocate( phys_desc%surf )
