@@ -1035,12 +1035,10 @@ CONTAINS
       if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
       if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
       if ( allocated( SPorosity%a ) )    deallocate( SPorosity%a )
-      if ( allocated( SPorosity%c ) )    deallocate( SPorosity%c )
       if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
       if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
       if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
       if ( allocated( IPorosity%a ) )    deallocate( IPorosity%a )
-      if ( allocated( IPorosity%c ) )    deallocate( IPorosity%c )
 
 
 #endif

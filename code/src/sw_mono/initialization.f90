@@ -1899,7 +1899,6 @@ SPorosity%beta = my_porosity%beta
 allocate( SPorosity%land( size( my_porosity%land ) ) )
 allocate( SPorosity%Phi ( size( my_porosity%Phi ) ) )
 allocate( SPorosity%a ( size( my_porosity%a ) ) )
-allocate( SPorosity%c ( size( my_porosity%c ) ) )
 
 ! loop on all cells to define patch correspondance
 do i = 1,size(my_porosity%land)
@@ -1910,7 +1909,6 @@ end do
 do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
    SPorosity%a( i ) = my_porosity%a( i )
-   SPorosity%c( i ) = my_porosity%c( i )
 end do
 
 !< Integral Porosity
