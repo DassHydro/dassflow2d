@@ -902,7 +902,8 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
    integer(ip)  ::  rec_index, mesh_total_size
 
    real(rp)  ::  h , u , v , c , hx , hy , dtx , dty , dmin
-
+   ! Déclaration des nouvelles variables locales 
+   real(rp) ::  yN, H_k
    !===================================================================================================================!
    !  Begin Subroutine
    !===================================================================================================================!
@@ -922,7 +923,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
          open(10,file=filename,status='replace',form='formatted')
 
          write(10,*) '# Gnuplot DataFile Version'
-         write(10,*) '# i x y bathy h zs Manning u v porosity a beta'
+         write(10,*) '# i x y bathy h zs Manning u v porosity yN'
 
          close(10)
 
@@ -942,8 +943,17 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
          open(10,file=filename,status='old',position='append',form='formatted')
 
          do i=1,mesh%nc
+            
 
-            write(10,'(I8,12(" ",ES15.8))') swap_index(i)					, &
+            ! --- Début de la boucle "do i=1,mesh%nc" ---
+
+            ! Calcul des valeurs nécessaires juste avant l'écriture
+            H_k = dof%h(i) + bathy_cell(i)
+
+            ! Calcul de yN (inspiré de calculate_wetted_area)
+            yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%beta(i),bathy_cell(i))
+
+            write(10,'(I8,11(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
                                  bathy_cell(i)          , &
@@ -953,8 +963,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  dof%u(i)               , &
                                  dof%v(i)               , &
                                  SPorosity%phi(i)       , &
-                                 SPorosity%a(i)         , &
-                                 SPorosity%beta(i)
+                                 yN
          end do
 
 
@@ -965,7 +974,23 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
       call mpi_wait_all
 
    end do
+   CONTAINS ! Début de la section pour les fonctions locales
 
+    !*************************************************************************
+    ! FONCTION AIDE : Calcul de yN (locale à v_gnuplot)
+    !*************************************************************************
+    FUNCTION Calculate_yn(H_k, a, beta, c) RESULT(yN_val)
+        IMPLICIT NONE
+        REAL(rp), INTENT(IN) :: H_k, a, beta, c
+        REAL(rp) :: yN_val
+        
+        IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
+            yN_val = 0.0_rp
+            RETURN
+        END IF
+
+        yN_val = ((H_k - c) / a)**(1.0_rp / beta)
+    END FUNCTION Calculate_yn
 
 END SUBROUTINE v_gnuplot
 
@@ -2511,6 +2536,67 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 
 END SUBROUTINE v_vtk_bin_init
 
+
+SUBROUTINE write_static_cell_data( mesh )
+    USE m_common
+    USE m_model
+    USE m_mpi
+
+    implicit none
+    TYPE(msh), intent(in) :: mesh
+
+    ! Variables locales
+    INTEGER  :: i
+    REAL(rp) :: W
+
+    ! N'écrit le fichier que depuis le processus principal pour éviter les conflits d'écriture
+    if (proc == 0) then
+        ! Ouvre un nouveau fichier dédié aux données statiques
+        open(20, file='res/static_cell_data.dat', status='replace', form='formatted')
+
+        ! Écrit l'en-tête du fichier
+        write(20,*) '# i a beta W'
+
+        ! Boucle sur toutes les cellules pour écrire les données
+        do i = 1, mesh%nc
+            W = calculate_width(i, mesh)
+            write(20,'(I8,3(" ",ES15.8))') i, SPorosity%a(i), SPorosity%beta(i), W
+        end do
+
+        ! Ferme le fichier
+        close(20)
+    endif
+   CONTAINS ! Début de la section pour les fonctions locales
+
+    !*************************************************************************
+    ! FONCTION AIDE : Calcul de la largeur (locale à cette subroutine)
+    !*************************************************************************
+    FUNCTION calculate_width(icell, mesh) RESULT(W_out)
+        IMPLICIT NONE
+        INTEGER, INTENT(IN) :: icell
+        TYPE(msh), INTENT(IN) :: mesh
+        REAL(rp) :: W_out
+        INTEGER :: k_loop, ie_local, count_found
+        REAL(rp) :: length1, length2
+
+        count_found = 0
+        length1 = 0.0_rp
+        length2 = 0.0_rp
+        DO k_loop = 1, mesh%cell(icell)%nbed
+            ie_local = mesh%cell(icell)%edge(k_loop)
+            IF (.NOT. mesh%edge(ie_local)%boundary) THEN
+                count_found = count_found + 1
+                IF (count_found == 1) THEN
+                    length1 = mesh%edge(ie_local)%length
+                ELSEIF (count_found == 2) THEN
+                    length2 = mesh%edge(ie_local)%length
+                    EXIT
+                END IF
+            END IF
+        END DO
+        W_out = (length1 + length2) / 2.0_rp
+    END FUNCTION calculate_width 
+END SUBROUTINE write_static_cell_data
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! AJOUT LILIAN
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
