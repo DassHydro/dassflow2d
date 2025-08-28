@@ -101,14 +101,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    tflux(:,:) = 0._rp
    
 
-   !=====================================================
-   ! FIX PARABOLA PARAMETERS
-   do ie = 1,mesh%nc
-      SPorosity%a(ie) = 1
-      SPorosity%beta(ie) = 2
-   enddo
-   !=====================================================
-
 #ifdef USE_PORO
    call update_all_porosities(dof, mesh)
 
@@ -441,7 +433,7 @@ CONTAINS
 
 
     !==================================================================================================================!
-    ! SUBROUTINE 1 : updates SPorosity (calculate the porosity of each cell)
+    ! SUBROUTINE 1 : updates SPorosity (calculate the porosity of all cells)
     !==================================================================================================================!
     SUBROUTINE update_all_porosities(dof, mesh)
         IMPLICIT NONE

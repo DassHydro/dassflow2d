@@ -122,6 +122,12 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
 #endif
+   !=====================================================
+   SPorosity%beta = 2
+   do ie = 1,mesh%nc
+      SPorosity%a(ie) = 1
+   enddo
+   !=====================================================
 
 !
 !      if (allocated(my_bc%rain)) then
