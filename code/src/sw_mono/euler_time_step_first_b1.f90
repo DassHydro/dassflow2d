@@ -103,9 +103,9 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
 
    !=====================================================
    ! A DEPLACER
-   SPorosity%beta = 8
-   do ie = 1,mesh%nc
-      SPorosity%a(ie) = 0.1
+   do icell = 1,mesh%nc
+      SPorosity%a(icell) = 1
+      SPorosity%beta(icell) = 2
    enddo
    !=====================================================
 
@@ -508,7 +508,7 @@ CONTAINS
         REAL(rp) :: a, c, beta, yN
 
         a     = SPorosity%a(icell)
-        beta  = SPorosity%beta
+        beta  = SPorosity%beta(icell)
         c     = bathy_cell(icell)
         
         IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN

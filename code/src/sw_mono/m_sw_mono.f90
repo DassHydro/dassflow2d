@@ -226,8 +226,7 @@ MODULE m_model
    real(rp), dimension(:), allocatable :: PhiW
 
    ! Parabole parameters
-   real(rp) :: beta
-
+   real(rp), dimension(:), allocatanle :: beta
    real(rp), dimension(:), allocatable :: a
 
 
@@ -1036,10 +1035,12 @@ CONTAINS
       if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
       if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
       if ( allocated( SPorosity%a ) )    deallocate( SPorosity%a )
+      if ( allocated( SPorosity%beta) )  deallocate( SPorosity%beta ) 
       if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
       if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
       if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
       if ( allocated( IPorosity%a ) )    deallocate( IPorosity%a )
+      if ( allocated( IPorosity%beta ) ) deallocate( IPorosity%beta )
 
 
 #endif

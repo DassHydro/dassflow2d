@@ -1895,10 +1895,10 @@ type( porosity_data ), intent(in   )  ::  my_porosity
 !< Single Porosity
 
 SPorosity%nland = my_porosity%nland
-SPorosity%beta = my_porosity%beta
 allocate( SPorosity%land( size( my_porosity%land ) ) )
 allocate( SPorosity%Phi ( size( my_porosity%Phi ) ) )
 allocate( SPorosity%a ( size( my_porosity%a ) ) )
+allocate( SPorosity%beta ( size( my_porosity%beta ) ) )
 
 ! loop on all cells to define patch correspondance
 do i = 1,size(my_porosity%land)
@@ -1909,6 +1909,7 @@ end do
 do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
    SPorosity%a( i ) = my_porosity%a( i )
+   SPorosity%beta( i ) = my_porosity%beta( i )
 end do
 
 !< Integral Porosity
