@@ -959,17 +959,29 @@ package:
 		# add necessary files for package generation
 		cp $(lilian_dir)/setup.py  $(true_wrapper_dir)
 
-		# change in wrapping dir the  imports of modules  /////
-		for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py  m_adjoint.py m_tap_vars.py; do \
-				echo $$file;\
-				sed -i -e "s/from wrapping/from dassflow2d.wrapping/g" 	$(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
-	  done
+# change in wrapping dir the  imports of modules  /////
+	for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py; do \
+		echo $$file;\
+		sed -i -e "s/from wrapping/from dassflow2d.wrapping/g"     wrappers_true/dassflow2d/wrapping/$$file ; \
+        done
+ifeq ($(ADJOINT),1)
+	for file in m_adjoint.py m_tap_vars.py; do \
+		echo $$file;\
+		sed -i -e "s/from wrapping/from dassflow2d.wrapping/g"     wrappers_true/dassflow2d/wrapping/$$file ; \
+        done
+endif
 
-# replace  _wrappring by  dassflow2d.wrapping._wrapping   (absolute call)
-		for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py  m_adjoint.py m_tap_vars.py; do \
-				echo $$file;\
-				sed -i -e "s/import _wrapping/from dassflow2d.wrapping import _wrapping/g" 	$(true_wrapper_dir)/$(module_name)/$(wrapping_name)/$$file ; \
-	  done
+        # replace  _wrappring by  dassflow2d.wrapping._wrapping
+	for file in m_mesh.py m_mpi.py m_model.py m_linear_algebra.py  m_common.py call_model.py; do \
+		echo $$file;\
+		sed -i -e "s/import _wrapping/from dassflow2d.wrapping import _wrapping/g"     wrappers_true/dassflow2d/wrapping/$$file ; \
+        done
+ifeq ($(ADJOINT),1)
+	for file in m_adjoint.py m_tap_vars.py; do \
+		echo $$file;\
+		sed -i -e "s/import _wrapping/from dassflow2d.wrapping import _wrapping/g"     wrappers_true/dassflow2d/wrapping/$$file ; \
+        done
+endif
 
 			# COMPILE package
 		pip install --no-compile $(true_wrapper_dir)/.
