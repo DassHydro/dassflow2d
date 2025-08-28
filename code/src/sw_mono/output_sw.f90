@@ -922,7 +922,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
          open(10,file=filename,status='replace',form='formatted')
 
          write(10,*) '# Gnuplot DataFile Version'
-         write(10,*) '# i x y bathy h zs Manning u v'
+         write(10,*) '# i x y bathy h zs Manning u v porosity a beta'
 
          close(10)
 
@@ -943,7 +943,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
          do i=1,mesh%nc
 
-            write(10,'(I8,9(" ",ES15.8))') swap_index(i)					, &
+            write(10,'(I8,12(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
                                  bathy_cell(i)          , &
@@ -951,7 +951,10 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  bathy_cell(i)+dof%h(i) , &
                                  manning( land(i) )     , &
                                  dof%u(i)               , &
-                                 dof%v(i)
+                                 dof%v(i)               , &
+                                 SPorosity%phi(i)       , &
+                                 SPorosity%a(i)         , &
+                                 SPorosity%beta(i)
          end do
 
 
