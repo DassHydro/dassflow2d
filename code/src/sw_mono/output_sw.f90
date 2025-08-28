@@ -162,6 +162,8 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
    if      ( tc < zerom ) then
 
       write(filename,'(A,"_initial")') namefile
+      ! On appelle ici, une seule fois, la routine d'écriture des données statiques
+      call write_static_cell_data( mesh )
 
    else if ( abs( tc - ts ) < zerom ) then
 
