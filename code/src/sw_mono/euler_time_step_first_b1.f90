@@ -102,7 +102,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    
 
    !=====================================================
-   ! FIX PARABOLE PARAMETERS
+   ! FIX PARABOLA PARAMETERS
    do ie = 1,mesh%nc
       SPorosity%a(ie) = 1
       SPorosity%beta(ie) = 2
@@ -496,9 +496,28 @@ CONTAINS
         END DO
         W = (length1 + length2) / 2.0_rp
     END FUNCTION calculate_width
+    
+    !===============================================================================================================!
+    ! FUNCTION 3 : calculates yN of a cell (half the width occupied by water)
+    !===============================================================================================================!
+    FUNCTION calculate_yn(H_k, a, beta, c) RESULT(yN)
+        IMPLICIT NONE
+        REAL(rp), INTENT(IN) :: H_k
+        REAL(rp), INTENT(IN) :: a         !parabola parameter
+        REAL(rp), INTENT(IN) :: beta      !parabola parameter
+        REAL(rp), INTENT(IN) :: c         !parabola parameter
+        REAL(rp) :: yN
+        
+        IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
+            yN = 0.0_rp
+            RETURN
+        END IF
+ 
+        yN = ((H_k - c) / a)**(1.0_rp / beta)
+    END FUNCTION calculate_yn
 
     !===============================================================================================================!
-    ! FUNCTION 3 : calculates the wetted area of a cell assuming that the bathymetry is a parabola 
+    ! FUNCTION 4 : calculates the wetted area of a cell assuming that the bathymetry is a parabola 
     ! ay^beta + bathy_cell, a and beta are parameters fixed by the user
     !===============================================================================================================!
     FUNCTION calculate_wetted_area(icell, H_k) RESULT(area)
@@ -506,7 +525,7 @@ CONTAINS
         INTEGER, INTENT(IN) :: icell
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp) :: area
-        REAL(rp) :: a, c, beta, yN
+        REAL(rp) :: a, c, beta, yN       !parabola parameters + half the width occupied by water
 
         a     = SPorosity%a(icell)
         beta  = SPorosity%beta(icell)
@@ -517,7 +536,7 @@ CONTAINS
             RETURN
         END IF
 
-        yN = ((H_k - c) / a)**(1.0_rp / beta)
+        yN = calculate_yn(H_k, a, beta, c)
         
         area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
         area = 2.0_rp * area

@@ -225,7 +225,7 @@ MODULE m_model
    real(rp), dimension(:), allocatable :: PhiG
    real(rp), dimension(:), allocatable :: PhiW
 
-   ! Parabole parameters
+   ! Parabola parameters
    real(rp), dimension(:), allocatable :: beta
    real(rp), dimension(:), allocatable :: a
 
