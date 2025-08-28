@@ -102,7 +102,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    
 
    !=====================================================
-   ! A DEPLACER
+   ! FIX PARABOLE PARAMETERS
    do ie = 1,mesh%nc
       SPorosity%a(ie) = 1
       SPorosity%beta(ie) = 2
@@ -440,11 +440,10 @@ END IF
 CONTAINS
 
 
-    !*************************************************************************
-    ! ROUTINE AIDE 1 : Orchestrateur de la porosité
-    !*************************************************************************
+    !==================================================================================================================!
+    ! SUBROUTINE 1 : updates SPorosity (calculate the porosity of each cell)
+    !==================================================================================================================!
     SUBROUTINE update_all_porosities(dof, mesh)
-        ! Note : pas besoin de USE m_model, car les variables sont héritées
         IMPLICIT NONE
         TYPE(unk), INTENT(IN)  :: dof
         TYPE(msh), INTENT(IN)  :: mesh
@@ -468,9 +467,10 @@ CONTAINS
         END DO
     END SUBROUTINE update_all_porosities
 
-    !*************************************************************************
-    ! ROUTINE AIDE 2 : Calcul de la largeur
-    !*************************************************************************
+    !===============================================================================================================!
+    ! FUNCTION 2 : calculates the width of a cell by averaging the length of the upstream interface and the
+    ! length of the downstream interface
+    !===============================================================================================================!
     FUNCTION calculate_width(icell, mesh) RESULT(W)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: icell
@@ -497,9 +497,10 @@ CONTAINS
         W = (length1 + length2) / 2.0_rp
     END FUNCTION calculate_width
 
-    !*************************************************************************
-    ! ROUTINE AIDE 3 : Calcul de l'aire mouillée
-    !*************************************************************************
+    !===============================================================================================================!
+    ! FUNCTION 3 : calculates the wetted area of a cell assuming that the bathymetry is a parabola 
+    ! ay^beta + bathy_cell, a and beta are parameters fixed by the user
+    !===============================================================================================================!
     FUNCTION calculate_wetted_area(icell, H_k) RESULT(area)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: icell
