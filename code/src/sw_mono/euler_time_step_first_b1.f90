@@ -103,9 +103,9 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
 
    !=====================================================
    ! A DEPLACER
-   do icell = 1,mesh%nc
-      SPorosity%a(icell) = 1
-      SPorosity%beta(icell) = 2
+   do ie = 1,mesh%nc
+      SPorosity%a(ie) = 1
+      SPorosity%beta(ie) = 2
    enddo
    !=====================================================
 
