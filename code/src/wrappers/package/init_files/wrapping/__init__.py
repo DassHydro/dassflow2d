@@ -8,7 +8,21 @@ enable the fortran subroutines calls
 """
 
 
-from dassflow2d.wrapping import _wrapping, m_mesh, m_common, m_linear_algebra, m_model, m_mpi,call_model, m_adjoint
+# NOUVELLE VERSION CORRIGÉE
+
+# Importer les modules de base qui sont toujours présents
+from dassflow2d.wrapping import _wrapping, m_mesh, m_common, m_linear_algebra, m_model, m_mpi, call_model
+
+# Essayer d'importer les modules adjoints, mais ne pas planter s'ils sont absents
+try:
+    from dassflow2d.wrapping import m_adjoint
+except ImportError:
+    pass # On ignore l'erreur si m_adjoint n'a pas été compilé
+
+try:
+    from dassflow2d.wrapping import m_tap_vars
+except ImportError:
+    pass # On ignore aussi pour m_tap_vars
 
 
 def read_input(filename):

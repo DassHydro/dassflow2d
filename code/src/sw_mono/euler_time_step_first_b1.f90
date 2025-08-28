@@ -103,9 +103,9 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
 
    !=====================================================
    ! A DEPLACER
-   SPorosity%beta = 2
+   SPorosity%beta = 8
    do ie = 1,mesh%nc
-      SPorosity%a(i) = 1
+      SPorosity%a(ie) = 0.1
    enddo
    !=====================================================
 
@@ -439,133 +439,89 @@ END IF
 
 CONTAINS
 
-FUNCTION calculate_wetted_area(icell, H_k) RESULT(area)
-    ! Calcule l'aire mouillée pour la cellule 'icell' et le niveau d'eau 'H_k'
-    ! en utilisant la formule de la demi-aire multipliée par deux.
-    USE m_model, ONLY: SPorosity, bathy_cell
-    IMPLICIT NONE
 
-    ! --- Arguments ---
-    INTEGER, INTENT(IN) :: icell
-    REAL(rp), INTENT(IN) :: H_k
-    
-    ! --- Variable de sortie ---
-    REAL(rp) :: area
-    
-    ! --- Variables locales ---
-    REAL(rp) :: a, c, beta, yN
-
-    ! --- 1. Récupérer les paramètres de forme ---
-    a     = SPorosity%a(icell)
-    beta  = SPorosity%beta
-    c     = bathy_cell(icell)
-    
-    ! --- 2. Condition de sécurité ---
-    IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
-        area = 0.0_rp
-        RETURN
-    END IF
-
-    ! --- 3. Calculer la position de la rive droite (yN) ---
-    yN = ((H_k - c) / a)**(1.0_rp / beta)
-    
-    ! --- 4. Calcul de l'aire avec votre formule préférée ---
-    
-    ! a) Calcul de l'aire de la moitié droite (intégrale de 0 à yN)
-    area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
-
-    ! b) On multiplie par 2 pour avoir l'aire totale
-    area = 2.0_rp * area
-
-    ! S'assurer que l'aire est positive
-    area = MAX(0.0_rp, area)
-    
-END FUNCTION calculate_wetted_area
-
-FUNCTION calculate_width(icell, mesh) RESULT(W)
-    ! Calcule la largeur W d'une cellule en faisant la moyenne
-    ! de la longueur de ses deux arêtes internes (non-frontières).
-    USE m_mesh, ONLY: msh
-    IMPLICIT NONE
-
-    ! --- Arguments ---
-    INTEGER, INTENT(IN) :: icell
-    TYPE(msh), INTENT(IN) :: mesh
-    
-    ! --- Résultat ---
-    REAL(rp) :: W
-
-    ! --- Variables locales ---
-    INTEGER :: k, ie, count_found
-    REAL(rp) :: length1, length2
-
-    ! Initialisation
-    count_found = 0
-    length1 = 0.0_rp
-    length2 = 0.0_rp
-
-    ! On parcourt les 4 arêtes de la cellule 'icell'
-    DO k = 1, mesh%cell(icell)%nbed
-        ie = mesh%cell(icell)%edge(k) ! Index de l'arête
-
-        ! Si l'arête N'EST PAS une frontière, c'est une arête interne (amont/aval).
-        ! Sa longueur correspond à la largeur de la cellule.
-        IF (.NOT. mesh%edge(ie)%boundary) THEN
-            count_found = count_found + 1
-            IF (count_found == 1) THEN
-                length1 = mesh%edge(ie)%length
-            ELSEIF (count_found == 2) THEN
-                length2 = mesh%edge(ie)%length
-                EXIT ! On a trouvé les deux, on peut sortir de la boucle.
+    !*************************************************************************
+    ! ROUTINE AIDE 1 : Orchestrateur de la porosité
+    !*************************************************************************
+    SUBROUTINE update_all_porosities(dof, mesh)
+        ! Note : pas besoin de USE m_model, car les variables sont héritées
+        IMPLICIT NONE
+        TYPE(unk), INTENT(IN)  :: dof
+        TYPE(msh), INTENT(IN)  :: mesh
+        
+        INTEGER  :: icell
+        REAL(rp) :: H_k, wetted_area, phi_K_new, macro_area
+        REAL(rp) :: W
+        
+        DO icell = 1, mesh%nc
+            W = calculate_width(icell, mesh)
+            H_k = dof%h(icell) + bathy_cell(icell)
+            wetted_area = calculate_wetted_area(icell, H_k)
+            macro_area = W * dof%h(icell)
+            
+            IF (macro_area > 1.0E-9_rp) THEN
+                phi_K_new = wetted_area / macro_area
+            ELSE
+                phi_K_new = 1.0_rp 
             END IF
+            SPorosity%phi(icell) = phi_K_new
+        END DO
+    END SUBROUTINE update_all_porosities
+
+    !*************************************************************************
+    ! ROUTINE AIDE 2 : Calcul de la largeur
+    !*************************************************************************
+    FUNCTION calculate_width(icell, mesh) RESULT(W)
+        IMPLICIT NONE
+        INTEGER, INTENT(IN) :: icell
+        TYPE(msh), INTENT(IN) :: mesh
+        REAL(rp) :: W
+        INTEGER :: k_loop, ie_local, count_found
+        REAL(rp) :: length1, length2
+
+        count_found = 0
+        length1 = 0.0_rp
+        length2 = 0.0_rp
+        DO k_loop = 1, mesh%cell(icell)%nbed
+            ie_local = mesh%cell(icell)%edge(k_loop)
+            IF (.NOT. mesh%edge(ie_local)%boundary) THEN
+                count_found = count_found + 1
+                IF (count_found == 1) THEN
+                    length1 = mesh%edge(ie_local)%length
+                ELSEIF (count_found == 2) THEN
+                    length2 = mesh%edge(ie_local)%length
+                    EXIT
+                END IF
+            END IF
+        END DO
+        W = (length1 + length2) / 2.0_rp
+    END FUNCTION calculate_width
+
+    !*************************************************************************
+    ! ROUTINE AIDE 3 : Calcul de l'aire mouillée
+    !*************************************************************************
+    FUNCTION calculate_wetted_area(icell, H_k) RESULT(area)
+        IMPLICIT NONE
+        INTEGER, INTENT(IN) :: icell
+        REAL(rp), INTENT(IN) :: H_k
+        REAL(rp) :: area
+        REAL(rp) :: a, c, beta, yN
+
+        a     = SPorosity%a(icell)
+        beta  = SPorosity%beta
+        c     = bathy_cell(icell)
+        
+        IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
+            area = 0.0_rp
+            RETURN
         END IF
-    END DO
-    
-    ! La largeur W est la moyenne des longueurs des deux arêtes internes trouvées.
-    W = (length1 + length2) / 2.0_rp
-    
-END FUNCTION calculate_width
 
-SUBROUTINE update_all_porosities(dof, mesh)
-    USE m_model
-    IMPLICIT NONE
-    TYPE(unk), INTENT(IN)  :: dof
-    TYPE(msh), INTENT(IN)  :: mesh
-    
-    ! --- Variables Locales ---
-    INTEGER  :: icell
-    REAL(rp) :: H_k, wetted_area, phi_K_new, macro_area
-    REAL(rp) :: W ! Variable pour la largeur de la cellule
-
-    ! Déclaration des fonctions externes que nous allons appeler
-    REAL(rp), EXTERNAL :: calculate_width, calculate_wetted_area
-
-    ! --- Boucle principale sur toutes les cellules ---
-    DO icell = 1, mesh%nc
-
-        ! 1. Obtenir la largeur physique de la cellule
-        W = calculate_width(icell, mesh)
+        yN = ((H_k - c) / a)**(1.0_rp / beta)
         
-        ! 2. Récupérer le niveau d'eau actuel
-        H_k = dof%h(icell) + bathy_cell(icell)
-
-        ! 3. Calculer l'aire mouillée réelle (la fonction est auto-suffisante)
-        wetted_area = calculate_wetted_area(icell, H_k)
-        
-        ! 4. Calculer l'aire macroscopique en utilisant le W qu'on vient de trouver
-        macro_area = W * dof%h(icell)
-        
-        ! 5. Calculer et stocker la porosité
-        IF (macro_area > 1.0E-9_rp) THEN
-            phi_K_new = wetted_area / macro_area
-        ELSE
-            phi_K_new = 1.0_rp 
-        END IF
-
-        SPorosity%phi(icell) = phi_K_new
-        
-    END DO
-END SUBROUTINE update_all_porosities
+        area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
+        area = 2.0_rp * area
+        area = MAX(0.0_rp, area)
+    END FUNCTION calculate_wetted_area
 
 
 END SUBROUTINE euler_time_step_first_b1

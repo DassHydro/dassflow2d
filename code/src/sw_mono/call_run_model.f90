@@ -901,7 +901,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    if (allocated(my_bc%rain_land)) deallocate(my_bc%rain_land)
 
  END SUBROUTINE bc_finalise
-
+#ifdef USE_ADJ
   subroutine func(mdl,ctrl_in, cost_func, grad_func)
   !>++++++++++++++++++++++++++++++++++++++++++++++++
   !>FORTRAN DOCUMENTATION
@@ -940,7 +940,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
     grad_func(:) = control_back(:)
 
   end subroutine func
-
+#endif
 
 !=============================================!
 ! additionnal write functions

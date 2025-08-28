@@ -392,6 +392,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, dof0, dof0_back, dof, dof_back, cost, &
     ELSE
       CALL PUSHCONTROL1B(0)
     END IF
+    CALL PUSHREAL8ARRAY(sporosity%a, size(sporosity%a,1))
     CALL PUSHREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
     IF (ALLOCATED(bathy_cell)) THEN
       CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
@@ -464,6 +465,7 @@ SUBROUTINE RUN_MODEL_BACK(mesh, dof0, dof0_back, dof, dof_back, cost, &
     IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
 &                                   size(bathy_cell,1))
     CALL POPREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
+    CALL POPREAL8ARRAY(sporosity%a, size(sporosity%a,1))
     CALL POPCONTROL1B(branch)
     IF (branch .EQ. 1) CALL POPINTEGER4ARRAY(innovation%ind_t, &
 &                                      size(innovation,1))
@@ -837,6 +839,7 @@ CONTAINS
         SELECT CASE (spatial_scheme)
         CASE ('first_b1')
 ! Compiltation flags for porosity now added in euler_time_step_first_b1
+          CALL PUSHREAL8ARRAY(sporosity%a, size(sporosity%a,1))
           CALL PUSHREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
           IF (ALLOCATED(bathy_cell)) THEN
             CALL PUSHREAL8ARRAY(bathy_cell, size(bathy_cell,1))
@@ -952,6 +955,7 @@ CONTAINS
         IF (branch .EQ. 1) CALL POPREAL8ARRAY(bathy_cell, &
 &                                       size(bathy_cell,1))
         CALL POPREAL8ARRAY(sporosity%phi, size(sporosity%phi,1))
+        CALL POPREAL8ARRAY(sporosity%a, size(sporosity%a,1))
         CALL EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, &
 &                                    poro_unit, nt)
       END IF

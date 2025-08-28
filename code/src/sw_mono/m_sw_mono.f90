@@ -227,7 +227,9 @@ MODULE m_model
 
    ! Parabole parameters
    real(rp) :: beta
+
    real(rp), dimension(:), allocatable :: a
+
 
    END TYPE porosity_data
 

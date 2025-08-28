@@ -115,6 +115,10 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit&
   REAL(rp) :: temp_back3
   REAL(rp) :: temp_back4
   tflux(:, :) = 0._rp
+  sporosity%beta = 8
+  DO ie=1,mesh%nc
+    sporosity%a(ie) = 0.1
+  END DO
   CALL UPDATE_ALL_POROSITIES(dof, mesh)
   DO 100 ie=1,mesh%ne
     CALL PUSHINTEGER4(il)
@@ -964,194 +968,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit&
   CALL UPDATE_ALL_POROSITIES_BACK(dof, dof_back, mesh)
 
 CONTAINS
-!  Differentiation of calculate_wetted_area_parabolic in reverse (adjoint) mode (with options fixinterface):
-!   gradient     of useful results: area_k
-!   with respect to varying inputs: b_min h_k
-  SUBROUTINE CALCULATE_WETTED_AREA_PARABOLIC_BACK(h_k, h_k_back, y1, &
-&   y_min, yn, b_min, b_min_back, area_k_back)
-
-  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
-
-    IMPLICIT NONE
-! --- Arguments ---
-    REAL(rp), INTENT(IN) :: h_k, y1, y_min, yn, b_min
-    REAL(rp) :: h_k_back, b_min_back
-! --- R\U000000e9sultat ---
-    REAL(rp) :: area_k
-    REAL(rp) :: area_k_back
-! --- Variables Locales ---
-    REAL(rp) :: a, b, c, den
-    REAL(rp) :: a_back, b_back, c_back
-    REAL(rp) :: y_start, y_end
-    INTRINSIC ABS
-    INTRINSIC MIN
-    INTRINSIC MAX
-    REAL(rp) :: abs5
-! Si le niveau d'eau est sous le fond, l'aire est nulle.
-    IF (h_k .LE. b_min) THEN
-      b_min_back = 0.0_8
-      h_k_back = 0.0_8
-    ELSE
-! ======================================================================
-! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
-! ======================================================================
-! D\U000000e9nominateur commun
-      den = (y1-y_min)*(yn-y_min)
-      IF (den .GE. 0.) THEN
-        abs5 = den
-      ELSE
-        abs5 = -den
-      END IF
-      IF (abs5 .LT. 1.0e-9_rp) THEN
-        b_min_back = 0.0_8
-        h_k_back = 0.0_8
-      ELSE
-! Coefficient 'a'
-        a = (b_min-h_k)/den
-! Coefficient 'b' (en supposant la sym\U000000e9trie, comme dans votre formule)
-        b = -(a*(y1+yn))
-! Coefficient 'c'
-        c = h_k - a*y1**2 - b*y1
-        IF (y1 .GT. yn) THEN
-          y_start = yn
-        ELSE
-          y_start = y1
-        END IF
-        IF (y1 .LT. yn) THEN
-          y_end = yn
-        ELSE
-          y_end = y1
-        END IF
-! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
-        area_k = (h_k-c)*(y_end-y_start) - b/2.0_rp*(y_end**2-y_start**2&
-&         ) - a/3.0_rp*(y_end**3-y_start**3)
-        IF (0.0_rp .GE. area_k) area_k_back = 0.0_8
-        h_k_back = (y_end-y_start)*area_k_back
-        c_back = -((y_end-y_start)*area_k_back)
-        b_back = -((y_end**2-y_start**2)*area_k_back/2.0_rp)
-        a_back = -((y_end**3-y_start**3)*area_k_back/3.0_rp)
-        b_back = b_back - y1*c_back
-        a_back = a_back - y1**2*c_back - (y1+yn)*b_back
-        h_k_back = h_k_back + c_back - a_back/den
-        b_min_back = a_back/den
-      END IF
-    END IF
-  END SUBROUTINE CALCULATE_WETTED_AREA_PARABOLIC_BACK
-
-  FUNCTION CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, b_min) &
-& RESULT (area_k)
-
-  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
-
-    IMPLICIT NONE
-! --- Arguments ---
-    REAL(rp), INTENT(IN) :: h_k, y1, y_min, yn, b_min
-! --- R\U000000e9sultat ---
-    REAL(rp) :: area_k
-! --- Variables Locales ---
-    REAL(rp) :: a, b, c, den
-    REAL(rp) :: y_start, y_end
-    INTRINSIC ABS
-    INTRINSIC MIN
-    INTRINSIC MAX
-    REAL(rp) :: abs5
-! Si le niveau d'eau est sous le fond, l'aire est nulle.
-    IF (h_k .LE. b_min) THEN
-      area_k = 0.0_rp
-      RETURN
-    ELSE
-! ======================================================================
-! PARTIE 1 : CALCUL DES COEFFICIENTS a, b, c SELON VOTRE FORMULE
-! ======================================================================
-! D\U000000e9nominateur commun
-      den = (y1-y_min)*(yn-y_min)
-      IF (den .GE. 0.) THEN
-        abs5 = den
-      ELSE
-        abs5 = -den
-      END IF
-      IF (abs5 .LT. 1.0e-9_rp) THEN
-! \U000000c9vite la division par z\U000000e9ro
-        area_k = 0.0_rp
-        RETURN
-      ELSE
-! Coefficient 'a'
-        a = (b_min-h_k)/den
-! Coefficient 'b' (en supposant la sym\U000000e9trie, comme dans votre formule)
-        b = -(a*(y1+yn))
-! Coefficient 'c'
-        c = h_k - a*y1**2 - b*y1
-        IF (y1 .GT. yn) THEN
-          y_start = yn
-        ELSE
-          y_start = y1
-        END IF
-        IF (y1 .LT. yn) THEN
-          y_end = yn
-        ELSE
-          y_end = y1
-        END IF
-! Calculer l'intégrale exacte de h(y) = H_k - (ay^2+by+c) entre y_start et y_end
-        area_k = (h_k-c)*(y_end-y_start) - b/2.0_rp*(y_end**2-y_start**2&
-&         ) - a/3.0_rp*(y_end**3-y_start**3)
-        IF (0.0_rp .LT. area_k) THEN
-          area_k = area_k
-        ELSE
-          area_k = 0.0_rp
-        END IF
-      END IF
-    END IF
-  END FUNCTION CALCULATE_WETTED_AREA_PARABOLIC
-
-  SUBROUTINE FIND_SECTION(mesh, target_x, y1, yn)
-
-  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
-
-    IMPLICIT NONE
-!=======================================================================
-! Analyse une section pour trouver les positions y des berges (y1, yN).
-!=======================================================================
-! --- Arguments ---
-    TYPE(MSH), INTENT(IN) :: mesh
-    REAL(rp), INTENT(IN) :: target_x
-    REAL(rp), INTENT(OUT) :: y1, yn
-! --- Variables Locales ---
-    INTEGER :: inode
-    LOGICAL, SAVE :: first_point_found=.false.
-    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
-    INTRINSIC ABS
-    INTRINSIC MIN
-    INTRINSIC MAX
-    REAL(rp) :: abs5
-! --- Boucle unique sur tous les n\U00000153uds du maillage ---
-    DO inode=1,mesh%nn
-      IF (mesh%node(inode)%coord%x - target_x .GE. 0.) THEN
-        abs5 = mesh%node(inode)%coord%x - target_x
-      ELSE
-        abs5 = -(mesh%node(inode)%coord%x-target_x)
-      END IF
-! On ne consid\U000000e8re que les n\U00000153uds qui appartiennent \U000000e0 la section
-      IF (abs5 .LT. tolerance) THEN
-! Si c'est le premier point qu'on trouve pour cette section
-        IF (.NOT.first_point_found) THEN
-          y1 = mesh%node(inode)%coord%y
-          yn = y1
-          first_point_found = .true.
-        END IF
-        IF (y1 .GT. mesh%node(inode)%coord%y) THEN
-          y1 = mesh%node(inode)%coord%y
-        ELSE
-          y1 = y1
-        END IF
-        IF (yn .LT. mesh%node(inode)%coord%y) THEN
-          yn = mesh%node(inode)%coord%y
-        ELSE
-          yn = yn
-        END IF
-      END IF
-    END DO
-  END SUBROUTINE FIND_SECTION
-
 !  Differentiation of update_all_porosities in reverse (adjoint) mode (with options fixinterface):
 !   gradient     of useful results: *bathy_cell[from module m_model]
 !                *(sporosity.phi)[from module m_model] *(dof.h)
@@ -1164,47 +980,22 @@ CONTAINS
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-!=======================================================================
-! Orchestre la mise \U000000e0 jour de la porosit\U000000e9 pour toutes les cellules 1D-like.
-!=======================================================================
-! --- Arguments ---
     TYPE(UNK), INTENT(IN) :: dof
     TYPE(UNK) :: dof_back ! Replaced by Perl Script
     TYPE(MSH), INTENT(IN) :: mesh
-! --- Variables Locales ---
-    INTEGER :: inode, icell
-    REAL(rp) :: h_b, b_min, h_k, phi_k_new, wetted_area
-    REAL(rp) :: h_b_back, b_min_back, h_k_back, phi_k_new_back, &
-&   wetted_area_back
-    REAL(rp) :: y1, y_min, yn, total_width, macro_area
-    REAL(rp) :: macro_area_back
-    REAL(rp) :: min_dist_to_b_min
-    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
-    INTRINSIC HUGE
+    INTEGER :: icell
+    REAL(rp) :: h_k, wetted_area, phi_k_new, macro_area
+    REAL(rp) :: h_k_back, wetted_area_back, phi_k_new_back, &
+&   macro_area_back
+    REAL(rp) :: w
     INTEGER*4 :: branch
-! --- Boucle principale sur toutes les cellules/sections ---
     DO icell=1,mesh%nc
-! 1. R\U000000e9cup\U000000e9rer les donn\U000000e9es macroscopiques et D\U000000c9FINIR b_min
-      CALL PUSHREAL8(h_b)
-      h_b = dof%h(icell)
-      b_min = bathy_cell(icell)
-      h_k = h_b + b_min
-! 2. Trouver y1, yN, et le y_min correspondant \U000000e0 b_min pour cette section
-      CALL PUSHREAL8(yn)
-      CALL PUSHREAL8(y1)
-      CALL FIND_SECTION(mesh, mesh%cell(icell)%grav%x, y1, yn)
-! Boucle suppl\U000000e9mentaire pour trouver le y_min associ\U000000e9 \U000000e0 b_min
-! Valeur par d\U000000e9faut au centre
-      CALL PUSHREAL8(y_min)
-      y_min = (y1+yn)/2.0_rp
-! 3. Calculer l'aire mouillée avec le modèle parabolique
+      CALL PUSHREAL8(w)
+      w = CALCULATE_WIDTH(icell, mesh)
+      h_k = dof%h(icell) + bathy_cell(icell)
       CALL PUSHREAL8(wetted_area)
-      wetted_area = CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, &
-&       b_min)
-! 4. Calculer la porosit\U000000e9 finale
-      CALL PUSHREAL8(total_width)
-      total_width = yn - y1
-      macro_area = total_width*h_b
+      wetted_area = CALCULATE_WETTED_AREA(icell, h_k)
+      macro_area = w*dof%h(icell)
       IF (macro_area .GT. 1.0e-9_rp) THEN
         CALL PUSHCONTROL1B(0)
       ELSE
@@ -1216,31 +1007,21 @@ CONTAINS
       sporosity_back%phi(icell) = 0.0_8
       CALL POPCONTROL1B(branch)
       IF (branch .EQ. 0) THEN
-        total_width = yn - y1
-        h_b = dof%h(icell)
-        macro_area = total_width*h_b
+        macro_area = w*dof%h(icell)
         wetted_area_back = phi_k_new_back/macro_area
         macro_area_back = -(wetted_area*phi_k_new_back/macro_area**2)
       ELSE
         wetted_area_back = 0.0_8
         macro_area_back = 0.0_8
       END IF
-      h_b_back = total_width*macro_area_back
-      CALL POPREAL8(total_width)
-      b_min = bathy_cell(icell)
-      h_k = h_b + b_min
+      h_k = dof%h(icell) + bathy_cell(icell)
       CALL POPREAL8(wetted_area)
-      CALL CALCULATE_WETTED_AREA_PARABOLIC_BACK(h_k, h_k_back, y1, y_min&
-&                                         , yn, b_min, b_min_back, &
-&                                         wetted_area_back)
-      CALL POPREAL8(y_min)
-      CALL POPREAL8(y1)
-      CALL POPREAL8(yn)
-      h_b_back = h_b_back + h_k_back
-      b_min_back = b_min_back + h_k_back
-      bathy_cell_back(icell) = bathy_cell_back(icell) + b_min_back
-      CALL POPREAL8(h_b)
-      dof_back%h(icell) = dof_back%h(icell) + h_b_back
+      CALL CALCULATE_WETTED_AREA_BACK(icell, h_k, h_k_back, &
+&                               wetted_area_back)
+      dof_back%h(icell) = dof_back%h(icell) + w*macro_area_back + &
+&       h_k_back
+      bathy_cell_back(icell) = bathy_cell_back(icell) + h_k_back
+      CALL POPREAL8(w)
     END DO
   END SUBROUTINE UPDATE_ALL_POROSITIES_BACK
 
@@ -1249,46 +1030,134 @@ CONTAINS
   USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
 
     IMPLICIT NONE
-!=======================================================================
-! Orchestre la mise \U000000e0 jour de la porosit\U000000e9 pour toutes les cellules 1D-like.
-!=======================================================================
-! --- Arguments ---
     TYPE(UNK), INTENT(IN) :: dof
     TYPE(MSH), INTENT(IN) :: mesh
-! --- Variables Locales ---
-    INTEGER :: inode, icell
-    REAL(rp) :: h_b, b_min, h_k, phi_k_new, wetted_area
-    REAL(rp) :: y1, y_min, yn, total_width, macro_area
-    REAL(rp) :: min_dist_to_b_min
-    REAL(rp), PARAMETER :: tolerance=1.0e-6_rp
-    INTRINSIC HUGE
-! --- Boucle principale sur toutes les cellules/sections ---
+    INTEGER :: icell
+    REAL(rp) :: h_k, wetted_area, phi_k_new, macro_area
+    REAL(rp) :: w
     DO icell=1,mesh%nc
-! 1. R\U000000e9cup\U000000e9rer les donn\U000000e9es macroscopiques et D\U000000c9FINIR b_min
-      h_b = dof%h(icell)
-      b_min = bathy_cell(icell)
-      h_k = h_b + b_min
-! 2. Trouver y1, yN, et le y_min correspondant \U000000e0 b_min pour cette section
-      CALL FIND_SECTION(mesh, mesh%cell(icell)%grav%x, y1, yn)
-! Boucle suppl\U000000e9mentaire pour trouver le y_min associ\U000000e9 \U000000e0 b_min
-      min_dist_to_b_min = HUGE(0.0_rp)
-! Valeur par d\U000000e9faut au centre
-      y_min = (y1+yn)/2.0_rp
-! 3. Calculer l'aire mouillée avec le modèle parabolique
-      wetted_area = CALCULATE_WETTED_AREA_PARABOLIC(h_k, y1, y_min, yn, &
-&       b_min)
-! 4. Calculer la porosit\U000000e9 finale
-      total_width = yn - y1
-      macro_area = total_width*h_b
+      w = CALCULATE_WIDTH(icell, mesh)
+      h_k = dof%h(icell) + bathy_cell(icell)
+      wetted_area = CALCULATE_WETTED_AREA(icell, h_k)
+      macro_area = w*dof%h(icell)
       IF (macro_area .GT. 1.0e-9_rp) THEN
         phi_k_new = wetted_area/macro_area
       ELSE
         phi_k_new = 1.0_rp
       END IF
-! 5. Stocker la nouvelle porosit\U000000e9 dans le tableau global
       sporosity%phi(icell) = phi_k_new
     END DO
   END SUBROUTINE UPDATE_ALL_POROSITIES
+
+  FUNCTION CALCULATE_WIDTH(icell, mesh) RESULT (w)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    INTEGER, INTENT(IN) :: icell
+    TYPE(MSH), INTENT(IN) :: mesh
+    REAL(rp) :: w
+    INTEGER :: k_loop, ie_local, count_found
+    REAL(rp) :: length1, length2
+    count_found = 0
+    length1 = 0.0_rp
+    length2 = 0.0_rp
+    DO k_loop=1,mesh%cell(icell)%nbed
+      ie_local = mesh%cell(icell)%edge(k_loop)
+      IF (.NOT.mesh%edge(ie_local)%boundary) THEN
+        count_found = count_found + 1
+        IF (count_found .EQ. 1) THEN
+          length1 = mesh%edge(ie_local)%length
+        ELSE IF (count_found .EQ. 2) THEN
+          length2 = mesh%edge(ie_local)%length
+          GOTO 100
+        END IF
+      END IF
+    END DO
+ 100 w = (length1+length2)/2.0_rp
+  END FUNCTION CALCULATE_WIDTH
+
+!  Differentiation of calculate_wetted_area in reverse (adjoint) mode (with options fixinterface):
+!   gradient     of useful results: *bathy_cell[from module m_model]
+!                area
+!   with respect to varying inputs: *bathy_cell[from module m_model]
+!                h_k
+!   Plus diff mem management of: bathy_cell[from module m_model]:in
+  SUBROUTINE CALCULATE_WETTED_AREA_BACK(icell, h_k, h_k_back, area_back)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    INTEGER, INTENT(IN) :: icell
+    REAL(rp), INTENT(IN) :: h_k
+    REAL(rp) :: h_k_back
+    REAL(rp) :: area
+    REAL(rp) :: area_back
+    REAL(rp) :: a, c, beta, yn
+    REAL(rp) :: c_back, yn_back
+    INTRINSIC MAX
+    REAL(rp) :: temp
+    REAL(rp) :: temp0
+    REAL(rp) :: temp_back
+    a = sporosity%a(icell)
+    beta = sporosity%beta
+    c = bathy_cell(icell)
+    IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
+      h_k_back = 0.0_8
+      c_back = 0.0_8
+    ELSE
+      yn = ((h_k-c)/a)**(1.0_rp/beta)
+      area = (h_k-c)*yn - a/(beta+1.0_rp)*yn**(beta+1.0_rp)
+      area = 2.0_rp*area
+      IF (0.0_rp .GE. area) area_back = 0.0_8
+      area_back = 2.0_rp*area_back
+      IF (yn .LE. 0.0 .AND. (beta + 1.0_rp .EQ. 0.0 .OR. beta + 1.0_rp &
+&         .NE. INT(beta + 1.0_rp))) THEN
+        yn_back = (h_k-c)*area_back
+      ELSE
+        yn_back = (h_k-c-yn**beta*a)*area_back
+      END IF
+      temp = (h_k-c)/a
+      temp0 = 1.0/beta
+      IF (temp .LE. 0.0 .AND. (temp0 .EQ. 0.0 .OR. temp0 .NE. INT(temp0)&
+&         )) THEN
+        temp_back = 0.0_8
+      ELSE
+        temp_back = temp0*temp**(temp0-1)*yn_back/a
+      END IF
+      h_k_back = yn*area_back + temp_back
+      c_back = -(yn*area_back) - temp_back
+    END IF
+    bathy_cell_back(icell) = bathy_cell_back(icell) + c_back
+  END SUBROUTINE CALCULATE_WETTED_AREA_BACK
+
+  FUNCTION CALCULATE_WETTED_AREA(icell, h_k) RESULT (area)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    INTEGER, INTENT(IN) :: icell
+    REAL(rp), INTENT(IN) :: h_k
+    REAL(rp) :: area
+    REAL(rp) :: a, c, beta, yn
+    INTRINSIC MAX
+    a = sporosity%a(icell)
+    beta = sporosity%beta
+    c = bathy_cell(icell)
+    IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
+      area = 0.0_rp
+      RETURN
+    ELSE
+      yn = ((h_k-c)/a)**(1.0_rp/beta)
+      area = (h_k-c)*yn - a/(beta+1.0_rp)*yn**(beta+1.0_rp)
+      area = 2.0_rp*area
+      IF (0.0_rp .LT. area) THEN
+        area = area
+      ELSE
+        area = 0.0_rp
+      END IF
+    END IF
+  END FUNCTION CALCULATE_WETTED_AREA
 
 END SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK
 

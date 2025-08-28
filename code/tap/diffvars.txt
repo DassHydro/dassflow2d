@@ -12,6 +12,7 @@ run_model_back.f90		ISIZE1OFDrfdof_h		dof%h
 run_model_back.f90		ISIZE1OFDrfinnovuv		innovuv
 run_model_back.f90		ISIZE1OFDrfinnovq		innovq
 run_model_back.f90		ISIZE1OFDrfinnovation		innovation
+run_model_back.f90		ISIZE1OFDrfsporosity_a		sporosity%a
 run_model_back.f90		ISIZE1OFDrfsporosity_phi		sporosity%phi
 run_model_back.f90		ISIZE1OFDrfbathy_cell		bathy_cell
 run_model_back.f90		ISIZE1OFDrfbc_sum_mass_flux		bc%sum_mass_flux
