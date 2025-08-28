@@ -2546,7 +2546,7 @@ SUBROUTINE write_static_cell_data( mesh )
     TYPE(msh), intent(in) :: mesh
 
     ! Variables locales
-    INTEGER  :: i
+    INTEGER  :: index
     REAL(rp) :: W
 
     ! N'écrit le fichier que depuis le processus principal pour éviter les conflits d'écriture
@@ -2558,9 +2558,9 @@ SUBROUTINE write_static_cell_data( mesh )
         write(20,*) '# i a beta W'
 
         ! Boucle sur toutes les cellules pour écrire les données
-        do i = 1, mesh%nc
-            W = calculate_width(i, mesh)
-            write(20,'(I8,3(" ",ES15.8))') i, SPorosity%a(i), SPorosity%beta(i), W
+        do index = 1, mesh%nc
+            W = calculate_width(index, mesh)
+            write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W
         end do
 
         ! Ferme le fichier
