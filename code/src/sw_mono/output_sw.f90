@@ -2571,43 +2571,13 @@ SUBROUTINE write_static_cell_data( mesh )
 
         ! Boucle sur toutes les cellules pour écrire les données
         do index = 1, mesh%nc 
-            W = calculate_width(index, mesh) 
+            W = Sporosity%width(index) 
             write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W
         end do
 
         ! Ferme le fichier
         close(20)
     endif
-   CONTAINS ! Début de la section pour les fonctions locales
-
-    !*************************************************************************
-    ! FONCTION AIDE : Calcul de la largeur (locale à cette subroutine)
-    !*************************************************************************
-    FUNCTION calculate_width(icell, mesh) RESULT(W_out)
-        IMPLICIT NONE
-        INTEGER, INTENT(IN) :: icell
-        TYPE(msh), INTENT(IN) :: mesh
-        REAL(rp) :: W_out
-        INTEGER :: k_loop, ie_local, count_found
-        REAL(rp) :: length1, length2
-
-        count_found = 0
-        length1 = 0.0_rp
-        length2 = 0.0_rp
-        DO k_loop = 1, mesh%cell(icell)%nbed
-            ie_local = mesh%cell(icell)%edge(k_loop)
-            IF (.NOT. mesh%edge(ie_local)%boundary) THEN
-                count_found = count_found + 1
-                IF (count_found == 1) THEN
-                    length1 = mesh%edge(ie_local)%length
-                ELSEIF (count_found == 2) THEN
-                    length2 = mesh%edge(ie_local)%length
-                    EXIT
-                END IF
-            END IF
-        END DO
-        W_out = (length1 + length2) / 2.0_rp
-    END FUNCTION calculate_width 
 END SUBROUTINE write_static_cell_data
 #endif
 

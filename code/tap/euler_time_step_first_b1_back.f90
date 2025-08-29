@@ -115,10 +115,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_BACK(dof, dof_back, mesh, poro_unit&
   REAL(rp) :: temp_back3
   REAL(rp) :: temp_back4
   tflux(:, :) = 0._rp
-  sporosity%beta = 8
-  DO ie=1,mesh%nc
-    sporosity%a(ie) = 0.1
-  END DO
   CALL UPDATE_ALL_POROSITIES(dof, mesh)
   DO 100 ie=1,mesh%ne
     CALL PUSHINTEGER4(il)
@@ -1077,6 +1073,64 @@ CONTAINS
  100 w = (length1+length2)/2.0_rp
   END FUNCTION CALCULATE_WIDTH
 
+!  Differentiation of calculate_yn in reverse (adjoint) mode (with options fixinterface):
+!   gradient     of useful results: yn h_k c
+!   with respect to varying inputs: h_k c
+  SUBROUTINE CALCULATE_YN_BACK(h_k, h_k_back, a, beta, c, c_back, &
+&   yn_back)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    REAL(rp), INTENT(IN) :: h_k
+    REAL(rp) :: h_k_back
+!parabola parameter
+    REAL(rp), INTENT(IN) :: a
+!parabola parameter
+    REAL(rp), INTENT(IN) :: beta
+!parabola parameter
+    REAL(rp), INTENT(IN) :: c
+    REAL(rp) :: c_back
+    REAL(rp) :: yn
+    REAL(rp) :: yn_back
+    REAL(rp) :: temp
+    REAL(rp) :: temp0
+    REAL(rp) :: temp_back
+    IF (.NOT.(h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp)) THEN
+      temp = (h_k-c)/a
+      temp0 = 1.0/beta
+      IF (temp .LE. 0.0 .AND. (temp0 .EQ. 0.0 .OR. temp0 .NE. INT(temp0)&
+&         )) THEN
+        temp_back = 0.0_8
+      ELSE
+        temp_back = temp0*temp**(temp0-1)*yn_back/a
+      END IF
+      h_k_back = h_k_back + temp_back
+      c_back = c_back - temp_back
+    END IF
+  END SUBROUTINE CALCULATE_YN_BACK
+
+  FUNCTION CALCULATE_YN(h_k, a, beta, c) RESULT (yn)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    REAL(rp), INTENT(IN) :: h_k
+!parabola parameter
+    REAL(rp), INTENT(IN) :: a
+!parabola parameter
+    REAL(rp), INTENT(IN) :: beta
+!parabola parameter
+    REAL(rp), INTENT(IN) :: c
+    REAL(rp) :: yn
+    IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
+      yn = 0.0_rp
+      RETURN
+    ELSE
+      yn = ((h_k-c)/a)**(1.0_rp/beta)
+    END IF
+  END FUNCTION CALCULATE_YN
+
 !  Differentiation of calculate_wetted_area in reverse (adjoint) mode (with options fixinterface):
 !   gradient     of useful results: *bathy_cell[from module m_model]
 !                area
@@ -1093,40 +1147,31 @@ CONTAINS
     REAL(rp) :: h_k_back
     REAL(rp) :: area
     REAL(rp) :: area_back
+!parabola parameters + half the width occupied by water
     REAL(rp) :: a, c, beta, yn
     REAL(rp) :: c_back, yn_back
     INTRINSIC MAX
-    REAL(rp) :: temp
-    REAL(rp) :: temp0
-    REAL(rp) :: temp_back
     a = sporosity%a(icell)
-    beta = sporosity%beta
+    beta = sporosity%beta(icell)
     c = bathy_cell(icell)
     IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
       h_k_back = 0.0_8
       c_back = 0.0_8
     ELSE
-      yn = ((h_k-c)/a)**(1.0_rp/beta)
+      yn = CALCULATE_YN(h_k, a, beta, c)
       area = (h_k-c)*yn - a/(beta+1.0_rp)*yn**(beta+1.0_rp)
       area = 2.0_rp*area
       IF (0.0_rp .GE. area) area_back = 0.0_8
       area_back = 2.0_rp*area_back
+      h_k_back = yn*area_back
+      c_back = -(yn*area_back)
       IF (yn .LE. 0.0 .AND. (beta + 1.0_rp .EQ. 0.0 .OR. beta + 1.0_rp &
 &         .NE. INT(beta + 1.0_rp))) THEN
         yn_back = (h_k-c)*area_back
       ELSE
         yn_back = (h_k-c-yn**beta*a)*area_back
       END IF
-      temp = (h_k-c)/a
-      temp0 = 1.0/beta
-      IF (temp .LE. 0.0 .AND. (temp0 .EQ. 0.0 .OR. temp0 .NE. INT(temp0)&
-&         )) THEN
-        temp_back = 0.0_8
-      ELSE
-        temp_back = temp0*temp**(temp0-1)*yn_back/a
-      END IF
-      h_k_back = yn*area_back + temp_back
-      c_back = -(yn*area_back) - temp_back
+      CALL CALCULATE_YN_BACK(h_k, h_k_back, a, beta, c, c_back, yn_back)
     END IF
     bathy_cell_back(icell) = bathy_cell_back(icell) + c_back
   END SUBROUTINE CALCULATE_WETTED_AREA_BACK
@@ -1139,16 +1184,17 @@ CONTAINS
     INTEGER, INTENT(IN) :: icell
     REAL(rp), INTENT(IN) :: h_k
     REAL(rp) :: area
+!parabola parameters + half the width occupied by water
     REAL(rp) :: a, c, beta, yn
     INTRINSIC MAX
     a = sporosity%a(icell)
-    beta = sporosity%beta
+    beta = sporosity%beta(icell)
     c = bathy_cell(icell)
     IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
       area = 0.0_rp
       RETURN
     ELSE
-      yn = ((h_k-c)/a)**(1.0_rp/beta)
+      yn = CALCULATE_YN(h_k, a, beta, c)
       area = (h_k-c)*yn - a/(beta+1.0_rp)*yn**(beta+1.0_rp)
       area = 2.0_rp*area
       IF (0.0_rp .LT. area) THEN

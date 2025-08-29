@@ -445,7 +445,7 @@ CONTAINS
         REAL(rp) :: W
         
         DO icell = 1, mesh%nc
-            W = calculate_width(icell, mesh)
+            W = Sporosity%width(icell)
             H_k = dof%h(icell) + bathy_cell(icell)
             wetted_area = calculate_wetted_area(icell, H_k)
             macro_area = W * dof%h(icell)
@@ -459,35 +459,6 @@ CONTAINS
         END DO
     END SUBROUTINE update_all_porosities
 
-    !===============================================================================================================!
-    ! FUNCTION 2 : calculates the width of a cell by averaging the length of the upstream interface and the
-    ! length of the downstream interface
-    !===============================================================================================================!
-    FUNCTION calculate_width(icell, mesh) RESULT(W)
-        IMPLICIT NONE
-        INTEGER, INTENT(IN) :: icell
-        TYPE(msh), INTENT(IN) :: mesh
-        REAL(rp) :: W
-        INTEGER :: k_loop, ie_local, count_found
-        REAL(rp) :: length1, length2
-
-        count_found = 0
-        length1 = 0.0_rp
-        length2 = 0.0_rp
-        DO k_loop = 1, mesh%cell(icell)%nbed
-            ie_local = mesh%cell(icell)%edge(k_loop)
-            IF (.NOT. mesh%edge(ie_local)%boundary) THEN
-                count_found = count_found + 1
-                IF (count_found == 1) THEN
-                    length1 = mesh%edge(ie_local)%length
-                ELSEIF (count_found == 2) THEN
-                    length2 = mesh%edge(ie_local)%length
-                    EXIT
-                END IF
-            END IF
-        END DO
-        W = (length1 + length2) / 2.0_rp
-    END FUNCTION calculate_width
     
     !===============================================================================================================!
     ! FUNCTION 3 : calculates yN of a cell (half the width occupied by water)

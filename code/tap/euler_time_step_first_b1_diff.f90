@@ -111,10 +111,6 @@ SUBROUTINE EULER_TIME_STEP_FIRST_B1_DIFF(dof, dof_diff, mesh, poro_unit&
   REAL(rp) :: temp_diff
   REAL(rp) :: temp_diff0
   tflux(:, :) = 0._rp
-  sporosity%beta = 8
-  DO ie=1,mesh%nc
-    sporosity%a(ie) = 0.1
-  END DO
   CALL UPDATE_ALL_POROSITIES_DIFF(dof, dof_diff, mesh)
   IF (MOD(it, write_frequency) .EQ. 0 .OR. it .EQ. 1) THEN
     WRITE(poro_unit, *) it, sporosity%phi(:)
@@ -672,6 +668,65 @@ CONTAINS
  100 w = (length1+length2)/2.0_rp
   END FUNCTION CALCULATE_WIDTH
 
+!  Differentiation of calculate_yn in forward (tangent) mode (with options fixinterface):
+!   variations   of useful results: yn
+!   with respect to varying inputs: h_k c
+  REAL(rp) FUNCTION CALCULATE_YN_DIFF(h_k, h_k_diff, a, beta, c, c_diff&
+&   , yn) RESULT (yn_diff)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    REAL(rp), INTENT(IN) :: h_k
+    REAL(rp), INTENT(IN) :: h_k_diff
+!parabola parameter
+    REAL(rp), INTENT(IN) :: a
+!parabola parameter
+    REAL(rp), INTENT(IN) :: beta
+!parabola parameter
+    REAL(rp), INTENT(IN) :: c
+    REAL(rp), INTENT(IN) :: c_diff
+    REAL(rp), INTENT(OUT) :: yn
+    REAL(rp) :: temp
+    REAL(rp) :: temp0
+    IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
+      yn = 0.0_rp
+      yn_diff = 0.0_8
+      RETURN
+    ELSE
+      temp = (h_k-c)/a
+      temp0 = 1.0/beta
+      IF (temp .LE. 0.0 .AND. (temp0 .EQ. 0.0 .OR. temp0 .NE. INT(temp0)&
+&         )) THEN
+        yn_diff = 0.0_8
+      ELSE
+        yn_diff = temp0*temp**(temp0-1)*(h_k_diff-c_diff)/a
+      END IF
+      yn = temp**temp0
+    END IF
+  END FUNCTION CALCULATE_YN_DIFF
+
+  FUNCTION CALCULATE_YN(h_k, a, beta, c) RESULT (yn)
+
+  USE M_TAP_VARS ! Added by Perl Script -> Need to be filled !!!
+
+    IMPLICIT NONE
+    REAL(rp), INTENT(IN) :: h_k
+!parabola parameter
+    REAL(rp), INTENT(IN) :: a
+!parabola parameter
+    REAL(rp), INTENT(IN) :: beta
+!parabola parameter
+    REAL(rp), INTENT(IN) :: c
+    REAL(rp) :: yn
+    IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
+      yn = 0.0_rp
+      RETURN
+    ELSE
+      yn = ((h_k-c)/a)**(1.0_rp/beta)
+    END IF
+  END FUNCTION CALCULATE_YN
+
 !  Differentiation of calculate_wetted_area in forward (tangent) mode (with options fixinterface):
 !   variations   of useful results: area
 !   with respect to varying inputs: *bathy_cell[from module m_model]
@@ -687,14 +742,13 @@ CONTAINS
     REAL(rp), INTENT(IN) :: h_k
     REAL(rp), INTENT(IN) :: h_k_diff
     REAL(rp), INTENT(OUT) :: area
+!parabola parameters + half the width occupied by water
     REAL(rp) :: a, c, beta, yn
     REAL(rp) :: c_diff, yn_diff
     INTRINSIC MAX
-    REAL(rp) :: temp
-    REAL(rp) :: temp0
     REAL(rp) :: temp_diff
     a = sporosity%a(icell)
-    beta = sporosity%beta
+    beta = sporosity%beta(icell)
     c_diff = bathy_cell_diff(icell)
     c = bathy_cell(icell)
     IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
@@ -702,15 +756,7 @@ CONTAINS
       area_diff = 0.0_8
       RETURN
     ELSE
-      temp = (h_k-c)/a
-      temp0 = 1.0/beta
-      IF (temp .LE. 0.0 .AND. (temp0 .EQ. 0.0 .OR. temp0 .NE. INT(temp0)&
-&         )) THEN
-        yn_diff = 0.0_8
-      ELSE
-        yn_diff = temp0*temp**(temp0-1)*(h_k_diff-c_diff)/a
-      END IF
-      yn = temp**temp0
+      yn_diff = CALCULATE_YN_DIFF(h_k, h_k_diff, a, beta, c, c_diff, yn)
       IF (yn .LE. 0.0 .AND. (beta + 1.0_rp .EQ. 0.0 .OR. beta + 1.0_rp &
 &         .NE. INT(beta + 1.0_rp))) THEN
         temp_diff = 0.0_8
@@ -739,16 +785,17 @@ CONTAINS
     INTEGER, INTENT(IN) :: icell
     REAL(rp), INTENT(IN) :: h_k
     REAL(rp) :: area
+!parabola parameters + half the width occupied by water
     REAL(rp) :: a, c, beta, yn
     INTRINSIC MAX
     a = sporosity%a(icell)
-    beta = sporosity%beta
+    beta = sporosity%beta(icell)
     c = bathy_cell(icell)
     IF (h_k - c .LT. 0.0_rp .OR. a .LE. 0.0_rp) THEN
       area = 0.0_rp
       RETURN
     ELSE
-      yn = ((h_k-c)/a)**(1.0_rp/beta)
+      yn = CALCULATE_YN(h_k, a, beta, c)
       area = (h_k-c)*yn - a/(beta+1.0_rp)*yn**(beta+1.0_rp)
       area = 2.0_rp*area
       IF (0.0_rp .LT. area) THEN
