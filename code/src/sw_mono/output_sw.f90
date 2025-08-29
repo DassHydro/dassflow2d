@@ -162,9 +162,9 @@ SUBROUTINE write_result_file( dof , mesh , namefile )
    if      ( tc < zerom ) then
 
       write(filename,'(A,"_initial")') namefile
-      ! On appelle ici, une seule fois, la routine d'écriture des données statiques
+      #ifdef USE_PORO
       call write_static_cell_data( mesh )
-
+      #endif
    else if ( abs( tc - ts ) < zerom ) then
 
       write(filename,'(A,"_final")') namefile
@@ -951,10 +951,10 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
             ! Calcul des valeurs nécessaires juste avant l'écriture
             H_k = dof%h(i) + bathy_cell(i)
-
+            #ifdef USE_PORO
             ! Calcul de yN (inspiré de calculate_wetted_area)
             yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%beta(i),bathy_cell(i))
-
+            #endif 
             write(10,'(I8,11(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
@@ -963,9 +963,11 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  bathy_cell(i)+dof%h(i) , &
                                  manning( land(i) )     , &
                                  dof%u(i)               , &
-                                 dof%v(i)               , &
+                                 dof%v(i)             
+                               #ifdef USE_PORO  , &
                                  SPorosity%phi(i)       , &
                                  yN
+                               #endif
          end do
 
 
@@ -981,6 +983,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
     !*************************************************************************
     ! FONCTION AIDE : Calcul de yN (locale à v_gnuplot)
     !*************************************************************************
+    
     FUNCTION Calculate_yn(H_k, a, beta, c) RESULT(yN_val)
         IMPLICIT NONE
         REAL(rp), INTENT(IN) :: H_k, a, beta, c
@@ -995,7 +998,6 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
     END FUNCTION Calculate_yn
 
 END SUBROUTINE v_gnuplot
-
 
 
 
@@ -1604,7 +1606,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
       rec_index = rec_index + mesh%nc
 
    end if
-#endif
+#endif 
 
 #ifdef USE_INFIL
     ! Physical descriptors
@@ -2538,7 +2540,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 
 END SUBROUTINE v_vtk_bin_init
 
-
+#ifdef USE_PORO
 SUBROUTINE write_static_cell_data( mesh )
     USE m_common
     USE m_model
@@ -2560,9 +2562,8 @@ SUBROUTINE write_static_cell_data( mesh )
         write(20,*) '# i a beta W'
 
         ! Boucle sur toutes les cellules pour écrire les données
-        do index = 1, mesh%nc
-            W = calculate_width(index, mesh)
-            write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W
+        do index = 1, mesh%nc W = calculate_width(index, mesh) write(20,'(I8,3(" ",ES15.8))') index, 
+            SPorosity%a(index), SPorosity%beta(index), W
         end do
 
         ! Ferme le fichier
@@ -2599,6 +2600,9 @@ SUBROUTINE write_static_cell_data( mesh )
         W_out = (length1 + length2) / 2.0_rp
     END FUNCTION calculate_width 
 END SUBROUTINE write_static_cell_data
+#endif
+
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! AJOUT LILIAN
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
