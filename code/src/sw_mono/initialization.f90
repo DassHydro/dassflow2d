@@ -97,7 +97,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    !===================================================================================================================!
 
    character(len=lchar)  ::  filename
-
+   REAL(rp) :: W, h_max_effective
    ! array of filenames for error identification (20 file names of 30 characters max each)
    character(len=20), dimension(20) :: filenames
    ! error message for read errors / eof
@@ -124,16 +124,27 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 #endif
 
 #ifdef USE_PORO
-   !=====================================================
-   SPorosity%beta = 2
-   do ie = 1,mesh%nc
-      SPorosity%a(ie) = 1
-      SPorosity%hbanks(ie) = 24
-      SPorosity%width(ie) = calculate_width(ie, mesh)
-   enddo
 
 
-   !=====================================================
+
+    do l = 1, mesh%nc
+        ! 1. Calculer et stocker la largeur de la cellule
+        SPorosity%width(l) = calculate_width(l, mesh)
+        Sporosity%hbanks(l)=24
+        ! 2. Fixer la forme de la parabole
+        SPorosity%beta(l) = 2.0_rp
+        
+        ! 3. Calculer 'a' avec la formule de contrainte physique CORRIGÉE
+        ! On calcule la hauteur d'eau maximale effective
+        h_max_effective = SPorosity%hbanks(l) - bathy_cell(l)
+        
+        if (SPorosity%width(l) > 1.0E-6_rp .AND. h_max_effective > 0.0_rp) then
+            SPorosity%a(l) = h_max_effective / ((SPorosity%width(l) / 2.0_rp)**SPorosity%beta(l))
+        else
+            ! Valeur de secours pour éviter les divisions par zéro ou les valeurs négatives
+            SPorosity%a(l) = 1.0_rp 
+        endif
+    end do
 #endif
 
 !
@@ -1923,10 +1934,10 @@ end do
 ! define values for each patch
 do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
-   SPorosity%a( i ) = my_porosity%a( i )
-   SPorosity%beta( i ) = my_porosity%beta( i )
-   SPorosity%hbanks( i ) = my_porosity%hbanks( i )
-   SPorosity%width( i ) = my_porosity%width ( i )
+   !SPorosity%a( i ) = my_porosity%a( i )
+   !SPorosity%beta( i ) = my_porosity%beta( i )
+   !SPorosity%hbanks( i ) = my_porosity%hbanks( i )
+   !SPorosity%width( i ) = my_porosity%width ( i )
 end do
 
 !< Integral Porosity
