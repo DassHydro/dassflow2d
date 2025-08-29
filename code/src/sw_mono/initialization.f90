@@ -2152,7 +2152,7 @@ FUNCTION calculate_width(icell, mesh) RESULT(W)
                 W = W + mesh%edge(ie_local)%length
             END IF
         END DO
-        W = W / count_found_rp
+        W = W / count_found
 END FUNCTION calculate_width
 
 
