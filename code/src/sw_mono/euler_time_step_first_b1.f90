@@ -488,7 +488,7 @@ CONTAINS
         INTEGER, INTENT(IN) :: icell
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp) :: area
-        REAL(rp) :: a, c, beta, yN, Hbanks       !parabola parameters + half the width occupied by water
+        REAL(rp) :: a, c, beta, yN, Hbanks, W      !parabola parameters + half the width occupied by water
 
         a     = SPorosity%a(icell)
         beta  = SPorosity%beta(icell)
