@@ -445,7 +445,7 @@ CONTAINS
         REAL(rp) :: W
         
         DO icell = 1, mesh%nc
-            W = Sporosity%width(icell)
+            W = SPorosity%width(icell)
             H_k = dof%h(icell) + bathy_cell(icell)
             wetted_area = calculate_wetted_area(icell, H_k)
             macro_area = W * dof%h(icell)
@@ -461,7 +461,7 @@ CONTAINS
 
     
     !===============================================================================================================!
-    ! FUNCTION 3 : calculates yN of a cell (half the width occupied by water)
+    ! FUNCTION 2 : calculates yN of a cell (half the width occupied by water)
     !===============================================================================================================!
     FUNCTION calculate_yn(H_k, a, beta, c) RESULT(yN)
         IMPLICIT NONE
@@ -480,7 +480,7 @@ CONTAINS
     END FUNCTION calculate_yn
 
     !===============================================================================================================!
-    ! FUNCTION 4 : calculates the wetted area of a cell assuming that the bathymetry is a parabola 
+    ! FUNCTION 3 : calculates the wetted area of a cell assuming that the bathymetry is a parabola 
     ! ay^beta + bathy_cell, a and beta are parameters fixed by the user
     !===============================================================================================================!
     FUNCTION calculate_wetted_area(icell, H_k) RESULT(area)
@@ -488,22 +488,30 @@ CONTAINS
         INTEGER, INTENT(IN) :: icell
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp) :: area
-        REAL(rp) :: a, c, beta, yN       !parabola parameters + half the width occupied by water
+        REAL(rp) :: a, c, beta, yN, Hbanks       !parabola parameters + half the width occupied by water
 
         a     = SPorosity%a(icell)
         beta  = SPorosity%beta(icell)
         c     = bathy_cell(icell)
+        Hbanks = SPorosity%hbanks(icell) 
         
         IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
             area = 0.0_rp
             RETURN
-        END IF
+        ELSE
+            yN = calculate_yn(H_k, a, beta, c)
+            IF (H_k < Hbanks) THEN 
+                area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
+                area = 2.0_rp * area
+                area = MAX(0.0_rp, area)
 
-        yN = calculate_yn(H_k, a, beta, c)
-        
-        area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
-        area = 2.0_rp * area
-        area = MAX(0.0_rp, area)
+            ELSE
+                area = (Hbanks - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
+                area = 2.0_rp * area
+                area = MAX(0.0_rp, area)
+                area = MAX(0.0_rp, area + 2*yN*(H_k-Hbanks))
+            END IF
+        END IF 
     END FUNCTION calculate_wetted_area
 
 
