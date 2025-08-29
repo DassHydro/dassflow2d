@@ -499,17 +499,18 @@ CONTAINS
             area = 0.0_rp
             RETURN
         ELSE
-            yN = calculate_yn(H_k, a, beta, c)
             IF (H_k < Hbanks) THEN 
+                yN = calculate_yn(H_k, a, beta, c)
                 area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area)
 
             ELSE
-                area = (Hbanks - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
+                W = SPorosity%width(icell)    
+                area = (Hbanks - c) * (W/2) - (a / (beta + 1.0_rp)) * (W/2)**(beta + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area)
-                area = MAX(0.0_rp, area + 2*yN*(H_k-Hbanks))
+                area = MAX(0.0_rp, area + W*(H_k-Hbanks))
             END IF
         END IF 
     END FUNCTION calculate_wetted_area
