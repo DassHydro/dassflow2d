@@ -2567,12 +2567,12 @@ SUBROUTINE write_static_cell_data( mesh )
         open(20, file='res/static_cell_data.dat', status='replace', form='formatted')
 
         ! Écrit l'en-tête du fichier
-        write(20,*) '# i a beta W'
+        write(20,*) '# i a beta W hbanks'
 
         ! Boucle sur toutes les cellules pour écrire les données
         do index = 1, mesh%nc 
             W = Sporosity%width(index) 
-            write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W
+            write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W, SPorosity%hbanks(index)
         end do
 
         ! Ferme le fichier
