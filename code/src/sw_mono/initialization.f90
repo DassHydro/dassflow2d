@@ -122,12 +122,19 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
    if (allocated(my_phys_desc%soil)) call my_phys_desc_2_fortran(my_phys_desc)
 #endif
+
+#ifdef USE_PORO
    !=====================================================
    SPorosity%beta = 2
    do ie = 1,mesh%nc
       SPorosity%a(ie) = 1
+      SPorosity%hbanks(ie) = 6
+      SPorosity%width(ie) = calculate_width(ie, mesh)
    enddo
+
+
    !=====================================================
+#endif
 
 !
 !      if (allocated(my_bc%rain)) then
@@ -1905,6 +1912,8 @@ allocate( SPorosity%land( size( my_porosity%land ) ) )
 allocate( SPorosity%Phi ( size( my_porosity%Phi ) ) )
 allocate( SPorosity%a ( size( my_porosity%a ) ) )
 allocate( SPorosity%beta ( size( my_porosity%beta ) ) )
+allocate( SPorosity%hbanks ( size( my_porosity%hbanks ) ) )
+allocate( SPorosity%width ( size( my_porosity%width ) ) )
 
 ! loop on all cells to define patch correspondance
 do i = 1,size(my_porosity%land)
@@ -1916,6 +1925,8 @@ do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
    SPorosity%a( i ) = my_porosity%a( i )
    SPorosity%beta( i ) = my_porosity%beta( i )
+   SPorosity%hbanks( i ) = my_porosity%hbanks( i )
+   SPorosity%width( i ) = my_porosity%width ( i )
 end do
 
 !< Integral Porosity
@@ -2122,5 +2133,27 @@ SUBROUTINE my_bc_2_fortran(my_bc)
     
 
 END SUBROUTINE my_bc_2_fortran
+
+
+
+FUNCTION calculate_width(icell, mesh) RESULT(W)
+        IMPLICIT NONE
+        INTEGER, INTENT(IN) :: icell
+        TYPE(msh), INTENT(IN) :: mesh
+        REAL(rp) :: W
+        INTEGER :: k_loop, ie_local, count_found
+
+        count_found = 0
+        W = 0
+        DO k_loop = 1, mesh%cell(icell)%nbed
+            ie_local = mesh%cell(icell)%edge(k_loop)
+            IF (.NOT. mesh%edge(ie_local)%boundary) THEN
+                count_found = count_found + 1
+                W = W + mesh%edge(ie_local)%length
+            END IF
+        END DO
+        W = W / count_found_rp
+END FUNCTION calculate_width
+
 
 END SUBROUTINE Initial

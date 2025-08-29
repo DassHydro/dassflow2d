@@ -228,7 +228,12 @@ MODULE m_model
    ! Parabola parameters
    real(rp), dimension(:), allocatable :: beta
    real(rp), dimension(:), allocatable :: a
+   
+   ! Bank height
+   real(rp), dimension(:), allocatable :: hbanks
 
+   ! Cell width 
+   real(rp), dimension(:), allocatable :: width
 
    END TYPE porosity_data
 
@@ -1032,15 +1037,19 @@ CONTAINS
       if ( allocated( PTF ) ) 		     deallocate( PTF )
 #endif
 #ifdef USE_PORO
-      if ( allocated( SPorosity%land ) ) deallocate( SPorosity%land )
-      if ( allocated( SPorosity%Phi ) )  deallocate( SPorosity%Phi )
-      if ( allocated( SPorosity%a ) )    deallocate( SPorosity%a )
-      if ( allocated( SPorosity%beta) )  deallocate( SPorosity%beta ) 
-      if ( allocated( IPorosity%land ) ) deallocate( IPorosity%land )
-      if ( allocated( IPorosity%PhiW ) ) deallocate( IPorosity%PhiW )
-      if ( allocated( IPorosity%PhiG ) ) deallocate( IPorosity%PhiG )
-      if ( allocated( IPorosity%a ) )    deallocate( IPorosity%a )
-      if ( allocated( IPorosity%beta ) ) deallocate( IPorosity%beta )
+      if ( allocated( SPorosity%land ) )   deallocate( SPorosity%land )
+      if ( allocated( SPorosity%Phi ) )    deallocate( SPorosity%Phi )
+      if ( allocated( SPorosity%a ) )      deallocate( SPorosity%a )
+      if ( allocated( SPorosity%beta) )    deallocate( SPorosity%beta )
+      if ( allocated( SPorosity%hbanks ) ) deallocate( SPorosity%hbanks )
+      if ( allocated( SPorosity%width ) ) deallocate( SPorosity%width ) 
+      if ( allocated( IPorosity%land ) )   deallocate( IPorosity%land )
+      if ( allocated( IPorosity%PhiW ) )   deallocate( IPorosity%PhiW )
+      if ( allocated( IPorosity%PhiG ) )   deallocate( IPorosity%PhiG )
+      if ( allocated( IPorosity%a ) )      deallocate( IPorosity%a )
+      if ( allocated( IPorosity%beta ) )   deallocate( IPorosity%beta )
+      if ( allocated( IPorosity%hbanks ) ) deallocate( IPorosity%hbanks )
+      if ( allocated( IPorosity%width ) ) deallocate( IPorosity%width )
 
 
 #endif
