@@ -954,7 +954,6 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
             #ifdef USE_PORO
             ! Calcul de yN (inspiré de calculate_wetted_area)
             yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%beta(i),bathy_cell(i))
-            #endif 
             write(10,'(I8,11(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
@@ -963,11 +962,20 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
                                  bathy_cell(i)+dof%h(i) , &
                                  manning( land(i) )     , &
                                  dof%u(i)               , &
-                                 dof%v(i)             
-                               #ifdef USE_PORO  , &
+                                 dof%v(i)               , &
                                  SPorosity%phi(i)       , &
                                  yN
-                               #endif
+            #else 
+            write(10,'(I8,11(" ",ES15.8))') swap_index(i)					, &
+								mesh%cell(i)%grav%x    , &
+                                 mesh%cell(i)%grav%y    , &
+                                 bathy_cell(i)          , &
+                                 dof%h(i)               , &
+                                 bathy_cell(i)+dof%h(i) , &
+                                 manning( land(i) )     , &
+                                 dof%u(i)               , &
+                                 dof%v(i)              
+            #endif
          end do
 
 
@@ -2562,8 +2570,9 @@ SUBROUTINE write_static_cell_data( mesh )
         write(20,*) '# i a beta W'
 
         ! Boucle sur toutes les cellules pour écrire les données
-        do index = 1, mesh%nc W = calculate_width(index, mesh) write(20,'(I8,3(" ",ES15.8))') index, 
-            SPorosity%a(index), SPorosity%beta(index), W
+        do index = 1, mesh%nc 
+            W = calculate_width(index, mesh) 
+            write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W
         end do
 
         ! Ferme le fichier
