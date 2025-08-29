@@ -2572,7 +2572,7 @@ SUBROUTINE write_static_cell_data( mesh )
         ! Boucle sur toutes les cellules pour écrire les données
         do index = 1, mesh%nc 
             W = Sporosity%width(index) 
-            write(20,'(I8,3(" ",ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W, SPorosity%hbanks(index)
+            write(20,'(I8, 4(1X,ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W, SPorosity%hbanks(index)
         end do
 
         ! Ferme le fichier
