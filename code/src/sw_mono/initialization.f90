@@ -128,7 +128,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
    SPorosity%beta = 2
    do ie = 1,mesh%nc
       SPorosity%a(ie) = 1
-      SPorosity%hbanks(ie) = 6
+      SPorosity%hbanks(ie) = 17
       SPorosity%width(ie) = calculate_width(ie, mesh)
    enddo
 
