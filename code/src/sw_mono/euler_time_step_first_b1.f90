@@ -509,7 +509,6 @@ CONTAINS
                 W = SPorosity%width(icell)    
                 area = (Hbanks - c) * (W/2) - (a / (beta + 1.0_rp)) * (W/2)**(beta + 1.0_rp)
                 area = 2.0_rp * area
-                area = MAX(0.0_rp, area)
                 area = MAX(0.0_rp, area + W*(H_k-Hbanks))
             END IF
         END IF 
