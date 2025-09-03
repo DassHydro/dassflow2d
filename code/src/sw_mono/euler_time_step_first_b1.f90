@@ -448,12 +448,11 @@ SUBROUTINE update_all_porosities(dof, mesh)
     TYPE(unk), INTENT(IN)  :: dof
     TYPE(msh), INTENT(IN)  :: mesh
     
-    INTEGER  :: icell, jloop
+    INTEGER  :: icell
     REAL(rp) :: h, H_k, wetted_area, phi_K_new, macro_area
     REAL(rp) :: W, hbanks
     ! Variables pour la gestion du front sec
     REAL(rp) :: h_virtual, Hk_wet_upstream, macro_area_virtual
-    LOGICAL  :: found_wet_upstream
     ! Variables pour le calcul en débordement
     REAL(rp) :: area_parabola_full, area_rectangle_over
 
@@ -461,33 +460,29 @@ SUBROUTINE update_all_porosities(dof, mesh)
         h = dof%h(icell)
         
         ! --- CAS 1 : La cellule est (quasiment) sèche ---
-        ! On applique la méthode de la hauteur virtuelle.
         if (h < 1.0E-6_rp) then
             
-            found_wet_upstream = .FALSE.
-            Hk_wet_upstream = -1.0E30_rp 
+            phi_K_new = 0.0_rp ! Par défaut, une cellule sèche a une porosité nulle
             
-            DO jloop = icell - 1, 1, -1
-                if (dof%h(jloop) > 1.0E-6_rp) then
-                    Hk_wet_upstream = dof%h(jloop) + bathy_cell(jloop)
-                    found_wet_upstream = .TRUE.
-                    EXIT
-                endif
-            END DO
-            
-            if (found_wet_upstream .AND. Hk_wet_upstream > bathy_cell(icell)) then
-                h_virtual = Hk_wet_upstream - bathy_cell(icell)
-                W = SPorosity%width(icell)
-                wetted_area = calculate_wetted_area(icell, Hk_wet_upstream)
-                macro_area_virtual = W * h_virtual
+            ! On ne vérifie que si ce n'est pas la première cellule du domaine
+            if (icell > 1) then
+                ! On regarde si la cellule IMMÉDIATEMENT précédente est mouillée
+                if (dof%h(icell - 1) > 1.0E-6_rp) then
+                    
+                    Hk_wet_upstream = dof%h(icell - 1) + bathy_cell(icell - 1)
+                    
+                    ! Si le niveau de la voisine est suffisant pour inonder la cellule actuelle
+                    if (Hk_wet_upstream > bathy_cell(icell)) then
+                        h_virtual = Hk_wet_upstream - bathy_cell(icell)
+                        W = SPorosity%width(icell)
+                        wetted_area = calculate_wetted_area(icell, Hk_wet_upstream)
+                        macro_area_virtual = W * h_virtual
 
-                if (macro_area_virtual > 1.0E-9_rp) then
-                    phi_K_new = wetted_area / macro_area_virtual
-                else
-                    phi_K_new = 0.0_rp
+                        if (macro_area_virtual > 1.0E-9_rp) then
+                            phi_K_new = wetted_area / macro_area_virtual
+                        endif
+                    endif
                 endif
-            else
-                phi_K_new = 0.0_rp
             endif
 
         ! --- CAS 2 ET 3 : La cellule est mouillée ---
@@ -499,11 +494,8 @@ SUBROUTINE update_all_porosities(dof, mesh)
 
             ! Cas 2 : L'eau a débordé
             IF (H_k >= hbanks) THEN
-                ! Aire de la parabole pleine jusqu'aux berges
                 area_parabola_full = calculate_wetted_area(icell, hbanks)
-                ! Aire du rectangle d'eau au-dessus des berges
                 area_rectangle_over = W * (H_k - hbanks)
-                ! Aire mouillée totale
                 wetted_area = area_parabola_full + area_rectangle_over
                 
             ! Cas 3 : L'eau est dans le lit mineur
@@ -511,11 +503,10 @@ SUBROUTINE update_all_porosities(dof, mesh)
                 wetted_area = calculate_wetted_area(icell, H_k)
             END IF
 
-            ! Calcul de la porosité (commun aux cas 2 et 3)
+            ! Calcul de la porosité
             IF (macro_area > 1.0E-9_rp) THEN
                 phi_K_new = wetted_area / macro_area
             ELSE
-                ! Si h > 0 mais macro_area est quasi-nul, la cellule est "pleine" par rapport à sa hauteur
                 phi_K_new = 1.0_rp 
             END IF
         END IF
