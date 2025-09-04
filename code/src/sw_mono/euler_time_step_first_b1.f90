@@ -473,9 +473,12 @@ SUBROUTINE update_all_porosities(dof, mesh)
                         W = SPorosity%width(icell)
                         wetted_area = calculate_wetted_area(icell, Hk_wet_upstream)
                         macro_area_virtual = W * h_virtual
+                        found_wet_upstream = .TRUE.
 
                         if (macro_area_virtual > 1.0E-9_rp) then
                             phi_K_new = wetted_area / macro_area_virtual
+                        else 
+                            phi_K_new = 1.0_rp
                         endif
                     endif
                 endif
