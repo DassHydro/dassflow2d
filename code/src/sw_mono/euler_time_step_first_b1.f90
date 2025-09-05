@@ -529,11 +529,11 @@ END SUBROUTINE update_all_porosities
     !===============================================================================================================!
     ! FUNCTION 2 : calculates yN of a cell (half the width occupied by water)
     !===============================================================================================================!
-    FUNCTION calculate_yn(H_k, a, beta, c) RESULT(yN)
+    FUNCTION calculate_yn(H_k, a, gamma, c) RESULT(yN)
         IMPLICIT NONE
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp), INTENT(IN) :: a         !parabola parameter
-        REAL(rp), INTENT(IN) :: beta      !parabola parameter
+        REAL(rp), INTENT(IN) :: gamma     !parabola parameter
         REAL(rp), INTENT(IN) :: c         !parabola parameter
         REAL(rp) :: yN
         
@@ -542,22 +542,22 @@ END SUBROUTINE update_all_porosities
             RETURN
         END IF
  
-        yN = ((H_k - c) / a)**(1.0_rp / beta)
+        yN = ((H_k - c) / a)**(1.0_rp / gamma)
     END FUNCTION calculate_yn
 
     !===============================================================================================================!
     ! FUNCTION 3 : calculates the wetted area of a cell assuming that the bathymetry is a parabola 
-    ! ay^beta + bathy_cell, a and beta are parameters fixed by the user
+    ! ay^gamma + bathy_cell, a and gamma are parameters fixed by the user
     !===============================================================================================================!
     FUNCTION calculate_wetted_area(icell, H_k) RESULT(area)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: icell
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp) :: area
-        REAL(rp) :: a, c, beta, yN, Hbanks, W      !parabola parameters + half the width occupied by water
+        REAL(rp) :: a, c, gamma, yN, Hbanks, W      !parabola parameters + half the width occupied by water
 
         a     = SPorosity%a(icell)
-        beta  = SPorosity%beta(icell)
+        gamma  = SPorosity%gamma(icell)
         c     = bathy_cell(icell)
         Hbanks = SPorosity%hbanks(icell) 
         
@@ -566,14 +566,14 @@ END SUBROUTINE update_all_porosities
             RETURN
         ELSE
             IF (H_k < Hbanks) THEN 
-                yN = calculate_yn(H_k, a, beta, c)
-                area = (H_k - c) * yN - (a / (beta + 1.0_rp)) * yN**(beta + 1.0_rp)
+                yN = calculate_yn(H_k, a, gamma, c)
+                area = (H_k - c) * yN - (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area)
 
             ELSE
                 W = SPorosity%width(icell)    
-                area = (Hbanks - c) * (W/2) - (a / (beta + 1.0_rp)) * (W/2)**(beta + 1.0_rp)
+                area = (Hbanks - c) * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area + W*(H_k-Hbanks))
             END IF

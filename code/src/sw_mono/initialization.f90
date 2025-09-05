@@ -128,10 +128,10 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
         SPorosity%phi(l) = 1.0_rp
         SPorosity%width(l) = calculate_width(l, mesh)
         !Sporosity%hbanks(l)=25
-        !SPorosity%beta(l) = 2.0_rp
+        !SPorosity%gamma(l) = 2.0_rp
         h_max_effective = SPorosity%hbanks(l) - bathy_cell(l)
         if (SPorosity%width(l) > 1.0E-6_rp .AND. h_max_effective > 0.0_rp) then
-            SPorosity%a(l) = h_max_effective / ((SPorosity%width(l) / 2.0_rp)**SPorosity%beta(l))
+            SPorosity%a(l) = h_max_effective / ((SPorosity%width(l) / 2.0_rp)**SPorosity%gamma(l))
         else
             SPorosity%a(l) = 1.0_rp 
         endif
@@ -1913,7 +1913,7 @@ SPorosity%nland = my_porosity%nland
 allocate( SPorosity%land( size( my_porosity%land ) ) )
 allocate( SPorosity%Phi ( size( my_porosity%Phi ) ) )
 allocate( SPorosity%a ( size( my_porosity%a ) ) )
-allocate( SPorosity%beta ( size( my_porosity%beta ) ) )
+allocate( SPorosity%gamma ( size( my_porosity%gamma ) ) )
 allocate( SPorosity%hbanks ( size( my_porosity%hbanks ) ) )
 allocate( SPorosity%width ( size( my_porosity%width ) ) )
 
@@ -1926,7 +1926,7 @@ end do
 do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
    SPorosity%a( i ) = my_porosity%a( i )
-   SPorosity%beta( i ) = my_porosity%beta( i )
+   SPorosity%gamma( i ) = my_porosity%gamma( i )
    SPorosity%hbanks( i ) = my_porosity%hbanks( i )
    SPorosity%width( i ) = my_porosity%width ( i )
 end do

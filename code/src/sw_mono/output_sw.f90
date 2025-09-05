@@ -953,7 +953,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
             H_k = dof%h(i) + bathy_cell(i)
             #ifdef USE_PORO
             ! Calcul de yN (inspiré de calculate_wetted_area)
-            yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%beta(i),bathy_cell(i))
+            yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%gamma(i),bathy_cell(i))
             write(10,'(I8,11(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
@@ -992,9 +992,9 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
     ! FONCTION AIDE : Calcul de yN (locale à v_gnuplot)
     !*************************************************************************
     
-    FUNCTION Calculate_yn(H_k, a, beta, c) RESULT(yN_val)
+    FUNCTION Calculate_yn(H_k, a, gamma, c) RESULT(yN_val)
         IMPLICIT NONE
-        REAL(rp), INTENT(IN) :: H_k, a, beta, c
+        REAL(rp), INTENT(IN) :: H_k, a, gamma, c
         REAL(rp) :: yN_val
         
         IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
@@ -1002,7 +1002,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
             RETURN
         END IF
 
-        yN_val = ((H_k - c) / a)**(1.0_rp / beta)
+        yN_val = ((H_k - c) / a)**(1.0_rp / gamma)
     END FUNCTION Calculate_yn
 
 END SUBROUTINE v_gnuplot
@@ -2567,12 +2567,12 @@ SUBROUTINE write_static_cell_data( mesh )
         open(20, file='res/static_cell_data.dat', status='replace', form='formatted')
 
         ! Écrit l'en-tête du fichier
-        write(20,*) '# i a beta W hbanks'
+        write(20,*) '# i a gamma W hbanks'
 
         ! Boucle sur toutes les cellules pour écrire les données
         do index = 1, mesh%nc 
             W = Sporosity%width(index) 
-            write(20,'(I8, 4(1X,ES15.8))') index, SPorosity%a(index), SPorosity%beta(index), W, SPorosity%hbanks(index)
+            write(20,'(I8, 4(1X,ES15.8))') index, SPorosity%a(index), SPorosity%gamma(index), W, SPorosity%hbanks(index)
         end do
 
         ! Ferme le fichier
