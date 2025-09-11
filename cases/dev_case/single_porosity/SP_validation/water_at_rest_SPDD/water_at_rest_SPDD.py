@@ -27,11 +27,11 @@ class mesh_box:
         self.x_cell = x_cell
         self.y_cell = y_cell
 
-
 ##############################################################################################################
 # --- CONFIGURATION DES CHEMINS ---
-code_dir =  os.getcwd() #os.path.join(dassflow_dir,"code")
-bin_dir = os.path.join(code_dir,"bin_A")
+initial_code_dir = os.getcwd() # Sauvegarde le répertoire de travail initial
+bin_dir = os.path.join(initial_code_dir, "bin_A")
+res_dir = os.path.join(bin_dir, 'res') # Définir res_dir ici, basé sur le bin_dir correct
 
 ##############################################################################################################
 
@@ -39,14 +39,12 @@ bin_dir = os.path.join(code_dir,"bin_A")
 # Initialise bin
 ##########
 
-os.chdir(code_dir)
+os.chdir(initial_code_dir) # Revenir au répertoire initial avant les "make clean"
 
-os.system("make cleanres")			   # removes all in bin_dir/res directory
-os.system("make cleanmsh")			   # removes all in bin_dir/msh directory
-os.system("make cleanmin")			   # removes all in bin_dir/min directory
+os.system("make cleanres")        # removes all in bin_dir/res directory
+os.system("make cleanmsh")        # removes all in bin_dir/msh directory
+os.system("make cleanmin")        # removes all in bin_dir/min directory
 
-#if os.path.isfile(f"rm {bin_dir}/restart.bin"):
-#	os.system(f"rm {bin_dir}/restart.bin")   # removes all in bin_dir/msh directory
 
 os.chdir(bin_dir)
 
@@ -189,23 +187,22 @@ if (os.path.isdir("./obs")):
 
 
 ##############################################################################################################
-
-#plot_vtk(code_dir,'porosity',time,ts,save)
 def read_dassflow_result(filename):
     """Lit un fichier de résultat temporel (result_xxx.dat)."""
-    u_list, H_list, v_list = [], [], []
+    speed_list, h_list = [], []
     with open(filename, 'r') as f:
         for line in f:
             if line.strip().startswith("#"): continue
             parts = line.strip().split()
             if len(parts) >= 11:
                 try:
-                    H = float(parts[4]); 
+                    h = float(parts[4]); 
                     u = float(parts[7]); 
                     v = float(parts[8]); 
-                    u_list.append(u); H_list.append(H);v_list.append(v); 
+                    speed = np.sqrt(u**2 + v**2)
+                    h_list.append(h); speed_list.append(speed); 
                 except (ValueError, IndexError): continue
-    return np.array(u_list),np.array(v_list), np.array(H_list)
+    return np.array(speed_list), np.array(h_list)
 
 def get_time_from_filename(filename):
     """Extrait la valeur numérique du temps depuis un nom de fichier."""
@@ -217,95 +214,99 @@ def get_time_from_filename(filename):
     except (ValueError, IndexError): return -1.0
 
 # --- GRAPHIQUE DE L'ÉVOLUTION VERS L'ÉTAT STATIONNAIRE ---
-if rank == 0:
-    print("\n--- Génération du graphique d'évolution vers l'état stationnaire (erreurs relatives) ---")
 
-    res_dir = os.path.join(bin_dir, 'res')
-    dat_files = sorted(
-        [f for f in os.listdir(res_dir) if f.startswith("result_") and f.endswith(".dat") and "final" not in f],
-        key=get_time_from_filename
-    )
+dat_files = sorted(
+    [f for f in os.listdir(res_dir) if f.startswith("result_") and f.endswith(".dat") and "final" not in f],
+    key=get_time_from_filename)
 
-    if len(dat_files) < 2:
-        print("Pas assez de fichiers pour calculer des erreurs relatives (il faut au moins 2 fichiers).")
-    else:
-        times_for_plot = []
-        h_rel_errors, u_rel_errors, v_rel_errors = [], [], []
+if len(dat_files) < 2:
+    print("Pas assez de fichiers pour calculer des erreurs relatives (il faut au moins 2 fichiers).")
+else:
+    times_for_plot = []
+    h_rel_errors, speed_rel_errors = [], []
+    speed = []
 
-        # Lecture du premier état (t=0)
-        u_prev, v_prev , h_prev = read_dassflow_result(os.path.join(res_dir, dat_files[0]))
+    # Lecture du premier état (t=0)
+    speed_curr, h_curr = read_dassflow_result(os.path.join(res_dir, dat_files[0]))
+    
+    # Boucle sur les états suivants (t=1, t=2, ...)
+    for f_idx, f in enumerate(dat_files[1:]): # Utilise f_idx pour suivre l'itération
+        time_curr = get_time_from_filename(f)
+        times_for_plot.append(time_curr)
 
-        # Boucle sur les états suivants (t=1, t=2, ...)
-        for f_idx, f in enumerate(dat_files[1:]): # Utilise f_idx pour suivre l'itération
-            time_curr = get_time_from_filename(f)
-            u_curr, v_curr, h_curr  = read_dassflow_result(os.path.join(res_dir, f))
+        speed_prev, h_prev = speed_curr, h_curr
 
-            # --- Calcul de l'erreur relative maximale pour h ---
-            with np.errstate(divide='ignore', invalid='ignore'):
-                h_diff = np.abs(h_curr - h_prev)
-                h_denom = np.abs(h_prev)
-                zero_h_mask = np.isclose(h_denom, 0.0, atol=1e-12)
-                errors_h_per_cell = np.where(zero_h_mask, -1.0, h_diff / h_denom)
-                
-                if np.all(errors_h_per_cell == -1.0):
-                    h_rel = -1.0
-                else:
-                    h_rel = np.max(errors_h_per_cell[errors_h_per_cell != -1.0])
+        speed_curr, h_curr = read_dassflow_result(os.path.join(res_dir, f))
+        speed.append(max(speed_curr))
 
-            # --- Calcul de l'erreur relative maximale pour u ---
-            with np.errstate(divide='ignore', invalid='ignore'):
-                u_diff = np.abs(u_curr - u_prev)
-                u_denom = np.abs(u_prev)
-                zero_u_mask = np.isclose(u_denom, 0.0, atol=1e-12)
-                errors_u_per_cell = np.where(zero_u_mask, -1.0, u_diff / u_denom)
-                
-                if np.all(errors_u_per_cell == -1.0):
-                    u_rel = -1.0
-                else:
-                    u_rel = np.max(errors_u_per_cell[errors_u_per_cell != -1.0])
+        # print("speed_prev = ", speed_prev, "speed_curr = ", speed_curr)
 
-            # --- Calcul de l'erreur relative maximale pour v ---
-            with np.errstate(divide='ignore', invalid='ignore'):
-                v_diff = np.abs(v_curr - v_prev)
-                v_denom = np.abs(v_prev)
-                zero_v_mask = np.isclose(v_denom, 0.0, atol=1e-12)
-                errors_v_per_cell = np.where(zero_v_mask, -1.0, v_diff / v_denom)
-                
-                if np.all(errors_v_per_cell == -1.0):
-                    v_rel = -1.0
-                else:
-                    v_rel = np.max(errors_v_per_cell[errors_v_per_cell != -1.0])
+        # --- Calcul de l'erreur relative maximale pour h ---
+        h_diff = np.abs(h_curr - h_prev)
+        errors_h_per_cell = h_diff / h_prev
+        h_rel = np.max(errors_h_per_cell[errors_h_per_cell != -1.0])
+        h_rel_errors.append(h_rel)
 
-            times_for_plot.append(time_curr)
-            h_rel_errors.append(h_rel)
-            u_rel_errors.append(u_rel)
-            v_rel_errors.append(v_rel)
-            
-            # Message de débogage amélioré
-            print(f"Time: {time_curr:.1f}s | h_prev[0]={h_prev[0]:.2e}, u_prev[0]={u_prev[0]:.2e}, v_prev[0]={v_prev[0]:.2e} | h_curr[0]={h_curr[0]:.2e}, u_curr[0]={u_curr[0]:.2e}, v_curr[0]={v_curr[0]:.2e} | h_rel={h_rel:.4e}, u_rel={u_rel:.4e}, v_rel={v_rel:.4e}")
+        speed_diff = np.abs(speed_curr - speed_prev)
+        errors_speed_per_cell = speed_diff / speed_prev
+        speed_rel = np.max(errors_speed_per_cell[errors_speed_per_cell != -1.0])
+        speed_rel_errors.append(speed_rel)
 
-            # Mise à jour pour l'itération suivante
-            h_prev, u_prev, v_prev = h_curr, u_curr, v_curr
+    #print(h_rel_errors)
+    #print(speed_rel_errors)
 
-        # --- Tracé du graphique ---
-        plt.figure(figsize=(12, 7))
-        plt.yscale("log") # Déplacé ici, avant le plot, c'est la meilleure pratique
-        
-        times_arr = np.array(times_for_plot)
-        h_errors_arr = np.array(h_rel_errors)
-        u_errors_arr = np.array(u_rel_errors)
-        v_errors_arr = np.array(v_rel_errors)
-        
-        # Filtrer les points avec -1.0 avant de les tracer sur l'échelle log
-        # car log(-1) n'est pas défini et causerait des problèmes.
-        
-        h_plot_times = times_arr[h_errors_arr != -1.0]
-        h_plot_errors = h_errors_arr[h_errors_arr != -1.0]
-        if len(h_plot_errors) > 0:
-            plt.plot(h_plot_times, h_plot_errors, "o-", label="Erreur relative h")
-        else:
-            print("Aucune erreur relative h valide à tracer.")
+times_for_plot = np.array(times_for_plot)
+h_rel_errors = np.array(h_rel_errors)
+speed_rel_errors = np.array(speed_rel_errors)
+speed = np.array(speed)
 
+# print("times_for_plot = ", times_for_plot)
+
+plt.figure(figsize=(12, 7))
+plt.yscale("log")
+plt.plot(times_for_plot, h_rel_errors, "o-", label="Erreur relative h")
+plt.axhline(y=1e-7, color='r', linestyle='--', label="Seuil de convergence = 1e-7")
+plt.xlabel("Temps (s)")
+plt.ylabel("Erreur relative max (échelle log)")
+plt.title("Convergence vers l'état stationnaire (erreur relative sur la hauteur d'eau)")
+plt.grid(True, which="both")
+plt.legend()
+plt.tight_layout()
+save_path = os.path.join(res_dir, "evolution_erreur_relative_h.png")
+plt.savefig(save_path)
+plt.show()
+
+plt.figure(figsize=(12, 7))
+#plt.yscale("log")
+plt.plot(times_for_plot, speed_rel_errors, "o-", label="Erreur relative vitesse")
+#plt.axhline(y=1e-7, color='r', linestyle='--', label="Seuil de convergence = 1e-7")
+plt.xlabel("Temps (s)")
+plt.ylabel("Erreur relative max") 
+plt.title("Convergence vers l'état stationnaire (erreur relative sur la vitesse)")
+plt.grid(True, which="both")
+plt.legend()
+plt.tight_layout()
+save_path = os.path.join(res_dir, "evolution_erreur_relative_v.png")
+plt.savefig(save_path)
+plt.show()
+
+plt.figure(figsize=(12, 7))
+plt.yscale("log")
+plt.plot(times_for_plot, speed, "o-", label="Evolution de la vitesse")
+plt.axhline(y=1e-7, color='r', linestyle='--', label="Seuil de convergence = 1e-7")
+plt.xlabel("Temps (s)")
+plt.ylabel("Vitesse (m/s)")
+plt.title("Convergence vers l'état stationnaire (évolution de la vitesse)")
+plt.grid(True, which="both")
+plt.legend()
+plt.tight_layout()
+save_path = os.path.join(res_dir, "evolution_vitesse.png")
+plt.savefig(save_path)
+plt.show()
+
+
+
+'''
         u_plot_times = times_arr[u_errors_arr != -1.0]
         u_plot_errors = u_errors_arr[u_errors_arr != -1.0]
         if len(u_plot_errors) > 0:
@@ -323,12 +324,7 @@ if rank == 0:
         epsilon = 1e-7 # Un seuil de convergence typique
         plt.axhline(y=epsilon, color='r', linestyle='--', label=f"Seuil de convergence = {epsilon:.0e}")
         
-        plt.xlabel("Temps (s)")
-        plt.ylabel("Erreur relative max (échelle log)") # Libellé mis à jour pour être clair
-        plt.title("Convergence vers l'état stationnaire (erreurs relatives)")
-        plt.grid(True, which="both")
-        plt.legend()
-        plt.tight_layout()
+        
 
         # Gestion des limites Y
         all_tracable_errors = []
@@ -344,10 +340,10 @@ if rank == 0:
         else:
             plt.ylim(1e-15, 1.0) # Limites par défaut
 
-        save_path = os.path.join(res_dir, "evolution_erreur_relative.png")
-        plt.savefig(save_path)
+        
         plt.close()
         print(f"Graphique sauvegardé : {save_path}")
+        '''
 
 ########################
 # Outputs from python
@@ -394,7 +390,7 @@ save = 1
 time = 'final'
 
 # 3. TRACER le champ 'h'. Il tracera maintenant les déviations.
-plot_vtk(code_dir,'h',time,ts,save)
+plot_vtk(initial_code_dir ,'h',time,ts,save)
 
 # 4. RESTAURER la tranche originale de 'h' APRÈS le tracé
 my_model.kernel.dof.h[:nc] = original_h_slice
@@ -402,9 +398,9 @@ my_model.kernel.dof.h[:nc] = original_h_slice
 
 # Les autres tracés (u, v, zs) sont effectués normalement, avec les VRAIES valeurs
 # (car h a été restauré, et u,v,zs n'ont pas été modifiés par ce hack).
-plot_vtk(code_dir,'u',time,ts,save)
-plot_vtk(code_dir,'v',time,ts,save)
-plot_vtk(code_dir,'zs','initial',ts,save)
-plot_vtk(code_dir,'zs',time,ts,save)
+plot_vtk(initial_code_dir ,'u',time,ts,save)
+plot_vtk(initial_code_dir ,'v',time,ts,save)
+plot_vtk(initial_code_dir ,'zs','initial',ts,save)
+plot_vtk(initial_code_dir ,'zs',time,ts,save)
 
 df2d.wrapping.call_model.clean_model(my_model.kernel)
