@@ -1,0 +1,12 @@
+!===============================================!
+!  Number of boundary conditions
+!===============================================!
+0
+!===============================================!
+!  List of boundary conditions (all unspecified boundaries are set as "wall" boundary condition type ) 
+!===============================================!
+!      0    wall     
+!      0    wall     
+!      0    wall     
+!      0    wall     
+
