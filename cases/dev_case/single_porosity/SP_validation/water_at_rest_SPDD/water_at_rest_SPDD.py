@@ -77,8 +77,8 @@ mesh_name = "automaticaly_generated_mesh.txt "
 # Model
 ##########
 
-ts = 13000
-dtw= 1300 
+ts = 20000
+dtw= 2000 
 
 # REMARK : In this test-case, you must set nland equal to the number of cells in your mesh
 
@@ -155,8 +155,10 @@ my_model.kernel.my_porosity.gamma = np.zeros(nc, dtype=float)
 my_model.kernel.my_porosity.width = np.zeros(nc, dtype=float)
 my_model.kernel.my_porosity.hbanks = np.zeros(nc, dtype=float)
 my_model.kernel.my_porosity.land[:] = np.arange(1, nc + 1)
+my_model.kernel.my_porosity.phi = np.zeros(nc, dtype=float)
 
-
+my_model.kernel.my_porosity.gamma = 2.0 
+my_model.kernel.my_porosity.hbanks = 25.0 
 
 ##########
 # Hydraulic states
