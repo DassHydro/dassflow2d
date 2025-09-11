@@ -66,13 +66,9 @@ rank = comm.Get_rank()
 # Mesh
 ##########
 
-L = 100
-dx = 1
-type = 'channel'
 
-mesh_name = gen_mesh(type,L,dx)
-
-# Remark : If you choose type = 'box' or 'flat_square' you must comment the call to the function plot_dat and add '_box' to the name function plot_vtk
+#mesh_name = gen_mesh(type,L,dx)
+mesh_name = "channel.geo"
 
 
 ##########
