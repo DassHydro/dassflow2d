@@ -75,7 +75,7 @@ mesh_name = "channel.geo"
 # Model
 ##########
 
-ts = 3000
+ts = 10000
 dtw = ts*0.2
 
 # REMARK : In this test-case, you must set nland equal to the number of cells in your mesh
@@ -108,7 +108,8 @@ my_model = df2d.dassflowmodel(bin_dir =  bin_dir, hdf5_path = os.path.join(bin_d
 
 #Re initialize mesh from new updated geo file
 my_model.init_mesh()
-#my_model.meshing.plot()
+my_model.meshing.plot()
+
 # Input parameters for the generation of observations
 
 Config = df2d.core.config.Config()
@@ -154,7 +155,8 @@ df2d.wrapping.call_model.init_porosity(my_model.kernel)
 for i in range(nland) :
 
     my_model.kernel.my_porosity.phi[i] = 0.5
-
+    my_model.kernel.my_porosity.hbanks[i] = 18
+    my_model.kernel.my_porosity.gamma[i] = 2
 my_model.kernel.my_porosity.land[:] = range(1,nland+1)
 
 
@@ -198,7 +200,7 @@ if (os.path.isdir("./obs")):
 
 # Meaning of graphe = [ 'h' , 'u' , 'v' , 'qx' , 'qy' ]
 
-graphe = [1,0,0,0,0]
+graphe = [1,1,1,0,0]
 
 # Remark : reference not usable here
 
@@ -211,7 +213,7 @@ h = my_model.kernel.dof.h[:nc]
 u = my_model.kernel.dof.u[:nc]
 v = my_model.kernel.dof.v[:nc]
 
-plot_dat(graphe,display_ref,mesh_name,ts,h,u,v,h0,u0,v0)
+#plot_dat(graphe,display_ref,mesh_name,ts,h,u,v,h0,u0,v0)
 
 # To save pictures : save = 1
 
