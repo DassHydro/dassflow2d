@@ -21,7 +21,7 @@
     dta                =   1000, 
     temp_scheme        =   'euler', 
     spatial_scheme     =   'first_b1', 
-    friction           =   1, 
+    friction           =   0, 
     adapt_dt           =   1, 
     dt                 =   1, 
     cfl                =   0.8, 

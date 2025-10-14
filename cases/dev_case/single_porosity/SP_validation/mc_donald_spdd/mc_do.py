@@ -49,6 +49,7 @@ os.system("make cleanmin")			   # removes all in bin_dir/min directory
 #	os.system(f"rm {bin_dir}/restart.bin")   # removes all in bin_dir/msh directory
 
 os.chdir(bin_dir)
+print("ok")
 
 ##########
 # MPI
