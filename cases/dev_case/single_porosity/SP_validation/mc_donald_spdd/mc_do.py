@@ -76,14 +76,6 @@ rank = comm.Get_rank()
 # Mesh
 ##########
 
-# COMMENTEZ OU SUPPRIMEZ LES PARAMÈTRES POUR LA GÉNÉRATION DE MAILLAGE DYNAMIQUE
-# L_mesh = 100.0 # Longueur du canal
-# dx_mesh = 1.0  # Taille de cellule en x
-# mesh_type_for_gen ='channel'
-# generated_mesh_filename = '{}_dx={}_L={}.geo'.format(mesh_type_for_gen, dx_mesh, L_mesh)
-# mesh_full_path_generated = os.path.join(bin_dir, generated_mesh_filename)
-
-
 # DÉFINIR LE NOM DU MAILLAGE STATIQUE DIRECTEMENT
 mesh_name_for_dassflow = 'channel.geo' # C'est le fichier que vous avez copié !
 
@@ -197,21 +189,6 @@ for i in range(nc) :
 my_model.kernel.dof0.u[:] = 0.0
 my_model.kernel.dof0.v[:] = 0.0
 
-# Définition de la bathymétrie (zb).
-# C'est ici que vous pouvez définir le profil du fond du canal.
-# Exemple d'une pente simple :
-# Définition de la bathymétrie (zb).
-# C'est ici que vous pouvez définir le profil du fond du canal.
-# Exemple d'une pente simple :
-
-print("Setting flat bathymetry (zb = 0.0 m for all cells).")
-zb = np.zeros(nc, dtype=float)
-zb[:] = 0.0 # Fond plat à une altitude de 0.0 mètre
-
-# Assigner la bathymétrie au maillage Fortran
-my_model.kernel.mesh.z[:] = zb
-
-##############################################################################################################
 
 ##########################################
 # Run
