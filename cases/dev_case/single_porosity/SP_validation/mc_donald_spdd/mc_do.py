@@ -101,7 +101,7 @@ else:
 # Model
 ##########
 
-ts = 10000
+ts = 100
 dtw = ts*0.2
 
 use_porosity = 1
@@ -204,12 +204,6 @@ my_model.kernel.dof0.v[:] = 0.0
 # C'est ici que vous pouvez définir le profil du fond du canal.
 # Exemple d'une pente simple :
 
-print("Setting flat bathymetry (zb = 0.0 m for all cells).")
-zb = np.zeros(nc, dtype=float)
-zb[:] = 0.0 # Fond plat à une altitude de 0.0 mètre
-
-# Assigner la bathymétrie au maillage Fortran
-my_model.kernel.mesh.z[:] = zb
 
 ##############################################################################################################
 
@@ -220,39 +214,52 @@ my_model.kernel.mesh.z[:] = zb
 df2d.wrapping.call_model.init_fortran(my_model.kernel)
 df2d.wrapping.call_model.run(my_model.kernel, arg = "direct")
 
-# IMPORTANT : Après le run, utilisez my_model.save_all() pour que les outputs soient générés
-my_model.save_all()
-
-if (os.path.isdir("./obs")):
-    shutil.rmtree('./obs')
-
-##############################################################################################################
-
 ########################
-# Outputs from python (Visualisation avec plot_field)
+# Outputs from python (Gestion et Visualisation)
 ########################
 
-# Instancier explicitement l'objet Outputs et le lier au modèle
+# 1. Instancier explicitement l'objet Outputs et le lier au modèle.
+#    Ceci CRÉE l'objet 'outputs' et l'attache à 'my_model', mais ne CHARGE PAS encore de données.
 try:
     # Tentative 1: df2d.Outputs
     my_model.outputs = df2d.Outputs(my_model)
-    my_model.outputs.load_outputs(custom_config=my_model.config.get_config())
-    print("Outputs object successfully created and loaded from df2d.Outputs.")
+    print("Outputs object successfully created and linked to model.")
 except AttributeError:
     # Tentative 2: df2d.postprocess.Outputs (la plus probable pour votre version)
     try:
         import dassflow2d.postprocess # Importez le module postprocess
         my_model.outputs = dassflow2d.postprocess.Outputs(my_model)
-        my_model.outputs.load_outputs(custom_config=my_model.config.get_config())
-        print("Outputs object successfully created and loaded from dassflow2d.postprocess.Outputs.")
+        print("Outputs object successfully created and linked from dassflow2d.postprocess.Outputs.")
     except Exception as e_postprocess:
-        print(f"Error creating/loading Outputs object from dassflow2d.postprocess: {e_postprocess}")
+        print(f"Error creating Outputs object from dassflow2d.postprocess: {e_postprocess}")
         print("Please check your DassFlow2D installation and module structure.")
         sys.exit("Cannot proceed with plotting without Outputs object.")
 except Exception as e:
-    print(f"Error creating/loading Outputs object (initial attempt df2d.Outputs): {e}")
+    print(f"Error creating Outputs object (initial attempt df2d.Outputs): {e}")
     print("Please check your DassFlow2D installation and module structure.")
     sys.exit("Cannot proceed with plotting without Outputs object.")
+
+
+# 2. IMPORTANT : Maintenant que l'objet Outputs est créé (my_model.outputs existe),
+#    on peut appeler my_model.save_all(). C'est cette fonction qui va écrire les
+#    résultats Fortran dans les fichiers de sortie (ex: simu.hdf5).
+my_model.save_all()
+print("Model results saved to HDF5/VTK files.")
+
+
+# 3. Nettoyage des fichiers 'obs' (si présents et non désirés)
+#    Ceci devrait se faire APRÈS la sauvegarde mais AVANT le chargement si ces
+#    fichiers ne sont pas ceux que load_outputs doit lire.
+if (os.path.isdir("./obs")): # Utilisez le chemin exact où 'obs' est créé
+    shutil.rmtree('./obs')
+    print("Removed temporary './obs' directory.")
+
+
+# 4. Charger les résultats dans l'objet Outputs.
+#    Ceci lit les fichiers de sortie qui viennent d'être écrits par my_model.save_all().
+my_model.outputs.load_outputs(custom_config=my_model.config.get_config())
+print("Outputs loaded into the Outputs object for plotting.")
+##############################################################################################################
 
 # Calcul de la moyenne et de la déviation (si nécessaire pour un tracé spécifique)
 # Utilisez my_model.outputs.result.h pour obtenir les données du dernier pas de temps
