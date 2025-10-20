@@ -1,4 +1,6 @@
-
+# Environnements virtuels
+.venv/
+venv/
 
 # Fichiers cache Python
 __pycache__/
@@ -56,3 +58,4 @@ result_*.dat
 *.swp
 
 
+cases/sw_mono/Model_Garonne/
