@@ -57,5 +57,4 @@ result_*.dat
 .idea/
 *.swp
 
-# Ignorer les répertoires de projets dans `sw_mono` qui semblent être d'autres cas de test.
-sw_mono/Model_Garonne/
+
