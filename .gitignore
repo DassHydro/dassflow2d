@@ -1,0 +1,61 @@
+# Environnements virtuels
+.venv/
+venv/
+
+# Fichiers cache Python
+__pycache__/
+*.pyc
+
+# Fichiers de résultats, binaires DassFlow et intermédiaires de compilation
+# Fichiers contenus dans les répertoires 'bin_A' (ou 'bin_B', 'bin_C'...)
+# partout dans ton projet, y compris dans les sous-dossiers.
+# Ces règles ciblent les fichiers à l'intérieur de ces dossiers de résultats.
+*/bin_A/msh/
+*/bin_A/res/
+*/bin_A/Saved_pictures/
+*/bin_A/*.pdf
+*/bin_A/*.png
+*/bin_A/*.vtk
+*/bin_A/*.vtu
+*/bin_A/*.pvtu
+*/bin_A/*.hdf5
+*/bin_A/*.dat
+*/bin_A/*.bin
+
+# Si tu as un dossier 'bin_A' directement sous 'code', comme dans ton `git status`
+code/bin_A/msh/
+code/bin_A/res/
+code/bin_A/Saved_pictures/
+code/bin_A/*.pdf
+code/bin_A/*.png
+code/bin_A/*.vtk
+code/bin_A/*.vtu
+code/bin_A/*.pvtu
+code/bin_A/*.hdf5
+code/bin_A/*.dat
+code/bin_A/*.bin
+
+# Fichiers de résultats spécifiques (au cas où ils ne sont pas dans un dossier bin_A)
+# Ex: porosity_history.dat
+porosity_history.dat
+simu.hdf5
+time_step.dat
+water_vol.dat
+water_vol_num_add.dat
+result_*.dat
+
+# Fichiers Fortran compilés et objets
+*.o
+*.mod
+*.a
+*.so
+*.dll
+*.out
+
+# Fichiers de l'IDE
+.vscode/
+.idea/
+*.swp
+
+# Ignorer les répertoires de projets dans `sw_mono` qui semblent être d'autres cas de test.
+sw_mono/Model_Garonne/
