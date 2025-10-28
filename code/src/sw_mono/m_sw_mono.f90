@@ -240,7 +240,6 @@ MODULE m_model
    type(porosity_data), target :: SPorosity
    type(porosity_data), target :: IPorosity
 
-   REAL(rp), ALLOCATABLE, PUBLIC :: porosity_history(:,:)
    !===================================================================================================================!
    !  Model parameters Structure
    !===================================================================================================================!
