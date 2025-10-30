@@ -2139,23 +2139,52 @@ END SUBROUTINE my_bc_2_fortran
 
 
 FUNCTION calculate_width(icell, mesh) RESULT(W)
-        IMPLICIT NONE
-        INTEGER, INTENT(IN) :: icell
-        TYPE(msh), INTENT(IN) :: mesh
-        REAL(rp) :: W
-        INTEGER :: k_loop, ie_local, count_found
+    ! Calcule la largeur W d'une cellule en faisant la moyenne
+    ! de la longueur de ses deux arêtes amont/aval.
+    USE m_mesh, ONLY: msh
+    IMPLICIT NONE
 
-        count_found = 0
-        W = 0
-        DO k_loop = 1, mesh%cell(icell)%nbed
-            ie_local = mesh%cell(icell)%edge(k_loop)
-            IF (.NOT. mesh%edge(ie_local)%boundary) THEN
-                count_found = count_found + 1
-                W = W + mesh%edge(ie_local)%length
+    ! --- Arguments ---
+    INTEGER, INTENT(IN) :: icell
+    TYPE(msh), INTENT(IN) :: mesh
+    
+    ! --- Résultat ---
+    REAL(rp) :: W
+
+    ! --- Variables locales ---
+    INTEGER :: k, ie, count_found
+    REAL(rp) :: length1, length2
+    REAL(rp) :: nx, ny ! Composantes du vecteur normal
+
+    ! Initialisation
+    count_found = 0
+    length1 = 0.0_rp
+    length2 = 0.0_rp
+
+    ! On parcourt les 4 arêtes de la cellule 'icell'
+    DO k = 1, mesh%cell(icell)%nbed
+        ie = mesh%cell(icell)%edge(k) ! Index de l'arête
+
+        ! On récupère les composantes du vecteur normal
+        nx = mesh%edge(ie)%normal%x
+        ny = mesh%edge(ie)%normal%y
+
+        ! Si la composante Y de la normale est plus grande que la X,
+        ! c'est une arête amont ou aval. Sa longueur est la largeur.
+        IF (ABS(ny) > ABS(nx)) THEN
+            count_found = count_found + 1
+            IF (count_found == 1) THEN
+                length1 = mesh%edge(ie)%length
+            ELSEIF (count_found == 2) THEN
+                length2 = mesh%edge(ie)%length
+                EXIT ! On a trouvé les deux, on peut sortir de la boucle.
             END IF
-        END DO
-        W = W / count_found
+        END IF
+    END DO
+    
+    ! La largeur W est la moyenne des longueurs des deux arêtes trouvées.
+    W = (length1 + length2) / 2.0_rp
+    
 END FUNCTION calculate_width
-
 
 END SUBROUTINE Initial
