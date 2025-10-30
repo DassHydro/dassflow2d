@@ -753,12 +753,12 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    mesh_total_cells = mesh%nc
      call mpi_sum_i( mesh_total_cells )
 
-    allocate ( my_porosity%Phi  ( my_porosity%nland ) )
+    allocate ( my_porosity%Phi  ( mesh%nc ) )
     allocate ( my_porosity%land ( mesh_total_cells ) )
-    allocate ( my_porosity%a    ( my_porosity%nland ) )
+    allocate ( my_porosity%a    ( mesh%nc ) )
     allocate ( my_porosity%gamma ( my_porosity%nland ) )
     allocate ( my_porosity%hbanks ( my_porosity%nland ) )
-    allocate ( my_porosity%width ( my_porosity%nland ) )
+    allocate ( my_porosity%width ( mesh%nc ) )
     allocate ( my_porosity%PhiW ( my_porosity%nland ) )
     allocate ( my_porosity%PhiG ( my_porosity%nland ) )
   

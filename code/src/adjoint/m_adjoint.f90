@@ -163,6 +163,11 @@ MODULE m_adjoint
     real(rp)     :: manning_lbound
     real(rp)     :: manning_ubound
 
+    real(rp)     ::  Phi_gamma_lbound
+    real(rp)     ::  Phi_gamma_ubound
+
+    real(rp)     ::  Phi_hbanks_lbound
+    real(rp)     ::  Phi_hbanks_ubound
 
 
     integer(ip)  ::  n_bathyb
@@ -392,6 +397,9 @@ CONTAINS
          manning_beta_back(:) = 0._rp
 
          SPorosity_back%Phi(:) = 0._rp
+         SPorosity_back%width(:) = 0._rp
+         SPorosity_back%hbanks(:) = 0._rp
+         SPorosity_back%gamma(:) = 0._rp
 
          slope_y_back = 0._rp
          slope_x_back = 0._rp
@@ -412,8 +420,8 @@ CONTAINS
       !================================================================================================================!
 
       call write_control_back( dof0_back , mesh )
-! write(*,*) proc, "control", control
-! write(*,*) proc, "control_back", control_back
+write(*,*) proc, "control", control
+write(*,*) proc, "control_back", control_back
 ! write(*,*) proc, "bc_back%sum_mass_flux( : )", bc_back%sum_mass_flux( : )
 ! write(*,*) proc, "bc%sum_mass_flux( : )", bc%sum_mass_flux( : )
 
@@ -805,6 +813,10 @@ CONTAINS
          if ( c_CN == 1         ) call var_2_control( infil%SCS(:)%CN, infil%nland , 0 )
 
          if ( c_porosity == 1   ) call var_2_control( SPorosity%Phi(:), SPorosity%nland, 0 )
+         if ( c_porosity == 2   ) then
+             call var_2_control( SPorosity%hbanks(:), SPorosity%nland, 0 )
+             call var_2_control( SPorosity%gamma(:), SPorosity%nland, 0 )
+         endif
 
          if (c_ptf         == 1 ) then
             do i = 1, phys_desc%ptf_nland
@@ -958,8 +970,11 @@ CONTAINS
          if ( c_manning_beta == 1 ) call var_2_control_diff( eps_manning * manning_beta    , nland   , manning_data_glob ) ! should have manning_BETA_data_glob ??
          if ( c_bathy   == 1 ) call var_2_control_diff( eps_bathy   * bathy_cell , mesh%nc , 0                 )
 
-         if ( c_porosity == 1 ) call var_2_control_diff( SPorosity%Phi(:), SPorosity%nland, 0 )
-
+         if ( c_porosity == 1 ) call var_2_control_diff( 0.01 * SPorosity%Phi(:), SPorosity%nland, 0 )
+         if ( c_porosity == 2   ) then
+             call var_2_control_diff( 0.01 * SPorosity%hbanks(:), SPorosity%nland, 0 )
+             call var_2_control_diff( 0.01 * SPorosity%gamma(:), SPorosity%nland, 0 )
+         endif
          if ( c_slope_y == 1 ) call var_2_control_diff( slope_y , size(slope_y) , 0                 )
          if ( c_slope_x == 1 ) call var_2_control_diff( slope_x , size(slope_x) , 0                 )
 
@@ -1178,6 +1193,10 @@ CONTAINS
          if ( c_bathy   == 1 ) call var_2_control_back( bathy_cell_back, mesh%nc , 0                 )
 
          if ( c_porosity == 1 ) call var_2_control_back( SPorosity_back%Phi(:), SPorosity%nland, 0 )
+         if ( c_porosity == 2   ) then
+             call var_2_control_back( SPorosity_back%hbanks(:), SPorosity%nland, 0 )
+             call var_2_control_back( SPorosity_back%gamma(:), SPorosity%nland, 0 )
+         endif
          if ( c_slope_y == 1 ) call var_2_control_back( slope_y , size(slope_y) , 0                 )
          if ( c_slope_x == 1 ) call var_2_control_back( slope_x , size(slope_x) , 0                 )
 
@@ -1360,6 +1379,12 @@ hydrograph_ubound = 9.35_rp
 Porosity_lbound = 0.1_rp
 Porosity_ubound = 1._rp
 
+Phi_gamma_lbound = 0.1_rp
+Phi_gamma_ubound = 4._rp
+
+Phi_hbanks_lbound = 0.5_rp
+Phi_hbanks_ubound = 10._rp
+
 manning_lbound = 0._rp
 manning_ubound = 1._rp
 
@@ -1430,6 +1455,10 @@ manning_ubound = 1._rp
 
          if ( c_porosity == 1 ) then
             call var_2_control_bounds(Porosity_lbound, Porosity_ubound, SPorosity%nland, 1)
+         end if
+         if ( c_porosity == 2 ) then
+            call var_2_control_bounds(Phi_hbanks_lbound, Phi_hbanks_ubound, SPorosity%nland, 1)
+            call var_2_control_bounds(Phi_gamma_lbound, Phi_gamma_ubound, SPorosity%nland, 1)
          end if
 !
 !          if      ( c_ratcurve == 1 ) then
@@ -1614,7 +1643,10 @@ manning_ubound = 1._rp
          if ( c_bathy   == 1 ) call control_2_var( bathy_cell, mesh%nc , 0                 )
  
          if ( c_porosity == 1 ) call control_2_var( SPorosity%Phi(:), SPorosity%nland, 0 )
-
+         if ( c_porosity == 2   ) then
+             call control_2_var( SPorosity%hbanks(:), SPorosity%nland, 0 )
+             call control_2_var( SPorosity%gamma(:), SPorosity%nland, 0 )
+         endif
          if ( c_slope_y == 1 ) call control_2_var( slope_y , size(slope_y) , 0                 )
          if ( c_slope_x == 1 ) call control_2_var( slope_x , size(slope_x) , 0                 )
 
@@ -1852,6 +1884,10 @@ manning_ubound = 1._rp
          if ( c_bathy   == 1 ) call control_diff_2_var( bathy_cell_diff , mesh%nc , 0                 )
 
          if ( c_porosity == 1 ) call control_diff_2_var( SPorosity%Phi(:), SPorosity%nland, 0 )
+         if ( c_porosity == 2   ) then
+             call control_diff_2_var( SPorosity%hbanks(:), SPorosity%nland, 0 )
+             call control_diff_2_var( SPorosity%gamma(:), SPorosity%nland, 0 )
+         endif
 
          if ( c_slope_y == 1 ) call control_diff_2_var( slope_y , size(slope_y) , 0                 )
          if ( c_slope_x == 1 ) call control_diff_2_var( slope_x , size(slope_x) , 0                 )
@@ -2013,7 +2049,10 @@ manning_ubound = 1._rp
          if ( c_bathy   == 1 ) call control_perturb_2_var( bathy_cell , mesh%nc , 0                 )
 
          if ( c_porosity == 1 ) call control_perturb_2_var( SPorosity%Phi(:), SPorosity%nland, 0 )
-
+         if ( c_porosity == 2   ) then
+             call control_perturb_2_var( SPorosity%hbanks(:), SPorosity%nland, 0 )
+             call control_perturb_2_var( SPorosity%gamma(:), SPorosity%nland, 0 )
+         endif
          if ( c_slope_y == 1 ) call control_perturb_2_var( slope_y , size(slope_y) , 0                 )
          if ( c_slope_x == 1 ) call control_perturb_2_var( slope_x , size(slope_x) , 0                 )
 
@@ -2278,7 +2317,22 @@ manning_ubound = 1._rp
             end do
 
             close(10)
+
+         elseif ( proc == 0 .and. c_porosity == 2 ) then
+
+            write(file_name,'(A,I3.3)') 'min/SPorosity.' , ite_min
+
+            open(10,file=file_name,status='replace',form='formatted')
+
+            do i = 1,SPorosity%nland
+
+               write(10,*) i , SPorosity%gamma(i), SPorosity%hbanks(i)
+
+            end do
+
+            close(10)
          end if
+
 
 
          if ( proc == 0 .and. c_bathy == 1 ) then
@@ -2590,17 +2644,17 @@ if (c_manning_beta == 1) then
                close(10)
 endif
 
-if (c_porosity == 1) then
-               write(file_name,'(A,I3.3,A)') 'grad/SPorosity' , k , '_grad'
+! if (c_porosity == 1) then
+!                write(file_name,'(A,I3.3,A)') 'grad/SPorosity' , k , '_grad'
 
-               open(10,file=file_name,status='replace',form='formatted')
+!                open(10,file=file_name,status='replace',form='formatted')
 
-               do i = 1,size(SPorosity_back%Phi)
-                  write(10,*) i, SPorosity_back%Phi(i)
-               end do
+!                do i = 1,size(SPorosity_back%Phi)
+!                   write(10,*) i, SPorosity_back%Phi(i)
+!                end do
 
-               close(10)
-endif
+!                close(10)
+! endif
       #endif
 
    END SUBROUTINE output_control_back

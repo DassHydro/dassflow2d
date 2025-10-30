@@ -590,6 +590,11 @@ CONTAINS
       do while(task(1:2) == "FG" .or. task == "NEW_X" .or. &
                task == "START")
 
+      if (size(control) < 30_ip) then
+        write(*,*) "Current control vector is ", control
+      else
+        write(*,*) proc, "Current control vector is too large to show"
+      endif
          !=============================================================================================================!
          !  task = FG -> LBFGSB-3.0 needs new values of the cost and its gradient
          !=============================================================================================================!

@@ -96,9 +96,9 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
 
 ! >>> AJOUTEZ CES LIGNES (OUVRIR LE FICHIER) <<<
 INTEGER :: poro_unit
-#ifdef USE_PORO
-OPEN(NEWUNIT=poro_unit, FILE='res/porosity_history.dat', FORM='FORMATTED', STATUS='REPLACE')
-#endif
+! #ifdef USE_PORO
+! OPEN(NEWUNIT=poro_unit, FILE='res/porosity_history.dat', FORM='FORMATTED', STATUS='REPLACE')
+! #endif
 
    !===================================================================================================================!
    !  Define parameterized bathymetry
@@ -344,9 +344,9 @@ OPEN(NEWUNIT=poro_unit, FILE='res/porosity_history.dat', FORM='FORMATTED', STATU
 ! write(*,*) "call calc_cost_function( cost , mesh )"
    call calc_cost_function( cost , mesh )
 
-#ifdef USE_PORO
-CLOSE(poro_unit)
-#endif
+! #ifdef USE_PORO
+! CLOSE(poro_unit)
+! #endif
 
 
 CONTAINS

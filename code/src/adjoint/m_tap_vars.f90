@@ -393,7 +393,10 @@ CONTAINS
          allocate( bathy_cell_back( size( bathy_cell ) ) )
          allocate( slope_y_back (size(slope_y)))
          allocate( slope_x_back (size(slope_x)))
-         allocate( SPorosity_back%Phi (size(SPorosity%Phi)))
+         allocate( SPorosity_back%Phi (mesh%nc))!(size(SPorosity%Phi)))
+         allocate( SPorosity_back%width (mesh%nc))!(size(SPorosity%width)))
+         allocate( SPorosity_back%hbanks (size(SPorosity%hbanks)))
+         allocate( SPorosity_back%gamma (size(SPorosity%gamma)))
 
          XSshape_back(:)%xleft = 0._rp
          XSshape_back(:)%xcenter = 0._rp
@@ -409,6 +412,9 @@ CONTAINS
          slope_x_back(:)   =  0._rp
 
          SPorosity_back%Phi(:) = 0._rp
+         SPorosity_back%width(:) = 0._rp
+         SPorosity_back%hbanks(:) = 0._rp
+         SPorosity_back%gamma(:) = 0._rp
 
          allocate( bc_back%sum_mass_flux( bc%nb ) )
 
