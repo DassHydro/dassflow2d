@@ -953,7 +953,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
             H_k = dof%h(i) + bathy_cell(i)
             #ifdef USE_PORO
             ! Calcul de yN (inspiré de calculate_wetted_area)
-            yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%gamma(i),bathy_cell(i))
+            yN= Calculate_yn(H_k,SPorosity%a(i),SPorosity%gamma(SPorosity%land(i)),bathy_cell(i))
             write(10,'(I8,11(" ",ES15.8))') swap_index(i)					, &
 								mesh%cell(i)%grav%x    , &
                                  mesh%cell(i)%grav%y    , &
@@ -2571,8 +2571,8 @@ SUBROUTINE write_static_cell_data( mesh )
 
         ! Boucle sur toutes les cellules pour écrire les données
         do index = 1, mesh%nc 
-            W = Sporosity%width(index) 
-            write(20,'(I8, 4(1X,ES15.8))') index, SPorosity%a(index), SPorosity%gamma(index), W, SPorosity%hbanks(index)
+            W = SPorosity%width(index) 
+            write(20,'(I8, 4(1X,ES15.8))') index, SPorosity%a(index), SPorosity%gamma(SPorosity%land(index)), W, SPorosity%hbanks(SPorosity%land(index))
         end do
 
         ! Ferme le fichier

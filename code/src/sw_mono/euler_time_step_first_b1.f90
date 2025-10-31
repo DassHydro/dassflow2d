@@ -463,7 +463,7 @@ SUBROUTINE update_all_porosities(dof, mesh)
             ! Only check if it is not the first cell in the domain
             if (icell > 1) then
                 ! Check if the IMMEDIATELY preceding cell is wet
-                if (dof%h(icell - 1) > heps) then
+                if (dof%h(icell - 1) > heps) then !! à compléter : ok sur la garonne car ca se suit, pas forcement le cas tout le temps, à compléter
                     
                     Hk_wet_upstream = dof%h(icell - 1) + bathy_cell(icell - 1)
                     
@@ -494,7 +494,7 @@ SUBROUTINE update_all_porosities(dof, mesh)
         ELSE
             W = SPorosity%width(icell)
             H_k = h + bathy_cell(icell)
-            hbanks = SPorosity%hbanks(SPorosity%land(icell))
+            Hbanks = SPorosity%hbanks(SPorosity%land(icell)) + bathy_cell(icell)
             macro_area = W * h
 
             ! Case 2: Water has overbanked
@@ -530,20 +530,20 @@ END SUBROUTINE update_all_porosities
     !===============================================================================================================!
     ! FUNCTION 2 : calculates yN of a cell (half the width occupied by water)
     !===============================================================================================================!
-    FUNCTION calculate_yn(H_k, a, gamma, c) RESULT(yN)
+    FUNCTION calculate_yn(H_k, a, gamma, z) RESULT(yN)
         IMPLICIT NONE
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp), INTENT(IN) :: a         !parabola parameter
         REAL(rp), INTENT(IN) :: gamma     !parabola parameter
-        REAL(rp), INTENT(IN) :: c         !parabola parameter
+        REAL(rp), INTENT(IN) :: z         !parabola parameter
         REAL(rp) :: yN
         
-        IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
+        IF ((H_k - z) < 0.0_rp .OR. a <= 0.0_rp) THEN
             yN = 0.0_rp
             RETURN
         END IF
  
-        yN = ((H_k - c) / a)**(1.0_rp / gamma)
+        yN = ((H_k - z) / a)**(1.0_rp / gamma)
     END FUNCTION calculate_yn
 
     !===============================================================================================================!
@@ -555,28 +555,28 @@ END SUBROUTINE update_all_porosities
         INTEGER, INTENT(IN) :: icell
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp) :: area
-        REAL(rp) :: a, c, gamma, yN, Hbanks, W      !parabola parameters + half the width occupied by water
+        REAL(rp) :: a, z, gamma, yN, Hbanks, W      !parabola parameters + half the width occupied by water
 
         a     = SPorosity%a(icell)
         gamma  = SPorosity%gamma(SPorosity%land(icell))
-        c     = bathy_cell(icell)
+        z     = bathy_cell(icell)
         Hbanks = SPorosity%hbanks(SPorosity%land(icell)) 
         
-        IF ((H_k - c) < 0.0_rp .OR. a <= 0.0_rp) THEN
+        IF ((H_k - z) < 0.0_rp .OR. a <= 0.0_rp) THEN
             area = 0.0_rp
             RETURN
         ELSE
             IF (H_k < Hbanks) THEN 
-                yN = calculate_yn(H_k, a, gamma, c)
-                area = (H_k - c) * yN - (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
+                yN = calculate_yn(H_k, a, gamma, z)
+                area = (H_k - z) * yN - (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area)
 
             ELSE
                 W = SPorosity%width(icell)    
-                area = (Hbanks - c) * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)
+                area = (Hbanks - z) * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)
                 area = 2.0_rp * area
-                area = MAX(0.0_rp, area + W*(H_k-Hbanks))
+                area = MAX(0.0_rp, area) ! + W*(H_k-Hbanks))
             END IF
         END IF 
     END FUNCTION calculate_wetted_area
