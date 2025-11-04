@@ -443,14 +443,14 @@ SUBROUTINE update_all_porosities(dof, mesh)
     
     INTEGER  :: icell, jloop
     REAL(rp) :: h, H_k, wetted_area, phi_K_new, macro_area
-    REAL(rp) :: W, hbanks
+    REAL(rp) :: W, Hbanks
     ! Variables for the wet-dry front management
     REAL(rp) :: h_virtual, Hk_wet_upstream, macro_area_virtual
     LOGICAL  :: found_wet_upstream
     ! Variables for the overbank flow calculation
     REAL(rp) :: area_parabola_full, area_rectangle_over
 
-    DO icell = 1, mesh%nc !ATTENTION, les cellules ne se suivent pas forcement selon leur indice !
+    DO icell = 1, mesh%nc 
         h = dof%h(icell)
         
         ! --- CASE 1: The cell is (almost) dry ---
@@ -463,7 +463,8 @@ SUBROUTINE update_all_porosities(dof, mesh)
             ! Only check if it is not the first cell in the domain
             if (icell > 1) then
                 ! Check if the IMMEDIATELY preceding cell is wet
-                if (dof%h(icell - 1) > heps) then !! à compléter : ok sur la garonne car ca se suit, pas forcement le cas tout le temps, à compléter
+                !!! assuming that adjacent cells have consecutive indices
+                if (dof%h(icell - 1) > heps) then 
                     
                     Hk_wet_upstream = dof%h(icell - 1) + bathy_cell(icell - 1)
                     
@@ -498,11 +499,11 @@ SUBROUTINE update_all_porosities(dof, mesh)
             macro_area = W * h
 
             ! Case 2: Water has overbanked
-            IF (H_k >= hbanks) THEN
+            IF (H_k >= Hbanks) THEN
                 ! Area of the full parabola up to the banks
-                area_parabola_full = calculate_wetted_area(icell, hbanks)
+                area_parabola_full = calculate_wetted_area(icell, Hbanks)
                 ! Area of the rectangular water section above the banks
-                area_rectangle_over = W * (H_k - hbanks)
+                area_rectangle_over = W * (H_k - Hbanks)
                 ! Total wetted area
                 wetted_area = area_parabola_full + area_rectangle_over
                 
@@ -510,7 +511,7 @@ SUBROUTINE update_all_porosities(dof, mesh)
             ELSE
                 wetted_area = calculate_wetted_area(icell, H_k)
             END IF
-write(*,*) tc, icell, H_k, hbanks, wetted_area, macro_area
+      !  write(*,*) tc, icell, H_k, hbanks, wetted_area, macro_area
             ! Porosity calculation (common to cases 2 and 3)
             IF (macro_area > 1.0E-9_rp) THEN
                 phi_K_new = wetted_area / macro_area
@@ -560,7 +561,7 @@ END SUBROUTINE update_all_porosities
         a     = SPorosity%a(icell)
         gamma  = SPorosity%gamma(SPorosity%land(icell))
         z     = bathy_cell(icell)
-        Hbanks = SPorosity%hbanks(SPorosity%land(icell)) 
+        Hbanks = SPorosity%hbanks(SPorosity%land(icell)) + z
         
         IF ((H_k - z) < 0.0_rp .OR. a <= 0.0_rp) THEN
             area = 0.0_rp
@@ -576,7 +577,7 @@ END SUBROUTINE update_all_porosities
                 W = SPorosity%width(icell)    
                 area = (Hbanks - z) * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)
                 area = 2.0_rp * area
-                area = MAX(0.0_rp, area) ! + W*(H_k-Hbanks))
+                area = MAX(0.0_rp, area) ! + W*(H_k-Hbanks)
             END IF
         END IF 
     END FUNCTION calculate_wetted_area
