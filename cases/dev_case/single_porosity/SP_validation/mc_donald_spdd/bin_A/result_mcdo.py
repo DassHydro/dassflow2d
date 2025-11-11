@@ -10,6 +10,7 @@ def read_dassflow_result(filename):
     H_list = []
     poro_list = []
     yn_list = []
+    x_list = []
     with open(filename, 'r') as f:
         for line in f:
             if line.startswith("#") or line.startswith("Gnuplot"):
@@ -17,10 +18,12 @@ def read_dassflow_result(filename):
             parts = line.strip().split()
             if len(parts) >= 8 :
                 try :
+                    x = float(parts[1])
                     bathy = float(parts[3])
                     H = float(parts[5])
                     u = float(parts[7])
                     v = float(parts[8])
+                    x_list.append(x)
                     speed = np.sqrt(u**2 + v**2)
                     bathy_list.append(bathy)
                     speed_list.append(speed)
@@ -35,7 +38,7 @@ def read_dassflow_result(filename):
                     yn_list.append(yn)
                 except ValueError :
                     continue
-    return np.array(bathy_list), np.array(speed_list), np.array(H_list), np.array(poro_list), np.array(yn_list)
+    return np.array(x_list), np.array(bathy_list), np.array(speed_list), np.array(H_list), np.array(poro_list), np.array(yn_list)
 
 
 def read_dassflow_parabola(filename):
@@ -74,25 +77,51 @@ def get_time_from_filename(filename):
 
 img_paths = []
 input_dir = os.getcwd()
-res_dir = os.path.join(input_dir, "res")
+res_dir = os.path.join(input_dir, "bin_A//res")
+
 # Récupérer les fichiers
 files = [f for f in os.listdir(res_dir) if f.startswith("result_") and f.endswith(".dat")]
-    
-#all_files
 
-print(files)
-
-for f in range(0, len(files)) :
+'''for f in range(0, len(files)) :
     filepath = os.path.join(res_dir, files[f])
-    bathy, speed, H, poro, yn = read_dassflow_result(filepath)
+    x, bathy, speed, H, poro, yn = read_dassflow_result(filepath)
+    h = H - bathy
+    h_theo = (4/10)**(1/3) * (1+0.5*np.exp(-16*x/1000 - 1)**2)
     time_sec = get_time_from_filename(files[f])
     if time_sec == float('inf') : 
         time_label = "final"
     else : 
         time_label = f"Heure {time_sec / 3600:.1f}"    
-    bathy_supp = - speed**2 / (2 * 9.81) - (H - bathy)   
-    plt.plot(bathy, bathy_supp)
-    plt.xlabel("Bathymétrie (m)")
-    plt.ylabel("Bathy. theo. (m)")
-    plt.title(time_label)
-    plt.show() 
+
+    plt.plot(H, label = "temps : " + time_label)'''
+
+
+filepath = os.path.join(res_dir, files[-2])
+g = 9.81
+x, bathy, speed, H, poro, yn = read_dassflow_result(filepath)
+h = H - bathy
+time_sec = get_time_from_filename(files[-2])
+if time_sec == float('inf') : 
+    time_label = "final"
+else : 
+    time_label = f"Heure {time_sec / 3600:.1f}"   
+
+
+
+h_supp = (4/g)**(1/3)*(1+0.5*np.exp(-16*x/1000 - 1)**2)
+q0 = 2
+u0 = q0 / h_supp[0]
+zb0 = bathy[0]
+c0 = 0.5*u0**2 + g*(h_supp[0] + zb0)
+bathy_sup = c0/g - q0**2 / (2*g*h_supp**2) - h_supp
+print(u0, q0, zb0, c0)
+
+plt.plot(h_supp + bathy, label = "Surface libre théorique")
+plt.plot(H, label = "Surface libre au temps " + time_label)
+plt.plot(bathy_sup, label = "Bathymétrie supposée", linestyle='--', color='red')
+plt.plot(bathy, label = "Bathymétrie du modèle", linestyle='--', color='black')
+plt.legend()
+plt.xlabel("Distance (m)")  
+plt.ylabel("Hauteur d'eau (m)")
+plt.title("Evolution de la hauteur d'eau le long du canal")
+plt.show() 

@@ -48,7 +48,6 @@ rank = comm.Get_rank()
 ##########
 
 mesh_name = 'channel.geo'
-
 # Nous utilisons maintenant un maillage statique, donc pas de génération.
 # Assurez-vous que le fichier existe dans bin_A.
 mesh_full_path_for_dassflow_read = os.path.join(bin_dir, mesh_name)
@@ -62,7 +61,7 @@ else:
 # Model
 ##########
 
-ts = 14000
+ts = 1400
 dtw = ts*0.2
 
 use_porosity = 1
@@ -88,16 +87,15 @@ input_params={ "mesh_name": mesh_name,
                 "bc_infil":"0",
                 "bc_rain":"0",}
 
-
 df2d.wrapping.read_input(os.path.join(bin_dir,"input.txt"))
 my_model = df2d.dassflowmodel(bin_dir =  bin_dir, hdf5_path = os.path.join(bin_dir,"res","simu.hdf5") , run_type = "direct", clean = True, custom_config=input_params)
-
 # Reinitialize mesh from new updated geo file
 my_model.init_mesh()
 # my_model.meshing.plot() 
 
 # Input parameters for the generation of observations
 Config = df2d.core.config.Config()
+print("okkk")
 Config.set(custom_config = input_params)
 nc = my_model.kernel.mesh.nc    # number of cells 
 nland = nc
