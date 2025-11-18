@@ -52,10 +52,14 @@ for line in lines:
         parts = line_strip.split()
         cell_id = int(parts[0])
         first_node_id = int(parts[1])
+        second_node_id = int(parts[2])
         x_first_node = nodes[first_node_id][0]  # récupérer x du premier noeud
-        print(x_first_node)
-        h = (4/g)**(1/3)*(1+0.5*np.exp(-16*x_first_node/1000 -1))**2
+        x_second_node = nodes[second_node_id][0] # récupérer x du second noeud
+        x = 0.5 * (x_first_node + x_second_node) # position x du centre de la cellule
+    
+        h = (4/g)**(1/3)*(1+0.5*np.exp(-16*x/1000 -1))**2
 
+        print(x)
         if first_node_id == 1:
             u0 = q0 / h
             z0 = 0
@@ -72,6 +76,7 @@ for line in lines:
         new_lines.append(new_line)
     else:
         new_lines.append(line)
+print("u0 =", u0, "c0 =", c0)
 
 with open("channel.geo", "w") as f:
     for line in new_lines:

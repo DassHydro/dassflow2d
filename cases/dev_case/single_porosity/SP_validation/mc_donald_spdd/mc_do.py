@@ -95,7 +95,6 @@ my_model.init_mesh()
 
 # Input parameters for the generation of observations
 Config = df2d.core.config.Config()
-print("okkk")
 Config.set(custom_config = input_params)
 nc = my_model.kernel.mesh.nc    # number of cells 
 nland = nc

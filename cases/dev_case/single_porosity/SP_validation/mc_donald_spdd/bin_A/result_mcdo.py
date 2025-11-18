@@ -108,13 +108,14 @@ else :
 
 
 
-h_supp = (4/g)**(1/3)*(1+0.5*np.exp(-16*x/1000 - 1)**2)
+h_supp = (4/g)**(1/3)*(1+0.5*np.exp(-16*x/1000 - 1))**2
+print(x)
 q0 = 2
 u0 = q0 / h_supp[0]
 zb0 = bathy[0]
 c0 = 0.5*u0**2 + g*(h_supp[0] + zb0)
 bathy_sup = c0/g - q0**2 / (2*g*h_supp**2) - h_supp
-print(u0, q0, zb0, c0)
+print("u0 =", u0, "c0 =", c0)
 
 plt.plot(h_supp + bathy, label = "Surface libre théorique")
 plt.plot(H, label = "Surface libre au temps " + time_label)
