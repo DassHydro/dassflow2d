@@ -2,7 +2,7 @@ import numpy as np
 
 nodes = {}  # id : (x, y, z)
 
-mesh_file = "bin_A\\old_channel.geo"
+mesh_file = "bin_A\\true_channel.geo"
 
 with open(mesh_file, "r") as f:
     lines = f.readlines()
@@ -57,15 +57,16 @@ for line in lines:
         x_second_node = nodes[second_node_id][0] # récupérer x du second noeud
         x = 0.5 * (x_first_node + x_second_node) # position x du centre de la cellule
         lx=100
-        h = (4/g)**(1/3)*(1+0.5*np.exp(-16*x/lx -1))**2
-        #h = (4/g)**(1/3)*(1+0.5*np.exp(-16*(x/lx-0.5)**2))
+        #h = (4/g)**(1/3)*(1+0.5*np.exp(-16*x/lx -1))**2
+        h = (1+0.5*np.exp(-16*(x/lx-0.5)**2))
 
         print(x)
         if first_node_id == 1:
+            q0=2
             u0 = q0 / h
             z0 = 0
             new_alt = z0
-            c0 = 0.5*u0**2 + g*(h + z0)
+            c0 = 0.5/g*u0**2 + (h + z0)
         else :
             new_alt = c0/g - q0**2/(2*g*h**2) - h
 

@@ -1,8 +1,11 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib.image as mpimg
 
+
+#################
+### FONCTIONS ###
+#################
 
 def read_dassflow_result(filename, y_min, y_max):
     bathy_list = []
@@ -32,7 +35,6 @@ def read_dassflow_result(filename, y_min, y_max):
                     continue
     return np.array(x_list), np.array(bathy_list), np.array(u_list), np.array(h_list)
 
-
 def get_time_from_filename(filename):
     if "initial" in filename: return 0.0
     if "final" in filename: return float('inf')
@@ -41,71 +43,111 @@ def get_time_from_filename(filename):
         return float(time_str)
     except (ValueError, IndexError): return -1.0
 
+def h_exacte(x, lx):
+    return (1+0.5*np.exp(-16*(x/lx-0.5)**2))
 
+
+#################
+### VARIABLES ###
+#################
 img_paths = []
 input_dir = os.getcwd()
 res_dir = os.path.join(input_dir, "bin_A//res")
 
+lx = 100
+ly = 10
+nx = 21
+ny = 3
+g = 9.81
+q0 = 2
+zb0 = 0
+
+
+###################
+### RECUP INFOS ###
+###################
+
 # Récupérer les fichiers
 files = [f for f in os.listdir(res_dir) if f.startswith("result_") and f.endswith(".dat")]
 
-
 filepath = os.path.join(res_dir, files[-2])
-g = 9.81
-x_m, bathy_m, u_m, h_m = read_dassflow_result(filepath, 1.7, 8)
-x_g, bathy_g, u_g, h_g = read_dassflow_result(filepath, 0, 1.7)
-x_d, bathy_d, u_d, h_d = read_dassflow_result(filepath, 8, 10)
+
+# Récupérer les valeurs pour la ligne milieu
+x_m, bathy_m, u_m, h_m = read_dassflow_result(filepath, ly/3 - 0.5, 2*ly/3 + 0.5)
 H_m = h_m + bathy_m
-H_g = h_g + bathy_g
-H_d = h_d + bathy_d
-#h_true  =  (4._8/g)**0.33333333333 * ( 1 + 0.5 * exp( - 16._8 * ( x / lx - 0.5 )**2 ) )
+q_m = h_m * u_m  #* ly
 
-lx=100
+# Hauteur d'eau supposée
+x = lx + (lx / (nx - 1))/2
+h_supp = h_exacte(x_m, lx)
 
-def h_exacte(x):
-    return (4/g)**(1/3)*(1+0.5*np.exp(-16*x/lx - 1))**2
-    #return (4/g)**(1/3)*(1+0.5*np.exp(-16*(x/lx-0.5)**2))
-
-h_supp = h_exacte(x_m)
-print("hauteur d'eau à imposer à la fin : ", h_exacte(lx))
-
-q0 = 2
-u0 = q0 / h_supp[0]
-zb0 = bathy_m[0]
-c0 = 0.5*u0**2 + g*(h_supp[0] + zb0)
+# Bathymétrie supposée
+u0 = q0 / h_supp[-1]
+c0 = 0.5/g*u0**2 + (h_supp[-1] + zb0)
+#c0 = 0.5*u0**2 + g*(h_supp[0] + zb0)
 bathy_sup = c0/g - q0**2 / (2*g*h_supp**2) - h_supp
-q_m = h_m * u_m
-q_g = h_g * u_g
-q_d = h_d * u_d
 
+# constante de bernoulli : doit être constante le long de la rivière
+c = (h_m*u_m)**2 / (2*g*h_m**2) + h_m + bathy_m 
 
-u0 = q0 / h_supp[0]
-z0 = bathy_m[0]
-new_alt = z0
-c0 = 0.5*u0**2 + g*(h_supp[0] + z0)
-bathy_theo =  c0/g - q0**2/(2*g*h_supp**2) - h_supp
+plt.plot(x_m, c)
+plt.title("Evolution de la constante de Bernoulli le long du canal")
+plt.ylabel("Constante de Bernoulli")
+plt.xlabel("Distance (m)")
+plt.show()
+
+########################
+### PRINT POUR DEBUG ###
+########################
 
 print("barycentres des cellules : ", x_m)
 print("hauteur d'eau théorique : ", h_supp)
 print("hauteur d'eau calculée : ", h_m)
 print("débit calculé : ", q_m)
+print("bathy réelle : ", bathy_m)
+#print("bathymétrie supposée : ", bathy_sup)
 
 
+###############
+### FIGURES ###
+###############
 
-plt.plot(x_m, h_supp + bathy_m, label = "Surface libre théorique", color='red')
-plt.plot(x_m, H_m, label = "Surface libre au temps final", linestyle='--', color='orange')
-plt.plot(x_m, bathy_m, label = "Bathymétrie du modèle", linestyle='--', color='black')
-#plt.plot(x_m, bathy_theo)
-plt.xlabel('Distance (en m)')
-plt.ylabel('Hauteur d\'eau (m)')
-plt.legend()
+# Première figure : hauteur d'eau et bathymétried'un côté, vitesse de l'eau de l'autre
+#plt.plot(x_m, h_supp)
+#plt.show()
+
+
+fig, ax1 = plt.subplots()
+
+ax1.plot(x_m, h_supp + bathy_m, label="Surface libre théorique", linestyle='--', color='lightblue')
+ax1.plot(x_m, H_m, label="Surface libre au temps final", color='lightblue')
+ax1.plot(x_m, bathy_m, label="Bathymétrie", color='black')
+ax1.set_xlabel('Distance (m)')
+ax1.set_ylabel("Altitude (m)")
+ax1.legend(loc="upper right", fontsize='x-small')
+
+ax2 = ax1.twinx()
+ax2.plot(x_m, h_supp, label="Hauteur d'eau théorique théorique", linestyle='--', color='orange')
+ax2.plot(x_m, h_m, label="Hauteur d'eau au temps final", color='orange')
+ax2.set_ylabel("Hauteur d'eau (m)", color='orange')
+ax2.tick_params(axis='y', labelcolor='orange')
+ax2.legend(loc="upper right", fontsize = 'x-small', bbox_to_anchor=(1, 0.5)  )
+
+plt.title("Évolution de la hauteur d'eau et de la vitesse le long du canal")
 plt.show()
 
-plt.plot(x_m, q_m, label="débit au milieu", color='blue')
-#plt.plot(x_g, q_g, label = "débit à gauche", color='lightblue')
-#plt.plot(x_d, q_d, label = "débit à droite", color='lightpink')
-plt.title("Débit")
-plt.xlabel('Distance (en m)')
-plt.ylabel('Débit (en m²/s)')
-plt.legend()
+fig, ax1 = plt.subplots()
+ax1.plot(x_m, q_m, color='blue')
+ax1.set_ylim(1.5,2.5)
+ax1.set_xlabel('Distance (m)')
+ax1.set_ylabel('Débit linéique (m2/s)')
+
+ax2 = ax1.twinx()
+ax2.plot(x_m, u_m, label='Vitesse', linestyle='-.', color='blue')
+ax2.set_ylabel('Vitesse (m/s)', color='blue')
+ax2.tick_params(axis='y', labelcolor='blue')
+ax2.legend(loc="upper right")
+plt.title("Évolution du débit et de la vitesse le long du canal")
 plt.show()
+
+
