@@ -14,10 +14,21 @@ def int_friction(x, lx):
     result = np.trapz(integrand, t)
     return result
 
+def h_ex(x, lx) :
+    return 1+0.5*np.exp(-16*(x/lx - 0.5)**2)
+
+def bathy(x, lx, n, cref, zref, qref, xref) :
+    if x == xref:
+        return zref
+    else :
+        h = h_ex(x, lx)
+        return cref - qref**2/(2*g*h**2) - h - (qref**2)*(n**2) * int_friction(x, lx)
+
 g = 9.81
 q0 = 2
 z0 = 0
 lx = 100
+nx = 400
 n = 0.05
 
 ###########################
@@ -89,8 +100,10 @@ for line in lines:
             u0 = q0 / h
             new_alt = z0
             c0 = 0.5*u0**2 + g*h + g*z0
+            c0 = c0 / g
+            x0 = x
         else :
-            new_alt = c0/g - q0**2/(2*g*h**2) - h - (q0**2)*(n**2)*int_friction(x, lx) 
+            new_alt = bathy(x, lx, n, c0, z0, q0, x0) 
 
         # Remplacer la dernière colonne
         parts[-1] = f"{new_alt:.7E}"
@@ -101,8 +114,23 @@ for line in lines:
     else:
         new_lines.append(line)
 
-print(c0)
-
 with open("new_channel.geo", "w") as f:
     for line in new_lines:
         f.write(line.rstrip() + "\n")
+
+
+###########################
+## CALCUL Z INLET OUTLET ##
+###########################
+x_in = -lx / nx
+z_in = bathy(x_in, lx, n, c0, z0, q0, x0)
+print("z inlet = ", z_in)
+
+x_out = lx + lx / nx
+z_out = bathy(x_out, lx, n, c0, z0, q0, x0)
+print("z outlet = ", z_out)
+
+###########################
+## HAUTEUR EAU EN SORTIE ##
+###########################
+print("h_fin = ", h_ex(lx, lx))

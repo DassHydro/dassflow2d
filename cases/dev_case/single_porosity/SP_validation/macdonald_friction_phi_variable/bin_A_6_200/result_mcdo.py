@@ -59,8 +59,8 @@ res_dir = os.path.join(input_dir, "res")
 
 lx = 100
 ly = 10
-nx = 21
-ny = 3
+nx = 200
+ny = 6
 g = 9.81
 q0 = 2
 zb0 = 0
@@ -76,7 +76,7 @@ files = [f for f in os.listdir(res_dir) if f.startswith("result_") and f.endswit
 filepath = os.path.join(res_dir, files[-2])
 
 # Récupérer les valeurs pour la ligne milieu
-x_m, bathy_m, u_m, h_m, phi_m = read_dassflow_result(filepath, ly/3 - 0.5, 2*ly/3 + 0.5)
+x_m, bathy_m, u_m, h_m, phi_m = read_dassflow_result(filepath, 2*ly/ny-0.5, 3*ly/ny+0.5)
 H_m = h_m + bathy_m
 q_m = h_m * u_m * phi_m
 
@@ -84,16 +84,19 @@ q_m = h_m * u_m * phi_m
 x = lx + (lx / (nx - 1))/2
 h_supp = h_exacte(x_m, lx)
 
+# Norme de l'erreur relative
+e = np.linalg.norm(h_supp - h_m, ord=1) / np.linalg.norm(h_supp, ord=1)
+
 ########################
 ### PRINT POUR DEBUG ###
 ########################
 
-print("barycentres des cellules : ", x_m)
-print("hauteur d'eau théorique : ", h_supp)
-print("hauteur d'eau calculée : ", h_m)
-print("débit calculé : ", q_m)
-print("bathy réelle : ", bathy_m)
-print("Porosité : ", phi_m)
+print("barycentres des cellules : ", x_m[:20])
+print("hauteur d'eau théorique : ", h_supp[:20])
+print("hauteur d'eau calculée : ", h_m[:20])
+print("débit calculé : ", q_m[:20])
+print("bathy réelle : ", bathy_m[:20])
+print("Porosité : ", phi_m[:20])
 
 
 ###############
@@ -101,46 +104,45 @@ print("Porosité : ", phi_m)
 ###############
 
 # Première figure : hauteur d'eau et bathymétried'un côté, vitesse de l'eau de l'autre
-#plt.plot(x_m, h_supp)
-#plt.show()
-
 fig, ax1 = plt.subplots()
 
-ax1.plot(x_m, h_supp + bathy_m, label="Surface libre théorique", linestyle='--', color='lightblue')
-ax1.plot(x_m, H_m, label="Surface libre au temps final", color='lightblue')
-ax1.plot(x_m, bathy_m, label="Bathymétrie", color='black')
+ax1.plot(x_m, h_supp + bathy_m, label="Exact free surface", linestyle='--', color='lightblue')
+ax1.plot(x_m, H_m, label="Computed free surface", color='lightblue')
+ax1.plot(x_m, bathy_m, label="Bathymetry", color='black')
 ax1.set_xlabel('Distance (m)')
 ax1.set_ylabel("Altitude (m)")
 ax1.legend(loc="upper right", fontsize='x-small')
 
 ax2 = ax1.twinx()
-ax2.plot(x_m, h_supp, label="Hauteur d'eau théorique théorique", linestyle='--', color='orange')
-ax2.plot(x_m, h_m, label="Hauteur d'eau au temps final", color='orange')
-ax2.set_ylabel("Hauteur d'eau (m)", color='orange')
+ax2.plot(x_m, h_supp, label="Exact water height", linestyle='--', color='orange')
+ax2.plot(x_m, h_m, label="Computed water height", color='orange')
+ax2.set_ylabel("Water height (m)", color='orange')
 ax2.tick_params(axis='y', labelcolor='orange')
 ax2.legend(loc="upper right", fontsize = 'x-small', bbox_to_anchor=(1, 0.5)  )
 
-plt.title("Évolution de la hauteur d'eau et de la vitesse le long du canal")
-plt.show()
+plt.title("Evolution of water height and velocity along the channel at steady state")
+plt.savefig('water_height.png')
+plt.close()
+
+plt.plot(x_m, abs(h_supp - h_m)/h_supp)
+plt.title(f"Relative error on the water height along the channel (e={e:.4e})")
+plt.xlabel("Distance (m)")
+plt.ylabel("Relative error on the water height")
+plt.savefig('error_water_height.png')
+plt.close()
 
 fig, ax1 = plt.subplots()
-ax1.plot(x_m, q_m, label="Débit*phi", color='blue')
+ax1.plot(x_m, q_m, label="Discharge*phi", color='blue')
 ax1.set_ylim(0.2,1)
 ax1.set_xlabel('Distance (m)')
-ax1.set_ylabel('Débit linéique*phi (m2/s)')
+ax1.set_ylabel('Lineic discharge*phi (m2/s)')
 ax1.legend(loc="upper left")
 
 ax2 = ax1.twinx()
-ax2.plot(x_m, u_m, label='Vitesse', linestyle='-.', color='blue')
-ax2.set_ylabel('Vitesse (m/s)', color='blue')
+ax2.plot(x_m, u_m, label='Velocity', linestyle='-.', color='blue')
+ax2.set_ylabel('Velocity (m/s)', color='blue')
 ax2.tick_params(axis='y', labelcolor='blue')
 ax2.legend(loc="upper right")
-plt.title("Évolution du débit et de la vitesse le long du canal")
-plt.show()
-
-'''
-plt.plot(x_m,2-q_m)
-plt.title("Évolution de l'erreur sur le débit le long du canal")
-plt.xlabel("Distance (m)")
-plt.ylabel("Erreur sur le débit (2-q*phi, en m2/s)")
-plt.show()'''
+plt.title("Evolution of the discharge and velocity along the channel")
+plt.savefig('discharge_velocity.png')
+plt.close()
