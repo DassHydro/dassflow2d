@@ -86,7 +86,7 @@ HYDRO		= 0
 #Infiltration model: 	'0' to not compile, '1' to compile rain module and both Green-Ampt and SCS-CN infiltration options
 INFILTRATION	= 1
 #Porosity model: 	'0' to not compile, '1' to compile Single Porosity
-POROSITY	= 1
+POROSITY	= 0
 #Adjoint model: 	'0' to not compile, '1' to compile
 ADJOINT	= 1
 #Minimization method: 	'1' to compile M1QN3, '2' to compile LBFGSB3
@@ -95,8 +95,8 @@ MINMETHOD	= 1
 SOLVER		= 0
 
 #Parallel computing: 	'1' to use
-MPI		= 0
-#If MPI=1, number of processors to use
+MPI		= 1
+#If MPI=1, number of processors to use ; nb_proc obsolete
 NB_PROC	= 2
 
 DEBUG_WRAPPING = 0
