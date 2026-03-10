@@ -128,6 +128,7 @@ class dassflowmodel(object):
 
         # ------------ Define Default values------------------
         self.config = Config()
+        self.config.get()
 
         # ------------ Clean files ------------------
         print("clean=", clean)
@@ -321,7 +322,7 @@ class dassflowmodel(object):
         if self.run_type =="direct":
             #print(self.config)
             self.outputs = Output(bin_dir = self.bin_dir,
-                ts = 0,#self.config["ts"],
+                ts = self.config["ts"],
                 boundary_metadata = self.boundary.get_metadata())
 
 #=================================================================#
