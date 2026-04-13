@@ -120,11 +120,11 @@ SUBROUTINE boundary_post( mass_flux , index_ghost , mesh )
 ! write(*,*) "then", proc, tc, "bc%sum_mass_flux( group )", bc%sum_mass_flux( group )!NOADJ
    end if
    
-   if ( mesh%edgeb(ib)%typlim(1:11) == 'internal_2D') then
-        
-        bc%sum_mass_flux( group )  =  bc%sum_mass_flux( group )  +  mass_flux * mesh%edge(ie)%length
-        
-   endif
+!   if ( mesh%edge(ie)%type == 3) then
+!
+!        bc%sum_mass_flux( group )  =  bc%sum_mass_flux( group )  +  mass_flux * mesh%edge(ie)%length
+!
+!   endif
 
 END SUBROUTINE boundary_post
                                                                                                                  !<NOADJ

@@ -129,7 +129,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
         SPorosity%width(l) = calculate_width(l, mesh)
         !Sporosity%hbanks(l)=25
         !SPorosity%gamma(l) = 2.0_rp
-        h_max_effective = SPorosity%hbanks(SPorosity%land(l)) - bathy_cell(l)
+        h_max_effective = SPorosity%hbanks(SPorosity%land(l))
         if (SPorosity%width(l) > 1.0E-6_rp .AND. h_max_effective > 0.0_rp) then
             SPorosity%a(l) = h_max_effective / ((SPorosity%width(l) / 2.0_rp)**SPorosity%gamma(SPorosity%land(l)))
         else
@@ -2152,38 +2152,44 @@ FUNCTION calculate_width(icell, mesh) RESULT(W)
     REAL(rp) :: W
 
     ! --- Variables locales ---
-    INTEGER :: k, ie, count_found
-    REAL(rp) :: length1, length2
-    REAL(rp) :: nx, ny ! Composantes du vecteur normal
+    INTEGER :: k, ie, count
+    REAL(rp) :: length
 
     ! Initialisation
-    count_found = 0
-    length1 = 0.0_rp
-    length2 = 0.0_rp
+    count = 0
+    length = 0
 
     ! On parcourt les 4 arêtes de la cellule 'icell'
     DO k = 1, mesh%cell(icell)%nbed
         ie = mesh%cell(icell)%edge(k) ! Index de l'arête
 
-        ! On récupère les composantes du vecteur normal
-        nx = mesh%edge(ie)%normal%x
-        ny = mesh%edge(ie)%normal%y
-
-        ! Si la composante Y de la normale est plus grande que la X,
-        ! c'est une arête amont ou aval. Sa longueur est la largeur.
-        IF (ABS(ny) > ABS(nx)) THEN
-            count_found = count_found + 1
-            IF (count_found == 1) THEN
-                length1 = mesh%edge(ie)%length
-            ELSEIF (count_found == 2) THEN
-                length2 = mesh%edge(ie)%length
-                EXIT ! On a trouvé les deux, on peut sortir de la boucle.
-            END IF
-        END IF
+        if (mesh%edge(ie)%type == 2) then !This is a 1D_to_D cell, over which XS porosity should be computed
+            length = length + mesh%edge(ie)%length
+            count = count + 1
+        end if
+!        ! On récupère les composantes du vecteur normal
+!        nx = mesh%edge(ie)%normal%x
+!        ny = mesh%edge(ie)%normal%y
+!
+!        ! Si la composante Y de la normale est plus grande que la X,
+!        ! c'est une arête amont ou aval. Sa longueur est la largeur.
+!        IF (ABS(ny) > ABS(nx)) THEN
+!            count_found = count_found + 1
+!            IF (count_found == 1) THEN
+!                length1 = mesh%edge(ie)%length
+!            ELSEIF (count_found == 2) THEN
+!                length2 = mesh%edge(ie)%length
+!                EXIT ! On a trouvé les deux, on peut sortir de la boucle.
+!            END IF
+!        END IF
     END DO
     
     ! La largeur W est la moyenne des longueurs des deux arêtes trouvées.
-    W = (length1 + length2) / 2.0_rp
+    if (count>0) then
+        W = length / count
+    else
+        W = 0
+    end if
     
 END FUNCTION calculate_width
 

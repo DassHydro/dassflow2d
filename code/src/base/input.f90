@@ -188,6 +188,15 @@ write(*,*)  " call Mesh_Partition_Scotch( mesh ) "
 write(*,*)  " call Mesh_Geometric_Properties( mesh ) "
    call Mesh_Geometric_Properties( mesh )
 
+
+   !===================================================================================================================!
+   !  Compute 1Dlike connectivity and curvilinear abscissa
+   !===================================================================================================================!
+write(*,*)  " call Build_1Dlike_Connectivity( mesh ) "
+   call Build_1Dlike_Connectivity( mesh )
+write(*,*)  " call Compute_Curvilinear_Abscissa(mesh) "
+   call Compute_Curvilinear_Abscissa( mesh )
+
 return
 
 END SUBROUTINE Mesh_Input

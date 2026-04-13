@@ -109,20 +109,22 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
 ! END IF
 #endif
 
-
    do ie = 1,mesh%ne
       !================================================================================================================!
       ! Calculate Left and Right States
       !================================================================================================================!
       iL = mesh%edge(ie)%cell(1)
-      iR = mesh%edge(ie)%cell(2) !Left cell id for a normal cell
+      iR = mesh%edge(ie)%cell(2) !Left cell id for a normal cells
+!      if ( mesh%edge(ie)%type == 2) then !If 1Dlike edge, do not compute has flux is computed over each connected classic 2D cell
+!          cycle
+      if ( mesh%edge(ie)%type == 3) then ! If "lateral" cell, i.e. linking a 2D and 1Dlike cell
+          if (mesh%cell(iL)%type == 2) then! If the current cell is the 1Dlike celle, skip fluw computation
+              cycle
+          endif
 
-    if ( mesh%edge(ie)%boundary ) then !Check if bounfary first so typlim exists
-        if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_1D' ) cycle
-        if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
-            iR = mesh%edge(ie)%cell1D2D !Get id of the single 1D-like cell with interface in the connected bc number => this should be done once!
-        endif
-    endif
+          iR = mesh%edge(ie)%cell1D2D !Get id of the single 1D-like cell with interface in the connected bc number => this should be done once!
+      endif
+
 
       hL(1) = dof%h( iL )
       hR(1) = dof%h( iR )
@@ -138,36 +140,37 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
          uL(2) = mesh%edge(ie)%normal%x * uL(1) + mesh%edge(ie)%normal%y * vL(1)
          vL(2) = mesh%edge(ie)%normal%x * vL(1) - mesh%edge(ie)%normal%y * uL(1)
 
+
          if ( mesh%edge(ie)%boundary) then
 
           zL = bathy_cell( iL )
-
+          zR = bathy_cell( iR )
             !================= Temporary modifications for some Andromede cases
-            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
-               zR = bathy_cell( iL ) !&
-                     !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
-                     !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
-            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
-               zR = bathy_cell( iL ) &
-               + slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
-               + slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
-            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
-               zR = bathy_cell( iL )
-            endif
+!            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'zspresc') then
+!               zR = bathy_cell( iL ) !&
+!                     !- slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+!                     !- slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+!            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'discharg1') then
+!               zR = bathy_cell( iL ) &
+!               !+ slope_y(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length &
+!               !+ slope_x(1) * mesh%cell( mesh%edge(iL)%cell(1) )%surf / mesh%edge(iL)%length
+!            else if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
+!               zR = bathy_cell( iL )
+!            endif
             !================= Temporary modifications for some Andromede cases
 
-             if (.not. ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' )) then !do not call boundary calculations for internal BCs
-                call calc_boundary_state( mesh , hL(1) , zL , uL(2) , vL(2) , &
-                                                 hR(1) , zR , uR(2) , vR(2) )
-             else
-
-                uR(1) = dof%u( iR )
-                vR(1) = dof%v( iR )
-
-                uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
-                vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
-
-            endif
+!             if (.not. ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' )) then !do not call boundary calculations for internal BCs
+          call calc_boundary_state( mesh , hL(1) , zL , uL(2) , vL(2) , &
+                                           hR(1) , zR , uR(2) , vR(2) )
+!             else
+!
+!                uR(1) = dof%u( iR )
+!                vR(1) = dof%v( iR )
+!
+!                uR(2) = mesh%edge(ie)%normal%x * uR(1) + mesh%edge(ie)%normal%y * vR(1)
+!                vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
+!
+!            endif
 #ifdef USE_PORO
             phiL  =  SPorosity%Phi( SPorosity%land(iL) )
             phiR  =  phiL
@@ -226,6 +229,12 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
          if ( mesh%edge(ie)%boundary ) then
             call boundary_post( nflux(1) , iR , mesh )
          endif
+
+!          if ( mesh%edge(ie)%type == 3) then
+!              write(*,*) "edge ", ie," linking cells ", iR, iL, " : flux at 1D-2D interface: ", nflux(1)
+!              write(*,*) hL, hR, zL, zR
+!          end if
+
          !=============================================================================================================!
          ! Flux rotation and summation (as antisymmetric part to save time computation)
          !=============================================================================================================!
@@ -277,18 +286,18 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
                                                     ( hR(1)**2 - hR(2)**2 ) )
          endif
 
-         if ( mesh%edge(ie)%boundary ) then
-
-            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then
-                tflux( 1 , iR ) = tflux( 1 , iR ) - lflux(1)
-                tflux( 2 , iR ) = tflux( 2 , iR ) - lflux(2)
-                tflux( 3 , iR ) = tflux( 3 , iR ) - lflux(3)
-                tflux( 2 , iR ) = tflux( 2 , iR ) - mesh%edge(ie)%normal%x * mesh%edge(ie)%length * 0.5_rp * g * ( &
-                                                        ( hR(1)**2 - hR(2)**2 ) )
-                tflux( 3 , iR ) = tflux( 3 , iR ) - mesh%edge(ie)%normal%y * mesh%edge(ie)%length * 0.5_rp * g * ( &
-                                                        ( hR(1)**2 - hR(2)**2 ) )
-            endif
-        endif
+!         if ( mesh%edge(ie)%boundary ) then
+!
+!            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then
+!                tflux( 1 , iR ) = tflux( 1 , iR ) - lflux(1)
+!                tflux( 2 , iR ) = tflux( 2 , iR ) - lflux(2)
+!                tflux( 3 , iR ) = tflux( 3 , iR ) - lflux(3)
+!                tflux( 2 , iR ) = tflux( 2 , iR ) - mesh%edge(ie)%normal%x * mesh%edge(ie)%length * 0.5_rp * g * ( &
+!                                                        ( hR(1)**2 - hR(2)**2 ) )
+!                tflux( 3 , iR ) = tflux( 3 , iR ) - mesh%edge(ie)%normal%y * mesh%edge(ie)%length * 0.5_rp * g * ( &
+!                                                        ( hR(1)**2 - hR(2)**2 ) )
+!            endif
+!        endif
 
 #endif
       endif
@@ -458,59 +467,52 @@ SUBROUTINE update_all_porosities(dof, mesh)
         if (h < heps) then
             
             found_wet_upstream = .FALSE.
-            Hk_wet_upstream = -1.0E30_rp 
-            
-            ! Only check if it is not the first cell in the domain
-            if (icell > 1) then
-                ! Check if the IMMEDIATELY preceding cell is wet
-                !!! assuming that adjacent cells have consecutive indices
-                if (dof%h(icell - 1) > heps) then 
-                    
-                    Hk_wet_upstream = dof%h(icell - 1) + bathy_cell(icell - 1)
-                    
-                    ! If the neighbor's water level is high enough to flood the current cell
-                    h_virtual = Hk_wet_upstream - bathy_cell(icell)
+            Hk_wet_upstream = -1.0E30_rp
+
+            DO k = 1, mesh%cell(icell)%nbed
+
+!                ie = mesh%cell(icell)%edge(k)
+
+                h_virtual = dof%h(mesh%cell(icell)%up(1))! WIP, loop on all 1Dlike cells ?
+
                     if (h_virtual > heps) then
-                        
+
+                        !HERE: get all connected cells depth... this is why porosity should be defined at edges (then average at the cell for now)
+
                         W = SPorosity%width(icell)
-                        wetted_area = calculate_wetted_area(icell, Hk_wet_upstream)
+                        wetted_area = calculate_wetted_area(icell, h_virtual)
                         macro_area_virtual = W * h_virtual
-                        found_wet_upstream = .TRUE.
+
 
                         if (macro_area_virtual > 1.0E-9_rp) then
                             phi_K_new = wetted_area / macro_area_virtual
-                        else 
+                        else
                             phi_K_new = 1.0_rp
                         endif
                     endif
-                endif
-            endif
-            
-            ! Default to zero if no wet upstream neighbor is found or if its level is too low
-            if (.not. found_wet_upstream) then
-                 phi_K_new = 0.0_rp
-            endif
+            END DO
 
+!            write(*,*) tc, "CASE 1", icell, h, phi_K_new, wetted_area, macro_area_virtual
         ! --- CASES 2 & 3: The cell is wet ---
         ELSE
             W = SPorosity%width(icell)
-            H_k = h + bathy_cell(icell)
-            Hbanks = SPorosity%hbanks(SPorosity%land(icell)) + bathy_cell(icell)
+            H_k = h
+            Hbanks = SPorosity%hbanks(SPorosity%land(icell))
             macro_area = W * h
 
             ! Case 2: Water has overbanked
-            IF (H_k >= Hbanks) THEN
-                ! Area of the full parabola up to the banks
-                area_parabola_full = calculate_wetted_area(icell, Hbanks)
-                ! Area of the rectangular water section above the banks
-                area_rectangle_over = W * (H_k - Hbanks)
-                ! Total wetted area
-                wetted_area = area_parabola_full + area_rectangle_over
+!            IF (H_k >= Hbanks) THEN
+!                ! Area of the full parabola up to the banks
+!                area_parabola_full = calculate_wetted_area(icell, H_k)
+!                ! Area of the rectangular water section above the banks
+!                !area_rectangle_over = W * (H_k - (Hbanks-bathy_cell(icell)))
+!                ! Total wetted area
+!                wetted_area = area_parabola_full !+ area_rectangle_over
                 
             ! Case 3: Water is in the main channel
-            ELSE
+            !ELSE
                 wetted_area = calculate_wetted_area(icell, H_k)
-            END IF
+            !END IF
       !  write(*,*) tc, icell, H_k, hbanks, wetted_area, macro_area
             ! Porosity calculation (common to cases 2 and 3)
             IF (macro_area > 1.0E-9_rp) THEN
@@ -519,11 +521,15 @@ SUBROUTINE update_all_porosities(dof, mesh)
                 ! If h > 0 but macro_area is almost zero, the cell is "full" relative to its depth
                 phi_K_new = 1.0_rp 
             END IF
+
+
+!            write(*,*) tc, "CASE 2-3", icell, h, Hbanks, phi_K_new, wetted_area, macro_area, SPorosity%width(icell)
         END IF
         
         SPorosity%phi(icell) = phi_K_new
       !   write(*,*) tc, icell, SPorosity%phi(icell), SPorosity%width(icell), dof%h(icell)
     END DO
+
 END SUBROUTINE update_all_porosities
 
 
@@ -531,20 +537,19 @@ END SUBROUTINE update_all_porosities
     !===============================================================================================================!
     ! FUNCTION 2 : calculates yN of a cell (half the width occupied by water)
     !===============================================================================================================!
-    FUNCTION calculate_yn(H_k, a, gamma, z) RESULT(yN)
+    FUNCTION calculate_yn(H_k, a, gamma) RESULT(yN)
         IMPLICIT NONE
         REAL(rp), INTENT(IN) :: H_k
         REAL(rp), INTENT(IN) :: a         !parabola parameter
         REAL(rp), INTENT(IN) :: gamma     !parabola parameter
-        REAL(rp), INTENT(IN) :: z         !parabola parameter
         REAL(rp) :: yN
         
-        IF ((H_k - z) < 0.0_rp .OR. a <= 0.0_rp) THEN
+        IF (H_k < 0.0_rp .OR. a <= 0.0_rp) THEN
             yN = 0.0_rp
             RETURN
         END IF
- 
-        yN = ((H_k - z) / a)**(1.0_rp / gamma)
+        yN = (H_k / a)**(1.0_rp / gamma)
+
     END FUNCTION calculate_yn
 
     !===============================================================================================================!
@@ -561,23 +566,24 @@ END SUBROUTINE update_all_porosities
         a     = SPorosity%a(icell)
         gamma  = SPorosity%gamma(SPorosity%land(icell))
         z     = bathy_cell(icell)
-        Hbanks = SPorosity%hbanks(SPorosity%land(icell)) + z
+        Hbanks = SPorosity%hbanks(SPorosity%land(icell))
         
-        IF ((H_k - z) < 0.0_rp .OR. a <= 0.0_rp) THEN
+        IF (H_k <= 0.0_rp .OR. a <= 0.0_rp) THEN
+            write(*,*) "area = 0.0_rp",icell, H_k, a
             area = 0.0_rp
             RETURN
         ELSE
-            IF (H_k < Hbanks) THEN 
-                yN = calculate_yn(H_k, a, gamma, z)
-                area = (H_k - z) * yN - (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
+            IF (H_k < Hbanks ) THEN
+                yN = calculate_yn(H_k, a, gamma)
+                area = H_k * yN - (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area)
-
+!write(*,*) icell, area, H_k, yN, H_k * yN, (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
             ELSE
                 W = SPorosity%width(icell)    
-                area = (Hbanks - z) * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)
-                area = 2.0_rp * area
-                area = MAX(0.0_rp, area) ! + W*(H_k-Hbanks)
+                area = Hbanks * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)
+                area = 2.0_rp * area + W * (H_k - Hbanks)
+                area = MAX(0.0_rp, area)
             END IF
         END IF 
     END FUNCTION calculate_wetted_area

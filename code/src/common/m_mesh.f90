@@ -136,6 +136,12 @@ MODULE m_mesh
 
       integer(ip)  :: rain                         !< Rain type
 
+      ! --- 1Dlike network connectivity ---
+      integer(ip) :: type                          !< 1 for classic, 2 for 1Dlike
+      integer(ip), allocatable :: up(:)
+      integer(ip), allocatable :: down(:)
+      real(rp) :: s
+
    END TYPE CellType
 
    !===================================================================================================================!
@@ -166,8 +172,6 @@ MODULE m_mesh
 
       integer(ip)  ::  cell(2)                     !< Cell Indexes linked to the Edge, 3rd is index is for 1D2D connections
 
-      integer(ip)  ::  cell1D2D
-
       logical  ::  boundary                        !< True boolean if Edge is a at mesh Boundary
 
       logical  ::  subdomain                       !< True boolean if Edge is a at sub-domain Boundary
@@ -185,6 +189,11 @@ MODULE m_mesh
       type(vec2d)  ::  vcell                       !< Cells(1&2) gravity center vector (oriented from 1 to 2)
 
       type(vec2d)  ::  v_edge_cell(2)              !< Vector going from the edge center to the cell(1&2) gravity center
+
+
+      ! --- 1D network connectivity ---
+      integer(ip)  :: type                          !< 1 for classic, 2 for 1Dlike, 3 for lateral/1Dlike2D
+      integer(ip)  :: cell1D2D                      !< ID of 1Dlike cell corresponding to classic 2D cell, this value replace the ghost cell index
 
    END TYPE EdgeType
 

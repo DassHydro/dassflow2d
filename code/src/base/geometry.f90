@@ -200,41 +200,41 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
       end do
 
   enddo
-
- do i = 1, mesh%ne
-
-!  WRITE(*,*) "check mesh%edge(i)%boundary"
-
-      if ( mesh%edge(i)%boundary ) then
-
-! WRITE(*,*) "i=", i
-! WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
-! WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
-! WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
-
-        if ( mesh%edgeb(mesh%edge(i)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
-                read(bc%typ (mesh%edgeb(mesh%edge(i)%lim)%group, 3 ),'(i3)') connected_num_bc !Get connectivity to 1D-like cell from bc.txt
-
-                do ib = 1,mesh%neb
-                    if ( mesh%edgeb(ib)%group  ==  connected_num_bc ) then
-
-                        mesh%edge(i)%cell1D2D  =  mesh%edge( mesh%edgeb( ib )%ind )%cell(1) !Get id of the single 1D-like cell with interface in the connected bc number
-
-                    endif
-                enddo
-
-
-        endif
-
-!   WRITE(*,*) "-----------------------------"
-!   WRITE(*,*) "i=", i
-!   WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
-!   WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
-!   WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
-!   WRITE(*,*) "-----------------------------"
-      endif
-
-   end do
+!
+! do i = 1, mesh%ne
+!
+!!  WRITE(*,*) "check mesh%edge(i)%boundary"
+!
+!      if ( mesh%edge(i)%boundary ) then
+!
+!! WRITE(*,*) "i=", i
+!! WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
+!! WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
+!! WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
+!
+!        if ( mesh%edgeb(mesh%edge(i)%lim)%typlim == 'internal_2D' ) then !then change connectivity to connected 1D-like cell
+!                read(bc%typ (mesh%edgeb(mesh%edge(i)%lim)%group, 3 ),'(i3)') connected_num_bc !Get connectivity to 1D-like cell from bc.txt
+!
+!                do ib = 1,mesh%neb
+!                    if ( mesh%edgeb(ib)%group  ==  connected_num_bc ) then
+!
+!!                        mesh%edge(i)%cell1D2D  =  mesh%edge( mesh%edgeb( ib )%ind )%cell(1) !Get id of the single 1D-like cell with interface in the connected bc number
+!
+!                    endif
+!                enddo
+!
+!
+!        endif
+!
+!!   WRITE(*,*) "-----------------------------"
+!!   WRITE(*,*) "i=", i
+!!   WRITE(*,*) "mesh%edge(i)%lim", mesh%edge(i)%lim
+!!   WRITE(*,*) "mesh%edge(i)%cell(:)", mesh%edge(i)%cell(:)
+!!   WRITE(*,*) "mesh%edgeb(mesh%edge(i)%lim)%typlim", mesh%edgeb(mesh%edge(i)%lim)%typlim
+!!   WRITE(*,*) "-----------------------------"
+!      endif
+!
+!   end do
 
 ! WRITE(*,*) " ==> TREAT NODES"
    do ie = 1,mesh%neb
@@ -418,6 +418,322 @@ SUBROUTINE Mesh_Geometric_Properties( mesh )
 
 !  WRITE(*,*) "OUT Mesh_Geometric_Properties"
 END SUBROUTINE Mesh_Geometric_Properties
+
+
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+!
+!  1Dlike meshes
+!
+!**********************************************************************************************************************!
+!**********************************************************************************************************************!
+
+SUBROUTINE Build_1Dlike_Connectivity(mesh)
+
+   USE m_common
+   USE m_mesh
+   USE m_mpi
+   USE m_model
+   implicit none
+
+   type(msh), intent(inout) :: mesh
+
+   integer(ip) :: c1,c2
+   integer(ip), dimension(mesh%nc) :: nup, ndown
+
+!   ! initialize
+!   do c1=1,mesh%nc
+!      if(allocated(mesh%cell(c1)%up))   deallocate(mesh%cell(c1)%up)
+!      if(allocated(mesh%cell(c1)%down)) deallocate(mesh%cell(c1)%down)
+!
+!      mesh%cell(c1)%type = 2
+!
+!      allocate(mesh%cell(c1)%up(0))
+!      allocate(mesh%cell(c1)%down(0))
+!   end do
+!
+!   ! build connectivity from edges
+!   do ie=1,mesh%ne
+!
+!      if (.not. mesh%edge(ie)%boundary) then
+!
+!         c1 = mesh%edge(ie)%cell(1)
+!         c2 = mesh%edge(ie)%cell(2)
+!
+!         mesh%edge(ie)%type = 2
+!
+!         call add_down(mesh%cell(c1)%down,c2)
+!         call add_up(mesh%cell(c2)%up,c1)
+!
+!      endif
+
+   do i=1,mesh%nc
+      nup(i)=0
+      ndown(i)=0
+   enddo
+
+   do ie=1,mesh%ne
+      if(.not.mesh%edge(ie)%boundary) then
+         c1 = mesh%edge(ie)%cell(1)
+         c2 = mesh%edge(ie)%cell(2)
+
+         ndown(c1)=ndown(c1)+1
+         nup(c2)=nup(c2)+1
+      endif
+   enddo
+
+   do i=1,mesh%nc
+      allocate(mesh%cell(i)%up(nup(i)))
+      allocate(mesh%cell(i)%down(ndown(i)))
+   enddo
+
+   nup=0
+   ndown=0
+
+   do ie=1,mesh%ne
+      if(.not.mesh%edge(ie)%boundary) then
+
+         c1 = mesh%edge(ie)%cell(1)
+         c2 = mesh%edge(ie)%cell(2)
+
+         ndown(c1)=ndown(c1)+1
+         mesh%cell(c1)%down(ndown(c1)) = c2
+
+         nup(c2)=nup(c2)+1
+         mesh%cell(c2)%up(nup(c2)) = c1
+
+      endif
+   enddo
+
+
+
+!CONTAINS
+!
+!   SUBROUTINE add_up(arr,val)
+!
+!      USE m_mesh
+!      implicit none
+!
+!      integer(ip), allocatable, intent(inout) :: arr(:)
+!      integer(ip), intent(in) :: val
+!      integer(ip), allocatable :: tmp(:)
+!
+!      allocate(tmp(size(arr)+1))
+!      if(size(arr)>0) tmp(1:size(arr))=arr
+!      tmp(size(arr)+1)=val
+!
+!      call move_alloc(tmp,arr)
+!
+!   END SUBROUTINE
+!
+!   SUBROUTINE add_down(arr,val)
+!
+!      USE m_mesh
+!      implicit none
+!
+!      integer(ip), allocatable, intent(inout) :: arr(:)
+!      integer(ip), intent(in) :: val
+!      integer(ip), allocatable :: tmp(:)
+!
+!      allocate(tmp(size(arr)+1))
+!      if(size(arr)>0) tmp(1:size(arr))=arr
+!      tmp(size(arr)+1)=val
+!
+!      call move_alloc(tmp,arr)
+!
+!   END SUBROUTINE
+
+END SUBROUTINE Build_1Dlike_Connectivity
+
+!SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
+!
+!   USE m_mesh
+!   implicit none
+!
+!   type(msh), intent(inout) :: mesh
+!
+!   integer(ip) :: nc
+!   integer(ip), allocatable :: indeg(:)
+!   integer(ip), allocatable :: queue(:)
+!   integer(ip), allocatable :: count_up(:)
+!
+!   integer(ip) :: head,tail
+!   integer(ip) :: idown
+!
+!   real(rp) :: dx1D,dy1D,dist
+!   real(rp) :: smax
+!
+!   nc = mesh%nc
+!
+!   allocate(indeg(nc))
+!   allocate(queue(nc))
+!   allocate(count_up(nc))
+!
+!   indeg = 0
+!   count_up = 0
+!
+!   !-----------------------------------------
+!   ! compute indegree (number of upstream cells)
+!   !-----------------------------------------
+!
+!   do i=1,nc
+!      indeg(i) = size(mesh%cell(i)%up)
+!   enddo
+!
+!   !-----------------------------------------
+!   ! initialize queue with source cells
+!   !-----------------------------------------
+!
+!   head = 1
+!   tail = 0
+!
+!   do i=1,nc
+!      mesh%cell(i)%s = 0._rp
+!
+!      if(indeg(i) == 0) then
+!         tail = tail + 1
+!         queue(tail) = i
+!      endif
+!   enddo
+!
+!   !-----------------------------------------
+!   ! topological propagation
+!   !-----------------------------------------
+!
+!   do while(head <= tail)
+!
+!      i = queue(head)
+!      head = head + 1
+!
+!      do k=1,size(mesh%cell(i)%down)
+!
+!         idown = mesh%cell(i)%down(k)
+!
+!         dx = mesh%cell(idown)%grav%x - mesh%cell(i)%grav%x
+!         dy = mesh%cell(idown)%grav%y - mesh%cell(i)%grav%y
+!
+!         dist = sqrt(dx*dx + dy*dy)
+!
+!         mesh%cell(idown)%s = mesh%cell(idown)%s + mesh%cell(i)%s + dist
+!         count_up(idown) = count_up(idown) + 1
+!
+!         indeg(idown) = indeg(idown) - 1
+!
+!         if(indeg(idown) == 0) then
+!
+!            mesh%cell(idown)%s = mesh%cell(idown)%s / real(count_up(idown),rp)
+!
+!            tail = tail + 1
+!            queue(tail) = idown
+!
+!         endif
+!
+!      enddo
+!
+!   enddo
+!
+!!   !-----------------------------------------
+!!   ! normalize abscissa
+!!   !-----------------------------------------
+!!
+!!   smax = maxval(mesh%cell(:)%s)
+!!
+!!   if(smax > 0._rp) then
+!!      do i=1,nc
+!!         mesh%cell(i)%s = mesh%cell(i)%s / smax
+!!      enddo
+!!   endif
+!
+!   deallocate(indeg,queue,count_up)
+!
+!END SUBROUTINE
+
+SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
+
+   USE m_mesh
+   implicit none
+
+   type(msh), intent(inout) :: mesh
+
+   integer(ip) :: nc
+   integer(ip), allocatable :: indeg(:)
+   integer(ip), allocatable :: queue(:)
+   integer(ip), allocatable :: count_up(:)
+
+   integer(ip) :: head,tail,idown
+   real(rp) :: dist
+   real(rp) :: smax
+
+   nc = mesh%nc
+
+   allocate(indeg(nc))
+   allocate(queue(nc))
+   allocate(count_up(nc))
+
+   indeg = 0
+   count_up = 0
+
+   ! count upstream connections
+   do i=1,nc
+      indeg(i)=size(mesh%cell(i)%up)
+      mesh%cell(i)%s = 0._rp
+   enddo
+
+   ! initialize queue with sources
+   head=1
+   tail=0
+
+   do i=1,nc
+      if(indeg(i)==0) then
+         tail=tail+1
+         queue(tail)=i
+      endif
+   enddo
+
+   ! propagate along network
+   do while(head<=tail)
+
+      i = queue(head)
+      head = head+1
+
+      do k=1,size(mesh%cell(i)%down)
+
+         idown = mesh%cell(i)%down(k)
+
+         dx = mesh%cell(idown)%grav%x - mesh%cell(i)%grav%x
+         dy = mesh%cell(idown)%grav%y - mesh%cell(i)%grav%y
+
+         dist = sqrt(dx*dx + dy*dy)
+
+         mesh%cell(idown)%s = mesh%cell(idown)%s + mesh%cell(i)%s + dist
+         count_up(idown)=count_up(idown)+1
+
+         indeg(idown)=indeg(idown)-1
+
+         if(indeg(idown)==0) then
+
+            mesh%cell(idown)%s = mesh%cell(idown)%s / real(count_up(idown),rp)
+
+            tail=tail+1
+            queue(tail)=idown
+
+         endif
+
+      enddo
+
+   enddo
+
+   ! normalize abscissa
+!   smax = maxval(mesh%cell(:)%s)
+!
+!   if(smax>0._rp) then
+!      do i=1,nc
+!         mesh%cell(i)%s = mesh%cell(i)%s / smax
+!      enddo
+!   endif
+
+END SUBROUTINE
+
 
 
 !**********************************************************************************************************************!

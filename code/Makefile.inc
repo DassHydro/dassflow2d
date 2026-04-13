@@ -78,13 +78,13 @@ CASEDIR	= ./bin_A
 #Fortran compiler: 	'0' for GNU, '1' for Intel
 COMPILO	= 0
 #Debug mode: 		'1' to activate. Not activating when computing adjoint model may cause errors.
-OPTIM		= 0
+OPTIM		= 1
 #SW model: 		'0' to not compile, '1' to compile SW_MONO, '2' to compile SW_HB, '3' to compile SW_MULTI
 MODEL		= 1
 #Hydrological model: 	'0' to not compile, '1' to compile hydrological model (currently unmaintained)
 HYDRO		= 0
 #Infiltration model: 	'0' to not compile, '1' to compile rain module and both Green-Ampt and SCS-CN infiltration options
-INFILTRATION	= 1
+INFILTRATION	= 0
 #Porosity model: 	'0' to not compile, '1' to compile Single Porosity
 POROSITY	= 1
 #Adjoint model: 	'0' to not compile, '1' to compile
@@ -95,7 +95,7 @@ MINMETHOD	= 1
 SOLVER		= 0
 
 #Parallel computing: 	'1' to use
-MPI		= 0
+MPI		= 1
 #If MPI=1, number of processors to use
 NB_PROC	= 2
 
