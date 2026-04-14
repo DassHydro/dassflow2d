@@ -1429,4 +1429,27 @@ END SUBROUTINE write_hydrograph
 
  END SUBROUTINE reallocate_manning
 
+ subroutine set_cell_type(mesh, i, val)
+        type(msh), intent(inout) :: mesh
+        integer, intent(in) :: i, val
+        mesh%cell(i)%type = val
+     write(*,*) "Type of cell", i, " set to ", val
+ end subroutine
+
+ subroutine set_edge_type(mesh, i, val)
+        type(msh), intent(inout) :: mesh
+        integer, intent(in) :: i, val
+        mesh%edge(i)%type = val
+     write(*,*) "Type of edge", i, " set to ", val
+ end subroutine
+
+ subroutine set_edge_connection(mesh, i, id_connect)
+        type(msh), intent(inout) :: mesh
+        integer, intent(in) :: i, id_connect
+        mesh%edge(i)%cell1D2D = id_connect
+        mesh%edge(i)%boundary = .False.
+     write(*,*) "Connected edge", i, " to 1Dlike cell ", id_connect
+ end subroutine
+
+
 END MODULE call_model
