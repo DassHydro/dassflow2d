@@ -59,3 +59,10 @@ result_*.dat
 
 
 cases/sw_mono/Model_Garonne/
+cases/moselle_cases/*
+code/tap/*
+code/obj/*
+code/cpp/*
+code/wrappers/*
+code/wrappers_true/*
+

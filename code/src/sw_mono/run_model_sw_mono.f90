@@ -90,10 +90,10 @@ SUBROUTINE run_model( mesh , dof0 , dof , cost )
    !  Local Variables
    !===================================================================================================================!
 
-   integer(ip)  ::  sub_nt, iR, iL
+   integer(ip)  ::  sub_nt, iR, iL!, count
     real(rp) :: bathy_temp
-    real(rp) :: Ks_ubound, Ks_lbound, z, lambda, shift
-
+    real(rp) :: Ks_ubound, Ks_lbound, z, lambda, shift!, length
+character(len=100) :: msg
 ! >>> AJOUTEZ CES LIGNES (OUVRIR LE FICHIER) <<<
 INTEGER :: poro_unit
 
@@ -168,6 +168,26 @@ INTEGER :: poro_unit
 
       endif
    endif
+
+
+   !===================================================================================================================!
+   !  Define porosity parameters
+   !===================================================================================================================!
+
+! #ifdef USE_PORO
+
+      do i = 1, mesh%nc 
+   
+          if (SPorosity%width(i) > 1.0E-6_rp) then! .AND. (SPorosity%hbanks(SPorosity%land(i)) > 0.0_rp)) then
+
+                SPorosity%a(i) = SPorosity%hbanks(SPorosity%land(i)) / & !SPorosity%land(i)
+                                  ((SPorosity%width(i) / 2.0_rp)**SPorosity%gamma(SPorosity%land(i)))
+
+          else
+                SPorosity%a(i) = 1.0_rp 
+          endif
+      end do
+
 
    !===================================================================================================================!
    !  Define parameterized bathymetry
@@ -393,7 +413,7 @@ CONTAINS
                          !    call euler_time_step_first_b1_porosity( dof , mesh )
                      
                          !  else
-
+! write(*,*) "Entering euler_time_step_first_b1"
                               call euler_time_step_first_b1( dof , mesh, poro_unit,nt ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
                      
                          !  end if

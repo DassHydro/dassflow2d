@@ -441,35 +441,17 @@ SUBROUTINE Build_1Dlike_Connectivity(mesh)
    integer(ip) :: c1,c2
    integer(ip), dimension(mesh%nc) :: nup, ndown
 
-!   ! initialize
-!   do c1=1,mesh%nc
-!      if(allocated(mesh%cell(c1)%up))   deallocate(mesh%cell(c1)%up)
-!      if(allocated(mesh%cell(c1)%down)) deallocate(mesh%cell(c1)%down)
-!
-!      mesh%cell(c1)%type = 2
-!
-!      allocate(mesh%cell(c1)%up(0))
-!      allocate(mesh%cell(c1)%down(0))
-!   end do
-!
-!   ! build connectivity from edges
-!   do ie=1,mesh%ne
-!
-!      if (.not. mesh%edge(ie)%boundary) then
-!
-!         c1 = mesh%edge(ie)%cell(1)
-!         c2 = mesh%edge(ie)%cell(2)
-!
-!         mesh%edge(ie)%type = 2
-!
-!         call add_down(mesh%cell(c1)%down,c2)
-!         call add_up(mesh%cell(c2)%up,c1)
-!
-!      endif
 
    do i=1,mesh%nc
       nup(i)=0
       ndown(i)=0
+      ! if (mesh%cell(i)%nbed .eq. 3) then
+      !    mesh%cell(i)%type = 1 ! Classic 2D cell with 3 edges
+      ! elseif (mesh%cell(i)%nbed .eq. 4) then
+         mesh%cell(i)%type = 2 ! 1Dlike cells
+         !TODO Handle classic 2D quad cells
+         ! TODO handle confluences "cells" with more than 4 edges ?
+      ! endif
    enddo
 
    do ie=1,mesh%ne
@@ -502,6 +484,14 @@ SUBROUTINE Build_1Dlike_Connectivity(mesh)
          nup(c2)=nup(c2)+1
          mesh%cell(c2)%up(nup(c2)) = c1
 
+      !    if (mesh%cell(c1)%type == 2) then
+         mesh%edge(ie)%type = 2 ! Any edge between 1Dlike cells is type 2
+      !    elseif (mesh%cell(c1)%type == 1) then
+      !       mesh%edge(ie)%type = 1 ! Any edge between 1Dlike and 2d cell is type 3
+      !    endif
+
+      ! elseif (mesh%cell(c1)%type == 1) ! If cell is 2d and a boundary...
+      !    mesh%edge(ie)%type = 3 ! If
       endif
    enddo
 

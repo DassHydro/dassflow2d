@@ -125,16 +125,15 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 #ifdef USE_PORO
     SPorosity%phi(:) = 1.0_rp
-    do l = 1, mesh%nc ! TODO add option for regionalized width, replace l by land(l)
+    do l = 1, mesh%nc 
         SPorosity%width(l) = calculate_width(l, mesh)
-        !Sporosity%hbanks(l)=25
-        !SPorosity%gamma(l) = 2.0_rp
-        h_max_effective = SPorosity%hbanks(SPorosity%land(l))
-        if (SPorosity%width(l) > 1.0E-6_rp .AND. h_max_effective > 0.0_rp) then
-            SPorosity%a(l) = h_max_effective / ((SPorosity%width(l) / 2.0_rp)**SPorosity%gamma(SPorosity%land(l)))
-        else
-            SPorosity%a(l) = 1.0_rp 
-        endif
+
+      !   h_max_effective = SPorosity%hbanks(SPorosity%land(l))
+      !   if (SPorosity%width(l) > 1.0E-6_rp .AND. h_max_effective > 0.0_rp) then
+      !       SPorosity%a(l) = h_max_effective / ((SPorosity%width(l) / 2.0_rp)**SPorosity%gamma(SPorosity%land(l)))
+      !   else
+      !       SPorosity%a(l) = 1.0_rp 
+      !   endif
     end do
 #endif
 
@@ -1925,10 +1924,10 @@ end do
 ! define values for each patch
 do i = 1,SPorosity%nland
    SPorosity%Phi( i ) = my_porosity%Phi( i )
-   SPorosity%a( i ) = my_porosity%a( i )
+   !SPorosity%a( i ) = my_porosity%a( i )
    SPorosity%gamma( i ) = my_porosity%gamma( i )
    SPorosity%hbanks( i ) = my_porosity%hbanks( i )
-   SPorosity%width( i ) = my_porosity%width ( i )
+   !SPorosity%width( i ) = my_porosity%width ( i )
 end do
 
 !< Integral Porosity

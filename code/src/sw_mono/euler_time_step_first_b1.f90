@@ -460,6 +460,7 @@ SUBROUTINE update_all_porosities(dof, mesh)
     REAL(rp) :: area_parabola_full, area_rectangle_over
 
     DO icell = 1, mesh%nc 
+
         h = dof%h(icell)
         
         ! --- CASE 1: The cell is (almost) dry ---
@@ -471,9 +472,9 @@ SUBROUTINE update_all_porosities(dof, mesh)
 
             DO k = 1, mesh%cell(icell)%nbed
 
-!                ie = mesh%cell(icell)%edge(k)
+               ! ie = mesh%cell(icell)%edge(k)
+                  h_virtual = dof%h(mesh%cell(icell)%up(1))! WIP, loop on all 1Dlike cells ?
 
-                h_virtual = dof%h(mesh%cell(icell)%up(1))! WIP, loop on all 1Dlike cells ?
 
                     if (h_virtual > heps) then
 
@@ -492,9 +493,10 @@ SUBROUTINE update_all_porosities(dof, mesh)
                     endif
             END DO
 
-!            write(*,*) tc, "CASE 1", icell, h, phi_K_new, wetted_area, macro_area_virtual
+!   
         ! --- CASES 2 & 3: The cell is wet ---
         ELSE
+
             W = SPorosity%width(icell)
             H_k = h
             Hbanks = SPorosity%hbanks(SPorosity%land(icell))
@@ -513,7 +515,7 @@ SUBROUTINE update_all_porosities(dof, mesh)
             !ELSE
                 wetted_area = calculate_wetted_area(icell, H_k)
             !END IF
-      !  write(*,*) tc, icell, H_k, hbanks, wetted_area, macro_area
+
             ! Porosity calculation (common to cases 2 and 3)
             IF (macro_area > 1.0E-9_rp) THEN
                 phi_K_new = wetted_area / macro_area
@@ -521,14 +523,10 @@ SUBROUTINE update_all_porosities(dof, mesh)
                 ! If h > 0 but macro_area is almost zero, the cell is "full" relative to its depth
                 phi_K_new = 1.0_rp 
             END IF
-
-
-!            write(*,*) tc, "CASE 2-3", icell, h, Hbanks, phi_K_new, wetted_area, macro_area, SPorosity%width(icell)
-        END IF
+         END IF
         
-        SPorosity%phi(icell) = phi_K_new
-      !   write(*,*) tc, icell, SPorosity%phi(icell), SPorosity%width(icell), dof%h(icell)
-    END DO
+         SPorosity%phi(icell) = phi_K_new
+         END DO
 
 END SUBROUTINE update_all_porosities
 
@@ -569,7 +567,6 @@ END SUBROUTINE update_all_porosities
         Hbanks = SPorosity%hbanks(SPorosity%land(icell))
         
         IF (H_k <= 0.0_rp .OR. a <= 0.0_rp) THEN
-            write(*,*) "area = 0.0_rp",icell, H_k, a
             area = 0.0_rp
             RETURN
         ELSE
@@ -578,7 +575,6 @@ END SUBROUTINE update_all_porosities
                 area = H_k * yN - (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
                 area = 2.0_rp * area
                 area = MAX(0.0_rp, area)
-!write(*,*) icell, area, H_k, yN, H_k * yN, (a / (gamma + 1.0_rp)) * yN**(gamma + 1.0_rp)
             ELSE
                 W = SPorosity%width(icell)    
                 area = Hbanks * (W/2) - (a / (gamma + 1.0_rp)) * (W/2)**(gamma + 1.0_rp)

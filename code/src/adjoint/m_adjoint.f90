@@ -398,6 +398,7 @@ CONTAINS
 
          SPorosity_back%Phi(:) = 0._rp
          SPorosity_back%width(:) = 0._rp
+         SPorosity_back%a(:) = 0._rp
          SPorosity_back%hbanks(:) = 0._rp
          SPorosity_back%gamma(:) = 0._rp
 
