@@ -174,7 +174,7 @@ INTEGER :: poro_unit
    !  Define porosity parameters
    !===================================================================================================================!
 
-! #ifdef USE_PORO
+#ifdef USE_PORO
 
       do i = 1, mesh%nc 
    
@@ -182,12 +182,12 @@ INTEGER :: poro_unit
 
                 SPorosity%a(i) = SPorosity%hbanks(SPorosity%land(i)) / & !SPorosity%land(i)
                                   ((SPorosity%width(i) / 2.0_rp)**SPorosity%gamma(SPorosity%land(i)))
-
           else
                 SPorosity%a(i) = 1.0_rp 
           endif
       end do
-
+      
+#endif
 
    !===================================================================================================================!
    !  Define parameterized bathymetry
@@ -413,7 +413,7 @@ CONTAINS
                          !    call euler_time_step_first_b1_porosity( dof , mesh )
                      
                          !  else
-! write(*,*) "Entering euler_time_step_first_b1"
+
                               call euler_time_step_first_b1( dof , mesh, poro_unit,nt ) ! Compiltation flags for porosity now added in euler_time_step_first_b1
                      
                          !  end if
@@ -446,7 +446,7 @@ CONTAINS
          !============================================================================!
          !  Post-processing
          !=============================================================================================================!
-
+! write(*,*) "Calling sw_post_treatment"
          call sw_post_treatment( dof , mesh )
 
          !=============================================================================================================!
