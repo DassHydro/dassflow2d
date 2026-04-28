@@ -1451,5 +1451,13 @@ END SUBROUTINE write_hydrograph
      write(*,*) "Connected edge", i, " to 1Dlike cell ", id_connect
  end subroutine
 
+  subroutine update_edge_length(mesh, i, len)
+        type(msh), intent(inout) :: mesh
+        integer, intent(in) :: i
+        real, intent(in) :: len
+        write(*,*) "Length of edge", i, " changed by ", len, " ( prev. len = ",mesh%edge(i)%length, " now",mesh%edge(i)%length - len ," )"
+        mesh%edge(i)%length =  mesh%edge(i)%length - len
+     
+ end subroutine
 
 END MODULE call_model

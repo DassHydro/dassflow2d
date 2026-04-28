@@ -115,10 +115,12 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
 !      if ( mesh%edge(ie)%type == 2) then !If 1Dlike edge, do not compute has flux is computed over each connected classic 2D cell
 !          cycle
       if ( mesh%edge(ie)%type == 3) then ! If "lateral" cell, i.e. linking a 2D and 1Dlike cell
-          if (mesh%cell(iL)%type == 2) then! If the current cell is the 1Dlike cell, skip flux computation
+         !  if (mesh%cell(iL)%type == 2) then! If the current cell is the 1Dlike cell, skip flux computation
+         !      cycle
+         !  endif
+         if (mesh%edge(ie)%length <= zerom) then! If the base wall boundary length has been reduce to 0 (full edge covered bu connected 2D cells), skip
               cycle
           endif
-
           iR = mesh%edge(ie)%cell1D2D !Get id of the single 1D-like cell with interface in the connected bc number => this should be done once!
       endif
 
@@ -146,7 +148,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
               zR = bathy_cell( iL )
            endif
-            !================= Temporary modifications for some Andromede cases
+
 #ifdef USE_PORO
             phiL  =  SPorosity%Phi( SPorosity%land(iL) )
 
@@ -237,15 +239,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
             tflux( 3 , iR )  =  tflux( 3 , iR )  -  lflux(3)  -  mesh%edge(ie)%normal%y * s2R * mesh%edge(ie)%length
 
          end if
-
-         if ( mesh%edge(ie)%boundary ) then
-            if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'internal_2D' ) then
-
-               tflux( 1 , iR )  =  tflux( 1 , iR )  -  lflux(1)
-               tflux( 2 , iR )  =  tflux( 2 , iR )  -  lflux(2)  -  mesh%edge(ie)%normal%x * s2R * mesh%edge(ie)%length
-               tflux( 3 , iR )  =  tflux( 3 , iR )  -  lflux(3)  -  mesh%edge(ie)%normal%y * s2R * mesh%edge(ie)%length
-            endif
-         endif
 #else
          tflux( 1 , iL ) = tflux( 1 , iL ) + lflux(1)
          tflux( 2 , iL ) = tflux( 2 , iL ) + lflux(2)
