@@ -1,5 +1,5 @@
-# DassFlow2D
-This version provides the framework for the upcoming integration of hydraulic structures into DassFlow2D.
+# DassFlow2D-WRAP
+This git repository contains the development version of DassFlow2D-Wrapped.
 
 ## Table of Contents
 1. [ General Information. ](#geninfo)
@@ -37,7 +37,7 @@ open ./doc/SPHINX_DOCUMENTATION/build/html/index.html
 ### 3.1 For dassflow2d installation
 <em>**Note:** some of the modules below might already be installed on your Linux machine.</em>
 #### 3.1.1 For the Fortran code
-- <strong>python 3.8</strong> or above (<em>check your python version with <code>python3 --version</code> in the terminal</em>)
+- <strong>python 3.9.12</strong> (<em>check your python version with <code>python3 --version</code> in the terminal</em>)
 - an up-to-date Java Development Kit (JDK) (<em>check your java version with <code>java --version</code> in the terminal or install it with <code>sudo apt install default-jdk</code></em>)
 - an MPI library : mpich
 ````
@@ -56,7 +56,7 @@ export PATH=$PATH:$"tapenade_dir"
 - pip3
 - f90wrap
 ````
-  pip install f90wrap
+  pip install f90wrap==0.2.16
 ````
 Add f90wrap to your PATH in ````~/.bashrc````. For example:
 ````
