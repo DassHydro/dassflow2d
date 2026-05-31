@@ -1,5 +1,5 @@
-# DassFlow2D-WRAP
-This git repository contains the development version of DassFlow2D-Wrapped.
+# DassFlow2D
+This version provides the framework for the upcoming integration of hydraulic structures into DassFlow2D.
 
 ## Table of Contents
 1. [ General Information. ](#geninfo)
