@@ -150,40 +150,22 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
       if ( bc%typ(num_bc,1)(1:8) == 'discharg'  .or. &
       bc%typ(num_bc,1)(1:3) == 'gr4' ) then ! .or. &
-!    mesh%edgeb(ib)%typlim(1:17) == 'internal_discharg') DEPRECATED
-
-!          if ( mesh_type == 'basic' ) then
-
-!             write(buffer,'(A,I3.3)') 'sum_mass_flux_inflow_' , num_bc
-
-!          else
 
             write(buffer,'(A,I3.3)') 'sum_mass_flux_inflow_' , num_bc!bc%grpf( num_bc )
-
-!          end if
 
       elseif ( bc%typ(num_bc,1)(1:6) == 'transm'   .or. &
                 bc%typ(num_bc,1)(1:8) == 'ratcurve' .or. &
                 bc%typ(num_bc,1)(1:7) == 'zspresc'  .or. &
                 bc%typ(num_bc,1)(1:6) == 'hpresc' ) then
-!               bc%typ(num_bc,1)(1:17) == 'internal_ratcurve' .or. & !DEPRECATED
-
-!          if ( mesh_type == 'basic' ) then
-!
-!             write(buffer,'(A,I3.3)') 'sum_mass_flux_outflow_' , num_bc
-!
-!          else
 
             write(buffer,'(A,I3.3)') 'sum_mass_flux_outflow_' , num_bc!bc%grpf( num_bc )
-
-!          endif
 
        elseif ( bc%typ(num_bc,1)(1:11) == 'internal_2D') then
 
            write(buffer,'(A,I3.3)') 'sum_mass_flux_internalflow_' , num_bc!bc%grpf( num_bc )
 
       endif
-
+! write(*,*) "Calling  write_scalar_in_time( bc%sum_mass_flux( num_bc )  , buffer )"
       if ( buffer /= '' ) call write_scalar_in_time( bc%sum_mass_flux( num_bc )  , buffer )
 
    end do

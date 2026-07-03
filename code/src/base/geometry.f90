@@ -445,13 +445,7 @@ SUBROUTINE Build_1Dlike_Connectivity(mesh)
    do i=1,mesh%nc
       nup(i)=0
       ndown(i)=0
-      ! if (mesh%cell(i)%nbed .eq. 3) then
-      !    mesh%cell(i)%type = 1 ! Classic 2D cell with 3 edges
-      ! elseif (mesh%cell(i)%nbed .eq. 4) then
-         mesh%cell(i)%type = 2 ! 1Dlike cells
-         !TODO Handle classic 2D quad cells
-         ! TODO handle confluences "cells" with more than 4 edges ?
-      ! endif
+      mesh%cell(i)%type = 2 ! 1Dlike cell by default
    enddo
 
    do ie=1,mesh%ne
@@ -469,9 +463,10 @@ SUBROUTINE Build_1Dlike_Connectivity(mesh)
       allocate(mesh%cell(i)%down(ndown(i)))
    enddo
 
-   nup=0
-   ndown=0
-
+   ! Reset indices
+   nup   = 0
+   ndown = 0
+   
    do ie=1,mesh%ne
       if(.not.mesh%edge(ie)%boundary) then
 
@@ -484,159 +479,17 @@ SUBROUTINE Build_1Dlike_Connectivity(mesh)
          nup(c2)=nup(c2)+1
          mesh%cell(c2)%up(nup(c2)) = c1
 
-      !    if (mesh%cell(c1)%type == 2) then
-         mesh%edge(ie)%type = 2 ! Any edge between 1Dlike cells is type 2
-      !    elseif (mesh%cell(c1)%type == 1) then
-      !       mesh%edge(ie)%type = 1 ! Any edge between 1Dlike and 2d cell is type 3
-      !    endif
-
-      ! elseif (mesh%cell(c1)%type == 1) ! If cell is 2d and a boundary...
-      !    mesh%edge(ie)%type = 3 ! If
+         if (mesh%cell(c1)%type == 2 .and. mesh%cell(c2)%type == 2) then
+            mesh%edge(ie)%type = 2          ! 1Dlike - 1Dlike
+         elseif (mesh%cell(c1)%type /= mesh%cell(c2)%type) then
+            mesh%edge(ie)%type = 3          ! interface 1Dlike / 2D
+         else
+            mesh%edge(ie)%type = 1          ! 2D - 2D
+         endif
       endif
    enddo
 
-
-
-!CONTAINS
-!
-!   SUBROUTINE add_up(arr,val)
-!
-!      USE m_mesh
-!      implicit none
-!
-!      integer(ip), allocatable, intent(inout) :: arr(:)
-!      integer(ip), intent(in) :: val
-!      integer(ip), allocatable :: tmp(:)
-!
-!      allocate(tmp(size(arr)+1))
-!      if(size(arr)>0) tmp(1:size(arr))=arr
-!      tmp(size(arr)+1)=val
-!
-!      call move_alloc(tmp,arr)
-!
-!   END SUBROUTINE
-!
-!   SUBROUTINE add_down(arr,val)
-!
-!      USE m_mesh
-!      implicit none
-!
-!      integer(ip), allocatable, intent(inout) :: arr(:)
-!      integer(ip), intent(in) :: val
-!      integer(ip), allocatable :: tmp(:)
-!
-!      allocate(tmp(size(arr)+1))
-!      if(size(arr)>0) tmp(1:size(arr))=arr
-!      tmp(size(arr)+1)=val
-!
-!      call move_alloc(tmp,arr)
-!
-!   END SUBROUTINE
-
 END SUBROUTINE Build_1Dlike_Connectivity
-
-!SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
-!
-!   USE m_mesh
-!   implicit none
-!
-!   type(msh), intent(inout) :: mesh
-!
-!   integer(ip) :: nc
-!   integer(ip), allocatable :: indeg(:)
-!   integer(ip), allocatable :: queue(:)
-!   integer(ip), allocatable :: count_up(:)
-!
-!   integer(ip) :: head,tail
-!   integer(ip) :: idown
-!
-!   real(rp) :: dx1D,dy1D,dist
-!   real(rp) :: smax
-!
-!   nc = mesh%nc
-!
-!   allocate(indeg(nc))
-!   allocate(queue(nc))
-!   allocate(count_up(nc))
-!
-!   indeg = 0
-!   count_up = 0
-!
-!   !-----------------------------------------
-!   ! compute indegree (number of upstream cells)
-!   !-----------------------------------------
-!
-!   do i=1,nc
-!      indeg(i) = size(mesh%cell(i)%up)
-!   enddo
-!
-!   !-----------------------------------------
-!   ! initialize queue with source cells
-!   !-----------------------------------------
-!
-!   head = 1
-!   tail = 0
-!
-!   do i=1,nc
-!      mesh%cell(i)%s = 0._rp
-!
-!      if(indeg(i) == 0) then
-!         tail = tail + 1
-!         queue(tail) = i
-!      endif
-!   enddo
-!
-!   !-----------------------------------------
-!   ! topological propagation
-!   !-----------------------------------------
-!
-!   do while(head <= tail)
-!
-!      i = queue(head)
-!      head = head + 1
-!
-!      do k=1,size(mesh%cell(i)%down)
-!
-!         idown = mesh%cell(i)%down(k)
-!
-!         dx = mesh%cell(idown)%grav%x - mesh%cell(i)%grav%x
-!         dy = mesh%cell(idown)%grav%y - mesh%cell(i)%grav%y
-!
-!         dist = sqrt(dx*dx + dy*dy)
-!
-!         mesh%cell(idown)%s = mesh%cell(idown)%s + mesh%cell(i)%s + dist
-!         count_up(idown) = count_up(idown) + 1
-!
-!         indeg(idown) = indeg(idown) - 1
-!
-!         if(indeg(idown) == 0) then
-!
-!            mesh%cell(idown)%s = mesh%cell(idown)%s / real(count_up(idown),rp)
-!
-!            tail = tail + 1
-!            queue(tail) = idown
-!
-!         endif
-!
-!      enddo
-!
-!   enddo
-!
-!!   !-----------------------------------------
-!!   ! normalize abscissa
-!!   !-----------------------------------------
-!!
-!!   smax = maxval(mesh%cell(:)%s)
-!!
-!!   if(smax > 0._rp) then
-!!      do i=1,nc
-!!         mesh%cell(i)%s = mesh%cell(i)%s / smax
-!!      enddo
-!!   endif
-!
-!   deallocate(indeg,queue,count_up)
-!
-!END SUBROUTINE
 
 SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
 
@@ -650,9 +503,9 @@ SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
    integer(ip), allocatable :: queue(:)
    integer(ip), allocatable :: count_up(:)
 
-   integer(ip) :: head,tail,idown
-   real(rp) :: dist
-   real(rp) :: smax
+   integer(ip) :: head, tail
+   integer(ip) :: idown, iup
+   real(rp)    :: dist
 
    nc = mesh%nc
 
@@ -660,35 +513,61 @@ SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
    allocate(queue(nc))
    allocate(count_up(nc))
 
-   indeg = 0
+   indeg    = 0
    count_up = 0
 
-   ! count upstream connections
-   do i=1,nc
-      indeg(i)=size(mesh%cell(i)%up)
+   !----------------------------------------------------------
+   ! Count upstream 1Dlike neighbours only
+   !----------------------------------------------------------
+   do i = 1, nc
+
       mesh%cell(i)%s = 0._rp
+
+      if (mesh%cell(i)%type /= 2) cycle
+
+      do k = 1, size(mesh%cell(i)%up)
+
+         iup = mesh%cell(i)%up(k)
+
+         if (mesh%cell(iup)%type == 2) then
+            indeg(i) = indeg(i) + 1
+         endif
+
+      enddo
+
    enddo
 
-   ! initialize queue with sources
-   head=1
-   tail=0
+   !----------------------------------------------------------
+   ! Initialize queue with 1D sources
+   !----------------------------------------------------------
+   head = 1
+   tail = 0
 
-   do i=1,nc
-      if(indeg(i)==0) then
-         tail=tail+1
-         queue(tail)=i
+   do i = 1, nc
+
+      if (mesh%cell(i)%type /= 2) cycle
+
+      if (indeg(i) == 0) then
+         tail = tail + 1
+         queue(tail) = i
       endif
+
    enddo
 
-   ! propagate along network
-   do while(head<=tail)
+   !----------------------------------------------------------
+   ! Propagate curvilinear abscissa
+   !----------------------------------------------------------
+   do while (head <= tail)
 
       i = queue(head)
-      head = head+1
+      head = head + 1
 
-      do k=1,size(mesh%cell(i)%down)
+      do k = 1, size(mesh%cell(i)%down)
 
          idown = mesh%cell(i)%down(k)
+
+         ! Ignore 2D cells
+         if (mesh%cell(idown)%type /= 2) cycle
 
          dx = mesh%cell(idown)%grav%x - mesh%cell(i)%grav%x
          dy = mesh%cell(idown)%grav%y - mesh%cell(i)%grav%y
@@ -696,16 +575,18 @@ SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
          dist = sqrt(dx*dx + dy*dy)
 
          mesh%cell(idown)%s = mesh%cell(idown)%s + mesh%cell(i)%s + dist
-         count_up(idown)=count_up(idown)+1
+         count_up(idown) = count_up(idown) + 1
 
-         indeg(idown)=indeg(idown)-1
+         indeg(idown) = indeg(idown) - 1
 
-         if(indeg(idown)==0) then
+         if (indeg(idown) == 0) then
 
-            mesh%cell(idown)%s = mesh%cell(idown)%s / real(count_up(idown),rp)
+            if (count_up(idown) > 0) then
+               mesh%cell(idown)%s = mesh%cell(idown)%s / real(count_up(idown), rp)
+            endif
 
-            tail=tail+1
-            queue(tail)=idown
+            tail = tail + 1
+            queue(tail) = idown
 
          endif
 
@@ -713,16 +594,11 @@ SUBROUTINE Compute_Curvilinear_Abscissa(mesh)
 
    enddo
 
-   ! normalize abscissa
-!   smax = maxval(mesh%cell(:)%s)
-!
-!   if(smax>0._rp) then
-!      do i=1,nc
-!         mesh%cell(i)%s = mesh%cell(i)%s / smax
-!      enddo
-!   endif
+   deallocate(indeg)
+   deallocate(queue)
+   deallocate(count_up)
 
-END SUBROUTINE
+END SUBROUTINE Compute_Curvilinear_Abscissa
 
 
 

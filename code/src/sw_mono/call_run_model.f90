@@ -1433,14 +1433,14 @@ END SUBROUTINE write_hydrograph
         type(msh), intent(inout) :: mesh
         integer, intent(in) :: i, val
         mesh%cell(i)%type = val
-     write(*,*) "Type of cell", i, " set to ", val
+    !  write(*,*) "Type of cell", i, " set to ", val
  end subroutine
 
  subroutine set_edge_type(mesh, i, val)
         type(msh), intent(inout) :: mesh
         integer, intent(in) :: i, val
         mesh%edge(i)%type = val
-     write(*,*) "Type of edge", i, " set to ", val
+    !  write(*,*) "Type of edge", i, " set to ", val
  end subroutine
 
  subroutine set_edge_connection(mesh, i, id_connect)
@@ -1448,14 +1448,14 @@ END SUBROUTINE write_hydrograph
         integer, intent(in) :: i, id_connect
         mesh%edge(i)%cell1D2D = id_connect
         mesh%edge(i)%boundary = .False.
-     write(*,*) "Connected edge", i, " to 1Dlike cell ", id_connect
+    !  write(*,*) "Connected edge", i, " to 1Dlike cell ", id_connect
  end subroutine
 
   subroutine update_edge_length(mesh, i, len)
         type(msh), intent(inout) :: mesh
         integer, intent(in) :: i
         real, intent(in) :: len
-        write(*,*) "Length of edge", i, " changed by ", len, " ( prev. len = ",mesh%edge(i)%length, " now",mesh%edge(i)%length - len ," )"
+        ! write(*,*) "Length of edge", i, " changed by ", len, " ( prev. len = ",mesh%edge(i)%length, " now",mesh%edge(i)%length - len ," )"
         mesh%edge(i)%length =  mesh%edge(i)%length - len
      
  end subroutine

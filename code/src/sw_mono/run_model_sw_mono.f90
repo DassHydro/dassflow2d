@@ -181,7 +181,7 @@ INTEGER :: poro_unit
           if (SPorosity%width(i) > 1.0E-6_rp) then! .AND. (SPorosity%hbanks(SPorosity%land(i)) > 0.0_rp)) then
 
                 SPorosity%a(i) = SPorosity%hbanks(SPorosity%land(i)) / & !SPorosity%land(i)
-                                  ((SPorosity%width(i) / 2.0_rp)**SPorosity%gamma(SPorosity%land(i)))
+                                  ((SPorosity%width(i) / 2.0_rp)**abs(SPorosity%gamma(SPorosity%land(i))))
           else
                 SPorosity%a(i) = 1.0_rp 
           endif

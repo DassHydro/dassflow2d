@@ -125,7 +125,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_porosity, my_pa
 
 #ifdef USE_PORO
     SPorosity%phi(:) = 1.0_rp
-    do l = 1, mesh%nc 
+    do l = 1, mesh%nc
         SPorosity%width(l) = calculate_width(l, mesh)
 
       !   h_max_effective = SPorosity%hbanks(SPorosity%land(l))
@@ -2138,58 +2138,48 @@ END SUBROUTINE my_bc_2_fortran
 
 
 FUNCTION calculate_width(icell, mesh) RESULT(W)
-    ! Calcule la largeur W d'une cellule en faisant la moyenne
-    ! de la longueur de ses deux arêtes amont/aval.
+
     USE m_mesh, ONLY: msh
     IMPLICIT NONE
 
-    ! --- Arguments ---
+    ! Arguments
     INTEGER, INTENT(IN) :: icell
     TYPE(msh), INTENT(IN) :: mesh
-    
-    ! --- Résultat ---
+
+    ! Result
     REAL(rp) :: W
 
-    ! --- Variables locales ---
-    INTEGER :: k, ie, count
-    REAL(rp) :: length
+    ! Local variables
+    INTEGER(ip) :: k, ie, count
+    REAL(rp)    :: length
 
-    ! Initialisation
-    count = 0
-    length = 0
+    ! Default value
+    W = 0._rp
 
-    ! On parcourt les 4 arêtes de la cellule 'icell'
+    ! Width is only defined for 1Dlike cells
+    IF (mesh%cell(icell)%type /= 2) RETURN
+
+    count  = 0
+    length = 0._rp
+
+    ! Average the length of all 1D-1D edges
     DO k = 1, mesh%cell(icell)%nbed
-        ie = mesh%cell(icell)%edge(k) ! Index de l'arête
 
-        if (mesh%edge(ie)%type == 2) then !This is a 1D_to_D cell, over which XS porosity should be computed
+        ie = mesh%cell(icell)%edge(k)
+
+        IF (mesh%edge(ie)%type == 2) THEN
             length = length + mesh%edge(ie)%length
-            count = count + 1
-        end if
-!        ! On récupère les composantes du vecteur normal
-!        nx = mesh%edge(ie)%normal%x
-!        ny = mesh%edge(ie)%normal%y
-!
-!        ! Si la composante Y de la normale est plus grande que la X,
-!        ! c'est une arête amont ou aval. Sa longueur est la largeur.
-!        IF (ABS(ny) > ABS(nx)) THEN
-!            count_found = count_found + 1
-!            IF (count_found == 1) THEN
-!                length1 = mesh%edge(ie)%length
-!            ELSEIF (count_found == 2) THEN
-!                length2 = mesh%edge(ie)%length
-!                EXIT ! On a trouvé les deux, on peut sortir de la boucle.
-!            END IF
-!        END IF
+            count  = count + 1
+        END IF
+
     END DO
     
-    ! La largeur W est la moyenne des longueurs des deux arêtes trouvées.
-    if (count>0) then
-        W = length / count
-    else
-        W = 0
-    end if
-    
-END FUNCTION calculate_width
+    IF (count > 0) THEN
+        W = length / REAL(count, rp)
+    ELSE
+        W = 0._rp
+    END IF
 
+END FUNCTION calculate_width
+    
 END SUBROUTINE Initial

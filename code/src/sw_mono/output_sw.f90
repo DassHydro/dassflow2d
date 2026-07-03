@@ -1608,7 +1608,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
       rec_index = rec_index + 5
 
       do i = 1,mesh%nc
-         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(SPorosity%land(i)) , char(10)
+         write(10,rec=rec_index+swap_index(i),fmt='(ES15.8,A1)') SPorosity%Phi(i) , char(10)
       end do
 
       rec_index = rec_index + mesh%nc
@@ -1853,6 +1853,30 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
    enddo
 
    !===================================================================================================================!
+   !   Writing VTK file water surface elevation
+   !===================================================================================================================!
+
+   do k = 0,np-1
+
+      if ( proc == k ) then
+
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+
+   	   if ( proc == 0    ) write(10) 'SCALARS '//'zs'//' double 1'//char(10)
+         if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
+                            do i = 1, mesh%nc
+                             write(10) bathy_cell(i)+dof%h(i)
+                            enddo
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+
+      end if
+
+      call mpi_wait_all
+
+   enddo
+
+   !===================================================================================================================!
    !   Writing VTK file h cell data
    !===================================================================================================================!
 
@@ -2058,52 +2082,22 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
       endif
 
 #endif
-!    !===================================================================================================================!
-!    !   Writing VTK file manning_land cell data
-!    !===================================================================================================================!
-!
-!    do k = 0,np-1
-!
-!       if ( proc == k ) then
-!
-!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
-!
-!    	   if ( proc == 0    ) write(10) 'SCALARS '//'manning_land'//' integer 1'//char(10)
-!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-!                              write(10) land(1:mesh%nc)
-!          if ( proc == np-1 ) write(10) char(10)
-!
-!          close(10)
-!
-!       end if
-!
-!       call mpi_wait_all
-!
-!    end do
 
-   !===================================================================================================================!
-   !   Writing VTK file rain_land cell data
-   !===================================================================================================================!
-! if (bc_rain == 1) then
-!    do k = 0,np-1
-!
-!       if ( proc == k ) then
-!
-!          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
-!
-!    	   if ( proc == 0    ) write(10) 'SCALARS '//'rain_land'//' integer 1'//char(10)
-!          if ( proc == 0    ) write(10) 'LOOKUP_TABLE default'//char(10)
-!                              write(10) bc%rain_land(1:mesh%nc)
-!          if ( proc == np-1 ) write(10) char(10)
-!
-!          close(10)
-!
-!       end if
-!
-!       call mpi_wait_all
-!
-!    end do
-! endif
+#ifdef USE_PORO
+      do k = 0,np-1
+      if ( proc == k ) then
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+       if ( proc == 0 ) write(10) 'SCALARS '//'Phi'//' double 1'//char(10)
+         if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                             write(10) SPorosity%Phi(i)
+                        enddo
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+      end if
+      call mpi_wait_all
+   enddo
+#endif
 
 END SUBROUTINE v_vtk_bin
 
@@ -2443,10 +2437,24 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
    do k = 0,np-1
       if ( proc == k ) then
          open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
-       if ( proc == 0 ) write(10) 'SCALARS '//'Phi'//' double 1'//char(10)
+       if ( proc == 0 ) write(10) 'SCALARS '//'gamma'//' double 1'//char(10)
          if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
                         do i = 1,mesh%nc
-                             write(10) SPorosity%Phi( SPorosity%land(i) )
+                             write(10) SPorosity%gamma( SPorosity%land(i) )
+                        enddo
+         if ( proc == np-1 ) write(10) char(10)
+         close(10)
+      end if
+      call mpi_wait_all
+   enddo
+
+   do k = 0,np-1
+      if ( proc == k ) then
+         open(10,file=filename,status='old',form= 'unformatted',access='stream',position='append',convert='big_endian')
+       if ( proc == 0 ) write(10) 'SCALARS '//'hbanks'//' double 1'//char(10)
+         if ( proc == 0 ) write(10) 'LOOKUP_TABLE default'//char(10)
+                        do i = 1,mesh%nc
+                             write(10) SPorosity%hbanks( SPorosity%land(i) )
                         enddo
          if ( proc == np-1 ) write(10) char(10)
          close(10)
@@ -2567,12 +2575,12 @@ SUBROUTINE write_static_cell_data( mesh )
         open(20, file='res/static_cell_data.dat', status='replace', form='formatted')
 
         ! Écrit l'en-tête du fichier
-        write(20,*) '# i a gamma W hbanks'
+        write(20,*) '# i cell_type absc_curv W manning gamma hbanks'
 
         ! Boucle sur toutes les cellules pour écrire les données
-        do index = 1, mesh%nc 
-            W = SPorosity%width(index) 
-            write(20,'(I8, 4(1X,ES15.8))') index, SPorosity%a(index), SPorosity%gamma(SPorosity%land(index)), W, SPorosity%hbanks(SPorosity%land(index))
+        do i = 1, mesh%nc 
+            write(20,'(I8, I8, 5(1X,ES15.8))') i, mesh%cell(i)%type, mesh%cell(i)%s, SPorosity%width(i), manning(land(i)),&
+            SPorosity%gamma(SPorosity%land(i)), SPorosity%hbanks(SPorosity%land(i))
         end do
 
         ! Ferme le fichier

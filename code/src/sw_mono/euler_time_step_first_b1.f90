@@ -86,7 +86,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
    real(rp) :: S ! potential maximal retention
    real(rp) :: Fn1 ! Temporal Fn+1
    real(rp) :: aFn1 , bFn1
-   real(rp) :: h_infil !local variable of infil calculated depth
+   real(rp) :: h_infil !local variable of infil calculated depth
    real(rp) :: vel ! Velocity norm
    real(rp) :: sfl ! Manning
    real(rp) :: madd ! mass rain >TGADJ
@@ -103,7 +103,6 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
 
 #ifdef USE_PORO
    call update_all_porosities(dof, mesh)
-
 #endif
 
    do ie = 1,mesh%ne
@@ -150,7 +149,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
            endif
 
 #ifdef USE_PORO
-            phiL  =  SPorosity%Phi( SPorosity%land(iL) )
+            phiL  =  SPorosity%Phi( iL )
 
             if ( mesh%edgeb(mesh%edge(ie)%lim)%typlim == 'wall') then
                phiR  =  0
@@ -174,8 +173,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
             vR(2) = mesh%edge(ie)%normal%x * vR(1) - mesh%edge(ie)%normal%y * uR(1)
 
 #ifdef USE_PORO
-            phiL  =  SPorosity%Phi( SPorosity%land(iL) )
-            phiR  =  SPorosity%Phi( SPorosity%land(iR) )
+            phiL  =  SPorosity%Phi( iL )
+            phiR  =  SPorosity%Phi( iR )
 #endif
 
          end if
@@ -285,7 +284,7 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
       v = dof%v(i)
 
 #ifdef USE_PORO
-      dof%h(i)  =  max( 0._rp , h  -  dt / SPorosity%Phi( SPorosity%land(i) ) * tflux(1,i) * mesh%cell(i)%invsurf )
+      dof%h(i)  =  max( 0._rp , h  -  dt / SPorosity%Phi( i ) * tflux(1,i) * mesh%cell(i)%invsurf )
 #else
       dof%h(i) = max( 0._rp , h - dt * tflux(1,i) * mesh%cell(i)%invsurf )
 #endif
@@ -363,8 +362,8 @@ SUBROUTINE euler_time_step_first_b1( dof , mesh, poro_unit, it)
       else
 
 #ifdef USE_PORO
-         dof%u(i)  =  (  h * u  -  dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(2,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
-         dof%v(i)  =  (  h * v  -  dt / SPorosity%Phi( SPorosity%land(i) ) * ( tflux(3,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
+         dof%u(i)  =  (  h * u  -  dt / SPorosity%Phi( i ) * ( tflux(2,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
+         dof%v(i)  =  (  h * v  -  dt / SPorosity%Phi( i ) * ( tflux(3,i) * mesh%cell(i)%invsurf )  )  /  dof%h(i)
 #else
          dof%u(i) = ( h * u - dt * ( tflux(2,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
          dof%v(i) = ( h * v - dt * ( tflux(3,i) * mesh%cell(i)%invsurf ) ) / dof%h(i)
@@ -523,9 +522,9 @@ END SUBROUTINE update_all_porosities
         REAL(rp) :: a, z, gamma, yN, Hbanks, W      !parabola parameters + half the width occupied by water
 
         a     = SPorosity%a(icell)
-        gamma  = SPorosity%gamma(SPorosity%land(icell))
+        gamma  = abs(SPorosity%gamma(SPorosity%land(icell)))
         z     = bathy_cell(icell)
-        Hbanks = SPorosity%hbanks(SPorosity%land(icell))
+        Hbanks = abs(SPorosity%hbanks(SPorosity%land(icell)))
         
         IF (H_k <= 0.0_rp .OR. a <= 0.0_rp) THEN
             area = 0.0_rp
