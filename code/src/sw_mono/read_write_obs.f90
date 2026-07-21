@@ -125,9 +125,9 @@ SUBROUTINE calc_innovation( dof,mesh )
 
                 enddo
 
-                call mpi_sum_r( h_mean )
-                call mpi_sum_r( s_total )
-                call mpi_sum_i( N_average )
+                call df_sum_r( h_mean )
+                call df_sum_r( s_total )
+                call df_sum_i( N_average )
 
                 if (s_total>0) then
 
@@ -323,8 +323,8 @@ character(50)  ::  filename
 
          end do
 
-         call mpi_sum_r( u_mean )
-         call mpi_sum_r( v_mean )
+         call df_sum_r( u_mean )
+         call df_sum_r( v_mean )
 
          if (s_total>0) then
             u_mean = u_mean / s_total
@@ -412,7 +412,7 @@ SUBROUTINE calc_innovW( dof,mesh )
 
          end do
 
-         call mpi_sum_r( w_total )
+         call df_sum_r( w_total )
 
 
 
@@ -642,12 +642,12 @@ SUBROUTINE write_stations( dof ,mesh )
 
                end do
 
-               call mpi_sum_r( h_mean )
-               call mpi_sum_r( u_mean )
-               call mpi_sum_r( v_mean )
-               call mpi_sum_r( w_meanb )
-               call mpi_sum_r( s_total )
-               call mpi_sum_i( N_average )
+               call df_sum_r( h_mean )
+               call df_sum_r( u_mean )
+               call df_sum_r( v_mean )
+               call df_sum_r( w_meanb )
+               call df_sum_r( s_total )
+               call df_sum_i( N_average )
 
                !*****************************
                ! H = 1/sriver \int_sobs Hdx
@@ -758,7 +758,7 @@ SUBROUTINE read_stations
 
    end if
 
-   # call sub_read( 'bin' )
+   ! call sub_read( 'bin' )
 
 
    CONTAINS
@@ -1127,7 +1127,7 @@ SUBROUTINE write_sections( dof,mesh )
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
             !==========================================================================================================!
             !
@@ -1168,7 +1168,7 @@ SUBROUTINE write_sections( dof,mesh )
 
                end if
 
-               call mpi_wait_all
+               call df_wait_all
 
             end do
 
@@ -1297,7 +1297,7 @@ SUBROUTINE write_sections( dof,mesh )
 
          call mpi_max_r( h )
 
-         call mpi_sum_r( q )
+         call df_sum_r( q )
 
       END SUBROUTINE
 

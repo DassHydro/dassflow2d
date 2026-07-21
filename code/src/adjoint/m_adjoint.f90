@@ -866,7 +866,7 @@ CONTAINS
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1033,7 +1033,7 @@ CONTAINS
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1074,8 +1074,8 @@ CONTAINS
 !          if ( manning_data_glob == 1 ) then
 
             do i = 1,nland
-               call mpi_sum_r( manning_back(i) )
-               call mpi_sum_r( manning_beta_back(i) )
+               call df_sum_r( manning_back(i) )
+               call df_sum_r( manning_beta_back(i) )
             end do
 
 !          end if
@@ -1084,7 +1084,7 @@ CONTAINS
          do k = 1,size(bc_back%gr4)
 
             do i = 1,4
-               call mpi_sum_r( bc_back%gr4( k )%params(i) )
+               call df_sum_r( bc_back%gr4( k )%params(i) )
             end do
 
          end do
@@ -1094,7 +1094,7 @@ CONTAINS
 
             do i = 1,size( bc_back%hyd( k )%q(:) )
 !             write(*,*) "k, i , bc_back%hyd( k )%q(:)", k, i , bc_back%hyd( k )%q(:)
-               call mpi_sum_r( bc_back%hyd( k )%q(i) )
+               call df_sum_r( bc_back%hyd( k )%q(i) )
             end do
 
          end do
@@ -1102,11 +1102,11 @@ CONTAINS
          do k = 1,bc%nb_out
 
             do i = 1,size( bc_back%rat( k )%q(:) )
-               call mpi_sum_r( bc_back%rat( k )%q(i) )
+               call df_sum_r( bc_back%rat( k )%q(i) )
             end do
 
             do i = 1,size( bc_back%rat( k )%pow(:) )
-               call mpi_sum_r( bc_back%rat( k )%pow(i) )
+               call df_sum_r( bc_back%rat( k )%pow(i) )
             end do
 
          end do
@@ -1114,7 +1114,7 @@ CONTAINS
          do k = 1,bc%nb_rn
 
             do i = 1,size( bc_back%rain( k )%q(:) )
-               call mpi_sum_r( bc_back%rain( k )%q(i) )
+               call df_sum_r( bc_back%rain( k )%q(i) )
             end do
 
          end do
@@ -1239,7 +1239,7 @@ CONTAINS
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1596,7 +1596,7 @@ x4_ubound = 1_rp
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1791,7 +1791,7 @@ x4_ubound = 1_rp
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1950,7 +1950,7 @@ x4_ubound = 1_rp
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -2452,7 +2452,7 @@ x4_ubound = 1_rp
 
 !      inquire( file = 'min/min_cost.txt' , exist = file_exist(1) )
 
-!      call mpi_wait_all
+!      call df_wait_all
 
 !      if ( .not. file_exist(1) ) then
 
@@ -2635,7 +2635,7 @@ x4_ubound = 1_rp
 
 !         end if
 
-!         call mpi_wait_all
+!         call df_wait_all
 
 !         call mpi_bcast_i( reverse , 0 )
 !         call mpi_bcast_i( indic   , 0 )
@@ -2668,7 +2668,7 @@ x4_ubound = 1_rp
 !      close(30)
 !      close(40)
 
-!      call mpi_wait_all
+!      call df_wait_all
 
 !      deallocate( dz )
 

@@ -93,7 +93,7 @@ SUBROUTINE Read_Input(filename)
 
    end if
 
-    call mpi_wait_all
+    call df_wait_all
 
    open(10,file='input.post',form='formatted',status='old')
 
@@ -704,7 +704,7 @@ SUBROUTINE Read_Dass_Mesh( mesh )
 
    inquire( file = trim(buffer) , exist = file_exist(1) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( .not. file_exist(1) ) then
 

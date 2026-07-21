@@ -514,7 +514,7 @@ write(6,'("nt = ",I8," t = ",ES12.5," / ",ES12.5," ( ",F5.1," % ) , dt = ",ES13.
 
       end if
 
-       call mpi_wait_all
+       call df_wait_all
    END SUBROUTINE Print_Screen
 
 
@@ -554,7 +554,7 @@ write(6,'("nt = ",I8," t = ",ES12.5," / ",ES12.5," ( ",F5.1," % ) , dt = ",ES13.
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
       if ( proc == 0 ) then
 

@@ -352,7 +352,7 @@ SUBROUTINE write_integer_for_all_nt( var , file_name )
          !
          !=============================================================================================================!
 
-         call mpi_wait_all
+         call df_wait_all
 
       END SUBROUTINE sub_write
 
@@ -552,7 +552,7 @@ SUBROUTINE write_pscalar_in_time( var , var_names , file_name , nbvars )
 
          end if
 
-         call mpi_wait_all
+         call df_wait_all
 
       END SUBROUTINE sub_write
 
@@ -749,7 +749,7 @@ SUBROUTINE write_pscalar( var , var_names , file_name , nbvars )
 
          end if
 
-         call mpi_wait_all
+         call df_wait_all
 
       END SUBROUTINE sub_write
 
@@ -899,7 +899,7 @@ SUBROUTINE write_scalar_field( var , mesh , file_name )
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -923,7 +923,7 @@ SUBROUTINE write_scalar_field( var , mesh , file_name )
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1070,7 +1070,7 @@ SUBROUTINE write_vector_field( var , mesh , file_name )
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1086,7 +1086,7 @@ SUBROUTINE write_vector_field( var , mesh , file_name )
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 
@@ -1110,7 +1110,7 @@ SUBROUTINE write_vector_field( var , mesh , file_name )
 
             end if
 
-            call mpi_wait_all
+            call df_wait_all
 
          end do
 

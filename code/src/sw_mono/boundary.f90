@@ -443,7 +443,7 @@ SUBROUTINE set_bc( dof , mesh )
 
          end do
 
-         call mpi_sum_r( sum_pow_h )
+         call df_sum_r( sum_pow_h )
 
          !=============================================================================================================!
          !
@@ -524,7 +524,7 @@ SUBROUTINE set_bc( dof , mesh )
 !
 !             end do
 !
-!             call mpi_sum_r( sum_pow_h )
+!             call df_sum_r( sum_pow_h )
 !
 !             !=============================================================================================================!
 !             !
@@ -634,7 +634,7 @@ SUBROUTINE set_bc( dof , mesh )
 
             end do
 
-            call mpi_sum_r( qout )
+            call df_sum_r( qout )
 
             bc%rat( bc%grpf( num_bc ) )%zout  =  &
 
@@ -677,7 +677,7 @@ SUBROUTINE set_bc( dof , mesh )
 
          end do
 
-         call mpi_sum_r( sum_pow_h )
+         call df_sum_r( sum_pow_h )
 
          if ( sum_pow_h > zerom ) then
 
@@ -740,7 +740,7 @@ SUBROUTINE set_bc( dof , mesh )
 !
 !          enddo
 !
-!          call mpi_sum_r( sum_pow_h )
+!          call df_sum_r( sum_pow_h )
 !
 !          if ( sum_pow_h > zerom ) then
 !
@@ -761,8 +761,8 @@ SUBROUTINE set_bc( dof , mesh )
 !
 !             enddo
 !
-!             call mpi_sum_r( hmoy )
-!             call mpi_sum_r( umoy )
+!             call df_sum_r( hmoy )
+!             call df_sum_r( umoy )
 !
 !             do ib = 1,mesh%neb
 !
@@ -834,7 +834,7 @@ SUBROUTINE set_bc( dof , mesh )
 
          enddo
 
-         call mpi_sum_r( sum_pow_h )
+         call df_sum_r( sum_pow_h )
 
          !=============================================================================================================!
          ! Set bc%inflow values from hydrological Qin at boundary edge groups
@@ -944,8 +944,8 @@ SUBROUTINE Newton_Qin( qin , dof , mesh , zs )
 
    end do
 
-   call mpi_sum_r( zs )
-   call mpi_sum_i( av )
+   call df_sum_r( zs )
+   call df_sum_i( av )
 
    if ( av > 0 ) then
 
@@ -990,8 +990,8 @@ SUBROUTINE Newton_Qin( qin , dof , mesh , zs )
 
       end do
 
-      call mpi_sum_r( s1 )
-      call mpi_sum_r( s2 )
+      call df_sum_r( s1 )
+      call df_sum_r( s2 )
 
       zs = zs - ( s1 - qin ) / s2
 

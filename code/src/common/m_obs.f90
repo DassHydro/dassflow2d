@@ -234,7 +234,15 @@ CONTAINS
 
             endif
 
-          call mpi_sum_r( cost_part(1) )
+          ! NB: cost_part(1) must NOT be reduced again here: it is built from
+          ! innovation(:)%diff / innovQ(:)%diff, which are already made
+          ! globally consistent on every rank by calc_innovation's own
+          ! internal df_sum_r(h_mean)/df_sum_r(s_total) reduction (and by
+          ! innovQ deriving from replicated boundary-condition data). Every
+          ! rank therefore already holds the correct global cost_part(1);
+          ! reducing it again here summed nproc identical copies, silently
+          ! multiplying the reported cost (and the adjoint seed reaching
+          ! calc_innovation_back) by the number of MPI processes.
 
 
 !~             !==========================================================================================================!
@@ -326,7 +334,7 @@ CONTAINS
                 do i = 1,mesh%nc
                     cost_part(2) = cost_part(2) + ( ( grad_var(i)%x )**2 +  ( grad_var(i)%y )**2 )
                 end do
-                call mpi_sum_r( cost_part(2) )
+                call df_sum_r( cost_part(2) )
 
             endif
 
@@ -360,7 +368,7 @@ CONTAINS
                   endif
                 enddo
                 
-                call mpi_sum_r( cost_part(2) )
+                call df_sum_r( cost_part(2) )
                   
               elseif (xsshp_along_y == 1) then
               
@@ -389,7 +397,7 @@ CONTAINS
                   endif
                 end do
 
-                call mpi_sum_r( cost_part(2) )
+                call df_sum_r( cost_part(2) )
 
               endif
             endif
@@ -493,7 +501,7 @@ endif
 
             end do
 
-            call mpi_sum_r( h_mean )
+            call df_sum_r( h_mean )
 
             h_mean = h_mean / real( size( station( iobs )%pt ) , 8 )
 

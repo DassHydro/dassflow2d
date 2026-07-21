@@ -207,7 +207,7 @@ CONTAINS
 
       inquire( file = 'min/min_cost.txt' , exist = file_exist(1) )
 
-      ! call mpi_wait_all
+      ! call df_wait_all
 
 !~       if ( .not. file_exist(1) ) then
 
@@ -453,7 +453,7 @@ CONTAINS
 
          end if
 
-         call mpi_wait_all
+         call df_wait_all
 
          call mpi_bcast_i( reverse , 0 )
          call mpi_bcast_i( indic   , 0 )
@@ -764,7 +764,7 @@ CONTAINS
       print *, 'FINAL_TASK=', trim(task)
 #endif
 
-      call mpi_wait_all
+      call df_wait_all
 
       deallocate( dz )
 

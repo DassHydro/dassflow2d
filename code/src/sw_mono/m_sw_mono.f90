@@ -880,7 +880,9 @@ CONTAINS
       allocate(dof%u(mesh%nc + mesh%ncb))
       allocate(dof%v(mesh%nc + mesh%ncb))
 
-      allocate(dof%infil(mesh%nc))
+      ! see unk_initialise: infil needs the mesh%ncb ghost-cell halo too,
+      ! since com_dof()/com_var_r() communicates it like h/u/v.
+      allocate(dof%infil(mesh%nc + mesh%ncb))
 
  !     allocate(dof%entropy(mesh%nc )) ! entropy for low froude scheme
 
@@ -1222,7 +1224,14 @@ CONTAINS
       allocate(dof%u( mesh%nc + mesh%ncb))
       allocate(dof%v(mesh%nc + mesh%ncb))
 
-      allocate(dof%infil(mesh%nc))
+      ! infil must include the ghost-cell halo (mesh%ncb): com_dof() calls
+      ! com_var_r(dof%infil(:), mesh) just like h/u/v, and com_var_r writes
+      ! into indices up to mesh%nc + mesh%ncb. Allocating infil with only
+      ! mesh%nc elements (as before) made that MPI receive overflow the
+      ! array on every 2+ rank run, corrupting adjacent heap memory --
+      ! observed as anything from an exact-zero adjoint gradient to a
+      ! delayed crash at MPI finalization.
+      allocate(dof%infil(mesh%nc + mesh%ncb))
 !      allocate(dof%entropy(mesh%nc )) ! entropy for low froude scheme
 
       allocate(dof%grad_h(mesh%nc + mesh%ncb))

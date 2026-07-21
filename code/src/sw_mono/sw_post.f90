@@ -88,7 +88,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
    do num_bc = 1,bc%nb
 
-      call mpi_sum_r( bc%sum_mass_flux( num_bc ) )
+      call df_sum_r( bc%sum_mass_flux( num_bc ) )
 
       if ( temp_scheme(1:2) == 'rk' .or. &
            temp_scheme(1:4) == 'imex' ) then
@@ -111,7 +111,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
    end do
 
-   call mpi_sum_r( mass )
+   call df_sum_r( mass )
 
    call write_scalar_in_time( mass , 'water_vol' )
 
@@ -121,7 +121,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
    mass_cut_tot  =  mass_cut
 
-   call mpi_sum_r( mass_cut_tot )
+   call df_sum_r( mass_cut_tot )
 
    if ( temp_scheme(1:2) == 'rk' .or. &
         temp_scheme(1:4) == 'imex' ) then
@@ -224,7 +224,7 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
       end do
 
-      call mpi_sum_r( discharg )
+      call df_sum_r( discharg )
 
       buffer = ''
 
@@ -373,19 +373,19 @@ SUBROUTINE sw_post_treatment( dof , mesh )
 
          end do
         ! update norm on all cells for this timestep
-         call mpi_sum_r( surf_total )
+         call df_sum_r( surf_total )
 
          call mpi_max_r( norm_inf(1) ) ; call mpi_max_r( norm_inf_e(1) )
-         call mpi_sum_r( norm_L1 (1) ) ; call mpi_sum_r( norm_L1_e (1) )
-         call mpi_sum_r( norm_L2 (1) ) ; call mpi_sum_r( norm_L2_e (1) )
+         call df_sum_r( norm_L1 (1) ) ; call df_sum_r( norm_L1_e (1) )
+         call df_sum_r( norm_L2 (1) ) ; call df_sum_r( norm_L2_e (1) )
 
          call mpi_max_r( norm_inf(2) ) ; call mpi_max_r( norm_inf_e(2) )
-         call mpi_sum_r( norm_L1 (2) ) ; call mpi_sum_r( norm_L1_e (2) )
-         call mpi_sum_r( norm_L2 (2) ) ; call mpi_sum_r( norm_L2_e (2) )
+         call df_sum_r( norm_L1 (2) ) ; call df_sum_r( norm_L1_e (2) )
+         call df_sum_r( norm_L2 (2) ) ; call df_sum_r( norm_L2_e (2) )
 
          call mpi_max_r( norm_inf(3) ) ; call mpi_max_r( norm_inf_e(3) )
-         call mpi_sum_r( norm_L1 (3) ) ; call mpi_sum_r( norm_L1_e (3) )
-         call mpi_sum_r( norm_L2 (3) ) ; call mpi_sum_r( norm_L2_e (3) )
+         call df_sum_r( norm_L1 (3) ) ; call df_sum_r( norm_L1_e (3) )
+         call df_sum_r( norm_L2 (3) ) ; call df_sum_r( norm_L2_e (3) )
 
          if ( w_norm <= 3 ) then ! for relative norms
 

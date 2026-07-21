@@ -296,7 +296,7 @@ CONTAINS
 
       #ifdef USE_MPI
 
-         call mpi_sum_r( val_back )
+         call df_sum_r( val_back )
 
       #endif
 
@@ -320,7 +320,7 @@ CONTAINS
 
       #ifdef USE_MPI
 
-         call mpi_sum_i( val_back )
+         call df_sum_i( val_back )
 
       #endif
 
@@ -369,7 +369,7 @@ CONTAINS
 
         index_m  =  maxloc( temp , 1 )
 
-        call mpi_sum_r( val_back )
+        call df_sum_r( val_back )
 
         if ( proc /= index_m - 1 )  val_back = 0._rp
 
@@ -411,7 +411,7 @@ CONTAINS
 
         index_m  =  maxloc( temp , 1 )
 
-        call mpi_sum_i( val_back )
+        call df_sum_i( val_back )
 
         if ( proc /= index_m - 1 )  val_back = 0
 
@@ -462,7 +462,7 @@ CONTAINS
 
         index_m  =  minloc( temp , 1 )
 
-        call mpi_sum_r( val_back )
+        call df_sum_r( val_back )
 
         if ( proc /= index_m - 1 )  val_back = 0._rp
 
@@ -504,7 +504,7 @@ CONTAINS
 
         index_m  =  minloc( temp , 1 )
 
-        call mpi_sum_i( val_back )
+        call df_sum_i( val_back )
 
         if ( proc /= index_m - 1 )  val_back = 0
 

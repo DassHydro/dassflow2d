@@ -347,7 +347,7 @@ SUBROUTINE write_restart_direct( dof , mesh )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -404,7 +404,7 @@ SUBROUTINE write_restart_with_tc0( dof , mesh )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -449,7 +449,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
    mesh_total_size = mesh%nc
 
-   call mpi_sum_i( mesh_total_size )
+   call df_sum_i( mesh_total_size )
 
    !===================================================================================================================!
    !  Opening/Creating Result File and Writing Header
@@ -508,7 +508,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -529,7 +529,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -549,7 +549,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -569,7 +569,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -589,7 +589,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -609,7 +609,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -633,7 +633,7 @@ SUBROUTINE v_tecplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -677,7 +677,7 @@ SUBROUTINE v_tecplot_direct( dof , mesh , filename )
    !===================================================================================================================!
 
    mesh_total_size = mesh%nc
-   call mpi_sum_i( mesh_total_size )
+   call df_sum_i( mesh_total_size )
 
    open(10,file=filename,status='replace',form='formatted',access='direct',recl=16)
 
@@ -808,7 +808,7 @@ SUBROUTINE v_tecplot_direct( dof , mesh , filename )
 
    close(10)
 
-   call mpi_wait_all
+   call df_wait_all
 
 END SUBROUTINE v_tecplot_direct
 
@@ -922,7 +922,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
    mesh_total_size = mesh%nc
 
-   call mpi_sum_i( mesh_total_size )
+   call df_sum_i( mesh_total_size )
 
    !===================================================================================================================!
    !  Opening/Creating Result File and Writing Header
@@ -972,7 +972,7 @@ SUBROUTINE v_gnuplot( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -1287,7 +1287,7 @@ SUBROUTINE v_vtk( dof , mesh , filename )
 
    endif
 
-   call mpi_wait_all
+   call df_wait_all
 close(10)
 END SUBROUTINE v_vtk
 
@@ -1665,7 +1665,7 @@ SUBROUTINE v_vtk_init( mesh , filename )
 ! 
 !     endif
 
-   call mpi_wait_all
+   call df_wait_all
 close(10)
 
 END SUBROUTINE v_vtk_init
@@ -1708,7 +1708,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
    !===================================================================================================================!
 
    mesh_total_size = mesh%nc
-   call mpi_sum_i( mesh_total_size )
+   call df_sum_i( mesh_total_size )
 
    if ( proc == 0 ) then
 
@@ -1752,7 +1752,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -1796,7 +1796,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    enddo
 
@@ -1819,7 +1819,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    enddo
 
@@ -1842,7 +1842,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    enddo
 
@@ -1865,7 +1865,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    enddo
 
@@ -1884,7 +1884,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         end do
     
     endif
@@ -1905,7 +1905,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
          if ( proc == np-1 ) write(10) char(10)
          close(10)
       end if
-      call mpi_wait_all
+      call df_wait_all
    enddo
    
    !===================================================================================================================!
@@ -1925,7 +1925,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         end do
         
     endif
@@ -1950,7 +1950,7 @@ SUBROUTINE v_vtk_bin( dof , mesh , filename )
 ! 
 !       end if
 ! 
-!       call mpi_wait_all
+!       call df_wait_all
 ! 
 !    end do
 
@@ -1974,7 +1974,7 @@ if (bc_infil .ne. 0) then
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -1999,7 +1999,7 @@ if (bc_infil .ne. 0) then
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -2023,7 +2023,7 @@ if (bc_infil .ne. 0) then
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -2046,7 +2046,7 @@ if (bc_rain == 1) then
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 endif
@@ -2071,7 +2071,7 @@ endif
 !
 !       end if
 !
-!       call mpi_wait_all
+!       call df_wait_all
 !
 !    end do
 
@@ -2108,7 +2108,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
    !===================================================================================================================!
 
    mesh_total_size = mesh%nc
-   call mpi_sum_i( mesh_total_size )
+   call df_sum_i( mesh_total_size )
 
    if ( proc == 0 ) then
 
@@ -2152,7 +2152,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    end do
 
@@ -2196,7 +2196,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 
       end if
 
-      call mpi_wait_all
+      call df_wait_all
 
    enddo
 
@@ -2219,7 +2219,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         enddo
    
         if (bc_infil == 2) then
@@ -2235,7 +2235,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
             enddo
             
             do k = 0,np-1
@@ -2249,7 +2249,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
             enddo
         
         elseif (bc_infil == 1) then
@@ -2265,7 +2265,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
             enddo
             
             do k = 0,np-1
@@ -2279,7 +2279,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
             enddo
             
             do k = 0,np-1
@@ -2293,7 +2293,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
             enddo
         endif
     
@@ -2312,7 +2312,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         enddo
     
         do k = 0,np-1
@@ -2326,7 +2326,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         enddo
         
 !         do k = 0,np-1
@@ -2340,7 +2340,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
 !                 if ( proc == np-1 ) write(10) char(10)
 !                 close(10)
 !             end if
-!             call mpi_wait_all
+!             call df_wait_all
 !         enddo
 
     endif
@@ -2357,7 +2357,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
          if ( proc == np-1 ) write(10) char(10)
          close(10)
       end if
-      call mpi_wait_all
+      call df_wait_all
    enddo
    
    do k = 0,np-1
@@ -2371,7 +2371,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
          if ( proc == np-1 ) write(10) char(10)
          close(10)
       end if
-      call mpi_wait_all
+      call df_wait_all
    enddo
    
    do k = 0,np-1
@@ -2385,7 +2385,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
          if ( proc == np-1 ) write(10) char(10)
          close(10)
       end if
-      call mpi_wait_all
+      call df_wait_all
    enddo
    
    !===================================================================================================================!
@@ -2403,7 +2403,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         end do
     
         do k = 0,np-1
@@ -2417,7 +2417,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         end do
         
     endif
@@ -2455,7 +2455,7 @@ SUBROUTINE v_vtk_bin_init( dof , mesh , filename )
                 if ( proc == np-1 ) write(10) char(10)
                 close(10)
             end if
-            call mpi_wait_all
+            call df_wait_all
         end do
         
     endif
@@ -2584,7 +2584,7 @@ END SUBROUTINE v_vtk_bin_init
 !
 !          end if ! end if time_ime_loop
 !
-!          call mpi_wait_all
+!          call df_wait_all
 !
 !       END SUBROUTINE sub_write
 !

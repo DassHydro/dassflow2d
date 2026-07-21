@@ -76,6 +76,12 @@ MODULE m_mpi
 	  include 'mpif.h'
       include 'scotchf.h'
 
+   #elif defined USE_MPI_ADJ
+      ! df_sum_r/df_sum_i must show Tapenade the real MPI_ALLREDUCE call (see
+      ! their own comment below) instead of a differentiable stub, so mpif.h
+      ! must stay visible under the tapenade-only USE_MPI_ADJ preprocessing
+      ! pass too (that pass is not given -DUSE_MPI, only -DUSE_MPI_ADJ).
+      include 'mpif.h'
    #endif
 
    integer(ip)  ::  np           !> number of processes
@@ -1254,8 +1260,8 @@ write(*,*) "mpi in fortran:np, proc", np, proc
 !**********************************************************************************************************************!
 !**********************************************************************************************************************!
 
-!> \brief mpi_sum_r  ????
-   SUBROUTINE mpi_sum_r( val )
+!> \brief df_sum_r  ????
+   SUBROUTINE df_sum_r( val )
 
       implicit none
 
@@ -1269,24 +1275,33 @@ write(*,*) "mpi in fortran:np, proc", np, proc
       !
       !================================================================================================================!
 
-      #if defined USE_MPI
+      ! Tapenade cannot differentiate through MPI_ALLREDUCE itself (opaque
+      ! external library call), but it DOES natively know how to differentiate
+      ! MPI_ALLREDUCE when it recognizes the call as a genuine MPI primitive
+      ! (it ships MPI_ALLREDUCE_FWD/MPI_ALLREDUCE_BWD in the ADFirstAidKit,
+      ! wired via -head call-graph traversal). It fails to do so only because
+      ! it also has an internal, NAME-based heuristic that flags any call to
+      ! a routine named "mpi_*"/"ampi_*" as an "MPI primitive" of its own --
+      ! and since df_sum_r/df_sum_i (deliberately renamed away from mpi_sum_r/
+      ! mpi_sum_i for this exact reason) no longer match that pattern, this
+      ! branch is what Tapenade actually differentiates. It must therefore
+      ! show the real MPI_ALLREDUCE call unconditionally (not the USE_MPI_ADJ
+      ! "val = val*val" placeholder previously used here), because the
+      ! tapenade preprocessing pass only defines USE_MPI_ADJ, not USE_MPI.
+      #if defined USE_MPI || defined USE_MPI_ADJ
 
          val_tmp_r  =  val
 
-         call MPI_ALLREDUCE( val_tmp_r , val , 1 , realtype , MPI_SUM , MPI_COMM_WORLD , code )
-
-      #elif defined USE_MPI_ADJ
-
-         val  =  val * val
+         call MPI_ALLREDUCE( val_tmp_r , val , 1 , MPI_DOUBLE_PRECISION , MPI_SUM , MPI_COMM_WORLD , code )
 
       #endif
-      
-      call mpi_wait_all
 
-   END SUBROUTINE mpi_sum_r
+      call df_wait_all
 
-!> \brief mpi_sum_i  ????
-   SUBROUTINE mpi_sum_i( val )
+   END SUBROUTINE df_sum_r
+
+!> \brief df_sum_i  ????
+   SUBROUTINE df_sum_i( val )
 
       implicit none
 
@@ -1300,19 +1315,17 @@ write(*,*) "mpi in fortran:np, proc", np, proc
       !
       !================================================================================================================!
 
-      #if defined USE_MPI
+      ! See df_sum_r just above: same reasoning, must show the real
+      ! MPI_ALLREDUCE call under USE_MPI_ADJ too (no differentiable stub).
+      #if defined USE_MPI || defined USE_MPI_ADJ
 
          val_tmp_i  =  val
 
-         call MPI_ALLREDUCE( val_tmp_i , val , 1 , inttype , MPI_SUM , MPI_COMM_WORLD , code )
-
-      #elif defined USE_MPI_ADJ
-
-         val  =  val * val
+         call MPI_ALLREDUCE( val_tmp_i , val , 1 , MPI_INTEGER , MPI_SUM , MPI_COMM_WORLD , code )
 
       #endif
 
-   END SUBROUTINE mpi_sum_i
+   END SUBROUTINE df_sum_i
 
 
 !**********************************************************************************************************************!
@@ -1585,8 +1598,8 @@ write(*,*) "mpi in fortran:np, proc", np, proc
 !**********************************************************************************************************************!
 
 
-!> \brief mpi_wait_all  ????
-   SUBROUTINE mpi_wait_all
+!> \brief df_wait_all  ????
+   SUBROUTINE df_wait_all
 
       implicit none
 
@@ -1596,7 +1609,7 @@ write(*,*) "mpi in fortran:np, proc", np, proc
 
       #endif
 
-   END SUBROUTINE mpi_wait_all
+   END SUBROUTINE df_wait_all
 
 
 !**********************************************************************************************************************!

@@ -151,8 +151,8 @@ CONTAINS
 
       #ifdef USE_MPI
 
-         call mpi_sum_r( val      )
-         call mpi_sum_r( val_diff )
+         call df_sum_r( val      )
+         call df_sum_r( val_diff )
 
       #endif
 
@@ -168,8 +168,8 @@ CONTAINS
 
       #ifdef USE_MPI
 
-         call mpi_sum_i( val      )
-         call mpi_sum_i( val_diff )
+         call df_sum_i( val      )
+         call df_sum_i( val_diff )
 
       #endif
 

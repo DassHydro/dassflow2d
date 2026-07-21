@@ -519,7 +519,7 @@ CONTAINS
    if(mesh_type=="dassflow") then
 
       mesh_total_cells = mesh%nc
-      call mpi_sum_i( mesh_total_cells )
+      call df_sum_i( mesh_total_cells )
 
 !===================================================================================================================!
 ! set the correspondance between cell and land value
@@ -613,7 +613,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
    if (mesh_type=='dassflow') then
 
       mesh_total_cells = mesh%nc
-      call mpi_sum_i( mesh_total_cells )
+      call df_sum_i( mesh_total_cells )
 
    !===================================================================================================================!
    ! set the correspondance between cell and land value
@@ -622,7 +622,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
       if (bc_infil == 1) then
 
         allocate( my_infiltration%land( mesh_total_cells ) )
-        #allocate( my_infiltration%coord( 4, my_infiltration%nland )   )
+        ! allocate( my_infiltration%coord( 4, my_infiltration%nland )   )
         allocate( my_infiltration%GA( my_infiltration%nland ) )
         allocate( my_infiltration%SCS( 1 ) )
 
@@ -684,7 +684,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
       integer(ip) :: mesh_total_cells
 
       mesh_total_cells = mesh%nc
-      call mpi_sum_i( mesh_total_cells )
+      call df_sum_i( mesh_total_cells )
 
       allocate(my_phys_desc%soil_land( mesh_total_cells ))!mesh%nc))
       allocate(my_phys_desc%soil( my_phys_desc%soil_nland ))!my_phys_desc%soil_nland))
@@ -757,7 +757,7 @@ SUBROUTINE infiltration_initialise(my_infiltration, mesh)
        if ( file_exist(1) ) write(*,*) "WARNING: you are trying to allocate rain from rain.txt and from init_bc"
    
       mesh_total_cells = mesh%nc
-      call mpi_sum_i( mesh_total_cells )
+      call df_sum_i( mesh_total_cells )
 
 
       allocate(my_bc%rain(my_bc%nb_rn))

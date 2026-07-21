@@ -98,13 +98,13 @@ ifeq ($(COMPILO),1)
 
   ifeq ($(OPTIM),0)
 
-    export CFLAGS = fpp -module ./obj -g -traceback -check all -check noarg_temp_created -fpe0 -nofor_main -diag-disable 8291 -fPIC
-    export FFLAGS = -nofor_main -fPIC
+    export CFLAGS = fpp -module ./obj -g -traceback -check all -check noarg_temp_created -fpe0 -nofor_main -diag-disable 8291 -fPIC -fallow-argument-mismatch
+    export FFLAGS = -nofor_main -fPIC -fallow-argument-mismatch
 
   else
 
-    export CFLAGS = fpp -module ./obj -fast -nofor_main -diag-disable 8291
-    export FFLAGS = -nofor_main -fPIC
+    export CFLAGS = fpp -module ./obj -fast -nofor_main -diag-disable 8291 -fallow-argument-mismatch
+    export FFLAGS = -nofor_main -fPIC -fallow-argument-mismatch
 
   endif
 
@@ -121,13 +121,13 @@ else
 
   ifeq ($(OPTIM),0)
 
-    export CFLAGS = -g -fbounds-check -ffree-line-length-0 -I./obj -J./obj -fPIC -ffpe-trap=invalid,zero,overflow,underflow -finit-real=nan
-    export FFLAGS = -fPIC
+    export CFLAGS = -g -fbounds-check -fallow-argument-mismatch -ffree-line-length-0 -I./obj -J./obj -fPIC -ffpe-trap=invalid,zero,overflow,underflow -finit-real=nan
+    export FFLAGS = -fPIC -fallow-argument-mismatch
 
   else
 
-    export CFLAGS = -O3 -fno-range-check -ffree-line-length-0 -I./obj -J./obj -fPIC
-    export FFLAGS = -fPIC
+    export CFLAGS = -O3 -fno-range-check -fallow-argument-mismatch -ffree-line-length-0 -I./obj -J./obj -fPIC
+    export FFLAGS = -fPIC -fallow-argument-mismatch
 
   endif
 
@@ -135,6 +135,25 @@ endif
 
 export CLIBS =
 export FLIBS =
+
+#======================================================================================================================#
+#   Tapenade ADFirstAidKit -- MPI_Allreduce_fwd/MPI_Allreduce_bwd used by the differentiated
+#   df_sum_r/df_sum_i (see src/common/m_mpi.f90). Vendored from tapenade's ADFirstAidKit.
+#
+#   df_sum_r/df_sum_i's body unconditionally shows tapenade the real
+#   `include 'mpif.h'` / MPI_ALLREDUCE call (no differentiable stub -- see
+#   their comment in m_mpi.f90), so Tapenade's OWN Fortran parser -- not just
+#   the compiler invoked afterwards -- must be able to resolve mpif.h itself
+#   (with -I) or it silently corrupts its internal AST and crashes later with
+#   an unrelated-looking java.lang.StackOverflowError.
+#======================================================================================================================#
+
+vpath %.c libs/adFirstAidKit
+
+MPI_INC := $(patsubst -I%,%,$(filter -I%,$(shell mpicc -show)))
+TAPENADE_MPI_I := $(foreach d,$(MPI_INC),-I $(d))
+
+export CLIBS  +=  -I$(PWD)/libs/adFirstAidKit
 
 #======================================================================================================================#
 #   Scotch
@@ -330,6 +349,8 @@ ifeq ($(ADJOINT),1)
     $(patsubst src/hydro/%.f90,obj/%.o,$(wildcard src/hydro/*.f90))\
     obj/adBuffer.o\
     obj/adStack.o\
+    obj/adMPI.o\
+    obj/adCharacterArrayShim.o\
     obj/lbfgsb_blas.o\
     obj/lbfgsb_linpack.o\
     obj/lbfgsb_timer.o\
@@ -340,8 +361,6 @@ ifeq ($(ADJOINT),1)
     $(patsubst tap/%.f90,obj/%.o,$(wildcard tap/*.f90))
  else
   OBJS_TAP  =  obj/m_tap_vars.o\
-			   obj/m_mpi_back.o\
-			   obj/m_mpi_diff.o\
 			   obj/m_gr4.o\
 			   obj/m_numeric_back.o\
 			   obj/m_adjoint.o\
@@ -349,6 +368,8 @@ ifeq ($(ADJOINT),1)
 			   $(patsubst src/adjoint/%.f90,obj/%.o,$(wildcard src/adjoint/*.f90))\
 			   obj/adBuffer.o\
 			   obj/adStack.o\
+			   obj/adMPI.o\
+			   obj/adCharacterArrayShim.o\
 			   obj/lbfgsb_blas.o\
 		   obj/lbfgsb_linpack.o\
 		   obj/lbfgsb_timer.o\
@@ -377,7 +398,9 @@ OBJS_MOD  =  obj/m_common.o\
              $(patsubst $(HYDROD)/%.f90,obj/%.o,$(wildcard $(HYDROD)/m_*.f90))\
              obj/m_linear_solver.o
 
-OBJS_SRC  =  obj/m_common.o\
+OBJS_SRC  =  obj/adMPI.o\
+             obj/adCharacterArrayShim.o\
+             obj/m_common.o\
              obj/m_linear_algebra.o\
              obj/m_mesh.o\
              obj/m_mpi.o\
@@ -494,20 +517,22 @@ copy: $(FILES_TAP)
 tgt: $(FILES_TAP)
 	@echo "============================================================================================================"
 
-	tapenade -d -fixinterface -splitoutputfiles \
+	tapenade -java "-Xss64m" -d -fixinterface -splitoutputfiles $(TAPENADE_MPI_I) \
 	-tgtfuncname _diff -tgtvarname _diff -tgtmodulename _diff -copyname _c_diff \
 	-head "run_model($(TAP_INVARS))\($(TAP_OUTVARS))" -O ./tap  $(FILES_TAP)
 
 adj: $(FILES_TAP)
 	@echo "============================================================================================================"
 
-	tapenade -b -fixinterface -splitoutputfiles \
+	tapenade -java "-Xss64m" -b -fixinterface -splitoutputfiles $(TAPENADE_MPI_I) \
 	-adjfuncname _back -adjvarname _back -adjmodulename _back -copyname _c_back \
 	-head "run_model($(TAP_INVARS))\($(TAP_OUTVARS))" -O ./tap  $(FILES_TAP)
 
 
 post:
 	@echo "============================================================================================================"
+	cp ./src/adjoint/extract_df_sum_adjoint.pl ./tap/
+	cd ./tap ; perl extract_df_sum_adjoint.pl
 	cp ./src/adjoint/finish_to_gen_adjoint.pl ./tap/
 	cd ./tap ; perl finish_to_gen_adjoint.pl
 	@echo "============================================================================================================"
@@ -541,9 +566,15 @@ post:
 	@echo "============================================================================================================"
 	$(FC) $(CFLAGS) $(CLIBS) -c $< -o $@
 
-./obj/%.o: ./tap/%.f90
+# Fortran module dependencies aren't tracked by this Makefile: tap/*.f90 files
+# that `USE M_MPI_BACK`/`USE M_MPI_DIFF` (e.g. m_numeric_back.f90) need
+# obj/m_mpi_back.o / obj/m_mpi_diff.o -- which since df_sum_r/df_sum_i were
+# renamed (see m_mpi.f90) resolve to the hand-written src/adjoint sources, not
+# a tap/ file -- to already be compiled first. Order-only prerequisite so it
+# doesn't affect m_mpi_back.o/m_mpi_diff.o's own (identical) rule.
+./obj/%.o: ./tap/%.f90 | obj/m_mpi_back.o obj/m_mpi_diff.o
 	@echo "============================================================================================================"
-	$(FC) $(CFLAGS) -c $< -o $@
+	$(FC) $(CFLAGS) $(CLIBS) -c $< -o $@
 
 ./obj/%.o: %.f
 	@echo "============================================================================================================"
@@ -551,7 +582,7 @@ post:
 
 ./obj/%.o: %.c
 	@echo "============================================================================================================"
-	$(CC) -fPIC -O2 -c $< -o $@
+	$(CC) -fPIC -O2 $(CLIBS) -c $< -o $@
 
 wrappers:
 	mkdir -p wrappers

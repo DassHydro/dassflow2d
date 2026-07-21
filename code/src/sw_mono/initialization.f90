@@ -234,7 +234,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(5)="GR4params.txt"
    inquire( file = 'GR4params.txt' , exist = file_exist(1) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( file_exist(1) ) then
 
@@ -329,7 +329,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(6)="GR4_PEwarmup.txt"
    inquire( file = 'GR4_PEwarmup.txt' , exist = file_exist(1) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( file_exist(1) ) then
 
@@ -385,7 +385,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(7)="hydrograph.txt"
    inquire( file = 'hydrograph.txt' , exist = file_exist(1) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( file_exist(1) ) then
 
@@ -474,7 +474,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(8)="hpresc.txt"
    inquire( file = 'hpresc.txt' , exist = file_exist(1) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( file_exist(1) ) then
 
@@ -527,7 +527,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(9)="zspresc.txt"
    inquire( file = 'zspresc.txt' , exist = file_exist(2) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( file_exist(2) ) then
 
@@ -582,7 +582,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(10)="rain.txt"
    inquire( file = 'rain.txt' , exist = file_exist(1) )
 
-   call mpi_wait_all
+   call df_wait_all
 
    if ( file_exist(1) ) then
 
@@ -898,7 +898,7 @@ SUBROUTINE Initial( dof0, mesh, my_friction, my_infiltration, my_param_model, my
    filenames(14)="rating_curve.txt"
    inquire( file = 'rating_curve.txt' , exist = file_exist(1) )
 
-  call mpi_wait_all
+  call df_wait_all
 
    if ( file_exist(1) ) then
 
